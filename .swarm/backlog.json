@@ -7,14 +7,14 @@
       "priority": 1,
       "value": "H",
       "effort": "M",
-      "status": "in_progress",
+      "status": "done",
       "deps": [],
       "files_hint": ["src/corpus.js", "src/select.js", "test/select.test.js"],
       "acceptance": "a caller gets correct deterministic filtered selection over a >=40 entry corpus; same seed always yields the same aphorism, author/tag filters AND together case-insensitively, empty candidate set throws",
       "packages": [],
       "model": "sonnet",
       "attempts": 0,
-      "notes": "dispatched cycle 1 as direct Agent (headless: Workflow review-gated)"
+      "notes": "verified cycle 1 by 14 conductor-authored assertions; corpus n=50, mulberry32 seeded PRNG"
     },
     {
       "id": "T-002",
@@ -23,14 +23,14 @@
       "priority": 1,
       "value": "H",
       "effort": "M",
-      "status": "in_progress",
+      "status": "done",
       "deps": [],
       "files_hint": ["src/args.js", "test/args.test.js"],
       "acceptance": "argv arrays parse into a correct options object; unknown flags, non-numeric seeds and value-less flags return a usage error instead of throwing",
       "packages": [],
       "model": "sonnet",
       "attempts": 0,
-      "notes": "dispatched cycle 1 as direct Agent (headless: Workflow review-gated)"
+      "notes": "verified cycle 1 by 19 conductor-authored assertions; builder also added stray-positional-arg rejection beyond spec"
     },
     {
       "id": "T-003",
@@ -39,14 +39,14 @@
       "priority": 1,
       "value": "H",
       "effort": "S",
-      "status": "in_progress",
+      "status": "done",
       "deps": ["T-001", "T-002"],
       "files_hint": ["bin/aphorism.js", "test/cli.test.js"],
       "acceptance": "node bin/aphorism.js prints one attributed aphorism to stdout and exits 0; --list/--json/--help/--seed/--author/--tag behave per Domain rules; no match exits 1 with stderr only",
       "packages": [],
       "model": "conductor",
       "attempts": 0,
-      "notes": "conductor-owned integration layer — depends on both builder items, disjoint file scope"
+      "notes": "conductor-owned; verified by 11 end-to-end process-level tests asserting real stdout/stderr/exit codes"
     },
     {
       "id": "T-004",
@@ -55,14 +55,14 @@
       "priority": 3,
       "value": "M",
       "effort": "S",
-      "status": "todo",
+      "status": "done",
       "deps": ["T-003"],
       "files_hint": ["README.md"],
       "acceptance": "README shows how to run without installing and documents all six flags plus exit codes",
       "packages": [],
-      "model": "haiku",
+      "model": "conductor",
       "attempts": 0,
-      "notes": "polish-docs candidate if clock allows; SMOKE clock likely forces conductor-inline"
+      "notes": "conductor-inline; polish-docs workflow never dispatched (SMOKE clock)"
     },
     {
       "id": "T-005",
@@ -78,7 +78,23 @@
       "packages": [],
       "model": "sonnet",
       "attempts": 0,
-      "notes": "the taste fix from kickoff critique — out of reach on a 25-min SMOKE clock, recorded so it is not lost"
+      "notes": "the taste fix from the kickoff critique; never dispatched — out of reach on a 25-min SMOKE clock. Carried forward deliberately, not dropped."
+    },
+    {
+      "id": "T-006",
+      "title": "Human audit of corpus attributions",
+      "kind": "qa",
+      "priority": 2,
+      "value": "H",
+      "effort": "M",
+      "status": "todo",
+      "deps": ["T-001"],
+      "files_hint": ["src/corpus.js"],
+      "acceptance": "every one of the 50 aphorisms is confirmed against a primary source or re-attributed to Anonymous",
+      "packages": [],
+      "model": "human",
+      "attempts": 0,
+      "notes": "filed at WRAP_UP; no automated check can settle attribution accuracy — named in REPORT.md hand-off as the largest correctness risk"
     }
   ]
 }
