@@ -1,0 +1,70 @@
+# aphorism
+
+A tiny, zero-dependency CLI that prints one random programming aphorism.
+
+`fortune(6)`, but curated for programmers. Quiet by default: one aphorism to stdout,
+nothing else. Safe to drop in a `.bashrc` or an MOTD.
+
+## Usage
+
+No install step and no dependencies — Node 18+ and the repo is all you need.
+
+```sh
+node bin/aphorism.js
+```
+
+```
+Simplicity is prerequisite for reliability.
+    — Edsger W. Dijkstra
+```
+
+## Flags
+
+| Flag | Effect |
+|---|---|
+| `--author <name>` | Only aphorisms whose author matches (case-insensitive) |
+| `--tag <tag>` | Only aphorisms carrying that tag (case-insensitive) |
+| `--seed <n>` | Deterministic pick — the same seed always yields the same aphorism |
+| `--list` | Print every aphorism in the filtered set, one per line |
+| `--json` | Emit the selected aphorism as a single-line JSON object |
+| `--help`, `-h` | Usage summary |
+
+`--author` and `--tag` narrow together (AND, not OR). `--json` composes with the
+filters and with `--seed`.
+
+```sh
+node bin/aphorism.js --author dijkstra
+node bin/aphorism.js --tag simplicity --seed 42
+node bin/aphorism.js --json | jq -r .author
+node bin/aphorism.js --list --tag debugging
+```
+
+## Exit codes
+
+| Code | Meaning |
+|---|---|
+| `0` | Success — an aphorism (or the help text) was printed to stdout |
+| `1` | No aphorism matched the given filters; message on stderr, stdout empty |
+| `2` | Usage error — unknown flag, non-numeric seed, or a flag missing its value |
+
+Errors always go to stderr, so `node bin/aphorism.js --tag nonexistent > out.txt`
+leaves `out.txt` empty rather than writing a diagnostic into your pipeline.
+
+## Layout
+
+```
+bin/aphorism.js    entry point — argument dispatch and output formatting only
+src/corpus.js      the aphorism corpus (text, author, tags)
+src/select.js      pure filtering and (optionally seeded) selection
+src/args.js        pure argv parser; returns a usage error, never throws
+test/              node:test suites — pure-module tests plus end-to-end CLI tests
+```
+
+The logic lives in pure modules so it is testable without spawning a process; the
+entry point stays thin.
+
+## Tests
+
+```sh
+node --test test/
+```
