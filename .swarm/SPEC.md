@@ -24,7 +24,7 @@ MOTD, or `.bashrc` — and who will be annoyed by anything that prints more than
 - [ ] A curated corpus of >= 40 aphorisms as structured data (text, author, tags)
 - [ ] Flags: `--author <name>` filter, `--tag <tag>` filter, `--seed <n>` deterministic pick, `--list`, `--json`, `--help`
 - [ ] No-match behaviour: message on stderr, nothing on stdout, non-zero exit
-- [ ] `node --test test/` suite covering pick, filters, seeding, no-match, and output format
+- [ ] `node --test test/*.test.js` suite covering pick, filters, seeding, no-match, and output format
 
 ## Nice-to-haves
 
@@ -64,14 +64,14 @@ loud; the aphorism is the product.
 ## Definition of done
 
 `node bin/aphorism.js` prints a random attributed aphorism; all six flags behave per the
-Domain rules above; `node --test test/` passes with zero failures; the corpus holds >= 40
+Domain rules above; `node --test test/*.test.js` passes with zero failures; the corpus holds >= 40
 entries; a README documents install-free usage and every flag; the tree has zero runtime
 dependencies.
 
 ## Commands
 
 - run: `node bin/aphorism.js`
-- test: `node --test test/`
+- test: `node --test test/*.test.js`
 
 ## Spec digest
 

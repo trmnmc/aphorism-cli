@@ -66,5 +66,8 @@ entry point stays thin.
 ## Tests
 
 ```sh
-node --test test/
+node --test test/*.test.js
 ```
+
+48 tests: pure-module coverage of the selection and parsing rules, plus end-to-end tests
+that spawn the real binary and assert on stdout, stderr, and exit codes.

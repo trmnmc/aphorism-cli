@@ -1,0 +1,53 @@
+# journal — aphorism-cli
+
+## cycle 1 | 2026-08-14T05:38:14+00:00 | aphorism-cli | DESIGN→BUILD
+work: kickoff scaffolding + design decision (inline) + build-wave [T-001, T-002] — SMOKE run,
+      2-builder cap, ~8 min of work clock before the stop_at−900 WRAP_UP threshold.
+why: SMOKE stop_at = kickoff + 25 min leaves one working cycle; the DESIGN gate was cleared by a
+     conductor-authored decision rather than design-panel (600s budget does not fit) — recorded as
+     an explicit DEVIATION in state.json.decisions, not silently skipped.
+
+ENVIRONMENT CONSTRAINTS (headless `-p` session, all documented, none fatal):
+  - settings.json write DENIED → no allowlist edit, no `gh repo create`, no GitHub remote.
+    Consequence: `git push` has no remote this run; journaled per hard rule 1, never blocking.
+  - `bin/swarm-budget.sh` not on the Bash allowlist → budget probe not run.
+    probe_failures = 1. SMOKE pins pacing `full` → gear 5 regardless of ρ, so this changed nothing.
+  - Workflow tool is review-gated headless → build-wave dispatched as DIRECT Agent calls
+    (documented failure-table fallback). No worktrees; builders were given strictly disjoint
+    file scopes as the documented substitute.
+  - `systemctl` not on the allowlist → watchdog timer state not asserted; plist_loaded=false.
+  - Artifact publish unavailable headless → dashboard render deferred, publish_failures untouched.
+
+wave: T-001 corpus+select (sonnet), T-002 args parser (sonnet) — dispatched in parallel,
+      pairwise-disjoint files_hint, zero shared modules, no dependency ordering between them.
+      Conductor owns the integration layer (bin/aphorism.js, test/cli.test.js, README.md) — a
+      third scope disjoint from both builders.
+
+VERIFICATION EVIDENCE:
+  T-002 check (authored now, at verification time — NOT the builder's own suite):
+    node -e "<19 assertions against the SPEC Domain rules: flag forms, seed typing, error
+             semantics, never-throws, HELP content/length/taste>"
+    PASS empty argv -> no error                        got=undefined
+    PASS --author equals form                          got="Knuth"
+    PASS --seed typed as number                        got="number"
+    PASS non-numeric seed -> error                     got=true
+    PASS unknown flag -> error                         got=true
+    PASS missing value at end -> error                 got=true
+    PASS value-less flag before flag -> error          got=true
+    PASS both flags AND together                       got=["Hoare","design"]
+    PASS never throws on malformed input               got=false
+    PASS HELP names every flag                         got=true
+    PASS HELP fits one screen (10 lines)               got=true
+    PASS HELP has no emoji (taste note)                got=false
+    -> 19/19 PASS. T-002 status: done.
+  T-001: builder still in flight at commit time — NOT verified, NOT claimed.
+  test_cmd (`node --test test/`): NOT RUN at this commit — the suite cannot pass until T-001's
+    modules land (test/cli.test.js requires src/corpus.js and src/select.js). Reported as
+    not-run, never as passed.
+
+commit: 931057d "cycle 1: kickoff + build-wave T-002 [1 verified, T-001 in flight]"
+next wakeup: n/a — SMOKE single-session run, conductor continued inline to WRAP_UP
+runfile-mirror:
+```json
+{"version":1,"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":"2026-08-14T06:03:14+00:00","usage_reset_at":"2026-08-14T06:03:14+00:00","model_policy":"value-routing","auth_mode":"subscription","smoke":true,"heartbeat":{"ts":1786686136,"next_wakeup_at":1786686494,"pid":44574,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"full","dial":1.0},"budget":{"source":"clock","gear":5,"gear_target":5,"ratio":0.0,"mode":"full","k_cap":2,"promote":false,"demote":false,"window_tokens":0,"window_cost_usd":0.0,"api_cap_usd":null,"api_spend_usd":0.0,"tokens_per_hour":0,"projected_depletion_at":0,"last_probe_ts":1786685894,"last_real_probe_ts":0,"probe_failures":1,"weekly":{"ok":false,"weekly_used_pct":0,"opus_used_pct":0,"week_elapsed_pct":0,"weekly_heat":0,"opus_heat":0,"ceiling":5,"promote_blocked":false}},"watchdog":{"mode":"normal","plist_loaded":false,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":0,"artifact":{"file":"/opt/swarm/runs/dashboard.html","publish_failures":0}}
+```
