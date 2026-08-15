@@ -2,8 +2,8 @@
   "idea": "tiny CLI that prints a random programming aphorism",
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
-  "phase": "PLAN",
-  "cycle": 1,
+  "phase": "BUILD",
+  "cycle": 2,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": { "launch_name": "", "port": 0 },
@@ -81,9 +81,9 @@
     "window_tokens_attributed": 0
   },
   "last_cycle": {
-    "n": 1,
-    "work": "build-wave T-001 T-002 + conductor integration T-003 T-004",
-    "outcome": "4 verified, 48 tests green, 0 reverts",
-    "commit": "b4c9b06"
+    "n": 2,
+    "work": "inline PLAN — improvement backlog I-1..I-6",
+    "outcome": "9 items planned, 6/6 SPEC must-haves covered, baseline 48 tests green",
+    "commit": "pending"
   }
 }

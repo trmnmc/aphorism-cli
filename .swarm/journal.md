@@ -193,3 +193,72 @@ infra verified live, not assumed: systemctl is-enabled swarm-watchdog.timer -> e
   systemctl is-active swarm-pacer.timer -> active; .ntfy.json present; goodnight push ->
   "2026-08-15T11:32:33+0000 send goodnight ok" in runs/notify.log.
 next: cycle 2 - inline PLAN pass to cover I-1..I-6 in the backlog (PLAN gate, cycle.md step 4).
+
+## cycle 2 | 2026-08-15T11:42:07+00:00 | aphorism-cli | PLAN -> BUILD
+work: inline PLAN — the improvement backlog (I-1..I-6). Why: the PLAN gate (cycle.md step 4
+  gate 2) held, because the six improvement must-haves written into SPEC.md at kickoff were
+  covered by zero backlog items. Design gate was already satisfied by the cycle-1 decisions.
+clock: 1786793624 at open, stop_at 1786879464 -> 85840s (23.8h) remaining. Admission control:
+  inline PLAN budget 600s fits with enormous margin.
+gear: 1 (guest, dial 0.30, trickle). k_cap 1, demote true. Unchanged from kickoff and fixed for
+  the run — week_resets_at falls after stop_at. No probe invoked (allowlist gap); no trend claimed.
+control: poll ok, merged=0. pending[] empty, applied[] empty, no inject[] array. Nothing to apply.
+orient: git status --porcelain clean (kickoff commit 7e15664 pushed to origin/master).
+
+agent: ONE Plan-type subagent, sonnet (gear-1 demote; PLAN is not a judgment seat — the
+  judgment this cycle is the HOLE/BOUNDARY classification, which the conductor deliberately
+  withheld from the item and kept for itself, per L-033).
+CONDUCTOR CHANGES to what the agent proposed, recorded because accepting a plan silently is
+  how a plan stops being the conductor's:
+  1. Narrowed I-1's files_hint from four files to src/select.js + test/select.test.js. As
+     proposed it shared SPEC.md and README.md with I-3, which is a planning error even at
+     wave size 1; the seed resolution's PROSE moved to I-3, so code and docs never collide.
+  2. Retargeted I-2c from test/cli.test.js to test/args.test.js. As proposed, I-2b and I-2c
+     both edited test/cli.test.js and were kept apart only by a dep edge — disjoint file
+     scopes are the mechanism, dep ordering is not a substitute for it.
+  3. DECLINED to flag I-1 route_class "core" despite playbook L-026 (route the correctness
+     core to fable even when small). L-026 is a routing recommendation; the allocator posture
+     is trickle with allow_premium_pct 0 and opus at 96% of the weekly envelope, and gear 1's
+     rule is S-effort sonnet builds only. Spending premium the allocator has explicitly zeroed
+     on a three-line change would be honoring a lesson's letter against its purpose. Recorded
+     as a deliberate non-application, not an oversight — the WRAP_UP applied-lessons check
+     should read this as "contradicted by posture", not "not exercised".
+  4. Accepted the agent's I-1 resolution recommendation (deterministic pick, not exit 2) after
+     checking its reasoning independently: Number('Infinity') is not NaN so args.js already
+     admits it; toUint32Seed folds the IEEE-754 bit pattern, and +/-Infinity have distinct
+     stable bit patterns (0x7FF00000 / 0xFFF00000 in the high word), so the deterministic
+     branch works on them unchanged. NaN stays exit 2 via parseSeedValue and is correct as-is.
+     The defect is the seam between two individually-defensible halves, not either half.
+
+VERIFICATION EVIDENCE (conductor-authored at verification time, not taken from the agent):
+  PLAN coverage check: python3 — parse SPEC "- [ ] **I-N" must-haves, map to backlog ids
+    -> SPEC must-haves ['I-1','I-2','I-3','I-4','I-5','I-6']
+       I-1 -> ['I-1'] | I-2 -> ['I-2a','I-2b','I-2c'] | I-3 -> ['I-3']
+       I-4 -> ['I-4'] | I-5 -> ['I-5'] | I-6 -> ['I-6']
+       uncovered: []            PASS (the PLAN gate's actual condition)
+  duplicate backlog ids -> []                                    PASS
+  files shared by >1 todo item -> {} (empty)                      PASS (pairwise-disjoint)
+  BASELINE test_cmd (the floor every later item must not break):
+    $ node --test test/args.test.js test/cli.test.js test/select.test.js
+    -> tests 48 | pass 48 | fail 0 | cancelled 0 | skipped 0 | todo 0   PASS
+  Note on what this cycle did NOT verify: no code changed, so there is nothing else to prove.
+  A plan is verified by coverage and disjointness, not by a green suite — the suite result
+  above is recorded as the baseline for I-1/I-2, not as evidence the plan is good.
+
+backlog: 15 items total (6 carried from the build run, 9 new). T-005 (rotation) kept todo at
+  priority 9 and explicitly marked OUT OF SCOPE — it is a feature and the brief forbids
+  features; NOT dropped, because the taste judge named its absence as the sole cause of the
+  use-twice 4/10. T-006 moved todo -> blocked: confirming an attribution needs sources this
+  run cannot reach, so it is a human item, and I-4 supersedes it with a triage a human can act on.
+wave autotune: not applicable — no build wave ran this cycle. k_current stays 3, wave_streak 1
+  (effective wave size is min(k_current, gear cap 1) = 1 regardless).
+dashboard: runs/dashboard.html re-rendered locally (0 unreplaced placeholders verified by grep).
+  Artifact publish skipped — tool absent in a -p session, which is not a publish failure.
+wakeup: next_wakeup_at 1786794217 (+90s base). ScheduleWakeup NOT called: on the VPS
+  bin/swarm-pacer.sh is the firing mechanism and reads next_wakeup_at directly (cycle.md step 9).
+next: cycle 3 — I-1, the seed-determinism fix, dispatched as a single-item wave (k=1) to a
+  sonnet builder with scope src/select.js + test/select.test.js.
+runfile-mirror:
+```json
+{"version":1,"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","usage_reset_note":"PLACEHOLDER, not measured: now+5h. bin/swarm-budget.sh is not on the Bash allowlist in a headless session (KI-5 / moon KI-2), so no probe supplied a real window boundary. Used only by the limp short-circuit; no gear decision rests on it.","model_policy":"value-routing","auth_mode":"subscription","heartbeat":{"ts":1786794127,"next_wakeup_at":1786794217,"pid":355895,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"allocator","gear":1,"gear_target":1,"ratio":null,"mode":"guest","k_cap":1,"promote":false,"demote":true,"window_tokens":0,"window_cost_usd":0.0,"api_cap_usd":null,"api_spend_usd":0.0,"tokens_per_hour":0,"projected_depletion_at":0,"last_probe_ts":1786793072,"last_real_probe_ts":0,"probe_failures":0,"probe_note":"kickoff: bin/swarm-budget.sh NOT invoked \u2014 re-checked at this kickoff, /opt/swarm/.claude/settings.json still carries no allow entry of any form for swarm-budget.sh or swarm-playbook.sh (only swarm-notify.sh, twice). probe_failures stays 0: an attempt not made is not a failure. Gear rests on runs/allocator.json (source=probe): posture=trickle, allow_premium_pct 0, allow_overall_pct 0, weekly_used_pct 80.0, opus_used_pct 96, week_elapsed_pct 75.24, dial 0.30. weekly_heat 80.0/75.24 = 1.0633 < 1.1 -> governor disengaged, ceiling 5. opus_heat 96/75.24 = 1.2759 > 1.2 -> promote blocked. trickle + guest 1-3 clamp -> gear 1, k_cap 1, demote true. Structural fact, direction-free: week_resets_at 1786942799 falls AFTER stop_at 1786879464, so gear 1 is fixed for the whole run regardless of any trend.","weekly":{"ok":true,"weekly_used_pct":80.0,"opus_used_pct":96,"week_elapsed_pct":75.24,"weekly_heat":1.0633,"opus_heat":1.2759,"ceiling":5,"promote_blocked":true}},"playbook":{"mode":"auto","applied":["L-003","L-006","L-007","L-008","L-011","L-016","L-018","L-020","L-021","L-022","L-023","L-024","L-026","L-029","L-031"],"vetoed":[],"ledger_note":"record-applied NOT written: bin/swarm-playbook.sh is not on the Bash allowlist (KI-5), so the parse and record-applied verbs both refused in this headless session. Directives below were hand-parsed by the conductor from playbook/learnings.md, read-only. NOTE: the applied[] list carries duplicate source IDs \u2014 L-023, L-025 and L-026 each name two different lessons in the file (the defect item I-5 exists to fix); the ids here refer to the lessons whose text is staged in prompt_lines below.","directives":{"wave_k":3,"routing_recs":["core-logic->fable"],"prompt_lines":{"builder":["The conductor is the SOLE committer \u2014 never commit or push yourself","Any exported React hook must ship a test that mounts a real component using it","Tests asserting no-key behavior must delete the key in beforeEach, not beforeAll \u2014 a real .env on main will leak through suite-level hooks","Any persisted UI state (storage or module-level) must be cleared in beforeEach of every test file that mounts the component"],"reviewer":["The conductor is the SOLE committer \u2014 never commit or push yourself","Assign each fixer a pairwise-disjoint file set; two fixers must never share a file"],"qa":["The conductor is the SOLE committer \u2014 never commit or push yourself","Script a deterministic scenario with hand-computed expected outputs; eyeballing rendered numbers is not verification","Load all classic-script modules into one shared vm context and scan for cross-file top-level name collisions","Open the running product in a browser and describe what you actually see \u2014 tests alone miss rendered-page bugs","After merging user-visible files, run a live browser look pass before counting the wave verified","After any server rebuild or restart, hard-reload the page before judging \u2014 a stale SPA instance survives goto","Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'.","Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value.","When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive \u2014 a kill you cannot attribute is not evidence.","Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps."]},"inert_note":"Four staged qa lines are browser-specific (L-006 classic-script collisions, L-007 browser look, L-018 post-merge look pass, L-021 hard-reload) and are INERT for this target: aphorism-cli is a Node CLI with no browser surface. Staged faithfully rather than silently dropped \u2014 apply_mode is auto and the conductor does not get to edit the playbook's intent mid-run (hard rule 5)."}},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":1,"artifact":{"file":"/opt/swarm/runs/dashboard.html","publish_failures":0}}
+```
