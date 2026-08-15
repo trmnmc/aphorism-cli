@@ -3,7 +3,7 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
   "phase": "POLISH",
-  "cycle": 18,
+  "cycle": 19,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -147,6 +147,31 @@
       "cycle": 18,
       "title": "Headless builder dispatch: no /tmp worktrees",
       "detail": "Dispatched T-012's builder into a /tmp worktree, per cycles 16-17 practice; the builder could not reach the path and reported the blocker instead of fabricating a diff. Re-dispatched into the target tree directly, which SKILL.md's headless rule prescribed all along. Recorded as KI-6 so the next cycle does not re-learn it."
+    },
+    {
+      "cycle": 19,
+      "what": "Cycle 18's handoff said this repo was out of gear-1 work and cycle 19 should be a consolidation pass. It was not; a measurement item was picked instead, and it refilled the backlog with four admissible S-effort items.",
+      "why": "The handoff's premise was that no BACKLOG item was admissible at gear 1, which was true. It does not follow that no WORK was admissible: gear 1 explicitly admits test triage, and cycle 4's mutation sweep predates every documentation guard this run built (T-009 Tag vocabulary, T-010/T-011 date recipe, I-4a Attribution). The unmeasured surface was created by this run itself and was therefore the least-measured thing in the repo. Recorded as a departure from a written handoff rather than taken silently. The distinction that makes this not busywork: the sweep asks a question with a real consequence attached -- T-007 (retagging) is live on the backlog and would falsify most of the README's tag numbers at once -- and the answer was NOT knowable by reading, which L-031 is precisely about."
+    },
+    {
+      "cycle": 19,
+      "what": "The conductor's own verification harness failed on its first run and the failure was a HARNESS defect, not a finding: every mutant read as KILLED including the unmutated PRISTINE control.",
+      "why": "Worth recording because the failure mode is the dangerous direction and it was caught by a control rather than by noticing. node --test defaults to the spec reporter, not TAP, so the harness's parse regexes returned null for tests/pass/fail; the survived predicate then evaluated false for EVERY copy and manufactured a KILLED verdict for all 21 mutants. Had the harness only checked claimed survivors, 'all survivors killed' would have read as a plausible refutation of the agent and the real findings would have been discarded. The PRISTINE control -- an unmutated whole-repo copy that must report 65/65 -- is what exposed it, which is exactly the job cycle 6 assigned to denominator/sanity controls after the same class of mistake (measuring the reporter rather than the claim). Fixed by forcing --test-reporter=tap and by making an unparseable run report UNPARSEABLE explicitly instead of falling through into a verdict. The gate was STRENGTHENED, not relaxed: a null parse can no longer produce any verdict at all."
+    },
+    {
+      "cycle": 19,
+      "what": "10 survivors classified HOLE and 3 BOUNDARY; the single most user-visible survivor (C3, the Flags table able to claim --tag is a substring match) is in the BOUNDARY set and is deliberately NOT being hardened.",
+      "why": "C3 is a flat lie about shipped behaviour -- conductor-measured this cycle, --tag test exits 1 with empty stdout while --tag testing exits 0, so --tag is genuinely whole-tag. It is still a boundary, because the only available assertion is that the Effect cell contains a particular English phrase, which freezes one wording and false-rejects an honest reword. Cycle 4 classified M22 BOUNDARY on identical reasoning. Recorded loudly rather than buried because any reader of the survivor list will reasonably ask why the worst-looking item is being left alone. C7 (the 'Node 18+' claim) is the sharper case and the reason the classification step exists at all: no test in this repo can confirm the floor is 18, since the suite runs on whatever Node is installed, so a test asserting the string '18' would LOOK like verification while verifying nothing -- the exact failure class this run was chartered to remove. Settling it needs a CI matrix, which is a human decision."
+    },
+    {
+      "cycle": 19,
+      "what": "Wave autotune NOT applied this cycle; wave_streak stays 1 and k_current stays 5.",
+      "why": "Cycle 8 set the rule that autotune keys on the ITEM KIND, not the dispatch mechanism, and cycle 9 applied it to a kind:test item dispatched as a direct Agent call. T-013 is kind:qa -- a measurement that produced a survivor list and changed no product or test file -- which is not build-class work under any dispatch mechanism, the same reason cycle 8 declined to autotune on a docs item. Inert either way: effective wave size = min(k_current 5, gear cap 1) = 1."
+    },
+    {
+      "cycle": 19,
+      "what": "Removed 9 untracked scratch files (create_test.js, edit_readme.js, final_report.json and kin) left in the SWARM root at /opt/swarm by cycle-17 and cycle-18 builder dispatches.",
+      "why": "SECOND occurrence of the structural hole cycle 9 recorded and named as a candidate lesson: agents are handed target paths only, per hard rule 5, but the session cwd IS /opt/swarm, so any relative scratch path lands inside the write fence by default. Cycle 9 said the fix is for dispatch prompts to name an explicit scratch location, since 'do not write to SWARM' is not something an agent can honor if it does not know where it is standing. That fix was recorded but never made standing, and it recurred twice. This cycle's dispatch DID name an explicit scratch path (/opt/targets/aphorism-cli/.swarm/scratch/, chosen over /tmp because KI-6 established /tmp is unreachable from the subagent sandbox) and the agent left nothing behind -- harness control CTRL-SCRATCH confirms the directory is gone and CTRL-TREE confirms the target tree carries only cycle-019 artifacts. Nothing under bin/, reference/, workflows/ or templates/ was ever touched; the debris was inert scratch. Promoted to KI-7 so it stops being re-learned once per run."
     }
   ],
   "known_issues": [
@@ -189,6 +214,14 @@
       "severity": "low",
       "cycle": 18,
       "status": "open"
+    },
+    {
+      "id": "KI-7",
+      "desc": "Subagent scratch files land in the SWARM root (/opt/swarm) unless the dispatch prompt names an explicit scratch path. Hard rule 5 hands agents target paths only, but the session cwd IS /opt/swarm, so a relative scratch path silently lands inside the write fence -- the fence is enforced by what agents are TOLD, and cwd supplies what they were not told. Observed cycle 9 (builder used /opt/swarm/.scratch/) and again at cycles 17-18 (9 untracked .js/.json scratch files in the SWARM root, removed by the conductor at cycle 19). Harmless so far -- all occurrences were inert scratch, nothing under bin/, reference/, workflows/ or templates/ -- but the same reflex on a different task could write into SWARM tooling mid-run.",
+      "severity": "low",
+      "cycle_found": 19,
+      "status": "open",
+      "remedy": "Name an explicit scratch directory in every dispatch prompt. NOT /tmp -- KI-6 established subagents are sandboxed to the session --add-dir list, so /tmp is unreachable. Use <target>/.swarm/scratch/ and require the agent to remove it, with a conductor gate check confirming the removal. Done this way at cycle 19 (T-013) and the agent left nothing behind (harness controls CTRL-SCRATCH, CTRL-TREE). Cycle 9 proposed this as a candidate playbook lesson and it was never made standing, which is why it recurred; it belongs in the wrap-up distillation."
     }
   ],
   "qa": {
@@ -204,9 +237,9 @@
     "window_tokens_attributed": 0
   },
   "last_cycle": {
-    "n": 18,
-    "work": "build-wave (one item, k_cap 1 at gear 1) -- T-012, making the readme-tags guard structural so it stops being keyed to one exact English sentence.",
-    "outcome": "VERIFIED done. 24/24 conductor gate checks (.swarm/runs/cycle-018-verify-T-012.txt), 65 tests green, tree clean apart from the one intended file. The kill is ATTRIBUTED rather than merely observed: control D1 replays the exact mutation against HEAD's test file and it survives, D2 shows HEAD did catch the un-reworded form, so the reworded-sentence blind spot is real and this change is what closes it. Every mutation was built to preserve the substring \"21 tags appear exactly once\" so a different pre-existing test could not fire and muddy attribution -- the builder's own failability run tripped exactly that confound and said so.",
-    "commit": "878479d"
+    "n": 19,
+    "work": "test triage (one item, k_cap 1 at gear 1) -- T-013, a mutation sweep asking which README claims could silently stop being true without the suite noticing.",
+    "outcome": "VERIFIED done. 37/37 conductor gate checks (.swarm/runs/cycle-019-verify-T-013.txt), 65 tests green, product tree untouched (the sweep changed no repo file by construction). Agent measured 21 mutants, 9 KILLED / 12 SURVIVED; the conductor independently re-derived 8 survivors and a 4-mutant control sample of claimed kills from one-sentence descriptions only, never from the agent's diffs, and agreed on all 12. A sealed pre-commitment written BEFORE dispatch (.swarm/runs/cycle-019-precommit.md) predicted all 12 survivors correctly, and the harness added one the agent never tested (V6: the single-entry tag count is stated twice in README.md and guarded once). Both Class A findings are ATTRIBUTED via paired positive controls, not merely observed. Classified 10 HOLE / 3 BOUNDARY (.swarm/runs/cycle-019-classification.md) and filed as T-014..T-017. Honest note: the harness's FIRST run was wrong in the dangerous direction -- a spec-vs-TAP reporter mismatch made every mutant read as KILLED, including the unmutated control -- and it was the PRISTINE control that caught it, not inspection.",
+    "commit": "PENDING"
   }
 }

@@ -468,6 +468,102 @@
       "attempts": 0,
       "acceptance": "The invented-tag check keeps working when the single-entry list is reworded: rewriting the lead-in sentence \"The remaining N tags appear exactly once:\" to any other phrasing must still cause a corpus-absent tag name in that list to fail the suite. Prove it with a reworded README plus a bogus tag, and confirm the failing assertion is the tag-existence one by name, not merely that something went red.",
       "notes": "Source: conductor gate check F10, cycle 17 (INFO probe, not a gate failure -- the shipped README is correct and fully watched today). test/readme-tags.test.js finds the single-entry list by matching the literal /The remaining \\d+ tags appear exactly once: (.+?)\\./. Measured: rewording that lead-in and inserting `zzzbogus` left the tag-existence test SILENT -- the only failure came from a different assertion (the single-entry count), which would disappear too if the count sentence moved with it. So the guard degrades quietly under an edit a future docs cycle could plausibly make. VALUE_LOOP note, recorded rather than hidden: no user of the CLI would ever notice this, so it does not clear the \"would the target user notice?\" ratchet as a feature. It is filed because this is a hardening run and a guard that can go quiet is the exact failure class this run exists to remove -- it competes for a slot on that basis, not on user-visible value. RESOLVED cycle 18: extraction made structural (fenced code blocks stripped from the Tag vocabulary section, then every backtick-quoted [a-z]+ token in what remains is a tag claim, via the file's existing extractTagsFromReadme helper). Conductor gate 24/24 (.swarm/runs/cycle-018-verify-T-012.txt). Kill is ATTRIBUTED: the same reworded-lead-in + bogus-tag mutation is missed by HEAD's test file (D1) and caught by the new one, while the un-reworded mutation was caught by both (D2) -- so the regression really was reword-specific and the fix is what closes it. Routed sonnet, not the haiku recorded at plan time: routing is pick-time and kind:fix never demotes below sonnet at gear 1."
+    },
+    {
+      "id": "T-013",
+      "title": "Mutation sweep: which README claims can go false without the suite noticing",
+      "kind": "qa",
+      "priority": 3,
+      "value": "M",
+      "effort": "S",
+      "status": "done",
+      "deps": [],
+      "files_hint": [],
+      "packages": [],
+      "model": "sonnet",
+      "attempts": 0,
+      "acceptance": "every factual claim README.md makes about the product or the corpus has been mutated at least once against the current suite, and each surviving mutant is recorded with the exact mutation applied and the suite's response",
+      "notes": "MEASUREMENT, not reading (L-031). Cycle 4's sweep (I-2a) predates every documentation guard this run built, and the README has since grown a Tag vocabulary section (T-009), a date-seed recipe (T-010/T-011) and an Attribution section (I-4a). The question is not whether the README is true today -- the conductor measured every number in it as correct before dispatch -- but which claims could silently STOP being true. This matters concretely because T-007 (retagging) is live on the backlog and would falsify most of the tag numbers at once. HOLE-vs-BOUNDARY classification withheld from the agent (L-033); it is the conductor's judgment. || VERIFIED cycle 19. Agent measured 21 mutants: 9 KILLED, 12 SURVIVED. Conductor harness .swarm/runs/cycle-019-verify-T-013.{js,txt} re-derived 8 survivors and a 4-mutant control sample of claimed KILLS from the one-sentence descriptions ONLY, never from the agent's diffs, each in its own whole-repo-minus-.git copy: 37/37, full agreement, plus one survivor the agent never tested (V6). Sealed pre-commitment .swarm/runs/cycle-019-precommit.md, written before dispatch, predicted all 12 survivors correctly. Controls that make the result sound: PRISTINE (unmutated copy must be 65/65 -- it FIRED on the harness's first run and exposed a parser bug that had silently turned every verdict into KILLED), APPLIED per mutant (a mutation that fails to apply makes SURVIVED vacuous), and PAIRED positive controls so each Class-A finding is ATTRIBUTED rather than merely observed. Classification: .swarm/runs/cycle-019-classification.md -- 10 HOLE, 3 BOUNDARY, collapsing into follow-ups T-014..T-017."
+    },
+    {
+      "id": "T-014",
+      "title": "Make the README tag-table guard bidirectional and band-aware",
+      "kind": "test",
+      "priority": 3,
+      "value": "H",
+      "effort": "S",
+      "status": "todo",
+      "deps": [
+        "T-013"
+      ],
+      "files_hint": [
+        "test/readme-tags.test.js"
+      ],
+      "packages": [],
+      "model": "sonnet",
+      "attempts": 0,
+      "acceptance": "Deleting an entire tag row from either README count table fails the suite, and moving a row into a band whose stated range its count does not satisfy fails the suite. Both must be proven twice per L-029: failable against the specific mutation, and attributable -- removing the new assertion lets that mutation survive the rest of the suite.",
+      "notes": "Source: T-013 survivors A7 and A8, cycle 19. The ONLY Class A finding in the sweep -- a guard that exists, passes, and is blind in one direction, which is the exact T-012 failure class this run has already fixed once. Both are ATTRIBUTED, not merely observed: V1 (row deleted) survives while V1b (wrong count, same table) kills, and V2 (row moved to the wrong band, count untouched) survives while V2b (same row, wrong count) kills. So the count check is provably live and provably one-directional. Highest-value follow-up because T-007 (retagging) is live on the backlog and would walk straight into it. Exact mutations pre-specified in .swarm/runs/cycle-019-classification.md, so the failability targets do not need re-deriving."
+    },
+    {
+      "id": "T-015",
+      "title": "Guard every corpus-derived number in the Tag vocabulary section",
+      "kind": "test",
+      "priority": 4,
+      "value": "M",
+      "effort": "S",
+      "status": "todo",
+      "deps": [
+        "T-013"
+      ],
+      "files_hint": [
+        "test/readme-tags.test.js"
+      ],
+      "packages": [],
+      "model": "sonnet",
+      "attempts": 0,
+      "acceptance": "Changing any of 'N tags appear on 2 or more entries', 'N tags have a robust pool (5+ entries)', 'N tags appear 2-4 times', or the second statement of the single-entry count ('the remaining N appear on exactly one entry') to a wrong number fails the suite. Keyed to the numbers and their meaning, not to one exact sentence -- rewording a lead-in must not make a check go quiet.",
+      "notes": "Source: T-013 survivors A9, A10, A11 and the conductor-original V6, cycle 19. These integers are the same kind as the two that ARE guarded ('37 distinct tags', '21 appear exactly once'); nothing distinguishes them except which sentences someone happened to write a regex for. V6 is the sharpest: the single-entry count is stated TWICE in README.md and guarded ONCE -- V6 (line 55 phrasing) survives while V6b (line 81 phrasing) kills, so the README can contradict itself about the same number and stay green. The agent's sweep never tested it; it came from the conductor harness. NOTE the standing hazard from T-012: do not key the new assertions to literal lead-in sentences, or this item recreates the very defect cycle 18 removed."
+    },
+    {
+      "id": "T-016",
+      "title": "Guard the README's cross-file and on-disk claims",
+      "kind": "test",
+      "priority": 5,
+      "value": "M",
+      "effort": "S",
+      "status": "todo",
+      "deps": [
+        "T-013"
+      ],
+      "files_hint": [
+        "test/readme-tags.test.js"
+      ],
+      "packages": [],
+      "model": "sonnet",
+      "attempts": 0,
+      "acceptance": "The corpus-size figure in the Attribution section ('ranks all N entries') must match corpus.length; the HIGH-risk count ('N are rated HIGH') must match docs/corpus-attribution-triage.md; and every path named in the Layout block must exist on disk. Each proven twice per L-029.",
+      "notes": "Source: T-013 survivors C1, C2, C6, cycle 19. All three are machine-checkable against something real (corpus length, another file in the repo, the filesystem) rather than against prose, which is why they are HOLE and the Flags/Exit-code table survivors are BOUNDARY. C6 is the cheapest real protection on the board: a file rename currently makes the Layout block lie with nothing noticing. C2 is the weakest of the three -- the triage doc is stable and human-owned -- and may honestly be dropped if it proves fiddly to parse; say so rather than forcing it."
+    },
+    {
+      "id": "T-017",
+      "title": "Check the --list format literal against the binary's real output",
+      "kind": "test",
+      "priority": 6,
+      "value": "M",
+      "effort": "S",
+      "status": "todo",
+      "deps": [
+        "T-013"
+      ],
+      "files_hint": [
+        "test/readme-tags.test.js"
+      ],
+      "packages": [],
+      "model": "sonnet",
+      "attempts": 0,
+      "acceptance": "Changing the separator in the README's --list format literal (`<text> — <author>`, U+2014) so it no longer matches what the shipped binary actually prints fails the suite. Proven twice per L-029.",
+      "notes": "Source: T-013 survivor C5, cycle 19. The interesting property that makes this a HOLE rather than a BOUNDARY: the README states the format BOTH as English prose ('text, space, EM DASH, space, author') AND as a literal inside backticks. Asserting against the literal is a literal-vs-behaviour check, so it freezes no wording -- the prose sentence stays free to be reworded. Do NOT write the check against the English sentence; that would be the C3/C4/C7 boundary mistake."
     }
   ]
 }

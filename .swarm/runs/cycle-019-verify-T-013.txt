@@ -1,0 +1,42 @@
+=== cycle 19 :: T-013 verification :: conductor harness ===
+scratch: /tmp/c19-verify-bjoJpr
+
+PASS  CTRL-PRISTINE  unmutated whole-repo copy: tests 65 pass 65 fail 0 (baseline must be 65/65/0 or every verdict below is unsound)
+PASS  V1.APPLIED  README.md changed (4528 -> 4508 bytes)
+PASS  V1.VERDICT  expected SURVIVED, measured SURVIVED (tests 65 pass 65 fail 0) -- A7: whole robust-pool row deleted
+PASS  V1b.APPLIED  README.md changed (4528 -> 4528 bytes)
+PASS  V1b.VERDICT  expected KILLED, measured KILLED (tests 65 pass 64 fail 1) failing: README tag counts must match corpus -- POSITIVE CONTROL: wrong count in the SAME table must kill
+PASS  V2.APPLIED  located the performance row and the robust-pool table
+PASS  V2.VERDICT  expected SURVIVED, measured SURVIVED (tests 65 pass 65 fail 0) -- A8: performance (count 4) now sits under "robust pool (5+ entries)" with its count still 4 -- README internally self-contradictory
+PASS  V2b.APPLIED  README.md changed (4528 -> 4528 bytes)
+PASS  V2b.VERDICT  expected KILLED, measured KILLED (tests 65 pass 64 fail 1) failing: README tag counts must match corpus -- POSITIVE CONTROL: same row, wrong count -- proves the count check is live on this row
+PASS  V3.APPLIED  README.md changed (4528 -> 4528 bytes)
+PASS  V3.VERDICT  expected SURVIVED, measured SURVIVED (tests 65 pass 65 fail 0) -- A9
+PASS  V4.APPLIED  README.md changed (4528 -> 4528 bytes)
+PASS  V4.VERDICT  expected SURVIVED, measured SURVIVED (tests 65 pass 65 fail 0) -- A10
+PASS  V5.APPLIED  README.md changed (4528 -> 4528 bytes)
+PASS  V5.VERDICT  expected SURVIVED, measured SURVIVED (tests 65 pass 65 fail 0) -- A11
+PASS  V6.APPLIED  README.md changed (4528 -> 4528 bytes)
+PASS  V6.VERDICT  expected SURVIVED, measured SURVIVED (tests 65 pass 65 fail 0) -- CONDUCTOR-ORIGINAL: second statement of the single-entry count, leaving the guarded sentence intact
+PASS  V6b.APPLIED  README.md changed (4528 -> 4528 bytes)
+PASS  V6b.VERDICT  expected KILLED, measured KILLED (tests 65 pass 64 fail 1) failing: README must correctly describe single-entry tag count -- POSITIVE CONTROL: the OTHER statement of the same number is guarded -- proves V6 is a real asymmetry
+PASS  V7.APPLIED  README.md changed (4528 -> 4528 bytes)
+PASS  V7.VERDICT  expected SURVIVED, measured SURVIVED (tests 65 pass 65 fail 0) -- C1: corpus size claim in Attribution
+PASS  V8.APPLIED  README.md changed (4528 -> 4535 bytes)
+PASS  V8.VERDICT  expected SURVIVED, measured SURVIVED (tests 65 pass 65 fail 0) -- C3: a FLAT LIE about shipped behaviour -- --tag is whole-tag, and cli.test.js proves it, yet the Flags table can say otherwise
+PASS  V9.APPLIED  README.md changed (4528 -> 4527 bytes)
+PASS  V9.VERDICT  expected SURVIVED, measured SURVIVED (tests 65 pass 65 fail 0) -- C5: --list render format prose
+PASS  V10.APPLIED  README.md changed (4528 -> 4528 bytes)
+PASS  V10.VERDICT  expected SURVIVED, measured SURVIVED (tests 65 pass 65 fail 0) -- C6: layout block names a file that does not exist
+PASS  K1.APPLIED  README.md changed (4528 -> 4528 bytes)
+PASS  K1.VERDICT  expected KILLED, measured KILLED (tests 65 pass 64 fail 1) failing: README tag counts must match corpus -- agent claimed A2 KILLED
+PASS  K2.APPLIED  README.md changed (4528 -> 4528 bytes)
+PASS  K2.VERDICT  expected KILLED, measured KILLED (tests 65 pass 64 fail 1) failing: README must state total unique tags correctly -- agent claimed A3 KILLED
+PASS  K3.APPLIED  located a corpus entry lacking yagni
+PASS  K3.VERDICT  expected KILLED, measured KILLED (tests 65 pass 64 fail 1) failing: README must correctly describe single-entry tag count -- agent claimed B3 KILLED (yagni 1 -> 2)
+PASS  K4.APPLIED  located the first corpus tags array
+PASS  K4.VERDICT  expected KILLED, measured KILLED (tests 65 pass 62 fail 3) failing: README must state total unique tags correctly | README must correctly describe single-entry tag count | README must list all single-entry tags -- agent claimed B1 KILLED (new distinct tag)
+PASS  CTRL-TREE  real repo carries only cycle-019 artifacts; unexpected entries: none
+PASS  CTRL-SCRATCH  .swarm/scratch removed by the agent: true
+
+=== 37 pass / 0 fail ===
