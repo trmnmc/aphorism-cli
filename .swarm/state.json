@@ -3,7 +3,7 @@
  "project_dir": "/opt/targets/aphorism-cli",
  "created_at": "2026-08-14T05:38:14+00:00",
  "phase": "QA",
- "cycle": 13,
+ "cycle": 14,
  "run_cmd": "node bin/aphorism.js",
  "test_cmd": "node --test test/*.test.js",
  "preview": {
@@ -11,17 +11,17 @@
   "port": 0
  },
  "spec_digest": [
-  "IMPROVEMENT RUN on a shipped zero-dep Node CLI: harden, document, repair \u2014 no new features",
+  "IMPROVEMENT RUN on a shipped zero-dep Node CLI: harden, document, repair — no new features",
   "must: close the --seed non-finite determinism hole; mutation-measured tests only; 3 doc divergences; corpus triage; playbook repair",
   "rules unchanged: seed deterministic, filters AND together, empty match = exit 1 + stderr only",
-  "non-goals this run: rotation, --width, NO_COLOR dim, network, npm publishing \u2014 all features",
+  "non-goals this run: rotation, --width, NO_COLOR dim, network, npm publishing — all features",
   "taste: unix-quiet, pipeable, errors to stderr, the aphorism is the product"
  ],
  "decisions": [
   {
    "cycle": 1,
    "what": "zero-dep CommonJS Node CLI: pure modules (corpus/select/args) under src/ + a thin bin/ entry point; node:test only, no test framework",
-   "why": "conductor-authored design under the SMOKE clock \u2014 no design-panel run. A ~200-line CLI has a forced architecture; the only real design choice is where the seam sits, and putting every decision in pure functions makes the Domain rules testable without spawning a process. Recorded as a DEVIATION: the DESIGN gate normally requires design-panel (600s budget), which does not fit a 25-min SMOKE window with ~8 min of work clock."
+   "why": "conductor-authored design under the SMOKE clock — no design-panel run. A ~200-line CLI has a forced architecture; the only real design choice is where the seam sits, and putting every decision in pure functions makes the Domain rules testable without spawning a process. Recorded as a DEVIATION: the DESIGN gate normally requires design-panel (600s budget), which does not fit a 25-min SMOKE window with ~8 min of work clock."
   },
   {
    "cycle": 1,
@@ -31,17 +31,17 @@
   {
    "cycle": 1,
    "what": "corrected test_cmd from `node --test test/` to `node --test test/*.test.js` in SPEC.md and README.md",
-   "why": "the documented command fails on Node 24 with MODULE_NOT_FOUND; the glob form runs all 48 tests green. Correcting a broken command string, NOT weakening a gate \u2014 the suite and its assertions are unchanged."
+   "why": "the documented command fails on Node 24 with MODULE_NOT_FOUND; the glob form runs all 48 tests green. Correcting a broken command string, NOT weakening a gate — the suite and its assertions are unchanged."
   },
   {
    "cycle": 1,
-   "what": "IMPROVEMENT RUN kickoff 2026-08-15: SPEC.md rewritten additively \u2014 the 2026-08-14 product spec is preserved verbatim and marked verified-done; a new 'Improvement run must-haves' section (I-1..I-6) scopes this run only",
-   "why": "allocator auto-kickoff (source=allocator, brief 'harden tests, fix playbook items, polish docs \u2014 no new features'). The product spec is the floor this run must not break, not the work; keeping it verbatim makes a regression visible as a diff against a frozen block rather than as a rewrite."
+   "what": "IMPROVEMENT RUN kickoff 2026-08-15: SPEC.md rewritten additively — the 2026-08-14 product spec is preserved verbatim and marked verified-done; a new 'Improvement run must-haves' section (I-1..I-6) scopes this run only",
+   "why": "allocator auto-kickoff (source=allocator, brief 'harden tests, fix playbook items, polish docs — no new features'). The product spec is the floor this run must not break, not the work; keeping it verbatim makes a regression visible as a diff against a frozen block rather than as a rewrite."
   },
   {
    "cycle": 1,
    "what": "DEVIATION: proceeded past the kickoff spec-confirmation gate with no user confirmation, under stated assumptions printed in the kickoff transcript with the taste critique",
-   "why": "headless allocator auto-kickoff has no user to confirm and SKILL.md defines no non-interactive behaviour for that gate \u2014 the exact house-rules gap this target's own RETRO (2026-08-14) proposed be settled. Recorded as a deviation rather than silently treated as confirmed."
+   "why": "headless allocator auto-kickoff has no user to confirm and SKILL.md defines no non-interactive behaviour for that gate — the exact house-rules gap this target's own RETRO (2026-08-14) proposed be settled. Recorded as a deviation rather than silently treated as confirmed."
   },
   {
    "cycle": 1,
@@ -60,8 +60,8 @@
   },
   {
    "cycle": 5,
-   "what": "Attribution at the gate is proven in the STRICT form \u2014 mutation applied with ALL FOUR new tests skipped must leave the suite green \u2014 rather than by removing one test at a time, and the harness carries a skip-sanity control.",
-   "why": "Per-test isolation is ambiguous when two tests observe the same mutation: M12 drops the last --list entry, which is length-changing, so it trips the M13 order test too, and isolating M12 alone still shows fail=1. That reads like a failed attribution when it is really an expected overlap. The strict form asks the question that actually matters \u2014 does the mutation survive everything that existed before this cycle? \u2014 and it landed on exactly 52 pass / 0 fail, the pre-sweep baseline, for all four. The skip-sanity control exists because ATTRIBUTABLE is a PASS-shaped result: if --test-skip-pattern had silently matched everything, all four would have 'passed' vacuously."
+   "what": "Attribution at the gate is proven in the STRICT form — mutation applied with ALL FOUR new tests skipped must leave the suite green — rather than by removing one test at a time, and the harness carries a skip-sanity control.",
+   "why": "Per-test isolation is ambiguous when two tests observe the same mutation: M12 drops the last --list entry, which is length-changing, so it trips the M13 order test too, and isolating M12 alone still shows fail=1. That reads like a failed attribution when it is really an expected overlap. The strict form asks the question that actually matters — does the mutation survive everything that existed before this cycle? — and it landed on exactly 52 pass / 0 fail, the pre-sweep baseline, for all four. The skip-sanity control exists because ATTRIBUTABLE is a PASS-shaped result: if --test-skip-pattern had silently matched everything, all four would have 'passed' vacuously."
   },
   {
    "cycle": 6,
@@ -71,22 +71,22 @@
   {
    "cycle": 7,
    "what": "The --list line format and the --list --json NDJSON shape were settled by WRITING THE RULE, not by loosening the test that had been pinning them. I-3 closed six divergences where SPEC named three.",
-   "why": "Cycle 5 surfaced a genuine tension and named both exits: a test now asserts --list's `<text> \u2014 <author>` line format, but no Domain rule promises it, so a test was acting as the de-facto spec. The two honest exits are write the rule or loosen the assertion to order-only; the dishonest one is leaving it. Chose to write the rule because --list is the flag people pipe into other tools \u2014 its line shape is a real contract in practice, and loosening would have deleted protection from a live surface to resolve a paperwork problem. Same reasoning applied to --list --json (M16): cycle 4 deferred hardening it precisely because no rule existed, so writing the NDJSON rule here is what unblocks hardening it later (new item I-8), rather than the rule being invented to bless whatever the code did."
+   "why": "Cycle 5 surfaced a genuine tension and named both exits: a test now asserts --list's `<text> — <author>` line format, but no Domain rule promises it, so a test was acting as the de-facto spec. The two honest exits are write the rule or loosen the assertion to order-only; the dishonest one is leaving it. Chose to write the rule because --list is the flag people pipe into other tools — its line shape is a real contract in practice, and loosening would have deleted protection from a live surface to resolve a paperwork problem. Same reasoning applied to --list --json (M16): cycle 4 deferred hardening it precisely because no rule existed, so writing the NDJSON rule here is what unblocks hardening it later (new item I-8), rather than the rule being invented to bless whatever the code did."
   },
   {
    "cycle": 7,
-   "what": "A docs item was gated by EXECUTING the shipped binary \u2014 36 behavioral checks with four discriminators \u2014 not by reading the prose it produced.",
+   "what": "A docs item was gated by EXECUTING the shipped binary — 36 behavioral checks with four discriminators — not by reading the prose it produced.",
    "why": "Every claim I-3 wrote is a claim about runtime behavior, so the docs are falsifiable exactly like code and the same evidence standard applies (hard rule 2). Reading the diff would only have confirmed the agent wrote what it was told; it could not have caught the agent transcribing a ruling the code does not actually honor. The discriminators exist because the naive checks are all passable by degenerate implementations: determinism alone is satisfied by an always-same-entry stub, so 7 seeds must reach 7 distinct aphorisms; a substring rule is only distinguishable from equality if the partial-author result set is required to EQUAL the full-name set. One imprecision was caught this way and fixed (the --list/--seed carve-out), which reading could not have surfaced."
   },
   {
    "cycle": 8,
    "what": "I-7 closed as a superset of the two divergences it named: the --json HELP line was widened to cover the --list/NDJSON case even though the item's acceptance named only --author and --tag.",
-   "why": "The --json line carried the IDENTICAL pre-I-3 defect the item exists to fix \u2014 a documentation surface describing only the non-list case \u2014 and it sits in the same file, in the same edit, at zero additional risk. Drawing the scope line so as to leave one of three known incompletenesses standing in the very file being opened to close that defect class would have been artificial rather than disciplined. Recorded here, and in the item's notes, rather than taken silently: widening an acceptance mid-cycle is a conductor call and must be visible as one. The opposite call was made for the --seed and --list lines and is the boundary that makes this one principled \u2014 both are incomplete (they omit the exotic-seed set and the --list-ignores-seed carve-out) but neither is MISLEADING, and README already carries the detail. The test is whether a reader would come away with a false belief, not whether the line is exhaustive."
+   "why": "The --json line carried the IDENTICAL pre-I-3 defect the item exists to fix — a documentation surface describing only the non-list case — and it sits in the same file, in the same edit, at zero additional risk. Drawing the scope line so as to leave one of three known incompletenesses standing in the very file being opened to close that defect class would have been artificial rather than disciplined. Recorded here, and in the item's notes, rather than taken silently: widening an acceptance mid-cycle is a conductor call and must be visible as one. The opposite call was made for the --seed and --list lines and is the boundary that makes this one principled — both are incomplete (they omit the exotic-seed set and the --list-ignores-seed carve-out) but neither is MISLEADING, and README already carries the detail. The test is whether a reader would come away with a false belief, not whether the line is exhaustive."
   },
   {
    "cycle": 8,
    "what": "A prose-only edit to a PRODUCT file was gated by byte-comparing everything outside the edited literal against HEAD, not by reading the diff or trusting the green suite.",
-   "why": "HELP lives in src/args.js alongside parseArgs. A prose edit that also nudged parser logic would be invisible in a green suite if the nudge landed in a corner the 58 tests do not reach \u2014 and cycle 4's mutation sweep proved such corners existed in this exact file (M21, M22 both survived the whole suite). Reading the diff would only confirm the agent changed what it was told to; it cannot prove nothing ELSE moved. Splitting the file at the template-literal boundary and byte-comparing the 216-byte prologue and 2631-byte epilogue turns 'zero behaviour change' from a claim into a measurement, and the literal's own 362 -> 397 byte change simultaneously proves the item was not a no-op. This is the cycle-7 docs-are-falsifiable rule extended: when docs live INSIDE a product file, the scope claim needs proving as much as the content claim."
+   "why": "HELP lives in src/args.js alongside parseArgs. A prose edit that also nudged parser logic would be invisible in a green suite if the nudge landed in a corner the 58 tests do not reach — and cycle 4's mutation sweep proved such corners existed in this exact file (M21, M22 both survived the whole suite). Reading the diff would only confirm the agent changed what it was told to; it cannot prove nothing ELSE moved. Splitting the file at the template-literal boundary and byte-comparing the 216-byte prologue and 2631-byte epilogue turns 'zero behaviour change' from a claim into a measurement, and the literal's own 362 -> 397 byte change simultaneously proves the item was not a no-op. This is the cycle-7 docs-are-falsifiable rule extended: when docs live INSIDE a product file, the scope claim needs proving as much as the content claim."
   },
   {
    "cycle": 9,
@@ -100,23 +100,23 @@
   },
   {
    "cycle": 10,
-   "what": "I-4 decomposed into I-4a (mechanical overclaim sweep) and I-4b (the ranked judgment artifact) \u2014 split by KIND OF CLAIM, not by risk band.",
-   "why": "Cycle 9's handoff named two exits for I-4 not fitting gear 1's S-effort rule and preferred decomposition. The obvious decomposition \u2014 slice the corpus by risk band \u2014 is circular: the band assignment IS the deliverable, so you cannot use it to define the slices. Splitting by kind of claim gives two pieces that genuinely need DIFFERENT evidence: I-4b is a judgment that can only be cross-checked against an independent derivation, while I-4a is a mechanical grep-and-fix gated by byte-comparison. A seam that changes the verification method is a real seam; one that just halves the word count is not."
+   "what": "I-4 decomposed into I-4a (mechanical overclaim sweep) and I-4b (the ranked judgment artifact) — split by KIND OF CLAIM, not by risk band.",
+   "why": "Cycle 9's handoff named two exits for I-4 not fitting gear 1's S-effort rule and preferred decomposition. The obvious decomposition — slice the corpus by risk band — is circular: the band assignment IS the deliverable, so you cannot use it to define the slices. Splitting by kind of claim gives two pieces that genuinely need DIFFERENT evidence: I-4b is a judgment that can only be cross-checked against an independent derivation, while I-4a is a mechanical grep-and-fix gated by byte-comparison. A seam that changes the verification method is a real seam; one that just halves the word count is not."
   },
   {
    "cycle": 10,
    "what": "A judgment artifact was gated against a ranking SEALED TO DISK BEFORE the agent was dispatched, rather than by reading the output and agreeing with it.",
-   "why": "Every prior gate this run had a command whose exit code carried the claim. A triage has none \u2014 it is 50 opinions about provenance, and reading it can only confirm that it reads well, which is precisely what a confabulated document also does. Writing the conductor's own high-risk list first (.swarm/runs/cycle-010-precommit.md) converts the check into a measurement: the agent could not have seen it, so overlap is evidence about the ranking rather than about the prose. It also cuts both ways by design \u2014 the agent's HIGH band found 4 entries the sealed list had NOT ranked high (#38 Wheeler, #39 Hopper, #45 Stroustrup, #48 Kay), and on inspection at least three are good catches, so the pre-commitment measured the conductor as much as the agent. Recorded honestly: the sealed list also contained an off-by-one (it named idx 39 as Wheeler; Wheeler is 38, 39 is Hopper), which affected only the informational Tier B tally, never the gate."
+   "why": "Every prior gate this run had a command whose exit code carried the claim. A triage has none — it is 50 opinions about provenance, and reading it can only confirm that it reads well, which is precisely what a confabulated document also does. Writing the conductor's own high-risk list first (.swarm/runs/cycle-010-precommit.md) converts the check into a measurement: the agent could not have seen it, so overlap is evidence about the ranking rather than about the prose. It also cuts both ways by design — the agent's HIGH band found 4 entries the sealed list had NOT ranked high (#38 Wheeler, #39 Hopper, #45 Stroustrup, #48 Kay), and on inspection at least three are good catches, so the pre-commitment measured the conductor as much as the agent. Recorded honestly: the sealed list also contained an off-by-one (it named idx 39 as Wheeler; Wheeler is 38, 39 is Hopper), which affected only the informational Tier B tally, never the gate."
   },
   {
    "cycle": 10,
    "what": "The document was ACCEPTED and then extended with a separately-attributed conductor addendum recording the four disagreements, rather than being sent back for a fix.",
-   "why": "The disagreements are not defects the author could resolve \u2014 neither party has a source, so a revision round would only have produced a more confident document with the same epistemic basis, which is the opposite of what this deliverable is for. Row #45 is the sharp case: it asserts a specific checkable fact about what Stroustrup's FAQ SAYS (that he disclaims the foot-gun line) and row #46 leans on the same asserted FAQ. The conductor recalls the reverse. Recording that conflict at the top of the human's queue is strictly more useful than silently picking a winner, because the fact that two independent passes disagree about a primary source is itself the finding. Suppressing it to make the artifact look cleaner would have been the dishonest option."
+   "why": "The disagreements are not defects the author could resolve — neither party has a source, so a revision round would only have produced a more confident document with the same epistemic basis, which is the opposite of what this deliverable is for. Row #45 is the sharp case: it asserts a specific checkable fact about what Stroustrup's FAQ SAYS (that he disclaims the foot-gun line) and row #46 leans on the same asserted FAQ. The conductor recalls the reverse. Recording that conflict at the top of the human's queue is strictly more useful than silently picking a winner, because the fact that two independent passes disagree about a primary source is itself the finding. Suppressing it to make the artifact look cleaner would have been the dishonest option."
   },
   {
    "cycle": 11,
    "what": "removed the corpus.js attribution-policy claim outright rather than rewording it, and added a README Attribution section the item did not strictly require",
-   "why": "Two judgment calls worth recording. (1) The header did not merely overstate \u2014 it described a hedging policy the file does not follow (1 of 50 hedged vs 8 HIGH-risk named attributions). A softened version (\"we generally hedge...\") would have preserved the false shape while sounding careful, which is the more dangerous failure: it reads as a considered disclosure. Deleting the policy claim and stating the actual epistemic status is the only honest option. (2) The README did NOT overclaim, so clause 1 of I-4a's acceptance did not oblige an edit there. I added the section anyway and am labelling it an addition rather than a correction: the triage document is the run's main deliverable to a human and was reachable only by reading source comments or the internal REPORT. A truthful corpus header that no user ever opens does not discharge the duty the item exists to serve."
+   "why": "Two judgment calls worth recording. (1) The header did not merely overstate — it described a hedging policy the file does not follow (1 of 50 hedged vs 8 HIGH-risk named attributions). A softened version (\"we generally hedge...\") would have preserved the false shape while sounding careful, which is the more dangerous failure: it reads as a considered disclosure. Deleting the policy claim and stating the actual epistemic status is the only honest option. (2) The README did NOT overclaim, so clause 1 of I-4a's acceptance did not oblige an edit there. I added the section anyway and am labelling it an addition rather than a correction: the triage document is the run's main deliverable to a human and was reachable only by reading source comments or the internal REPORT. A truthful corpus header that no user ever opens does not discharge the duty the item exists to serve."
   },
   {
    "cycle": 12,
@@ -126,17 +126,32 @@
   {
    "cycle": 13,
    "what": "QA-full chosen over the taste pass for cycle 13, and the live-look stage declared not-applicable rather than run.",
-   "why": "Both gate-4 passes were outstanding (last_full_qa_cycle and last_taste_cycle were both 0). QA-full wins the earlier slot because its findings land as kind:\"fix\" items that are IN scope for an improvement run, whereas taste findings land as kind:\"feature\"/\"polish\" and this run's spec makes every new feature a non-goal \u2014 a fundamental taste verdict would re-aim the clock at work the spec forbids. Live-look inspects a running product through a browser; this target is a Node CLI with no server or browser surface, so nothing could be inspected and nothing is claimed. Its cheap CLI analogue (output survives a pipe unchanged) was folded into the conductor harness as check S7."
+   "why": "Both gate-4 passes were outstanding (last_full_qa_cycle and last_taste_cycle were both 0). QA-full wins the earlier slot because its findings land as kind:\"fix\" items that are IN scope for an improvement run, whereas taste findings land as kind:\"feature\"/\"polish\" and this run's spec makes every new feature a non-goal — a fundamental taste verdict would re-aim the clock at work the spec forbids. Live-look inspects a running product through a browser; this target is a Node CLI with no server or browser surface, so nothing could be inspected and nothing is claimed. Its cheap CLI analogue (output survives a pipe unchanged) was folded into the conductor harness as check S7."
+  },
+  {
+   "cycle": 14,
+   "what": "The taste pass was dispatched through the qa-verify.js WORKFLOW rather than as a direct Agent call: the Workflow tool was permitted this session for the first time in 13 cycles.",
+   "why": "Every cycle since kickoff recorded Workflow as review-gated in a -p session and used the documented direct-Agent fallback. The gate is evidently not a fixed property of headless sessions, so the sanctioned path was attempted first this cycle and it went through. Recorded because 13 journal entries assert the opposite and a future conductor reading them would otherwise skip the attempt on precedent. The correct standing behaviour is to ATTEMPT the workflow and fall back on refusal, not to assume the gate from history. Note the cost of using the real script on a CLI target: qa-verify.js has no CLI-shaped brief, so the agent was instructed to start a dev server on port 8137 and poll it with curl. It handled the mismatch honestly (ran it, confirmed via lsof that nothing listens, said so) but a browser-shaped brief is wasted budget on a CLI. Tool gap, journaled not fixed (hard rule 5)."
+  },
+  {
+   "cycle": 14,
+   "what": "The taste verdict was accepted while one of its headline numbers was REFUTED, and both halves are recorded rather than the finding being either discarded or silently corrected.",
+   "why": "Finding 1 asserted 23 of 37 singleton tags; the true count is 21 (harness C1c). The tempting moves are both wrong: discarding the finding treats an arithmetic slip as if it falsified the observation, and quietly rewriting 23 to 21 erases that the agent miscounted, which is exactly the calibration signal a later reader needs when weighing its other numbers. The claim was therefore split — the ECHO behaviour was reproduced directly (8/8 pulls of --tag naming and --tag caching, 1 distinct output) and the distribution re-measured (30 of 37 tags hold <=2), so the finding stands on conductor-measured numbers while the agent's figure is marked refuted in the same file. Applied the same way to finding 2, in the opposite direction: its anecdote (first repeat at use 3) is not reproducible, but the underlying claim measured STRONGER than the agent could show from one session — 3000 simulated sessions put the mean first repeat at 9.60 against a closed-form 9.54, with the picker proven uniform so the cause is corpus size rather than a selection bug."
+  },
+  {
+   "cycle": 14,
+   "what": "T-008 (deepen the corpus) was filed with deps on T-006 (the human attribution audit) instead of being queued as the highest-value taste finding.",
+   "why": "It is the finding with the largest effect on the product's core complaint, and taking it would make an OPEN HIGH-severity known issue worse. KI-2 is open precisely because the existing 50 attributions are unaudited and 8 are high-risk; adding ~70 more unaudited quotes multiplies the unaudited surface in the same dimension a human has already been handed a queue for. Cycle 11 spent its budget removing overclaims about attribution quality from this repo, so bulk-adding unverified attributions the very next day would undo that work while looking like progress. Recorded as a dependency and a named judgment rather than a silent deprioritisation."
   }
  ],
  "known_issues": [
   {
    "id": "KI-2",
-   "desc": "corpus attributions are unaudited \u2014 entry shape is machine-verified but no check available to this run can confirm each of the 50 quotes is correctly attributed; programming aphorisms are widely misattributed. Item I-4 produces a risk-ranked triage for a human, NOT an audit.",
+   "desc": "corpus attributions are unaudited — entry shape is machine-verified but no check available to this run can confirm each of the 50 quotes is correctly attributed; programming aphorisms are widely misattributed. Item I-4 produces a risk-ranked triage for a human, NOT an audit.",
    "severity": "high",
    "cycle_found": 1,
    "note_cycle_10": "STILL OPEN and still high. Item I-4b delivered docs/corpus-attribution-triage.md this cycle: a risk-ranked list of all 50 entries (8 HIGH / 16 MEDIUM / 26 LOW) with an entry-specific reason each. That is the human-actionable triage KI-2 asked for; it is explicitly NOT an audit and does not resolve this issue. Nothing in the corpus was changed. The eight HIGH entries are the queue a human should work first.",
-   "note_cycle_11": "STILL OPEN, still high, and deliberately so. I-4a removed the repo's false CLAIM about attribution quality and pointed both src/corpus.js and README.md at the triage; it changed no attribution and confirmed no quote. What changed is that the product now tells the truth about what it does not know \u2014 a reader is no longer told the uncertain entries are hedged to Anonymous when 8 of them name famous people. KI-2 closes only when a human checks the 8 HIGH entries against primary sources (backlog T-006, owner: human)."
+   "note_cycle_11": "STILL OPEN, still high, and deliberately so. I-4a removed the repo's false CLAIM about attribution quality and pointed both src/corpus.js and README.md at the triage; it changed no attribution and confirmed no quote. What changed is that the product now tells the truth about what it does not know — a reader is no longer told the uncertain entries are hedged to Anonymous when 8 of them name famous people. KI-2 closes only when a human checks the 8 HIGH entries against primary sources (backlog T-006, owner: human)."
   },
   {
    "id": "KI-3",
@@ -145,11 +160,11 @@
    "cycle_found": 1,
    "status": "resolved",
    "resolved_cycle": 7,
-   "resolution": "Item I-3 landed cycle 7: the behavior was DOCUMENTED, not changed \u2014 SPEC.md Domain rules and README.md now both state that --list accepts a valid --seed and ignores it (no pick happens; exit 0), with the parse-failure carve-out named so `--list --seed abc` reading as exit 0 is impossible. Conductor-verified by execution: --list output is byte-identical across unseeded, --seed 1, --seed 999999 and --seed Infinity, while --list --seed abc still exits 2 with empty stdout. Evidence: .swarm/runs/cycle-007-verify-I-3.txt"
+   "resolution": "Item I-3 landed cycle 7: the behavior was DOCUMENTED, not changed — SPEC.md Domain rules and README.md now both state that --list accepts a valid --seed and ignores it (no pick happens; exit 0), with the parse-failure carve-out named so `--list --seed abc` reading as exit 0 is impossible. Conductor-verified by execution: --list output is byte-identical across unseeded, --seed 1, --seed 999999 and --seed Infinity, while --list --seed abc still exits 2 with empty stdout. Evidence: .swarm/runs/cycle-007-verify-I-3.txt"
   },
   {
    "id": "KI-4",
-   "desc": "--seed with a numeric-but-non-finite value (Infinity, -Infinity) is accepted by args.js (Number('Infinity') is not NaN) and then silently falls through select.js's Number.isFinite guard to Math.random() \u2014 exit 0, non-deterministic. VERIFIED at 2026-08-15 kickoff: 6 distinct aphorisms in 6 runs of `--seed Infinity --json`. Violates the Domain rule that a seeded pick is deterministic. Scoped to item I-1.",
+   "desc": "--seed with a numeric-but-non-finite value (Infinity, -Infinity) is accepted by args.js (Number('Infinity') is not NaN) and then silently falls through select.js's Number.isFinite guard to Math.random() — exit 0, non-deterministic. VERIFIED at 2026-08-15 kickoff: 6 distinct aphorisms in 6 runs of `--seed Infinity --json`. Violates the Domain rule that a seeded pick is deterministic. Scoped to item I-1.",
    "severity": "high",
    "cycle_found": 2,
    "status": "resolved",
@@ -167,7 +182,7 @@
  "qa": {
   "last_full_qa_cycle": 13,
   "last_look_cycle": 0,
-  "last_taste_cycle": 0
+  "last_taste_cycle": 14
  },
  "counters": {
   "consecutive_no_value": 0,
@@ -177,9 +192,9 @@
   "window_tokens_attributed": 0
  },
  "last_cycle": {
-  "n": 13,
-  "work": "QA-full pass (step-4 gate 4) \u2014 spec-only fable scenario author -> sonnet executor, dispatched as direct Agent calls because Workflow is review-gated headless. Live-look stage not applicable to a CLI and reported as not-run.",
-  "outcome": "0 spec divergences across 6 scenarios; conductor harness 27/27 incl. 4 negative controls, sweeping all 37 tags, 37 tag prefixes and 40 author x tag pairs; suite 59/59. Gate-4 QA half now satisfied and evidenced.",
-  "commit": "327fe3c"
+  "n": 14,
+  "work": "TASTE pass (step-4 gate 4, the last outstanding one) — ONE fable taste agent via the qa-verify.js Workflow, mode taste. 9 minutes of use, 32 core-loop pulls, 15 flows.",
+  "outcome": "verdict wears-thin, 4 boredom findings (2 notable, 2 minor), all 4 fact-checked by the conductor: 3 confirmed outright, 1 confirmed on corrected numbers (agent said 23 singleton tags, actual 21). 17/17 harness checks incl. 3 negative controls; suite 59/59; product tree untouched. 4 backlog items filed (T-007..T-010), 2 of them in-scope S-effort docs work.",
+  "commit": "pending"
  }
 }

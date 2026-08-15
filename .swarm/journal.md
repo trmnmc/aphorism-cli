@@ -1685,3 +1685,137 @@ runfile-mirror:
 ```json
 {"version":1,"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","usage_reset_note":"PLACEHOLDER, not measured: now+5h. bin/swarm-budget.sh is not on the Bash allowlist in a headless session (KI-5 / moon KI-2), so no probe supplied a real window boundary. Used only by the limp short-circuit; no gear decision rests on it.","model_policy":"value-routing","auth_mode":"subscription","heartbeat":{"ts":1786805147,"next_wakeup_at":1786806347,"pid":408303,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"allocator","gear":1,"gear_target":1,"ratio":null,"mode":"guest","k_cap":1,"promote":false,"demote":true,"window_tokens":0,"window_cost_usd":0,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":0,"projected_depletion_at":0,"last_probe_ts":1786805147,"last_real_probe_ts":0,"probe_failures":0,"probe_note":"cycle 13: bin/swarm-budget.sh invoked and REFUSED by the permission layer, not by the script -- TWELFTH consecutive cycle (KI-5; the whole bin/ family is unreachable headless). probe_failures stays 0 on the standing reasoning: a command the harness never let start is not a probe that failed. Control read from runs/control.json directly: pending[] and applied[] both empty, no inject[] array. Gear re-derived from runs/allocator.json (source=probe): posture=trickle, allow_premium_pct 0, allow_overall_pct 0, weekly_used_pct 82.0, opus_used_pct 96, week_elapsed_pct 77.22, dial 0.3. weekly_heat 82.0/77.22 = 1.0619 < 1.1 -> governor disengaged, ceiling 5. opus_heat 96/77.22 = 1.2432 > 1.2 -> promote blocked. trickle + guest 1-3 clamp -> gear 1, k_cap 1, demote true.","weekly":{"ok":true,"weekly_used_pct":82.0,"opus_used_pct":96,"week_elapsed_pct":77.22,"weekly_heat":1.0619,"opus_heat":1.2432,"ceiling":5,"promote_blocked":true}},"playbook":{"mode":"auto","applied":["L-003","L-006","L-007","L-008","L-011","L-016","L-018","L-020","L-021","L-022","L-034","L-024","L-026","L-029","L-031"],"vetoed":[],"ledger_note":"record-applied NOT written: bin/swarm-playbook.sh is not on the Bash allowlist (KI-5), so the parse and record-applied verbs both refused in this headless session. Directives below were hand-parsed by the conductor from playbook/learnings.md, read-only. CYCLE 12 UPDATE: the applied[] list is now UNAMBIGUOUS. Item I-5 repaired the duplicate source IDs, so the entry that read L-023 (meaning the moon-sourced REFUTE lesson staged in prompt_lines.qa, not the repo-atlas L-023) has been rewritten to its new id L-034. L-026 here means the repo-atlas routing lesson (core-logic->fable), which kept its id. No other applied id was affected. Remap and reasoning: playbook/HANDOFF-cap-2026-08-15.md.","directives":{"wave_k":3,"routing_recs":["core-logic->fable"],"prompt_lines":{"builder":["The conductor is the SOLE committer \u2014 never commit or push yourself","Any exported React hook must ship a test that mounts a real component using it","Tests asserting no-key behavior must delete the key in beforeEach, not beforeAll \u2014 a real .env on main will leak through suite-level hooks","Any persisted UI state (storage or module-level) must be cleared in beforeEach of every test file that mounts the component"],"reviewer":["The conductor is the SOLE committer \u2014 never commit or push yourself","Assign each fixer a pairwise-disjoint file set; two fixers must never share a file"],"qa":["The conductor is the SOLE committer \u2014 never commit or push yourself","Script a deterministic scenario with hand-computed expected outputs; eyeballing rendered numbers is not verification","Load all classic-script modules into one shared vm context and scan for cross-file top-level name collisions","Open the running product in a browser and describe what you actually see \u2014 tests alone miss rendered-page bugs","After merging user-visible files, run a live browser look pass before counting the wave verified","After any server rebuild or restart, hard-reload the page before judging \u2014 a stale SPA instance survives goto","Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'.","Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value.","When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive \u2014 a kill you cannot attribute is not evidence.","Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps."]},"inert_note":"Four staged qa lines are browser-specific (L-006 classic-script collisions, L-007 browser look, L-018 post-merge look pass, L-021 hard-reload) and are INERT for this target: aphorism-cli is a Node CLI with no browser surface. Staged faithfully rather than silently dropped \u2014 apply_mode is auto and the conductor does not get to edit the playbook's intent mid-run (hard rule 5)."}},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":12,"artifact":{"file":"/opt/swarm/runs/dashboard.html","publish_failures":0}}
 ```
+
+## cycle 14 | 2026-08-15T15:11:00+00:00 | aphorism-cli | QA
+
+work: TASTE pass (step-4 gate 4). This closes the last outstanding gate-4 pass: last_taste_cycle
+  was still 0 while QA-full landed at cycle 13. review-fix remains unrun and is judged the
+  weakest remaining candidate for the same reason cycle 13 gave -- the diff it would review is
+  prose and test edits the conductor already gated item-by-item.
+workflow: DISPATCHED THROUGH THE REAL WORKFLOW, and this is the notable operational fact of the
+  cycle. Thirteen consecutive journal entries record the Workflow tool as review-gated in a -p
+  session, with direct Agent calls as the documented fallback. This cycle attempted the sanctioned
+  path first and it was PERMITTED: SWARM/workflows/qa-verify.js, mode taste, run wf_5b4a7d11-ff5.
+  The standing lesson is to attempt the workflow and fall back on refusal, never to assume the
+  gate from precedent. Return saved to .swarm/runs/cycle-014-qa-taste.json.
+  models: taste fable (judgment seat -- the fable guard exempts it from the gear-1 demotion).
+  1 agent, 0 dead, 26,513 tokens, 28 tool calls, 179s.
+brief mismatch, recorded not fixed: qa-verify.js builds serverBrief/browseBrief for a web target,
+  so the fable agent was told to start a dev server on port 8137 and poll it with curl. This
+  target is a CLI. The agent ran the mandated invocation anyway, confirmed with lsof before,
+  during and after that nothing ever listened on 8137, and said so plainly rather than inventing
+  a server session. Honest handling of an instruction it could not satisfy as written -- the same
+  shape as cycle 13's /tmp disclosure. The workflow has no CLI brief; that is a tool gap and hard
+  rule 5 sends it to the morning report, not to a live edit.
+CONDUCTOR ERROR, mine, stated plainly: the spec_digest I passed the agent asserted that --author
+  is a whole-value match. SPEC.md Domain rules line 106 say --author matches by SUBSTRING
+  containment, case-insensitively; --tag is the whole-value one. I handed a judgment agent a
+  false digest. It did not damage the pass -- the agent exercised `--author pike` against the
+  real binary and observed the true behaviour, so the digest was corrected by contact with the
+  product -- but the error is mine and the next dispatch should read the Domain rules rather than
+  paraphrase them from memory.
+clock/gear: bin/swarm-budget.sh invoked and REFUSED by the permission layer for the THIRTEENTH
+  consecutive cycle (KI-5 -- the whole bin/ family, budget + notify + playbook, is unreachable
+  headless). probe_failures stays 0 on the standing reasoning: a command the harness never let
+  start is not a probe that failed. Gear re-derived from runs/allocator.json (source=probe):
+  posture trickle, allow_premium_pct 0, weekly_used 83.0 vs week_elapsed 77.47 -> weekly_heat
+  1.0714 < 1.1, governor disengaged, ceiling 5; opus_used 97 -> opus_heat 1.2521 > 1.2, promote
+  blocked; trickle + guest 1-3 clamp -> gear 1, k_cap 1, demote true. 20.2h to stop_at, so a
+  900s taste wave was never near the admission boundary.
+control: runs/control.json read directly (swarm-notify.sh poll refused by the same allowlist
+  gap). pending[] empty, applied[] empty, no inject[] array. Nothing to apply.
+orient: tree clean at entry, no salvage. Cycle 14 is not a multiple of 5, so no full SPEC re-read;
+  digest restated -- improvement run on a shipped zero-dep Node CLI, harden/document/repair, no
+  new features.
+
+VERIFICATION EVIDENCE -- a taste verdict is a judgment and no exit code can gate it, but every
+  FACTUAL claim it rests on is falsifiable, so each was measured rather than read and agreed with.
+  Harness .swarm/runs/cycle-014-verify-taste.js authored AFTER the return landed; the agent never
+  saw it. Full output .swarm/runs/cycle-014-verify-taste.txt:
+```
+PASS  C1c agent claim "23 of 37 tags hold exactly one quote" is REFUTED  :: actual singletons = 21
+PASS  C1d finding survives on corrected numbers  :: 30/37 tags hold <=2 (21 hold exactly 1)
+PASS  C2a --tag naming x4 + --tag caching x4 = ONE identical output  :: distinct outputs = 1
+PASS  C2c [negative control] a MULTI-entry tag is NOT a fixed echo  :: humor pool 9, 8 distinct/25
+PASS  C3a empirical first-repeat matches closed-form birthday  :: mean 9.60 vs analytic 9.54
+PASS  C3b majority meet a repeat within 10 uses  :: P(repeat by use 10) = 60.1%
+PASS  C3c [negative control] picker is UNIFORM  :: min 931 max 1085 expected 1000
+PASS  C4a --help names --tag but zero tags  :: 10 lines, 0 tag names
+PASS  C4c --tag bugs exits 1 while --tag debugging exits 0  :: corpus spells it debugging
+PASS  C5b consecutive date seeds give DIFFERENT quotes  :: 3/3 distinct
+PASS  C6 the taste agent modified NO product file  :: git diff vs HEAD over product paths empty
+17/17 checks passed
+```
+  The two calibration results are the point of the harness. C1c REFUTES the agent's headline
+  number -- 21 singleton tags, not 23 -- and C1d shows the finding survives anyway, in fact
+  understated at 30 of 37 tags holding <=2. C3a runs the other way: the agent's "first repeat at
+  use 3" is a one-session anecdote I could not reproduce, but re-measuring over 3000 sessions put
+  the mean at 9.60 against a closed-form 9.54, so the CLAIM is better supported than the agent's
+  own evidence for it. C3c is the check that decides what the finding means: the picker is
+  uniform, so recycling is corpus SIZE and not a selection bug -- without it, "users see repeats"
+  would have been a plausible bug report aimed at the wrong file.
+VERIFICATION EVIDENCE -- full test_cmd run directly by the conductor, not by any agent:
+```
+$ node --test test/*.test.js
+i tests 59   i pass 59   i fail 0   i cancelled 0   i skipped 0   i todo 0
+```
+  59/59, matching the cycle-11/12/13 baseline. Expected: no product file was touched this cycle
+  and `git diff --stat HEAD -- src bin test README.md docs` is empty, so this is a regression
+  floor confirmed, not a change measured.
+gate: TASTE PASS satisfied. verdict wears-thin (interesting at first, stale by ten), 4 boredom
+  findings -- 2 notable, 2 minor, 0 fundamental. No fundamental verdict, so NO decision re-aiming
+  the remaining clock at depth items is required (cycle.md step 4). state.qa.last_taste_cycle
+  0 -> 14. All three gate-4 passes are now accounted for: QA-full done cycle 13, taste done
+  cycle 14, review-fix judged and declined with reasons.
+findings -> backlog, 4 items filed as T-007..T-010, each carrying its conductor verdict:
+  T-007 (notable, M) consolidate the tag taxonomy -- 21 tags return a fixed single entry forever;
+    --tag naming and --tag caching are the same Karlton line on all 8 pulls. NOT picked at gear 1
+    (M-effort; gear 1 admits S-effort builds only). Flagged for whoever takes it: retagging
+    silently changes what shipped --tag queries return, a behaviour change to a live contract even
+    though it adds no feature.
+  T-008 (notable, L) deepen the corpus -- deps [T-006] DELIBERATELY. This is the highest-value
+    taste finding and taking it now would make an open HIGH-severity issue worse: KI-2 is open
+    because the existing 50 attributions are unaudited and 8 are high-risk, and adding ~70 more
+    unaudited quotes multiplies exactly the surface a human already holds a queue for. Cycle 11
+    spent its budget deleting overclaims about attribution quality from this repo; bulk-adding
+    unverified attributions the next day would undo that while looking like progress.
+  T-009 (minor, S) publish the tag vocabulary in README + --help. In scope, docs, admissible at
+    gear 1. Cycle-8 precedent attaches: HELP lives inside src/args.js, so a prose edit there must
+    be gated by byte-comparing outside the template literal against HEAD.
+  T-010 (minor, S) surface the `--seed $(date +%Y%m%d)` quote-of-the-day recipe in the README.
+    Verified working BEFORE filing (C5a/C5b) rather than filed as a plausible idea. Best
+    value-per-effort item on the board: one README line converts an already-shipped flag into the
+    reason a user returns tomorrow, with no feature and no rotation state.
+scope honesty: the run's spec makes new features non-goals, and cycle 13 predicted the taste pass
+  would therefore produce mostly out-of-scope findings and little backlog. That prediction was
+  half right and worth correcting. Two of four findings (T-009, T-010) are pure documentation,
+  squarely in scope, S-effort, and buildable at gear 1 -- the taste pass paid for itself inside
+  the run's own constraints rather than only leaving a note for the next one.
+live-look / collision-scan: NOT RUN, not applicable -- taste mode skips the look stage by design
+  (qa-verify.js line 504), and collision-scan gates browser targets built from classic scripts.
+  Reported as not-run, never as passed.
+autotune: NOT applied. Autotune keys on a build-wave's merges completing; no wave was dispatched.
+  k_current stays 5, wave_streak stays 1; inert either way at gear 1's k_cap of 1.
+counters: consecutive_no_value set to 0, and the judgment is stated rather than buried because
+  this is the SECOND consecutive cycle where no backlog item moved to done. It counts as value:
+  the cycle closed a required gate that had never run, produced 4 findings that survived
+  independent fact-checking, and filed 2 in-scope items a later cycle can actually build. But two
+  gate-closure cycles in a row is the shape that could hide churn, so the standard for cycle 15 is
+  set here: it should LAND an item (T-010 then T-009 are the obvious pair), and if it does not,
+  the counter should start incrementing rather than absorbing another rationale.
+backlog: 15 done / 6 todo / 1 blocked, 22 live (was 18). T-005 (rotation) remains todo and an
+  explicit non-goal of this run -- notable now because the taste pass independently identified
+  no-repeat rotation as the structural fix for its top complaint, which is a data point for the
+  NEXT run's spec, not a licence to build it in this one. known_issues unchanged: KI-2 high and
+  human-owned, KI-5 medium (cap breach + allowlist gap, handed off).
+outcome: gate-4 taste pass satisfied, verdict wears-thin, 4 findings verified, 4 items filed.
+dashboard: runs/dashboard.html re-rendered locally. Artifact publish skipped -- the tool is absent
+  in a -p session, which is not a publish failure.
+next: cycle 15 should BUILD T-010 then T-009 (both S-effort docs, in scope, haiku-priced, gear-1
+  admissible) -- and per the counter note above, cycle 15 is expected to move an item to done.
+  If the Workflow gate stays open, build-wave is available for the first time this run, though at
+  k_cap 1 it carries one item and a direct Agent call would do the same work for less overhead.
+runfile-mirror:
+```json
+{"version":1,"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","usage_reset_note":"PLACEHOLDER, not measured: now+5h. bin/swarm-budget.sh is not on the Bash allowlist in a headless session (KI-5 / moon KI-2), so no probe supplied a real window boundary. Used only by the limp short-circuit; no gear decision rests on it.","model_policy":"value-routing","auth_mode":"subscription","heartbeat":{"ts":1786807263,"next_wakeup_at":1786808163,"pid":411966,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"allocator","gear":1,"gear_target":1,"ratio":null,"mode":"guest","k_cap":1,"promote":false,"demote":true,"window_tokens":0,"window_cost_usd":0,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":0,"projected_depletion_at":0,"last_probe_ts":1786807263,"last_real_probe_ts":0,"probe_failures":0,"probe_note":"cycle 14: bin/swarm-budget.sh invoked and REFUSED by the permission layer, not by the script -- THIRTEENTH consecutive cycle (KI-5; the whole bin/ family -- budget, notify, playbook -- is unreachable headless). probe_failures stays 0 on the standing reasoning: a command the harness never let start is not a probe that failed. Control read from runs/control.json directly: pending[] and applied[] both empty, no inject[] array. Gear re-derived from runs/allocator.json (source=probe): posture=trickle, allow_premium_pct 0, allow_overall_pct 0, weekly_used_pct 83, opus_used_pct 97, week_elapsed_pct 77.47, dial 0.3. weekly_heat 1.0714 < 1.1 -> governor disengaged, ceiling 5. opus_heat 1.2521 > 1.2 -> promote blocked. trickle + guest 1-3 clamp -> gear 1, k_cap 1, demote true. NOTE cycle 14: the Workflow tool was PERMITTED this session for the first time in 13 cycles -- the review gate is not a fixed property of -p sessions, so attempt the sanctioned path before falling back to direct Agent calls.","weekly":{"ok":true,"weekly_used_pct":83,"opus_used_pct":97,"week_elapsed_pct":77.47,"weekly_heat":1.0714,"opus_heat":1.2521,"ceiling":5,"promote_blocked":true}},"playbook":{"mode":"auto","applied":["L-003","L-006","L-007","L-008","L-011","L-016","L-018","L-020","L-021","L-022","L-034","L-024","L-026","L-029","L-031"],"vetoed":[],"ledger_note":"record-applied NOT written: bin/swarm-playbook.sh is not on the Bash allowlist (KI-5), so the parse and record-applied verbs both refused in this headless session. Directives below were hand-parsed by the conductor from playbook/learnings.md, read-only. CYCLE 12 UPDATE: the applied[] list is now UNAMBIGUOUS. Item I-5 repaired the duplicate source IDs, so the entry that read L-023 (meaning the moon-sourced REFUTE lesson staged in prompt_lines.qa, not the repo-atlas L-023) has been rewritten to its new id L-034. L-026 here means the repo-atlas routing lesson (core-logic->fable), which kept its id. No other applied id was affected. Remap and reasoning: playbook/HANDOFF-cap-2026-08-15.md.","directives":{"wave_k":3,"routing_recs":["core-logic->fable"],"prompt_lines":{"builder":["The conductor is the SOLE committer — never commit or push yourself","Any exported React hook must ship a test that mounts a real component using it","Tests asserting no-key behavior must delete the key in beforeEach, not beforeAll — a real .env on main will leak through suite-level hooks","Any persisted UI state (storage or module-level) must be cleared in beforeEach of every test file that mounts the component"],"reviewer":["The conductor is the SOLE committer — never commit or push yourself","Assign each fixer a pairwise-disjoint file set; two fixers must never share a file"],"qa":["The conductor is the SOLE committer — never commit or push yourself","Script a deterministic scenario with hand-computed expected outputs; eyeballing rendered numbers is not verification","Load all classic-script modules into one shared vm context and scan for cross-file top-level name collisions","Open the running product in a browser and describe what you actually see — tests alone miss rendered-page bugs","After merging user-visible files, run a live browser look pass before counting the wave verified","After any server rebuild or restart, hard-reload the page before judging — a stale SPA instance survives goto","Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'.","Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value.","When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence.","Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps."]},"inert_note":"Four staged qa lines are browser-specific (L-006 classic-script collisions, L-007 browser look, L-018 post-merge look pass, L-021 hard-reload) and are INERT for this target: aphorism-cli is a Node CLI with no browser surface. Staged faithfully rather than silently dropped — apply_mode is auto and the conductor does not get to edit the playbook's intent mid-run (hard rule 5)."}},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":13,"artifact":{"file":"/opt/swarm/runs/dashboard.html","publish_failures":0}}
+```

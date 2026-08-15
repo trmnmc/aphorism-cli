@@ -353,6 +353,83 @@
    "model": "conductor",
    "attempts": 0,
    "notes": "Runs at WRAP_UP by design; depends on every other item because it reports their outcomes. Conductor-owned: reporting what was verified is the one thing that must not be delegated to an agent whose work is being reported on."
+  },
+  {
+   "id": "T-007",
+   "title": "Consolidate the tag taxonomy so every advertised tag has a real pool",
+   "kind": "polish",
+   "priority": 8,
+   "value": "M",
+   "effort": "M",
+   "status": "todo",
+   "deps": [],
+   "files_hint": [
+    "src/corpus.js",
+    "test/corpus.test.js"
+   ],
+   "packages": [],
+   "model": "sonnet",
+   "attempts": 0,
+   "acceptance": "No tag reachable via --tag returns a fixed single entry: every tag present in the corpus has >= 3 entries, achieved by RETAGGING existing aphorisms (folding singletons into neighbours), not by adding aphorisms. --tag remains whole-tag case-insensitive and the suite stays green.",
+   "notes": "Source: cycle-14 taste pass, finding 1 (notable). Conductor-verified: 21 of 37 tags hold exactly one entry and 30 of 37 hold <=2, so --tag naming and --tag caching return the identical Phil Karlton line on every invocation forever (8/8 pulls, 1 distinct output). The taste agent reported 23 singletons; the true figure is 21 (harness C1c) — the finding survives on corrected numbers. NOT picked at gear 1: M-effort, and gear 1 admits S-effort builds only. Judgment flag for whoever picks it up: retagging silently changes what existing --tag queries return, which is a behaviour change to a shipped contract even though it adds no feature — the Domain rules should be re-read before it lands."
+  },
+  {
+   "id": "T-008",
+   "title": "Deepen the corpus beyond the 50 most-quoted lines",
+   "kind": "polish",
+   "priority": 9,
+   "value": "M",
+   "effort": "L",
+   "status": "todo",
+   "deps": [
+    "T-006"
+   ],
+   "files_hint": [
+    "src/corpus.js",
+    "docs/corpus-attribution-triage.md"
+   ],
+   "packages": [],
+   "model": "sonnet",
+   "attempts": 0,
+   "acceptance": "Corpus depth increases materially (target >= 120 entries) with each added entry carrying text/author/tags and an attribution-risk band recorded in docs/corpus-attribution-triage.md, and the suite stays green.",
+   "notes": "Source: cycle-14 taste pass, finding 2 (notable). Conductor-verified staleness arithmetic: the picker is uniform (50k draws, min 931 max 1085 vs 1000 expected), so the repeat rate is CORPUS SIZE, not a selection bug — empirical first repeat at use 9.60, matching the closed-form birthday value 9.54, and 60.1% of users meet a repeat by use 10 (harness C3a-C3c). CONFLICT WITH KI-2, stated rather than buried: KI-2 is open at HIGH severity because the existing 50 attributions are unaudited and 8 are high-risk. Adding ~70 more unaudited attributions makes the repo MORE wrong in exactly the dimension a human has already been handed a queue for. Hence deps:[T-006] — the human audit should land first, or this item should ship with its own triage in the same change. This is a judgment call for a human, not a swarm task to grab because it is the highest-value taste finding."
+  },
+  {
+   "id": "T-009",
+   "title": "Publish the tag vocabulary in README and --help",
+   "kind": "docs",
+   "priority": 4,
+   "value": "H",
+   "effort": "S",
+   "status": "todo",
+   "deps": [],
+   "files_hint": [
+    "README.md",
+    "src/args.js"
+   ],
+   "packages": [],
+   "model": "haiku",
+   "attempts": 0,
+   "acceptance": "A reader can learn a valid tag without piping --list --json through a parser: README carries the tag list (or the well-populated ones) under its own heading, and --help points at where to find them. Every tag named must actually exist in the corpus, and the --help prose edit must not alter parseArgs behaviour.",
+   "notes": "Source: cycle-14 taste pass, finding 3 (minor). Conductor-verified: --help is 10 lines and names zero tags (C4a); README names 2 of 37 tags and only as inline examples (C4b); guessing costs real misses — --tag bugs exits 1 while the corpus spells it debugging (C4c). Squarely in scope for an improvement run (documentation) and S-effort, so it is admissible at gear 1. Cycle-8 precedent applies if --help is touched: HELP lives inside src/args.js, so a prose edit there must be gated by byte-comparing everything outside the template literal against HEAD."
+  },
+  {
+   "id": "T-010",
+   "title": "Surface the quote-of-the-day recipe in the README usage examples",
+   "kind": "docs",
+   "priority": 4,
+   "value": "H",
+   "effort": "S",
+   "status": "todo",
+   "deps": [],
+   "files_hint": [
+    "README.md"
+   ],
+   "packages": [],
+   "model": "haiku",
+   "attempts": 0,
+   "acceptance": "README usage examples include the date-seeded one-liner (node bin/aphorism.js --seed $(date +%Y%m%d)) with a one-line explanation that it is stable all day and changes tomorrow. The claim must be true of the shipped binary, not just plausible.",
+   "notes": "Source: cycle-14 taste pass, finding 4 (minor). Conductor-verified that the recipe actually works before filing it: three consecutive date seeds are each stable across 3 runs and yield 3 distinct quotes (C5a, C5b), and the README currently shows only the fixture-shaped --tag simplicity --seed 42 with no date recipe (C5c). Best value-per-effort item on the board: it costs one README line and converts an existing, already-verified flag into the reason a user comes back tomorrow, without adding a feature or any rotation state. This is the taste pass paying for itself in scope."
   }
  ]
 }

@@ -1,0 +1,36 @@
+== use 1 ==
+Bad programmers worry about the code. Good programmers worry about data structures and their relationships.
+    — Linus Torvalds
+== use 2 ==
+I'm not a great programmer; I'm just a good programmer with great habits.
+    — Kent Beck
+== use 3 ==
+I'm not a great programmer; I'm just a good programmer with great habits.
+    — Kent Beck
+== use 4 ==
+Testing shows the presence, not the absence, of bugs.
+    — Edsger W. Dijkstra
+== use 5 ==
+The bigger the interface, the weaker the abstraction.
+    — Rob Pike
+== use 6 ==
+Optimization hinders evolution.
+    — Alan Perlis
+== use 7 ==
+Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.
+    — Brian Kernighan
+== use 8 ==
+Make it work, make it right, make it fast.
+    — Kent Beck
+== use 9 ==
+I call it my billion-dollar mistake. It was the invention of the null reference.
+    — C.A.R. Hoare
+== use 10 ==
+The bearing of a child takes nine months, no matter how many women are assigned.
+    — Fred Brooks
+== use 11 ==
+Errors are values.
+    — Rob Pike
+== use 12 ==
+Organizations which design systems are constrained to produce designs which are copies of the communication structures of these organizations.
+    — Melvin Conway
