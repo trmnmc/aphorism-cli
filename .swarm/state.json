@@ -127,6 +127,6 @@
     "n": 7,
     "work": "I-3 — six doc/behaviour divergences settled identically in SPEC.md + README.md (direct Agent, haiku, k=1, scoped to the two doc files) + conductor execution harness",
     "outcome": "1 verified; 36/36 behavioral checks green with four discriminators; suite 58/58; zero product code touched; KI-3 resolved; OPEN AMBIGUITIES block deleted; follow-ups I-7 and I-8 opened",
-    "commit": "pending"
+    "commit": "185eb84"
   }
 }
