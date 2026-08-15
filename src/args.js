@@ -13,6 +13,9 @@ Options:
   --list           list all matching aphorisms, one per line
   --json           output as JSON (single line, or NDJSON with --list)
   -h, --help       show this help and exit
+
+Valid tags are documented in README.md under "Tag vocabulary".
+Run --list --json | jq '.tags[]' to see tags in the corpus.
 `;
 
 const VALUE_FLAGS = {
