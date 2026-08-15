@@ -3,7 +3,7 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
   "phase": "POLISH",
-  "cycle": 23,
+  "cycle": 24,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -217,6 +217,21 @@
       "cycle": 23,
       "what": "T-017 is accepted on the README-LITERAL side of its comparison only. The binary-side mutations (separator, reversed order, dropped line) fail the new test but are NOT attributable to it: the pre-existing test \"--list preserves corpus order (first and last line match)\" already kills all three.",
       "why": "The honest accounting of what a new test buys is what it catches that nothing else does, not what it happens to notice. Reporting the binary-side kills as T-017 value would have inflated the item threefold. What is genuinely new -- and what survivor C5 actually named -- is that the README's format LITERAL is now pinned to real runtime behaviour: mutate it to a pipe, or merely delete the spaces around the em dash, and the whole rest of the suite sits green at 71/71/0 while this one test fails by name."
+    },
+    {
+      "cycle": 24,
+      "what": "The gate's decisive check used a README LAYOUT THAT DOES NOT EXIST IN THIS REPO -- a three-band Tag vocabulary section (10+, 5-9, 2-4) -- rather than only the two-band layout the item was written against.",
+      "why": "Every acceptance-shaped check asks whether deleting a band table is caught, and a guard hardcoding 'there must be a 5+ table and a 2-4 table' passes all of them, because it does catch today's deletion. The two readings only separate on a README the repo has never had. T-007 (retagging) is live on the backlog and could legitimately change the band boundaries or the NUMBER of bands, at which point a hardcoded guard fires on a CORRECT README -- a false rejection a maintainer resolves by deleting the guard, which is worse than never having written it. So the pair was run on the unfamiliar layout: the correct three-band README stays green at 73/73, and deleting the MIDDLE band kills naming T-019 alone and is attributable at 72/72/0. The middle-band mutation is also the only one that proves the fix is not riding on the pre-existing zero-band sanity assertion, since two band tables are still standing when it fires. This is the cycle-21/22 R2 consistent-change method extended from 'change the artifact' to 'change the artifact's SHAPE'."
+    },
+    {
+      "cycle": 24,
+      "what": "Two gate checks FAILED and the item was accepted anyway; neither was re-run to a manufactured clean sheet, and the more interesting of the two was proven NOT to belong to the item under test.",
+      "why": "R3.GREEN failed: rewording a band heading's lead-in, with every digit and row intact, fails the suite. The tempting reading of a red check on a verification gate is that the item under test caused it. That was measured rather than assumed (.swarm/runs/cycle-024-probe-R3.txt) -- the identical rewording fails identically against HEAD's test file, which contains no T-019 test at all, and the T-019 assertion itself stays green under all three rewording variants. So it is a PRE-EXISTING fragility in the T-014 heading-count test that this cycle's gate happened to surface, filed as T-022, and the honest record is a failed control plus its attribution rather than either a quietly relaxed check or a defect charged to the wrong item. S3.SCRATCH failed for the second time in four cycles (KI-7). Both are recorded as failures as authored, per the cycle-21 precedent: relaxing a control and re-running for 23/23 would be opening a gate by weakening it."
+    },
+    {
+      "cycle": 24,
+      "what": "The conductor's own harness broke on its first run (a corpus-mutation helper sliced off a string's opening quote and produced a SyntaxError) and was repaired mid-verification.",
+      "why": "Third cycle in a row where the instrument failed before the item did (cf. cycle 19's reporter parse bug, cycle 23's TAP attribution bug). Worth recording because the failure direction was SAFE this time -- a SyntaxError is loud and unmissable, unlike cycle 19's bug which silently manufactured a KILLED verdict for every mutant including the pristine control. The repair changed the mutation helper only; no check was relaxed, and the acceptance checks A3/A4 had already passed before the R1 helper was ever reached, so the repair could not have been motivated by a result it wanted to change."
     }
   ],
   "known_issues": [
@@ -268,6 +283,7 @@
       "status": "open",
       "note_cycle_21": "THIRD occurrence, in a new and milder variant: the dispatch prompt named the explicit in-target scratch path as the remedy prescribes, and the builder honored it AND deleted its mutation copies -- but left the bare empty .swarm/scratch directory behind. Measured at 0 files inside, so nothing leaked and no untracked scratch reached git status; this is the same residue cycle 9 recorded (agent removes copies, conductor removes the empty directory). Caught only because the conductor gate carries a standing SCOPE.SCRATCH control, which is the reason to keep that control even on cycles where it looks like a formality. Remedy refinement for the wrap-up distillation: the prompt should say remove the scratch DIRECTORY, not just its contents.",
       "remedy": "Name an explicit scratch directory in every dispatch prompt. NOT /tmp -- KI-6 established subagents are sandboxed to the session --add-dir list, so /tmp is unreachable. Use <target>/.swarm/scratch/ and require the agent to remove it, with a conductor gate check confirming the removal. Done this way at cycle 19 (T-013) and the agent left nothing behind (harness controls CTRL-SCRATCH, CTRL-TREE). Cycle 9 proposed this as a candidate playbook lesson and it was never made standing, which is why it recurred; it belongs in the wrap-up distillation.",
+      "note_cycle_24": "FOURTH occurrence, and it PARTIALLY CONTRADICTS the cycle-22 note below, so that note should not be read on its own. The cycle-21 remedy refinement was again applied verbatim in the dispatch prompt -- it named the in-target scratch path AND required removing the scratch DIRECTORY itself, not merely its contents, calling out that an empty directory counts as debris and is checked. The builder created three subdirectories under .swarm/scratch/ and reported removing them with rm -rf, which it had genuinely done: the standing SCOPE.SCRATCH control found .swarm/scratch present with ZERO entries inside. So the agent removed what it created and still left the parent it did not create. Nothing leaked, git status showed no untracked scratch, and the conductor removed the directory by hand. The lesson for the wrap-up distillation is narrower and more useful than 'name the scratch path': an agent told to remove its scratch directory removes the directories IT MADE, so the prompt must name the exact path whose absence is checked, or the check must tolerate an empty parent. Cycle 22's 'the remedy is now measured to work' was drawn from a single clean cycle and does not survive a second sample.",
       "note_cycle_22": "NO occurrence this cycle, and that is evidence rather than luck. The cycle-21 remedy refinement was applied verbatim in the dispatch prompt -- it named the in-target scratch path AND required removing the scratch DIRECTORY itself, not merely its contents, calling out that an empty directory counts as debris and is checked. The builder honoured both: the standing SCOPE.SCRATCH control passed for the first time since the refinement was written (.swarm/runs/cycle-022-verify-T-016.txt), and the SWARM root carried no debris at orient either. The issue stays OPEN because one clean cycle does not close a structural hole -- the fence is still enforced by what the prompt says, and a prompt that forgot the line would reproduce it -- but the remedy is now measured to work, which is what the wrap-up distillation needs."
     }
   ],
@@ -280,13 +296,13 @@
     "consecutive_no_value": 0,
     "consecutive_failures": 0,
     "k_current": 5,
-    "wave_streak": 1,
+    "wave_streak": 0,
     "window_tokens_attributed": 0
   },
   "last_cycle": {
-    "n": 23,
-    "work": "test triage (one item, k_cap 1 at gear 1) -- T-017, checking the README's `--list` format literal `<text> — <author>` against what the shipped binary actually prints. Last open HOLE from the cycle-19 mutation sweep (survivor C5).",
-    "outcome": "VERIFIED done. 18/18 conductor gate checks after two harness repairs (v1 had 12 false FAILs from a reporter mismatch, all in the harness, none in the item), plus 4/4 on the TRACKS addendum with a non-vacuity control. Suite 71 -> 72, pure insertion (+95 -0); test_cmd on the real tree 72/72/0, run by me. Attribution proven twice in the STRICT form with mutations the builder never saw: README literal -> \"<text> | <author>\" and README literal with the spaces removed each fail exactly one test BY NAME and each survives at the pre-cycle baseline 71/71/0 when that test is filtered out. Scope clean: +95/-0 on one file, no scratch residue. Residual filed as T-021 (LOW): the section locator requires the heading's backticks, so an honest reformat is rejected -- loudly, by name, the safe direction.",
-    "commit": "451d49a5b340941959013337345c921e06aba8d6"
+    "n": 24,
+    "work": "test triage (one item, k_cap 1 at gear 1) -- T-019, guarding against an entire band table disappearing from the README's Tag vocabulary section. The last SILENT hole on the board; the three items left (T-018, T-020, T-021, now joined by T-022) are all LOUD false rejections.",
+    "outcome": "VERIFIED done. 21/23 conductor gate checks; both failures analysed and neither is an acceptance clause. Suite 72 -> 73, pure insertion (+65 -0) on one file; test_cmd on the real tree 73/73/0, run by me; six product files byte-identical to HEAD. Pre-dispatch baseline re-measured the blindness at the current suite instead of inheriting cycle 21's figure, and found the defect was ALL-OR-NOTHING: either band table deleted alone survives 72/72, both deleted kills at 72/70/2 via the pre-existing zero-band sanity assert. Both acceptance mutations proven twice: each deletion fails naming T-019 and nothing else, each survives at exactly 72/72/0 with that test filtered. The two decisive checks were ones no acceptance clause asked for -- R1 promoted `yagni` 1->2 IN THE CORPUS with a consistent README (green 73/73; a hardcoded 16-tag union cannot pass) against a stale half that fails at 73/68/5 naming T-019; R2 restructured the section into a THREE-band layout this repo has never had (green 73/73, not falsely rejected) and then deleted the MIDDLE band (fails naming T-019 alone, attributable at 72/72/0, with two band tables still standing so the zero-band assert provably cannot be what fired). Failed checks, kept as failures: R3.GREEN, a reworded band lead-in, MEASURED as a pre-existing fragility -- it fails identically against HEAD's test file which has no T-019 test at all -- filed as T-022; and S3.SCRATCH, an empty .swarm/scratch left behind, KI-7's fourth occurrence, removed by hand.",
+    "commit": "PENDING"
   }
 }

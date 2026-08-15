@@ -1,0 +1,60 @@
+=== CONTROLS ===
+PASS  G0.PRISTINE  unmutated working-tree copy is fully green
+        tests 73 pass 73 fail 0
+PASS  G0b.DENOMINATOR  skip pattern removes exactly 1 test, leaving the 72-test baseline green
+        tests 72 pass 72 fail 0
+PASS  G0c.SKIP-SANITY  an unrelated breaking mutation still fails under the same skip pattern
+        tests 72 pass 71 fail 1 :: README tag counts must match corpus
+
+=== ACCEPTANCE: deleting an entire band table must fail, failable + attributable ===
+PASS  A3.APPLIED  the 2–4 band table really was removed (heading + rows)
+        131 -> 115 lines
+PASS  A3.FAILABLE  deleting the 2–4 band table fails the suite, naming T-019 and nothing else
+        tests 73 pass 72 fail 1 :: every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+        message: Tag `abstraction` (corpus count 2) appears on 2+ entries in the corpus but has no row in ANY band table in the Tag vocabulary section -- an entire band table ma
+PASS  A3.ATTRIBUTABLE  with T-019 filtered out, the same deletion SURVIVES at the pre-cycle baseline
+        tests 72 pass 72 fail 0
+PASS  A4.APPLIED  the 5+ band table really was removed (heading + rows)
+        131 -> 123 lines
+PASS  A4.FAILABLE  deleting the 5+ band table fails the suite, naming T-019 and nothing else
+        tests 73 pass 72 fail 1 :: every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+        message: Tag `debugging` (corpus count 5) appears on 2+ entries in the corpus but has no row in ANY band table in the Tag vocabulary section -- an entire band table may 
+PASS  A4.ATTRIBUTABLE  with T-019 filtered out, the same deletion SURVIVES at the pre-cycle baseline
+        tests 72 pass 72 fail 0
+
+=== R1: corpus-derived, not a hardcoded 16-tag union (TRACKS / STALE pair) ===
+PASS  R1.APPLIED  corpus mutation promoted `yagni` 1 -> 2 and moved nothing else
+        yagni=2 multi-entry tags=17 (was 16)
+PASS  R1.TRACKS  corpus + README changed together and consistently stays GREEN
+        tests 73 pass 73 fail 0 :: 
+PASS  R1.STALE  same corpus change with a stale README fails, and T-019 is among the failures
+        tests 73 pass 68 fail 5 :: README must correctly describe single-entry tag count | every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band | every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019) | README band table headings must state the correct count of tags in their band | README opening sentence must state correct multi-entry and single-entry tag counts
+
+=== R2: not hardcoded to today's TWO bands (the T-007 false-rejection risk) ===
+PASS  R2.APPLIED  README restructured from 2 band tables to 3, corpus untouched
+        bands now: 10+, 5–9, 2–4
+PASS  R2.TRACKS  a correct THREE-band README is NOT falsely rejected
+        tests 73 pass 73 fail 0 :: 
+PASS  R2.APPLIED-KILL  middle band deleted; two band tables still present
+PASS  R2.FAILABLE  deleting the MIDDLE of three bands fails, naming T-019 and nothing else
+        tests 73 pass 72 fail 1 :: every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+PASS  R2.ATTRIBUTABLE  with T-019 filtered, the middle-band deletion SURVIVES at the baseline
+        tests 72 pass 72 fail 0
+
+=== R3: T-012 hazard — not keyed to lead-in prose ===
+FAIL  R3.GREEN  both band lead-ins reworded (digits + rows intact) stays green
+        tests 73 pass 72 fail 1 :: README band table headings must state the correct count of tags in their band
+PASS  R3.KILL  reworded prose + deleted band still kills, naming T-019
+        tests 73 pass 71 fail 2 :: every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019) | README band table headings must state the correct count of tags in their band
+
+=== SCOPE ===
+PASS  S1.SCOPE  exactly one tracked file modified
+        test/readme-tags.test.js
+PASS  S2.PRODUCT-UNTOUCHED  README, corpus, parser, selector, entry point and triage doc byte-identical to HEAD
+        all 6 identical
+FAIL  S3.SCRATCH  no .swarm/scratch directory left behind (KI-7)
+PASS  S4.PURE-INSERTION  the test file gained lines and lost none (no assertion weakened or deleted)
+        +65 -0
+
+root: /tmp/aph-c24-gate-QW1QpH
+GATE: 21/23 checks passed

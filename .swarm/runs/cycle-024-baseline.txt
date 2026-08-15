@@ -1,0 +1,15 @@
+PASS  CTRL-PRISTINE  SURVIVED (expected SURVIVED)  tests 72 pass 72 fail 0
+APPLIED B1: true (removed 16 lines)
+PASS  B1  SURVIVED (expected SURVIVED)  tests 72 pass 72 fail 0
+APPLIED B1b: true
+PASS  B1b  KILLED (expected KILLED)  tests 72 pass 71 fail 1
+         failing: README tag counts must match corpus
+APPLIED B2: true (removed 8 lines)
+PASS  B2  SURVIVED (expected SURVIVED)  tests 72 pass 72 fail 0
+APPLIED B3: true
+FAIL  B3  KILLED (expected SURVIVED)  tests 72 pass 70 fail 2
+         failing: every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+         failing: README band table headings must state the correct count of tags in their band
+
+root: /tmp/aph-c24-base-TJxd2L
+BASELINE: 4/5 as expected

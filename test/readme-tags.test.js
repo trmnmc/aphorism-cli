@@ -312,6 +312,71 @@ test('every band table in README Tag vocabulary contains exactly the corpus tags
 });
 
 // ---------------------------------------------------------------------------
+// Guard against an entire band table -- heading AND all its rows -- being
+// deleted wholesale from the Tag vocabulary section (T-019).
+//
+// The "every band table ... contains exactly the corpus tags whose count
+// fits that band" test above is blind to this: it iterates `bands`, the set
+// of band tables extractBandTablesFromReadme actually FOUND. If a whole
+// band table disappears, it is simply never in that array, so nothing in
+// that test ever looks at the tags that used to live there -- every
+// remaining stated fact in the README is still true, so the check stays
+// green while the README goes silently quiet about an entire cohort of
+// tags. Only a total wipeout (zero band tables left) is caught, by the
+// pre-existing `bands.length > 0` sanity assertion in each of the two tests
+// above; one-of-several-tables vanishing is not.
+//
+// The fix does not hardcode "there must be a 5+ band and a 2-4 band" --
+// that would fire on a CORRECT README after a corpus retagging (T-007 is
+// live on the backlog and would change the band boundaries and possibly
+// the number of bands entirely), which is exactly the kind of false
+// rejection a maintainer resolves by deleting the guard. Instead this
+// checks a corpus-derived invariant that holds regardless of how many band
+// tables exist or where their boundaries fall: every corpus tag that
+// appears on 2 or more entries must be a row in the UNION of whatever band
+// tables are actually present. Deleting one whole band table shrinks that
+// union and strands its tags with no table claiming them, which this test
+// names individually.
+// ---------------------------------------------------------------------------
+
+test('every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)', () => {
+  const readmePath = path.join(__dirname, '..', 'README.md');
+  const readmeContent = fs.readFileSync(readmePath, 'utf8');
+  const tagVocabSection = getTagVocabSection(readmeContent);
+  const tagsInCorpus = countTagsInCorpus();
+
+  const bands = extractBandTablesFromReadme(tagVocabSection);
+
+  // Union of every row actually present across ALL band tables found in the
+  // section -- not scoped to any single band, so a tag is credited as
+  // "covered" regardless of which table (if any) it currently lives in.
+  const actualTagsUnion = new Set();
+  for (const band of bands) {
+    for (const tag of Object.keys(band.rows)) {
+      actualTagsUnion.add(tag);
+    }
+  }
+
+  // Expected set derived purely from the corpus: every tag with 2 or more
+  // entries is supposed to be claimed by SOME band table somewhere in the
+  // section. "2" is not a band boundary borrowed from today's README -- it
+  // is the corpus-wide split between "appears more than once" and
+  // "appears exactly once" that the section's own opening sentence and the
+  // single-entry-tag tests elsewhere in this file already establish.
+  const expectedMultiEntryTags = Object.keys(tagsInCorpus)
+    .filter(tag => tagsInCorpus[tag] >= 2)
+    .sort();
+
+  for (const tag of expectedMultiEntryTags) {
+    assert(
+      actualTagsUnion.has(tag),
+      'Tag `' + tag + '` (corpus count ' + tagsInCorpus[tag] + ') appears on 2+ entries in the corpus but has ' +
+        'no row in ANY band table in the Tag vocabulary section -- an entire band table may have been deleted'
+    );
+  }
+});
+
+// ---------------------------------------------------------------------------
 // Guard the remaining corpus-derived cardinalities in the Tag vocabulary
 // section that the tests above do not touch:
 //
