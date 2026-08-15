@@ -50,6 +50,44 @@ fails to parse is still a usage error (exit 2), even with `--list`. When combine
 `--json`, `--list` emits one JSON object per line (newline-delimited JSON / NDJSON) for each
 entry in the filtered set, in corpus order.
 
+## Tag vocabulary
+
+The corpus contains 37 distinct tags. They are not evenly distributed: 16 tags appear on 2 or more entries; the remaining 21 appear on exactly one entry.
+
+4 tags have a robust pool (5+ entries):
+| Tag | Count |
+|---|---|
+| `design` | 13 |
+| `simplicity` | 10 |
+| `humor` | 9 |
+| `debugging` | 5 |
+
+12 tags appear 2–4 times:
+| Tag | Count |
+|---|---|
+| `performance` | 4 |
+| `language` | 3 |
+| `readability` | 3 |
+| `abstraction` | 2 |
+| `complexity` | 2 |
+| `culture` | 2 |
+| `data` | 2 |
+| `errors` | 2 |
+| `management` | 2 |
+| `philosophy` | 2 |
+| `process` | 2 |
+| `testing` | 2 |
+
+The remaining 21 tags appear exactly once: `algorithms`, `architecture`, `caching`, `dependencies`, `elegance`, `focus`, `habits`, `history`, `humility`, `innovation`, `interoperability`, `naming`, `opensource`, `optimization`, `organization`, `pragmatism`, `psychology`, `reliability`, `robustness`, `style`, `yagni`.
+
+Single-entry tags are real — they match real aphorisms in the corpus — but `--tag` on one of them returns the same line every time.
+
+To find available tags at the command line, run:
+
+```sh
+node bin/aphorism.js --list --json | jq -r ".tags[]" | sort | uniq -c | sort -rn
+```
+
 ## Exit codes
 
 | Code | Meaning |
