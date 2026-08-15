@@ -1,0 +1,40 @@
+{
+  "cycle": 3,
+  "timestamp": 1786794592,
+  "work_type": "build-wave",
+  "dispatch_mechanism": "direct Agent call",
+  "dispatch_note": "Workflow tool is review-gated in a headless -p session, so build-wave.js was NOT invoked; the documented failure-table fallback (direct Agent call, strictly disjoint file scope, no worktree) was used. Wave size 1, so disjointness is trivially satisfied.",
+  "gear": 1,
+  "k_effective": 1,
+  "k_derivation": "min(k_current=3, gear cap=1, hard max 5) = 1",
+  "craft_pack": {
+    "invoked": true,
+    "degraded": [],
+    "passed_to_agent": false,
+    "why": "item I-1 is not craft:\"ui\" — its files_hint is src/select.js + test/select.test.js, no UI surface. aphorism-cli has no browser surface at all, so craft.ui is inert for this target. Pack ran clean (degraded: []) and is recorded here rather than silently skipped."
+  },
+  "items": [
+    {
+      "id": "I-1",
+      "title": "Close the --seed non-finite determinism hole in pick()",
+      "model": "sonnet",
+      "model_derivation": "routing table -> sonnet for an S-effort fix; gear 1 demote:true does not apply (build/fix never drops below sonnet); NOT promoted to fable despite routing_recs core-logic->fable because allocator posture is trickle with allow_premium_pct 0 and promote_blocked true",
+      "attempts_before": 0,
+      "files_touched": ["src/select.js", "test/select.test.js"],
+      "claim": "guard in pick() widened from Number.isFinite(seed) to !Number.isNaN(seed); JSDoc updated; 4 tests added to test/select.test.js; agent reports 16/16 pass in that file and claims it stashed src/select.js to confirm the new -Infinity test fails pre-fix",
+      "claim_status": "CLAIM ONLY — the agent's self-report was not accepted as evidence",
+      "conductor_verdict": "PASS",
+      "conductor_evidence_file": ".swarm/runs/cycle-003-verify-I-1.txt"
+    }
+  ],
+  "merges": {
+    "count": 0,
+    "reverts": 0,
+    "note": "no branches: the direct-Agent fallback leaves changes in the working tree and the conductor is the sole committer, so there is no merge step to run test_cmd after. test_cmd was run by the conductor against the working tree instead."
+  },
+  "post_merge_checks": {
+    "collision_scan": "not applicable — no classic browser scripts in this target",
+    "qa_look_pass": "not applicable — no user-visible browser files merged"
+  },
+  "outcome": "1 item verified, 52 tests green (was 48), KI-4 resolved"
+}

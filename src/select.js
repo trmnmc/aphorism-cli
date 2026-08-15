@@ -59,10 +59,13 @@ function toUint32Seed(seed) {
 }
 
 /**
- * Pick one element from candidates. When seed is a number, the pick is
- * deterministic: the same seed over the same candidates array always
- * returns the same element. When seed is undefined/null, pick uniformly
- * at random. Throws RangeError if candidates is empty.
+ * Pick one element from candidates. When seed is a number (including
+ * +Infinity/-Infinity), the pick is deterministic: the same seed over the
+ * same candidates array always returns the same element. toUint32Seed
+ * folds the seed's IEEE-754 bit pattern down to 32 bits, which is
+ * well-defined even for non-finite values, so only NaN and
+ * undefined/null seeds fall back to picking uniformly at random. Throws
+ * RangeError if candidates is empty.
  *
  * @param {Array<object>} candidates
  * @param {number} [seed]
@@ -74,7 +77,7 @@ function pick(candidates, seed) {
   }
 
   let index;
-  if (typeof seed === 'number' && Number.isFinite(seed)) {
+  if (typeof seed === 'number' && !Number.isNaN(seed)) {
     const rng = mulberry32(toUint32Seed(seed));
     index = Math.floor(rng() * candidates.length);
     if (index >= candidates.length) index = candidates.length - 1;

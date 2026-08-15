@@ -123,6 +123,37 @@ test('pick: throws RangeError on empty candidates array', () => {
   assert.throws(() => pick([]), RangeError);
 });
 
+test('pick: Infinity seed is deterministic and returns a valid member', () => {
+  const many = corpus.concat(corpus).concat(corpus); // >= 20 elements, well over
+  const first = pick(many, Infinity);
+  assert.ok(many.includes(first));
+  for (let i = 0; i < 20; i++) {
+    assert.deepStrictEqual(pick(many, Infinity), first);
+  }
+});
+
+test('pick: -Infinity seed is deterministic and returns a valid member', () => {
+  const many = corpus.concat(corpus).concat(corpus);
+  const first = pick(many, -Infinity);
+  assert.ok(many.includes(first));
+  for (let i = 0; i < 20; i++) {
+    assert.deepStrictEqual(pick(many, -Infinity), first);
+  }
+});
+
+test('pick: NaN seed still uses the random branch and returns a valid member', () => {
+  const result = pick(corpus, NaN);
+  assert.ok(corpus.includes(result));
+});
+
+test('pick: finite seed determinism is unchanged by the non-finite-seed fix', () => {
+  const many = corpus.concat(corpus).concat(corpus);
+  const expected = pick(many, 12345);
+  for (let i = 0; i < 20; i++) {
+    assert.deepStrictEqual(pick(many, 12345), expected);
+  }
+});
+
 test('pick: single-element candidates always returns that element regardless of seed', () => {
   const single = [corpus[0]];
   assert.deepStrictEqual(pick(single, 1), corpus[0]);

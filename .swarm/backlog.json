@@ -9,7 +9,11 @@
       "effort": "M",
       "status": "done",
       "deps": [],
-      "files_hint": ["src/corpus.js", "src/select.js", "test/select.test.js"],
+      "files_hint": [
+        "src/corpus.js",
+        "src/select.js",
+        "test/select.test.js"
+      ],
       "acceptance": "corpus holds >= 40 entries with text/author/tags; filter and pick behave per Domain rules",
       "packages": [],
       "model": "sonnet",
@@ -25,7 +29,10 @@
       "effort": "M",
       "status": "done",
       "deps": [],
-      "files_hint": ["src/args.js", "test/args.test.js"],
+      "files_hint": [
+        "src/args.js",
+        "test/args.test.js"
+      ],
       "acceptance": "every flag parses; malformed usage is reported via an error field, never a throw",
       "packages": [],
       "model": "sonnet",
@@ -40,8 +47,14 @@
       "value": "H",
       "effort": "S",
       "status": "done",
-      "deps": ["T-001", "T-002"],
-      "files_hint": ["bin/aphorism.js", "test/cli.test.js"],
+      "deps": [
+        "T-001",
+        "T-002"
+      ],
+      "files_hint": [
+        "bin/aphorism.js",
+        "test/cli.test.js"
+      ],
       "acceptance": "node bin/aphorism.js prints one attributed aphorism to stdout, exit 0",
       "packages": [],
       "model": "sonnet",
@@ -56,8 +69,12 @@
       "value": "M",
       "effort": "S",
       "status": "done",
-      "deps": ["T-003"],
-      "files_hint": ["README.md"],
+      "deps": [
+        "T-003"
+      ],
+      "files_hint": [
+        "README.md"
+      ],
       "acceptance": "README documents zero-install usage and every one of the six flags",
       "packages": [],
       "model": "haiku",
@@ -73,7 +90,10 @@
       "effort": "M",
       "status": "todo",
       "deps": [],
-      "files_hint": ["src/rotation.js", "test/rotation.test.js"],
+      "files_hint": [
+        "src/rotation.js",
+        "test/rotation.test.js"
+      ],
       "acceptance": "consecutive runs never repeat an aphorism until the corpus is spent",
       "packages": [],
       "model": "sonnet",
@@ -89,7 +109,9 @@
       "effort": "M",
       "status": "blocked",
       "deps": [],
-      "files_hint": ["src/corpus.js"],
+      "files_hint": [
+        "src/corpus.js"
+      ],
       "acceptance": "every corpus entry's attribution is confirmed against a primary source",
       "packages": [],
       "model": "sonnet",
@@ -103,14 +125,17 @@
       "priority": 1,
       "value": "H",
       "effort": "S",
-      "status": "todo",
+      "status": "done",
       "deps": [],
-      "files_hint": ["src/select.js", "test/select.test.js"],
+      "files_hint": [
+        "src/select.js",
+        "test/select.test.js"
+      ],
       "acceptance": "--seed Infinity and --seed -Infinity each return the identical aphorism on every run at exit 0, with the same filters applied",
       "packages": [],
       "model": "sonnet",
       "attempts": 0,
-      "notes": "CONDUCTOR-CONFIRMED defect (kickoff probe: 6 distinct aphorisms in 6 runs, exit 0). Resolution chosen: DETERMINISTIC PICK, not exit 2. Reasoning, judged against the SPEC's own rules: args.js already accepts Infinity as numeric (Number('Infinity') is not NaN) and the Domain rule promises determinism for --seed with no finiteness carve-out, so rejecting it would mean inventing a NEW undocumented validation rule rather than fixing the actual defect — which is that select.js gates its deterministic branch on Number.isFinite while toUint32Seed's IEEE-754 bit-fold already handles +/-Infinity deterministically. NaN stays exit 2 (parseSeedValue already rejects it) and that is correct and unchanged. Doc statement of this resolution belongs to I-3, which is why this item's files_hint is code+test only. NOT flagged route_class core despite playbook L-026: the allocator posture is trickle with allow_premium_pct 0 and opus at 96%, and gear 1's rule is S-effort sonnet builds — deliberately routing a 3-line fix to fable would spend premium the allocator has explicitly zeroed."
+      "notes": "CONDUCTOR-CONFIRMED defect (kickoff probe: 6 distinct aphorisms in 6 runs, exit 0). Resolution chosen: DETERMINISTIC PICK, not exit 2. Reasoning, judged against the SPEC's own rules: args.js already accepts Infinity as numeric (Number('Infinity') is not NaN) and the Domain rule promises determinism for --seed with no finiteness carve-out, so rejecting it would mean inventing a NEW undocumented validation rule rather than fixing the actual defect — which is that select.js gates its deterministic branch on Number.isFinite while toUint32Seed's IEEE-754 bit-fold already handles +/-Infinity deterministically. NaN stays exit 2 (parseSeedValue already rejects it) and that is correct and unchanged. Doc statement of this resolution belongs to I-3, which is why this item's files_hint is code+test only. NOT flagged route_class core despite playbook L-026: the allocator posture is trickle with allow_premium_pct 0 and opus at 96%, and gear 1's rule is S-effort sonnet builds — deliberately routing a 3-line fix to fable would spend premium the allocator has explicitly zeroed. || VERIFIED cycle 3 by the conductor with checks authored at verification time (the builder never saw them): full test_cmd 52/52 green, end-to-end CLI stability 1-distinct-of-8 for +Inf, -Inf, and +Inf under a --tag filter, and a discriminator that independently re-derived the expected corpus index for each seed (a degenerate index-pin would have passed the stability check alone). NaN contract and the unseeded random branch both confirmed unchanged. Evidence: .swarm/runs/cycle-003-verify-I-1.txt"
     },
     {
       "id": "I-2a",
@@ -136,8 +161,12 @@
       "value": "M",
       "effort": "S",
       "status": "todo",
-      "deps": ["I-2a"],
-      "files_hint": ["test/cli.test.js"],
+      "deps": [
+        "I-2a"
+      ],
+      "files_hint": [
+        "test/cli.test.js"
+      ],
       "acceptance": "each behavior the conductor classified HOLE is covered by a test that fails against its specific mutation, and whose removal lets that same mutation survive",
       "packages": [],
       "model": "sonnet",
@@ -152,8 +181,13 @@
       "value": "M",
       "effort": "S",
       "status": "todo",
-      "deps": ["I-2a", "I-2b"],
-      "files_hint": ["test/args.test.js"],
+      "deps": [
+        "I-2a",
+        "I-2b"
+      ],
+      "files_hint": [
+        "test/args.test.js"
+      ],
       "acceptance": "each remaining conductor-classified HOLE survivor in the parser or selection layer is covered by a test that fails against its specific mutation and whose removal lets that mutation survive",
       "packages": [],
       "model": "sonnet",
@@ -168,8 +202,13 @@
       "value": "M",
       "effort": "S",
       "status": "todo",
-      "deps": ["I-1"],
-      "files_hint": [".swarm/SPEC.md", "README.md"],
+      "deps": [
+        "I-1"
+      ],
+      "files_hint": [
+        ".swarm/SPEC.md",
+        "README.md"
+      ],
       "acceptance": "SPEC.md Domain rules and README.md state in matching wording: how --author matches, what --list does with --seed, what --list --json emits, and how a non-finite --seed behaves; and SPEC.md's OPEN AMBIGUITIES comment is gone rather than left open",
       "packages": [],
       "model": "haiku",
@@ -185,7 +224,9 @@
       "effort": "M",
       "status": "todo",
       "deps": [],
-      "files_hint": ["docs/corpus-attribution-triage.md"],
+      "files_hint": [
+        "docs/corpus-attribution-triage.md"
+      ],
       "acceptance": "a written risk-ranked list names the corpus entries most likely to carry a wrong or unverifiable attribution with a stated reason each, and no file in the repo describes the corpus as audited, verified, or fact-checked",
       "packages": [],
       "model": "sonnet",
@@ -216,8 +257,18 @@
       "value": "H",
       "effort": "S",
       "status": "todo",
-      "deps": ["I-1", "I-2a", "I-2b", "I-2c", "I-3", "I-4", "I-5"],
-      "files_hint": ["REPORT.md"],
+      "deps": [
+        "I-1",
+        "I-2a",
+        "I-2b",
+        "I-2c",
+        "I-3",
+        "I-4",
+        "I-5"
+      ],
+      "files_hint": [
+        "REPORT.md"
+      ],
       "acceptance": "REPORT.md states the actual verified outcome of every I-item, and every item that was not conductor-verified is labeled unverified rather than claimed done",
       "packages": [],
       "model": "conductor",
