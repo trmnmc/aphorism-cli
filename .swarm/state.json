@@ -180,6 +180,6 @@
   "n": 13,
   "work": "QA-full pass (step-4 gate 4) \u2014 spec-only fable scenario author -> sonnet executor, dispatched as direct Agent calls because Workflow is review-gated headless. Live-look stage not applicable to a CLI and reported as not-run.",
   "outcome": "0 spec divergences across 6 scenarios; conductor harness 27/27 incl. 4 negative controls, sweeping all 37 tags, 37 tag prefixes and 40 author x tag pairs; suite 59/59. Gate-4 QA half now satisfied and evidenced.",
-  "commit": "PENDING"
+  "commit": "327fe3c"
  }
 }
