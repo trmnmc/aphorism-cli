@@ -308,6 +308,6 @@
     "n": 25,
     "work": "test triage (one item, k_cap 1 at gear 1) -- T-022, letting the band-heading count parser tolerate a descriptive lead-in before the \"N tags\" count. Fourth of the prose-anchor family, and the first whose gate found a fifth.",
     "outcome": "VERIFIED done. 34/35 conductor gate checks. Pre-dispatch baseline re-measured the defect at the current 73-test suite (both shipped headings falsely rejected, reason PARSE-FAILURE) rather than inheriting cycle 24's single R3.GREEN reading. Suite stays 73 -- an existing guard was repaired, not a test added -- so attribution ran against git HEAD's test file instead of by filtering: every green reading is paired with the identical mutation rejected at 73/72/1 on pre-fix HEAD. The RED half was UPGRADED: a wrong count under a reworded heading previously died on the parse before any comparison, and now fails on COUNT-MISMATCH. Two discriminators no hardcoded fix could pass (R1 corpus promotion with a reworded consistent README; R2 three-band reworded layout with a wrong middle band). test_cmd on the real tree, run by the conductor: 73/73/0. One check failed and is kept as a failure: S4.SCRATCH, an empty .swarm/scratch left behind (KI-7, second consecutive cycle). Residual T-023 filed from the gate's own probe.",
-    "commit": null
+    "commit": "b5b48a4"
   }
 }
