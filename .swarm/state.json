@@ -104,6 +104,6 @@
     "n": 4,
     "work": "I-2a mutation sweep (direct Agent, sonnet, k=1) + conductor re-measurement and classification",
     "outcome": "1 verified; 27 mutants, 7 survivors, 11/11 independent re-measurements agree; 5 HOLE / 1 BOUNDARY / 1 deferred to I-3",
-    "commit": "PENDING"
+    "commit": "e1ca260"
   }
 }
