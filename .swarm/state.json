@@ -147,6 +147,6 @@
     "n": 9,
     "work": "I-8 -- hardened --list --json against mutant M16 (direct Agent, sonnet, k=1, file scope test/cli.test.js only) + conductor mutation/attribution harness",
     "outcome": "1 verified; 24/24 harness checks green including 3 discriminators and a MUTATION-APPLIED control on every scratch copy; suite 58 -> 59 green; product tree byte-identical to HEAD; I-2 hardening thread complete",
-    "commit": "PENDING"
+    "commit": "1080e49"
   }
 }
