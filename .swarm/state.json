@@ -169,6 +169,6 @@
     "n": 11,
     "work": "I-4a — repo-wide overclaim sweep and repair (conductor-executed, k=1, gear 1, prose-only edits to src/corpus.js and README.md); closes the I-4 umbrella",
     "outcome": "2 items verified (I-4a + I-4 umbrella); 19/19 harness checks incl. 3 negative controls; repo-wide sweep 0 overclaims across 9 product files with a detector proven live by 3 negative controls; corpus data deep-equal to HEAD; suite 59/59 green",
-    "commit": "pending"
+    "commit": "320486e"
   }
 }
