@@ -195,6 +195,6 @@
   "n": 14,
   "work": "TASTE pass (step-4 gate 4, the last outstanding one) — ONE fable taste agent via the qa-verify.js Workflow, mode taste. 9 minutes of use, 32 core-loop pulls, 15 flows.",
   "outcome": "verdict wears-thin, 4 boredom findings (2 notable, 2 minor), all 4 fact-checked by the conductor: 3 confirmed outright, 1 confirmed on corrected numbers (agent said 23 singleton tags, actual 21). 17/17 harness checks incl. 3 negative controls; suite 59/59; product tree untouched. 4 backlog items filed (T-007..T-010), 2 of them in-scope S-effort docs work.",
-  "commit": "pending"
+  "commit": "93491f7"
  }
 }
