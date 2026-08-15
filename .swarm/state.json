@@ -137,6 +137,6 @@
     "n": 8,
     "work": "I-7 — HELP text in src/args.js aligned with the I-3 Domain rules (direct Agent, haiku, k=1, file scope src/args.js only) + conductor scope-and-execution harness",
     "outcome": "1 verified; 35/35 harness checks green with three discriminators; suite 58/58; parser bytes proven identical to HEAD; --json line widened to cover NDJSON, recorded as a decision",
-    "commit": "pending"
+    "commit": "34f4d17"
   }
 }
