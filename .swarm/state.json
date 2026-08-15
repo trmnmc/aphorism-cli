@@ -163,6 +163,6 @@
     "n": 10,
     "work": "I-4b — risk-ranked corpus attribution triage (direct Agent, sonnet, k=1, file scope docs/corpus-attribution-triage.md only) gated against a pre-dispatch sealed ranking",
     "outcome": "1 verified; 16/16 harness checks green including 2 negative controls; 50/50 entries covered and double-keyed to the corpus; conductor addendum records 4 disagreements; suite 59/59 green, product tree byte-identical to HEAD",
-    "commit": "PENDING"
+    "commit": "73b1687"
   }
 }
