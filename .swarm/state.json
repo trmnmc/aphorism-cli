@@ -3,7 +3,7 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
   "phase": "POLISH",
-  "cycle": 28,
+  "cycle": 29,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -277,6 +277,21 @@
       "cycle": 28,
       "what": "A harness imprecision is recorded rather than back-edited: the gate's `reason` classifier is only meaningful on a RED run.",
       "why": "The SEPARATOR-MISMATCH branch keys on text including '--list output', which also appears in the passing test's NAME, so every GREEN run reports reason=SEPARATOR-MISMATCH spuriously (visible in probe cells P2, P3, P5). It affected no verdict: every gate check that asserted on `reason` also asserted a red signature (C1, A1b, A2, A2b, L1, L2, B2, B3), and P3's verdict rests on its 73/73/0 signature, not on its reason field. Recorded because cycle 19's harness bug -- a parse failure silently manufacturing a verdict -- is the precedent for treating instrument defects as findings in their own right, and because a later reader scanning the probe output would otherwise see 'SEPARATOR-MISMATCH' next to a green run and mistrust the whole file. Fourth cycle in this run where the instrument needed comment (cf. c19 reporter parse, c23 TAP attribution, c24 mutation helper)."
+    },
+    {
+      "cycle": 29,
+      "what": "T-025 was classified HOLE and hardened, REFUTING the BOUNDARY premise it was filed with. The deciding evidence is a probe of the item's own central factual claim, which no acceptance clause asked for.",
+      "why": "The item was filed at cycle 27 asserting that widening the scan 'trades a loud false rejection for a possible silent mis-parse'. That is a factual claim about what a widened scan does, and it had never been run -- it was inherited reasoning from T-018's constraint set. Cycle 28 is the precedent that makes this the load-bearing step: there a fix passed 22/22 and was rejected only because a probe went looking for the silent case, so the same standard has to cut BOTH ways -- a probe that can reject a passing item must also be allowed to rescue a mis-filed one. 18 cells (6 README variants x 3 scan variants, PRISTINE control 73/73/0) found no silent hole under either widening, and the widened scans were LOUDER on every wrong README (73/72/1 -> 73/71/2). Had I taken the filed classification on trust, the honest-looking outcome would have been a BOUNDARY comment restating an argument the measurement contradicts -- a documented non-fix that reads as diligence."
+    },
+    {
+      "cycle": 29,
+      "what": "The conductor sealed its own classification AND its own preferred fix shape to disk before dispatch (.swarm/runs/cycle-029-precommit.md); the builder independently reached both. A labelling error in the conductor's harness is recorded rather than back-edited.",
+      "why": "Cycle 10 established that a judgment deliverable cannot be gated by reading it and agreeing -- that is exactly what a confabulated document also survives. The pre-commitment converts agreement into a measurement: the builder could not see the file, so its arrival at HOLE *and* at the moderate stop-at-band-token shape (rather than the maximal widening) is evidence about the conclusion rather than about the prose. The seal also named in advance what would make BOUNDARY acceptable -- a measured one -- so the pre-commitment could not function as a rubber stamp for the answer I preferred. Recorded honestly: the seal names an error in my own probe, where R4 was labelled `wrong: true` when every number in it is true. It could not have corrupted the verdict (a silent hole requires conservative RED and R4 is conservative GREEN) but the label is wrong in the source and stands uncorrected there, per the cycle-21/24/27 precedent on failed or imprecise controls."
+    },
+    {
+      "cycle": 29,
+      "what": "The gate's 20/20 was NOT treated as sufficient: probe N1 was run afterwards against the one wrong-README shape every gate variant shared a blind spot for -- an ORPHAN table whose preceding heading carries no band token.",
+      "why": "Every wrong-README variant in the gate had a band-token heading, so the shipped stop rule could always see the boundary it was being tested on. That is a gate measuring the cases it was designed around. The orphan shape is the one the stop rule structurally CANNOT see, so it is where a silent hole would live if one existed. Both orphan variants -- one with unrelated rows, one with plausible-but-incomplete 5+ rows chosen to look like a successful theft -- are caught LOUD at 74/72/2 against HEAD's 73/72/1. The reason is structural and was documented by the builder rather than leaned on silently: both consumer tests assert EXACT set equality between a band's corpus-derived expected tags and its table's actual rows, so a mis-attached table carries rows derived from a different heading's range and cannot coincide. Cycle 28's lesson stated generally: the decisive probe is the one the acceptance never asked for."
     }
   ],
   "known_issues": [
@@ -338,16 +353,16 @@
     "last_taste_cycle": 14
   },
   "counters": {
-    "consecutive_no_value": 1,
+    "consecutive_no_value": 0,
     "consecutive_failures": 0,
     "k_current": 5,
-    "wave_streak": 0,
+    "wave_streak": 1,
     "window_tokens_attributed": 0
   },
   "last_cycle": {
-    "n": 28,
-    "work": "T-021 -- let the `--list` behaviour section locator tolerate a heading whose backticks were dropped. ONE sonnet builder (k_cap 1), direct Agent call into the target tree, file scope test/readme-tags.test.js alone. Fix delivered as asked: scan every '### ' heading, strip backticks, take the FIRST whose text carries both the --list token and the word 'behaviour'.",
-    "outcome": "REJECTED AT THE GATE, work REVERTED, item back to todo at attempts 1. No verified value this cycle; counters.consecutive_no_value 0 -> 1. The fix passed 22/22 conductor gate checks (.swarm/runs/cycle-028-verify-T-021.txt) including both acceptance halves, the degenerate-fix discriminator and every loudness check -- and was still rejected on probe .swarm/runs/cycle-028-probe-B4.txt. Cell P3: FIRST-MATCH-WINS lets an earlier decoy '### ' heading carrying both tokens capture the section, so a README whose REAL format literal is FALSE passes at 73/73/0; cell P4 proves HEAD catches that same input at 73/72/1. A silent hole traded for a loud false rejection is backwards on this repo's standard, so the change was reverted rather than accepted with a follow-up. test_cmd on the reverted real tree, run by the conductor: 73/73/0. T-021's acceptance has been AMENDED by measurement (fail-for-the-right-reason; no first-match theft) so the next attempt cannot repeat this. Two findings carried: the baseline's masking discovery (attribution must be by assertion message, not test name) and a harness imprecision recorded rather than back-edited.",
-    "commit": "a93443f"
+    "n": 29,
+    "work": "T-025 -- decide the band heading separated from its table by prose: harden or document as BOUNDARY. Pre-dispatch conductor probe (18 cells) + sealed pre-commitment, then ONE sonnet builder (k_cap 1), direct Agent call into the target tree, file scope test/readme-tags.test.js alone.",
+    "outcome": "VERIFIED DONE, and the item's filed BOUNDARY premise was refuted by measurement. Classified HOLE; extractBandTablesFromReadme now tolerates ordinary prose between a heading and its table, stopping at any line carrying its own band token. Gate 20/20 (.swarm/runs/cycle-029-verify-T-025.txt): scope clean, one test added (73 -> 74), the false rejection removed (RED 73/72/1 at HEAD -> GREEN 74/74/0), still loud on a real defect (74/72/2), no wrong README traded RED->GREEN, no new false rejection on a correct README, and attribution proven both ways (new test fails alone at 74/73/1 against the old scan; without it the old scan is 73/73/0). Conductor probe N1 then closed the gate's own blind spot -- orphan tables under band-token-less headings -- both caught LOUD. T-026 filed from the builder's volunteered uncertainty. counters.consecutive_no_value 1 -> 0.",
+    "commit": "PENDING"
   }
 }

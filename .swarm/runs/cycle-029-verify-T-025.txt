@@ -1,0 +1,51 @@
+=== CONTROLS ===
+PASS  C1.PRISTINE     real tree must be 74/74/0 as claimed
+        74/74/0
+PASS  C2.REVERTIBLE   new scan block found verbatim (attribution is possible)
+
+=== SCOPE ===
+PASS  S1.README       README.md byte-identical to HEAD (item forbids touching it)
+PASS  S2.FILES        only test/readme-tags.test.js modified
+        test/readme-tags.test.js
+PASS  S3.SCRATCH      .swarm/scratch removed entirely (KI-7)
+PASS  S4.ONETEST      exactly one test added
+        14 -> 15
+
+=== ACCEPTANCE: the false rejection is gone ===
+PASS  A1.FIXED        T-025 layout (correct README) is GREEN
+        74/74/0
+PASS  A1b.WAS_BROKEN  same README is RED at HEAD (the defect was real)
+        73/72/1  every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+
+=== ACCEPTANCE: still LOUD on a real defect ===
+PASS  A2.LOUD         row deleted under the T-025 layout is RED
+        74/72/2  every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band | every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+
+=== DISCRIMINATOR: silent-hole hunt against the SHIPPED code ===
+PASS  D.R2_t025_row_deletedwrong README stays caught (HEAD 73/72/1 -> new 74/72/2)
+PASS  D.R3_table_removedwrong README stays caught (HEAD 73/72/1 -> new 74/73/1)
+PASS  D.R5_orphan_adoptswrong README stays caught (HEAD 73/70/3 -> new 74/72/2)
+PASS  D0.NO_SILENT    no wrong README was traded from RED to GREEN
+
+=== DISCRIMINATOR: no NEW false rejection on a CORRECT README ===
+PASS  F.R0_pristine   correct README green at HEAD must stay green (HEAD 73/73/0 -> new 74/74/0)
+PASS  F.R4_decoy_token_correctcorrect README green at HEAD must stay green (HEAD 73/73/0 -> new 74/74/0)
+
+=== BUILDER-VOLUNTEERED WEAKNESS (R6): direction of harm ===
+        R6 "Requires Node 18+ to run." between heading and table
+        HEAD 73/71/2   NEW 74/72/2
+        NEW fails: every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band | README band table headings must state the correct count of tags in their band
+PASS  W1.NOT_SILENT   R6 must NOT be a silent pass on a mis-parsed README (loud is acceptable, silent is not)
+
+=== ATTRIBUTION (L-029): the new test must earn its place ===
+PASS  T1.FAILABLE     new test FAILS against the old conservative scan
+        74/73/1
+PASS  T2.BY_NAME      and the failure is attributable to the T-025 test by name
+        extractBandTablesFromReadme tolerates a prose sentence between a band heading and its table (T-025), without mis-attaching a table when the real one is missing
+PASS  T3.ONLY         no OTHER test fails under the revert (the kill is isolated)
+        74/73/1
+PASS  T4.DENOMINATOR  without the new test, the old scan is GREEN (defect survives)
+        73/73/0
+
+=== SUMMARY ===
+20/20 checks passed

@@ -204,7 +204,15 @@ function getTagVocabSection(readmeContent) {
   return readmeContent.substring(tagVocabStart, tagVocabEnd);
 }
 
-// Helper: find every "heading line immediately followed by a `| Tag | Count |`
+// Helper: does `line` itself carry a parseable band token (an "N+" or
+// "N<dash>M" shape)? Used below to tell an ordinary prose sentence apart
+// from what is plausibly ANOTHER band heading, so the heading-to-table scan
+// knows where it must stop rather than reading through it.
+function lineHasBandToken(line) {
+  return /(\d+)\s*\+/.test(line) || /(\d+)\s*[-‐‑‒–—―]\s*(\d+)/.test(line);
+}
+
+// Helper: find every "heading line eventually followed by a `| Tag | Count |`
 // table" in the given text, and for each one derive its band's [min, max]
 // bounds purely from digits/punctuation in that heading line -- never from
 // the words around them -- plus the set of {tag, count} rows actually
@@ -219,22 +227,56 @@ function getTagVocabSection(readmeContent) {
 function extractBandTablesFromReadme(sectionText) {
   const lines = sectionText.split('\n');
   const tableRowPattern = /\| `([a-z]+)` \| (\d+) \|/;
+  const headerRowPattern = /^\|\s*Tag\s*\|\s*Count\s*\|\s*$/;
   const bands = [];
 
   for (let i = 0; i < lines.length; i++) {
     const headingLine = lines[i];
 
-    // Allow any number of blank lines between the heading and its table's
-    // `| Tag | Count |` header row -- idiomatic markdown often puts one
-    // there. Skip forward over blank lines only; stop at the first
-    // non-blank line and require THAT one to be the header row. This means
-    // a heading with no table (blank lines followed by ordinary prose, or
-    // by another heading) never has a later, unrelated table grafted onto
-    // it -- the scan does not skip past non-blank content looking for a
-    // table further down.
-    let headerIdx = i + 1;
-    while (headerIdx < lines.length && lines[headerIdx].trim() === '') {
-      headerIdx++;
+    // Between the heading and its table's `| Tag | Count |` header row,
+    // tolerate any number of blank lines AND any number of ordinary prose
+    // lines (e.g. "See the table below.") -- idiomatic markdown may put a
+    // lead-in sentence there (T-025). What the scan will NOT read through is
+    // a line that itself looks like another band heading (carries its own
+    // "N+" / "N-M" token, per lineHasBandToken): that is the one shape a
+    // real heading-to-table gap is never expected to contain, and it is
+    // also the shape of the exact hazard this scan must not walk past --
+    // one heading's search reaching down into a DIFFERENT heading's table.
+    // Hitting such a line aborts the search for THIS heading outright (no
+    // table found), rather than reading past it looking for one further
+    // down. This bounds the "widening" to prose only: a heading with no
+    // table of its own (prose, then another real band heading, then that
+    // other heading's table) still never has a foreign table grafted onto
+    // it here.
+    //
+    // This is deliberately not the only thing standing between a widened
+    // scan and a mis-attached table: even if the search below did latch
+    // onto the wrong table, the two callers of this function (the
+    // "contains exactly the corpus tags" test and the T-019 wholesale-
+    // deletion test) independently recompute each band's expected tag SET
+    // from the corpus using this band's own [min, max] and assert it is
+    // EXACTLY (not just approximately) the table's actual row set. A
+    // mis-attached table's rows are corpus-derived from a *different*
+    // heading's range, so they are exceedingly unlikely to exactly equal
+    // this heading's own expected set -- a coincidence, not a design this
+    // scan relies on, but a second line of defence measured to hold in
+    // every mis-attachment shape tried while sizing this change (see the
+    // T-025 test below).
+    let headerIdx = -1;
+    for (let idx = i + 1; idx < lines.length; idx++) {
+      const trimmed = lines[idx].trim();
+      if (trimmed === '') continue;
+      if (headerRowPattern.test(trimmed)) {
+        headerIdx = idx;
+        break;
+      }
+      if (lineHasBandToken(lines[idx])) {
+        break; // looks like another band heading -- stop, no table for this one
+      }
+      // else: ordinary prose line, keep scanning forward
+    }
+    if (headerIdx === -1) {
+      continue;
     }
     const headerRowLine = lines[headerIdx];
     // The separator row must immediately follow the header row -- that is
@@ -243,7 +285,7 @@ function extractBandTablesFromReadme(sectionText) {
     // being relaxed here, not header-to-separator.
     const separatorRowLine = lines[headerIdx + 1];
 
-    if (!headerRowLine || !/^\|\s*Tag\s*\|\s*Count\s*\|\s*$/.test(headerRowLine.trim())) {
+    if (!headerRowLine || !headerRowPattern.test(headerRowLine.trim())) {
       continue;
     }
     if (!separatorRowLine || !/^\|[-\s|]+\|$/.test(separatorRowLine.trim())) {
@@ -292,6 +334,97 @@ function extractBandTablesFromReadme(sectionText) {
 
   return bands;
 }
+
+// ---------------------------------------------------------------------------
+// Guard the heading-to-table scan itself against the T-025 layout: a band
+// heading separated from its `| Tag | Count |` table by an ordinary prose
+// sentence (e.g. "See the table below."), rather than by blank lines only.
+//
+// This exercises extractBandTablesFromReadme directly, on hand-built section
+// text, rather than through the real README -- the point is to pin down the
+// extractor's own behaviour at this specific layout shape, independent of
+// whatever the README happens to say today.
+// ---------------------------------------------------------------------------
+
+test('extractBandTablesFromReadme tolerates a prose sentence between a band heading and its table (T-025), without mis-attaching a table when the real one is missing', () => {
+  // T-025's exact layout: heading / blank / ordinary sentence / blank / the
+  // real `| Tag | Count |` table. Every number here is correct (matches the
+  // real corpus), so this must be found as a normal, complete band.
+  const correctLayout = [
+    '4 tags have a robust pool (5+ entries):',
+    '',
+    'See the table below.',
+    '',
+    '| Tag | Count |',
+    '|---|---|',
+    '| `design` | 13 |',
+    '| `simplicity` | 10 |',
+    '| `humor` | 9 |',
+    '| `debugging` | 5 |',
+  ].join('\n');
+
+  const bandsCorrect = extractBandTablesFromReadme(correctLayout);
+  assert.equal(
+    bandsCorrect.length,
+    1,
+    'a band heading separated from its table by an ordinary sentence must still be recognised as having that table'
+  );
+  assert.deepEqual(
+    Object.keys(bandsCorrect[0].rows).sort(),
+    ['debugging', 'design', 'humor', 'simplicity'],
+    'the table found for the T-025 layout must be the heading\'s own table, with all of its rows'
+  );
+
+  // Same layout, but with a row (`debugging`) deleted from the table. The
+  // extractor must still see the table (so the caller tests can compare its
+  // rows against the corpus) -- and it must see the DEFECT, not silently
+  // backfill or hide the missing row.
+  const rowDeletedLayout = [
+    '4 tags have a robust pool (5+ entries):',
+    '',
+    'See the table below.',
+    '',
+    '| Tag | Count |',
+    '|---|---|',
+    '| `design` | 13 |',
+    '| `simplicity` | 10 |',
+    '| `humor` | 9 |',
+  ].join('\n');
+
+  const bandsRowDeleted = extractBandTablesFromReadme(rowDeletedLayout);
+  assert.equal(bandsRowDeleted.length, 1, 'the table must still be found even with a row missing from it');
+  assert(
+    !('debugging' in bandsRowDeleted[0].rows),
+    'a row deleted under the T-025 layout must be visibly absent from the extracted rows, not silently present'
+  );
+
+  // Mis-attachment probe: the heading's OWN table is missing entirely (only
+  // prose sits where it should be), and a DIFFERENT band's real heading and
+  // table follow. Tolerating prose between a heading and its table must not
+  // let the first heading reach past the second heading and steal ITS
+  // table -- that is exactly the "widen the scan" hazard T-025 was filed to
+  // measure.
+  const misattachLayout = [
+    '4 tags have a robust pool (5+ entries):',
+    '',
+    'The table for this band was removed by mistake.',
+    '',
+    '12 tags appear 2-4 times:',
+    '| Tag | Count |',
+    '|---|---|',
+    '| `performance` | 4 |',
+    '| `language` | 3 |',
+  ].join('\n');
+
+  const bandsMisattach = extractBandTablesFromReadme(misattachLayout);
+  assert.equal(
+    bandsMisattach.length,
+    1,
+    'a heading whose own table is missing must not mis-attach a different band\'s table -- only the ' +
+      'second heading\'s genuine band should be found'
+  );
+  assert.equal(bandsMisattach[0].min, 2, 'the one band found must be the second heading\'s own 2-4 band, not the first heading\'s 5+ band');
+});
 
 test('every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band', () => {
   const readmePath = path.join(__dirname, '..', 'README.md');

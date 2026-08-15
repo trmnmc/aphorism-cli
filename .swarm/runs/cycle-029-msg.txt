@@ -1,0 +1,53 @@
+cycle 29: T-025 — tolerate prose between a band heading and its table [1 verified]
+
+Classified HOLE, not the BOUNDARY it was filed as. The item asserted that widening
+the heading-to-table scan "trades a loud false rejection for a possible silent
+mis-parse" -- a factual claim inherited from T-018's constraint set that had never
+been run.
+
+Pre-dispatch probe cycle-029-probe-T025 (6 README variants x 3 scan variants, 18
+cells, PRISTINE control 73/73/0): no silent hole under either widening, and the
+widened scans are LOUDER on every wrong README (73/72/1 -> 73/71/2). The
+measurement also split a fix space the item treated as one design -- a MAXIMAL
+widening fixes T-025 but introduces a new false rejection on a correct README
+carrying a decoy band token (R4), while a MODERATE widening that stops at the next
+line carrying its own band token fixes it cleanly.
+
+Conductor sealed its classification and preferred shape before dispatch
+(cycle-029-precommit.md, cycle-10 method), naming in advance what would make a
+BOUNDARY answer acceptable so the seal could not act as a rubber stamp. The builder
+reached HOLE and the same moderate shape independently.
+
+Shipped: extractBandTablesFromReadme now tolerates blank lines AND ordinary prose
+between a heading and its table, aborting the search for that heading on a line
+carrying its own N+/N-M token. One test added (73 -> 74).
+
+Gate 20/20 (cycle-029-verify-T-025): false rejection removed (HEAD 73/72/1 -> new
+74/74/0), still loud on a real defect (74/72/2), no wrong README traded RED->GREEN,
+no new false rejection on a correct README, attribution proven both ways (new test
+fails alone at 74/73/1 against the old scan; without it the old scan is 73/73/0).
+
+20/20 was not treated as sufficient (cycle 28 precedent). Every wrong-README variant
+in the gate carried a band-token heading, so the stop rule could always see the
+boundary it was tested on. Probe cycle-029-probe-N1 closed that blind spot with
+ORPHAN tables under band-token-less headings: both caught LOUD at 74/72/2 vs HEAD's
+73/72/1. Mis-attachment is self-defeating because both consumer tests assert exact
+set equality against corpus-derived expectations.
+
+Also carried:
+- T-026 filed from the builder's volunteered uncertainty (coincidental band-shaped
+  token in prose still aborts the scan). NOT a regression -- red at HEAD too, which
+  tolerates no prose at all -- hence priority 4, and it belongs in T-024's re-shape.
+- Harness label error recorded rather than back-edited: the probe marks R4
+  wrong:true when every number in it is true. Could not affect the verdict (a silent
+  hole requires conservative RED; R4 is conservative GREEN).
+- opus_heat margin now 0.0020 and likely to cross below 1.2 soon; flagged in the
+  runfile so a future conductor does not misread it as a gear change (trickle +
+  guest clamp pin gear 1, and the week resets after stop_at).
+- Permission layer measurably stricter this session: compound commands, heredocs and
+  $? expansion refused. No work blocked; helpers written to disk instead.
+
+test_cmd on the real tree: tests 74 / pass 74 / fail 0.
+counters.consecutive_no_value 1 -> 0. wave_streak 0 -> 1.
+
+Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
