@@ -1,0 +1,52 @@
+=== I-8 verification — cycle 9 ===
+
+PASS  SCOPE: exactly one tracked file changed, and it is test/cli.test.js
+        git diff --name-only HEAD -> ["test/cli.test.js"]
+PASS  SCOPE: bin/aphorism.js byte-identical to HEAD
+        1456 B HEAD vs 1456 B worktree
+PASS  SCOPE: src/args.js byte-identical to HEAD
+        3246 B HEAD vs 3246 B worktree
+PASS  SCOPE: src/select.js byte-identical to HEAD
+        2982 B HEAD vs 2982 B worktree
+PASS  SCOPE: src/corpus.js byte-identical to HEAD
+        8342 B HEAD vs 8342 B worktree
+PASS  BASELINE: HEAD (pre-cycle) suite is 58 tests / 58 pass / 0 fail
+        tests 58 pass 58 fail 0 skipped 0
+PASS  CURRENT: working tree suite is 59 tests / 59 pass / 0 fail
+        tests 59 pass 59 fail 0 skipped 0
+PASS  CURRENT: suite grew by exactly 1 test over the pre-cycle baseline
+        58 -> 59
+PASS  DENOMINATOR: skip pattern removes exactly 1 test (59 -> 58), suite still green
+        tests 58 pass 58 fail 0 skipped 0 (pattern "emits newline-delimited JSON")
+PASS  MUTATION-APPLIED [M16 pretty-printed array]
+        bin/aphorism.js 1452 -> 1525 chars (JS string length, not bytes — the file has multi-byte em dashes)
+PASS  FAILABLE: M16 makes the suite fail
+        tests 59 pass 58 fail 1
+PASS  FAILABLE: the ONLY failing test is the one added this cycle
+        failing: ["--list --json emits newline-delimited JSON, one object per line, in corpus order"]
+PASS  MUTATION-APPLIED [M16 for attribution]
+        bin/aphorism.js 1452 -> 1525 chars (JS string length, not bytes — the file has multi-byte em dashes)
+PASS  ATTRIBUTABLE (strict): M16 + new test filtered -> 58 tests / 58 pass / 0 fail
+        tests 58 pass 58 fail 0 — pre-cycle baseline was 58/58/0
+PASS  MUTATION-APPLIED [control: em dash -> double hyphen]
+        bin/aphorism.js 1452 -> 1453 chars (JS string length, not bytes — the file has multi-byte em dashes)
+PASS  SKIP-SANITY: an unrelated mutation still fails under the same skip pattern
+        tests 58 pass 57 fail 1; failing: ["--list preserves corpus order (first and last line match)"]
+PASS  MUTATION-APPLIED [COMPACT single-line JSON array]
+        bin/aphorism.js 1452 -> 1516 chars (JS string length, not bytes — the file has multi-byte em dashes)
+PASS  DISCRIMINATOR: new test also kills COMPACT single-line JSON array
+        fail 1; failing: ["--list --json emits newline-delimited JSON, one object per line, in corpus order"]
+PASS  MUTATION-APPLIED [REVERSED NDJSON order]
+        bin/aphorism.js 1452 -> 1484 chars (JS string length, not bytes — the file has multi-byte em dashes)
+PASS  DISCRIMINATOR: new test also kills REVERSED NDJSON order
+        fail 2; failing: ["--list preserves corpus order (first and last line match)","--list --json emits newline-delimited JSON, one object per line, in corpus order"]
+PASS  MUTATION-APPLIED [TRUNCATED NDJSON (last entry dropped)]
+        bin/aphorism.js 1452 -> 1472 chars (JS string length, not bytes — the file has multi-byte em dashes)
+PASS  DISCRIMINATOR: new test also kills TRUNCATED NDJSON (last entry dropped)
+        fail 3; failing: ["--list prints exactly one line per matching entry, no drops","--list preserves corpus order (first and last line match)","--list --json emits newline-delimited JSON, one object per line, in corpus order"]
+PASS  END-TO-END: shipped binary emits one standalone JSON object per line, in corpus order
+        exit 0, 13 lines, 13 design entries; every line a standalone object, first/last match corpus order
+PASS  TEARDOWN: scratch copies removed
+        /tmp/aph-verify-9-JSwUbv
+
+=== 24 pass / 0 fail ===

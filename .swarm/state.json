@@ -3,7 +3,7 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
   "phase": "BUILD",
-  "cycle": 8,
+  "cycle": 9,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -87,6 +87,16 @@
       "cycle": 8,
       "what": "A prose-only edit to a PRODUCT file was gated by byte-comparing everything outside the edited literal against HEAD, not by reading the diff or trusting the green suite.",
       "why": "HELP lives in src/args.js alongside parseArgs. A prose edit that also nudged parser logic would be invisible in a green suite if the nudge landed in a corner the 58 tests do not reach — and cycle 4's mutation sweep proved such corners existed in this exact file (M21, M22 both survived the whole suite). Reading the diff would only confirm the agent changed what it was told to; it cannot prove nothing ELSE moved. Splitting the file at the template-literal boundary and byte-comparing the 216-byte prologue and 2631-byte epilogue turns 'zero behaviour change' from a claim into a measurement, and the literal's own 362 -> 397 byte change simultaneously proves the item was not a no-op. This is the cycle-7 docs-are-falsifiable rule extended: when docs live INSIDE a product file, the scope claim needs proving as much as the content claim."
+    },
+    {
+      "cycle": 9,
+      "what": "Wave autotune IS applied this cycle (wave_streak 0 -> 1) even though the item ran as a single direct Agent call rather than through the build-wave Workflow, reversing the reasoning cycle 8 used to skip it.",
+      "why": "Cycle 8 declined to autotune on the ground that a direct Agent call is not a build-wave. That reasoning was really about the ITEM KIND -- cycle 8's item was docs, which is not a build-wave item under any dispatch mechanism. This cycle's item is kind 'test', i.e. build-class code, dispatched through the documented headless substitute for build-wave (Workflow is review-gated in a -p session, so direct Agent calls with strictly disjoint file scopes are the sanctioned fallback). Keying autotune on the dispatch MECHANISM rather than the work type would mean a headless run can never learn its wave size, which is not what the rule is for. Recorded rather than taken silently because it is a visible departure from last cycle's stated reasoning. INERT either way this run: effective wave size = min(k_current 5, gear cap 1) = 1, and gear 1 is structurally fixed because week_resets_at (1786942799) falls after stop_at (1786879464). The streak is being carried for a future run on a healthier window."
+    },
+    {
+      "cycle": 9,
+      "what": "HARD RULE 5 DEVIATION BY A SUBAGENT, caught and cleaned: the builder created its mutation scratch copies under /opt/swarm/.scratch/ -- a SWARM path outside the runs/ and playbook/ write fence -- rather than under the system temp dir. It removed the copies itself; the conductor removed the leftover empty directory.",
+      "why": "Worth recording because the prompt did NOT hand the agent a SWARM path: it was given target paths only, exactly as hard rule 5 requires. The agent reached a SWARM path anyway, almost certainly because the session cwd IS /opt/swarm, so a relative scratch path lands inside the fence by default. That makes it a STRUCTURAL hole rather than a prompt defect -- the fence is enforced by what agents are told, and cwd silently supplies what they were not told. No harm here (the writes were scratch copies of the target, nothing under bin/, reference/, workflows/ or templates/ was touched, and the tree is clean), but the same reflex on a different task could write into SWARM tooling mid-run. Candidate lesson for the wrap-up distillation: builder prompts should name an explicit scratch location outside the repo, since 'do not write to SWARM' is not something the agent can honor if it does not know where it is standing. The conductor's own harness used os.tmpdir() and left nothing behind."
     }
   ],
   "known_issues": [
@@ -130,13 +140,13 @@
     "consecutive_no_value": 0,
     "consecutive_failures": 0,
     "k_current": 5,
-    "wave_streak": 0,
+    "wave_streak": 1,
     "window_tokens_attributed": 0
   },
   "last_cycle": {
-    "n": 8,
-    "work": "I-7 — HELP text in src/args.js aligned with the I-3 Domain rules (direct Agent, haiku, k=1, file scope src/args.js only) + conductor scope-and-execution harness",
-    "outcome": "1 verified; 35/35 harness checks green with three discriminators; suite 58/58; parser bytes proven identical to HEAD; --json line widened to cover NDJSON, recorded as a decision",
-    "commit": "34f4d17"
+    "n": 9,
+    "work": "I-8 -- hardened --list --json against mutant M16 (direct Agent, sonnet, k=1, file scope test/cli.test.js only) + conductor mutation/attribution harness",
+    "outcome": "1 verified; 24/24 harness checks green including 3 discriminators and a MUTATION-APPLIED control on every scratch copy; suite 58 -> 59 green; product tree byte-identical to HEAD; I-2 hardening thread complete",
+    "commit": "PENDING"
   }
 }

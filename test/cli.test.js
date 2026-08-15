@@ -150,3 +150,39 @@ test('--json output is exactly one line, never pretty-printed', () => {
   const lines = r.stdout.split('\n').filter((l) => l.length > 0);
   assert.strictEqual(lines.length, 1, 'expected --json output to be a single line');
 });
+
+test('--list --json emits newline-delimited JSON, one object per line, in corpus order', () => {
+  // Fixture assumption, shared with the plain --list corpus-order test above:
+  // multiple "design"-tagged entries exist, so a collapsed single-array shape
+  // (one JSON.stringify of the whole list) is distinguishable by line count
+  // from one-object-per-line NDJSON.
+  const expected = corpus.filter((e) => e.tags.includes('design'));
+  assert.ok(expected.length > 1, 'fixture assumption: need multiple "design" entries');
+
+  const r = run(['--tag', 'design', '--list', '--json']);
+  assert.strictEqual(r.status, 0);
+  const lines = r.stdout.trim().split('\n');
+
+  // NDJSON promises exactly one line per entry. A pretty-printed JSON array
+  // (JSON.stringify(candidates, null, 2)) would spread each entry across many
+  // lines instead, so this count check alone catches the array shape — but we
+  // also confirm each line parses standalone as a JSON object, which no line
+  // of a multi-line array (e.g. "[", "  {", '    "text": ...') can do.
+  assert.strictEqual(
+    lines.length,
+    expected.length,
+    'expected exactly one JSON line per matching entry, not a pretty-printed array'
+  );
+
+  const parsed = lines.map((line) => JSON.parse(line));
+  for (const p of parsed) {
+    assert.strictEqual(typeof p.text, 'string');
+    assert.strictEqual(typeof p.author, 'string');
+    assert.ok(Array.isArray(p.tags));
+  }
+  assert.deepStrictEqual(
+    parsed.map((p) => p.text),
+    expected.map((e) => e.text),
+    'entries must appear in corpus order'
+  );
+});
