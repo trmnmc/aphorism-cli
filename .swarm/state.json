@@ -313,6 +313,6 @@
     "n": 26,
     "work": "RECYCLE (hard rule 7) -- no new work dispatched, no agent spawned, no product or test byte changed. cycles_since_recycle reached 25/25 at step 0, which skips steps 4-6 by rule. Clean commit, handoff note journaled, counter reset to 0.",
     "outcome": "NO VERIFIED VALUE, by design -- a recycle has no item and therefore no gate. Nothing is claimed done this cycle. Orient found the tree clean at 9dc38a3 (no salvage needed), bin/swarm-notify.sh poll RAN clean for the second consecutive cycle with control.json pending[]/applied[] empty and no inject[], and bin/swarm-budget.sh was REFUSED for the 25th consecutive cycle (KI-5), so the gear was re-derived by hand from runs/allocator.json. Gear stays 1. The handoff note in this cycle's journal block is the deliverable.",
-    "commit": "PENDING"
+    "commit": "a81e6aa"
   }
 }

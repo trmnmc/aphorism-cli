@@ -3512,7 +3512,7 @@ VERIFICATION EVIDENCE:
 
 **STANDING CONSTRAINTS.** Every new feature is a non-goal this run (rotation, --width, NO_COLOR dim, network, npm publishing). New tests are admitted ONLY for measured mutation survivors classified HOLE or BOUNDARY before any hardening — test-count is not a deliverable (cycle-1 decision, playbook L-029/L-031/L-033). The conductor is the sole committer. `bin/swarm-budget.sh` and `bin/swarm-playbook.sh` will refuse; attempt them anyway each cycle and derive the gear by hand from `runs/allocator.json` when they do.
 
-commit: PENDING_COMMIT
+commit: a81e6aa "cycle 26: RECYCLE — handoff note journaled, cycles_since_recycle reset 25 -> 0"
 next wakeup: 1786822625 (+90s; the VPS pacer fires the actual cycle within its 5-min tick)
 runfile-mirror:
 ```json
