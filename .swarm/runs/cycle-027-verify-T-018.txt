@@ -1,0 +1,77 @@
+PASS  C1.PRISTINE          unmutated copy of the WORKING tree is green
+        observed 73/73/0
+PASS  C2.NEGATIVE          harness can produce a RED (wrong stated band count)
+        observed 73/72/1 <- README band table headings must state the correct count of tags in their band
+PASS  C3.HEAD-BASE         git HEAD's test file on an unmutated README is green
+        observed 73/73/0
+PASS  A1.BLANK-5PLUS       blank line before the 5+ table -> suite GREEN
+        observed 73/73/0
+PASS  A2.BLANK-2-4         blank line before the 2-4 table -> suite GREEN
+        observed 73/73/0
+PASS  A3.BLANK-BOTH        blank line before BOTH tables -> suite GREEN
+        observed 73/73/0
+PASS  A4.BLANK-x3          THREE blank lines before the 5+ table -> suite GREEN
+        observed 73/73/0
+PASS  A5.WS-ONLY           a whitespace-only line (2 spaces) before the 5+ table -> suite GREEN
+        observed 73/73/0
+PASS  A6.TABS              a tab-only line before the 2-4 table -> suite GREEN
+        observed 73/73/0
+PASS  A1b.BLANK-5PLUS.ATTRIB blank line before the 5+ table is REJECTED by HEAD's parser (so the fix is what changed it)
+        observed 73/72/1 <- every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+PASS  A2b.BLANK-2-4.ATTRIB blank line before the 2-4 table is REJECTED by HEAD's parser (so the fix is what changed it)
+        observed 73/72/1 <- every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+PASS  A3b.BLANK-BOTH.ATTRIB blank line before BOTH tables is REJECTED by HEAD's parser (so the fix is what changed it)
+        observed 73/70/3 <- every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band ; every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019) ; README band table headings must state the correct count of tags in their band
+PASS  A7.ROWDEL-PLAIN      row deletion with NO reformat still fails (reference signature)
+        observed 73/71/2 <- every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band ; every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+PASS  A8.ROWDEL-REFORMAT   row deletion UNDER a reformatted heading fails IDENTICALLY to A7
+        observed 73/71/2 <- every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band ; every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019) | reference 73/71/2 <- every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band ; every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+FAIL  A9.WRONGCOUNT-REFORMAT a wrong row count under a reformatted 2-4 heading still fails LOUD
+        observed 73/72/1 <- README tag counts must match corpus
+PASS  A10.STATEDCOUNT      a wrong STATED count under a reformatted heading still fails LOUD
+        observed 73/72/1 <- README band table headings must state the correct count of tags in their band
+PASS  A11.DECOY-HEADING    a decoy line with a band token + blank lines does not steal the table
+        observed 73/73/0
+PASS  A12.NONTABLE-GAP     heading + blank + PROSE + blank + table does NOT parse as a band (fails loud, not silent)
+        observed 73/72/1 <- every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+PASS  A13.ZERO-BAND        the zero-band sanity assertion is still reachable
+        observed 73/70/3 <- every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band ; every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019) ; README band table headings must state the correct count of tags in their band
+PASS  S1.SCOPE             exactly one tracked file modified, and it is the test file
+        git diff --name-only HEAD = ["test/readme-tags.test.js"]
+PASS  S2.README            README.md is byte-identical to HEAD
+        HEAD 4528 B vs working 4528 B
+PASS  S3.PRODUCT           no product file touched
+        differing: []
+PASS  S4.NOT-A-NOOP        the test file actually changed
+        HEAD 37500 B vs working 38466 B
+PASS  S5.NO-WEAKENING      no test or assert removed, no skip introduced
+        tests 14->14, asserts 25->25, skip=false
+PASS  S6.SCRATCH           no .swarm/scratch directory left behind
+        checked /opt/targets/aphorism-cli/.swarm/scratch
+
+=== GATE SUMMARY: 24 pass / 1 fail (of 25) ===
+PASS  C1.PRISTINE
+PASS  C2.NEGATIVE
+PASS  C3.HEAD-BASE
+PASS  A1.BLANK-5PLUS
+PASS  A2.BLANK-2-4
+PASS  A3.BLANK-BOTH
+PASS  A4.BLANK-x3
+PASS  A5.WS-ONLY
+PASS  A6.TABS
+PASS  A1b.BLANK-5PLUS.ATTRIB
+PASS  A2b.BLANK-2-4.ATTRIB
+PASS  A3b.BLANK-BOTH.ATTRIB
+PASS  A7.ROWDEL-PLAIN
+PASS  A8.ROWDEL-REFORMAT
+FAIL  A9.WRONGCOUNT-REFORMAT
+PASS  A10.STATEDCOUNT
+PASS  A11.DECOY-HEADING
+PASS  A12.NONTABLE-GAP
+PASS  A13.ZERO-BAND
+PASS  S1.SCOPE
+PASS  S2.README
+PASS  S3.PRODUCT
+PASS  S4.NOT-A-NOOP
+PASS  S5.NO-WEAKENING
+PASS  S6.SCRATCH

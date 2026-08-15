@@ -3,7 +3,7 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
   "phase": "POLISH",
-  "cycle": 26,
+  "cycle": 27,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -242,6 +242,26 @@
       "cycle": 26,
       "what": "RECYCLE cycle taken at cycles_since_recycle 25 with four admissible S-effort items sitting on the board, and it is NOT counted against counters.consecutive_no_value (stays 0, not incremented to 1).",
       "why": "Two calls worth recording. (1) The recycle was TAKEN rather than deferred. Hard rule 7's trigger is a context-length proxy, not a workload signal, so \"there is still work\" is never a reason to skip it -- deferring to finish T-018 would spend the recycle's whole purpose (a fresh session re-orienting from disk) to save one 5-minute pacer interval, and this run has ~15.8h left, so the interval is free. This is the FIRST recycle of the run; cycles 1-25 ran without one. (2) The churn breaker was NOT incremented. Read literally, \"a cycle with no verified-value outcome increments it\" would fire here, because a recycle produces no verified value BY CONSTRUCTION. But the counter exists to detect a target that cannot make progress -- at >=2 it forces a work-type switch, at >=4 a consolidation pass, at >=6 it STALLS the target, and only a manual user edit un-stalls it. Charging a conductor-mandated pause to that ladder would mean a long run walks itself toward a false stall on its own housekeeping. Cycle 25 verified T-022 and reset the counter to 0; nothing about this cycle is evidence that the target has stopped producing value. Recorded rather than taken silently because it is a departure from the rule's literal text, and a later conductor reading only the counter would otherwise see a gap it cannot explain."
+    },
+    {
+      "cycle": 27,
+      "what": "The pre-dispatch baseline REDEFINED what T-018's acceptance clause could honestly mean, and the gate demanded strictly more than the clause as written.",
+      "why": "T-018's acceptance said a blank line must leave the suite green 'while a row deletion under that reformatted heading still fails'. Cycle 20 had recorded that reformat+row-deletion was 'still KILLED' and read that as the guard still working. Re-measuring at the current 73-test suite before dispatch (.swarm/runs/cycle-027-baseline.txt) showed that reading was wrong: reformat+row-deletion (B4) fails with the IDENTICAL signature as reformat ALONE (B1), 73/72/1 naming only the T-019 union test, whereas a row deletion with no reformat (B5) fails at 73/71/2 and names the band-contents assertion too. The whole band is invisible, so the suite is reporting the PARSE failure and the deleted row is masked. A fix that made the reformat green while leaving detection broken would therefore have satisfied the acceptance clause exactly as written, and the item would have closed on a technically-true reading. The gate's requirement became: under a reformatted heading, a row deletion must produce the SAME signature as one with no reformat at all. It does -- A7 and A8 both land 73/71/2 with identical failing test names. The general point worth carrying: an acceptance clause written from an earlier cycle's measurement can go stale, and re-measuring the DEFECT before dispatch is what catches it. Inheriting cycle 20's figure would have hidden this."
+    },
+    {
+      "cycle": 27,
+      "what": "Took exit (a) -- fix T-018 narrowly -- and filed the structural re-shape as T-024 for a healthier window. The deciding argument is NOT that (b) did not fit gear 1; it is that T-018 was never a member of the prose-anchor family.",
+      "why": "The cycle-26 handoff framed the judgment as (a) narrow fix vs (b) re-shape the extraction to read structure and close two or three siblings at once, with gear 1's S-effort rule as the tiebreak. Reading the extractor settled it on the merits before the budget argument was needed: extractBandTablesFromReadme already locates a band STRUCTURALLY -- the `| Tag | Count |` header row plus the `|---|---|` separator -- and reads only band-bound digits (`5+`, `2-4`) from the heading, which the cycle-25 finding explicitly permits because those digits carry mathematical meaning. Its defect was an ADJACENCY requirement, not a prose anchor, and the fix removes a requirement rather than narrowing an anchor. So T-018 is not a sixth member of the family and closing it narrowly does not add to the cumulative deletion risk cycle 25 named. The family stays T-020/T-021/T-023 and the re-shape is filed as T-024 (M-effort, unreachable this run) so the finding survives as an actionable item rather than only as retro prose. Recorded because 'it did not fit the gear' would have been an available and much weaker justification for the same action."
+    },
+    {
+      "cycle": 27,
+      "what": "Gate check A9 is recorded as FAILED AS AUTHORED and was NOT rewritten to pass, even though a follow-up probe proved its substantive claim holds and proved the red does not belong to the item.",
+      "why": "A9 asserted that a wrong ROW COUNT under a reformatted heading still fails loud AND that the band-contents assertion is what fires. It failed loud (73/72/1) but named a different guard, 'README tag counts must match corpus'. The predicate encoded a wrong belief of mine about which test owns cell values: the band-contents assertion computes expected membership from CORPUS counts, so editing a table's stated number does not move that tag out of its band there -- a separate pre-existing test owns the cell value. The probe (.swarm/runs/cycle-027-probe-A9.txt) settles attribution in four cells: fixed parser gives 73/72/1 with and without the reformat, and HEAD's parser gives the same 73/72/1 without the reformat -- three identical cells, so the reformat is not what changes anything. The only cell that differs is HEAD+reformat at 73/71/2, where the extra failure is exactly the parse-failure noise T-018 removes; the fix strictly REDUCES noise here. Rewriting the predicate after seeing the result would have been coding to the outcome, which is the mirror image of what this run exists to prevent, so the failed check stands with its attribution attached (cycle-21 and cycle-24 precedent). Side finding, recorded rather than back-edited: cycle 24's note that band assertion 2 'also catches a row whose count was edited without moving it' is imprecise -- assertion 2 catches a tag that does not belong in its band; the cell VALUE is caught elsewhere."
+    },
+    {
+      "cycle": 27,
+      "what": "The allowlist gap (KI-5) is PATH-FORM sensitive, which two cycles of journal entries had generalised wrongly: `bin/swarm-notify.sh poll` runs, `/opt/swarm/bin/swarm-notify.sh poll` is REFUSED.",
+      "why": "Cycles 25 and 26 both recorded that notify poll 'RAN clean' and cycle 26 promoted it to a property -- 'one sample was luck, two is a property: notify is reachable, budget and playbook are not'. This cycle the absolute-path form was tried first and refused; the relative form then ran clean against the same binary. So the reachable/unreachable split is not a property of the SCRIPT, it is a property of the literal command string matched against the allowlist. bin/swarm-budget.sh was attempted in BOTH forms this cycle and refused in both, so its unreachability is genuine and KI-5's substance stands. Recorded because a future conductor reading cycles 25-26 would conclude the script is what matters and could log a spurious probe failure after invoking a reachable tool by its absolute path."
     }
   ],
   "known_issues": [
@@ -306,13 +326,13 @@
     "consecutive_no_value": 0,
     "consecutive_failures": 0,
     "k_current": 5,
-    "wave_streak": 1,
+    "wave_streak": 0,
     "window_tokens_attributed": 0
   },
   "last_cycle": {
-    "n": 26,
-    "work": "RECYCLE (hard rule 7) -- no new work dispatched, no agent spawned, no product or test byte changed. cycles_since_recycle reached 25/25 at step 0, which skips steps 4-6 by rule. Clean commit, handoff note journaled, counter reset to 0.",
-    "outcome": "NO VERIFIED VALUE, by design -- a recycle has no item and therefore no gate. Nothing is claimed done this cycle. Orient found the tree clean at 9dc38a3 (no salvage needed), bin/swarm-notify.sh poll RAN clean for the second consecutive cycle with control.json pending[]/applied[] empty and no inject[], and bin/swarm-budget.sh was REFUSED for the 25th consecutive cycle (KI-5), so the gear was re-derived by hand from runs/allocator.json. Gear stays 1. The handoff note in this cycle's journal block is the deliverable.",
-    "commit": "a81e6aa"
+    "n": 27,
+    "work": "T-018 -- let the README band-table parser tolerate blank lines between a band heading and its `| Tag | Count |` table. ONE sonnet builder (k_cap 1), direct Agent call into the target tree, file scope test/readme-tags.test.js alone. Fix: skip blank lines forward from i+1 and require the FIRST non-blank line to be the header row, so a heading with no table never has a later table grafted onto it.",
+    "outcome": "VERIFIED. 24/25 conductor gate checks (.swarm/runs/cycle-027-verify-T-018.txt); the one red is A9, proven by probe (.swarm/runs/cycle-027-probe-A9.txt) to be a defect in the conductor's predicate and not to belong to the item -- recorded as failed-as-authored rather than rewritten. test_cmd on the real tree, run by the conductor: 73/73/0. Scope clean: one tracked file changed, README and every product file byte-identical to HEAD, no assertion removed, no scratch residue. Two new items filed from the gate's own measurements: T-024 (M, the prose-anchor re-shape, unreachable this run) and T-025 (S, the heading-separated-by-prose BOUNDARY question).",
+    "commit": "PENDING"
   }
 }

@@ -223,8 +223,25 @@ function extractBandTablesFromReadme(sectionText) {
 
   for (let i = 0; i < lines.length; i++) {
     const headingLine = lines[i];
-    const headerRowLine = lines[i + 1];
-    const separatorRowLine = lines[i + 2];
+
+    // Allow any number of blank lines between the heading and its table's
+    // `| Tag | Count |` header row -- idiomatic markdown often puts one
+    // there. Skip forward over blank lines only; stop at the first
+    // non-blank line and require THAT one to be the header row. This means
+    // a heading with no table (blank lines followed by ordinary prose, or
+    // by another heading) never has a later, unrelated table grafted onto
+    // it -- the scan does not skip past non-blank content looking for a
+    // table further down.
+    let headerIdx = i + 1;
+    while (headerIdx < lines.length && lines[headerIdx].trim() === '') {
+      headerIdx++;
+    }
+    const headerRowLine = lines[headerIdx];
+    // The separator row must immediately follow the header row -- that is
+    // standard markdown table syntax (a blank line there would stop it from
+    // rendering as a table at all), so only heading-to-header spacing is
+    // being relaxed here, not header-to-separator.
+    const separatorRowLine = lines[headerIdx + 1];
 
     if (!headerRowLine || !/^\|\s*Tag\s*\|\s*Count\s*\|\s*$/.test(headerRowLine.trim())) {
       continue;
@@ -257,7 +274,7 @@ function extractBandTablesFromReadme(sectionText) {
     // Collect this table's own rows (starting right after the separator
     // row) until a line that is not itself a table row.
     const rows = {};
-    let k = i + 3;
+    let k = headerIdx + 2;
     while (k < lines.length) {
       const rowMatch = lines[k].match(tableRowPattern);
       if (!rowMatch) break;
