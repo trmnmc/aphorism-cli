@@ -237,13 +237,17 @@ function extractBandTablesFromReadme(sectionText) {
     const openEnded = headingLine.match(/(\d+)\s*\+/);
     const rangePair = headingLine.match(/(\d+)\s*[-‐‑‒–—―]\s*(\d+)/);
 
-    let min, max;
+    let min, max, bandTokenStart, bandTokenEnd;
     if (openEnded) {
       min = parseInt(openEnded[1], 10);
       max = Infinity;
+      bandTokenStart = openEnded.index;
+      bandTokenEnd = openEnded.index + openEnded[0].length;
     } else if (rangePair) {
       min = parseInt(rangePair[1], 10);
       max = parseInt(rangePair[2], 10);
+      bandTokenStart = rangePair.index;
+      bandTokenEnd = rangePair.index + rangePair[0].length;
     } else {
       // A table with no parseable band token in its heading -- nothing to
       // check it against, skip rather than guess.
@@ -261,7 +265,12 @@ function extractBandTablesFromReadme(sectionText) {
       k++;
     }
 
-    bands.push({ headingLine, min, max, rows });
+    // bandTokenStart/bandTokenEnd is the character span, within headingLine,
+    // consumed by the bounds token itself (e.g. "5+" or "2-4"). Kept so
+    // downstream parsing of the heading's leading "N tags" count (T-022)
+    // can tell the bounds digits apart from the count digits even when a
+    // reworded heading places them close together.
+    bands.push({ headingLine, min, max, rows, bandTokenStart, bandTokenEnd });
   }
 
   return bands;
@@ -414,14 +423,39 @@ test('README band table headings must state the correct count of tags in their b
   assert(bands.length > 0, 'expected at least one parseable band table (heading with an N+ or N-M token, followed by a | Tag | Count | table) in the Tag vocabulary section');
 
   for (const band of bands) {
-    // The leading "N tags ..." count on the heading line itself -- parsed
-    // from the digits immediately followed by the word "tags", independent
-    // of whatever descriptive phrase follows (which may be reworded freely).
-    const leadingCountMatch = band.headingLine.match(/^\s*(\d+)\s+tags\b/);
+    // The band's stated "N tags ..." count, found anywhere on the heading
+    // line -- NOT anchored to the start (T-022: a descriptive lead-in
+    // phrase, e.g. "Well-populated: 4 tags carry 5+ entries each.", must be
+    // free to precede it). Scan every "<digits> tags" occurrence in the
+    // line and take the first one whose digit run does NOT fall inside the
+    // span already claimed by the band's own bounds token (the "5+" or
+    // "2-4" parsed above as bandTokenStart/bandTokenEnd).
+    //
+    // Reading chosen for the digits-vs-digits hazard: the bounds token and
+    // the count token are different numbers in the same line, both matched
+    // by digit-based regexes, so a naive "first N-tags-shaped match wins"
+    // parse could be fooled by a reworded heading that happens to land the
+    // word "tags" right after the bounds token (e.g. "... 2-4 tags per
+    // band, 12 tags total qualify:" -- a naive scan would read the count as
+    // 4, not 12). Excluding any match whose digits overlap the bounds
+    // token's own character span closes that hole without keying the count
+    // extraction to any particular lead-in wording.
+    const countPattern = /(\d+)\s+tags\b/g;
+    let candidateMatch;
+    let leadingCountMatch = null;
+    while ((candidateMatch = countPattern.exec(band.headingLine)) !== null) {
+      const digitStart = candidateMatch.index;
+      const digitEnd = candidateMatch.index + candidateMatch[1].length;
+      const overlapsBandToken = digitStart < band.bandTokenEnd && digitEnd > band.bandTokenStart;
+      if (!overlapsBandToken) {
+        leadingCountMatch = candidateMatch;
+        break;
+      }
+    }
     assert(
       leadingCountMatch,
-      'could not parse a leading "N tags" count from band heading "' + band.headingLine.trim() +
-        '" -- this claim must fail loud, not pass silently, when it cannot be parsed'
+      'could not parse a "N tags" count (distinct from the band\'s own bounds token) from band heading "' +
+        band.headingLine.trim() + '" -- this claim must fail loud, not pass silently, when it cannot be parsed'
     );
     const statedBandCount = parseInt(leadingCountMatch[1], 10);
 

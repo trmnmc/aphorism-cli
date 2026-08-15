@@ -3290,3 +3290,188 @@ runtime runfile-mirror:
 ```json
 {"version":1,"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","usage_reset_note":"PLACEHOLDER, not measured: now+5h. bin/swarm-budget.sh is not on the Bash allowlist in a headless session (KI-5 / moon KI-2), so no probe supplied a real window boundary. Used only by the limp short-circuit; no gear decision rests on it.","model_policy":"value-routing","auth_mode":"subscription","heartbeat":{"ts":1786820392,"next_wakeup_at":1786820482,"pid":564292,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"allocator","gear":1,"gear_target":1,"ratio":null,"mode":"guest","k_cap":1,"promote":false,"demote":true,"window_tokens":0,"window_cost_usd":0,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":0,"projected_depletion_at":0,"last_probe_ts":1786819516,"last_real_probe_ts":0,"probe_failures":0,"probe_note":"cycle 24: bin/swarm-budget.sh REFUSED by the permission layer again (TWENTY-THIRD consecutive cycle, KI-5). Attempted rather than skipped on precedent, per the standing cycle-14 rule that the sanctioned path is tried every cycle and the gate is never assumed from history; it refused before the command started, so probe_failures stays 0 on the standing reasoning. bin/swarm-notify.sh poll likewise refused, so the control poll was file-only: runs/control.json read directly, pending[] and applied[] both empty, no inject[] array -- nothing to apply, nothing to triage. node bin/swarm-craft.mjs DID run (it is not gated) and loaded clean with degraded[] empty; its ui/review/docs packs are not applicable to a test-guard item on a Node CLI and were not spliced. Gear re-derived by hand from runs/allocator.json (source=probe), which moved only in week_elapsed_pct since cycle 23: posture=trickle, allow_premium_pct 0, allow_overall_pct 0, weekly_used_pct 86.0 (unchanged), opus_used_pct 97 (unchanged), week_elapsed_pct 79.61 (was 79.45). weekly_heat 86.0/79.61 = 1.0803 < 1.1 -> governor disengaged, ceiling 5. opus_heat 97/79.61 = 1.2184 > 1.2 -> promote still blocked. trickle + guest 1-3 clamp -> gear 1, k_cap 1, demote true. Week resets 1786942800, AFTER stop_at (1786879464) -- gear 1 remains the standing gear for the rest of this run. The board carries four S-effort gear-1 items after this cycle (T-018, T-020, T-021, T-022), so the repo is still not out of gear-1 work. PRIOR NOTE (cycle 23): bin/swarm-budget.sh REFUSED by the permission layer again (TWENTY-SECOND consecutive cycle, KI-5). Attempted rather than skipped on precedent, per the standing cycle-14 rule that the sanctioned path is tried every cycle and the gate is never assumed from history; it refused before the command started, so probe_failures stays 0 on the standing reasoning. bin/swarm-notify.sh poll likewise refused, so the control poll was file-only: runs/control.json read directly, pending[] and applied[] both empty, no inject[] array -- nothing to apply, nothing to triage. node bin/swarm-craft.mjs DID run (it is not gated) and loaded clean with degraded[] empty; its ui/review/docs packs are not applicable to a test-guard item on a Node CLI and were not spliced. Gear re-derived by hand from runs/allocator.json (source=probe), which moved slightly since cycle 22: posture=trickle, allow_premium_pct 0, allow_overall_pct 0, weekly_used_pct 86.0 (was 85.0), opus_used_pct 97, week_elapsed_pct 79.45 (was 79.21). weekly_heat 86.0/79.45 = 1.0824 < 1.1 -> governor disengaged, ceiling 5. opus_heat 97/79.45 = 1.2209 > 1.2 -> promote still blocked. trickle + guest 1-3 clamp -> gear 1, k_cap 1, demote true. Week resets 1786942799, AFTER stop_at (1786879464) -- gear 1 remains the standing gear for the rest of this run. The board carries four S-effort gear-1 items after this cycle (T-018, T-019, T-020, T-021), so the repo is still not out of gear-1 work.","weekly":{"ok":true,"weekly_used_pct":86,"opus_used_pct":97,"week_elapsed_pct":79.61,"weekly_heat":1.0803,"opus_heat":1.2184,"ceiling":5,"promote_blocked":true}},"playbook":{"mode":"auto","applied":["L-003","L-006","L-007","L-008","L-011","L-016","L-018","L-020","L-021","L-022","L-034","L-024","L-026","L-029","L-031"],"vetoed":[],"ledger_note":"record-applied NOT written: bin/swarm-playbook.sh is not on the Bash allowlist (KI-5), so the parse and record-applied verbs both refused in this headless session. Directives below were hand-parsed by the conductor from playbook/learnings.md, read-only. CYCLE 12 UPDATE: the applied[] list is now UNAMBIGUOUS. Item I-5 repaired the duplicate source IDs, so the entry that read L-023 (meaning the moon-sourced REFUTE lesson staged in prompt_lines.qa, not the repo-atlas L-023) has been rewritten to its new id L-034. L-026 here means the repo-atlas routing lesson (core-logic->fable), which kept its id. No other applied id was affected. Remap and reasoning: playbook/HANDOFF-cap-2026-08-15.md.","directives":{"wave_k":3,"routing_recs":["core-logic->fable"],"prompt_lines":{"builder":["The conductor is the SOLE committer — never commit or push yourself","Any exported React hook must ship a test that mounts a real component using it","Tests asserting no-key behavior must delete the key in beforeEach, not beforeAll — a real .env on main will leak through suite-level hooks","Any persisted UI state (storage or module-level) must be cleared in beforeEach of every test file that mounts the component"],"reviewer":["The conductor is the SOLE committer — never commit or push yourself","Assign each fixer a pairwise-disjoint file set; two fixers must never share a file"],"qa":["The conductor is the SOLE committer — never commit or push yourself","Script a deterministic scenario with hand-computed expected outputs; eyeballing rendered numbers is not verification","Load all classic-script modules into one shared vm context and scan for cross-file top-level name collisions","Open the running product in a browser and describe what you actually see — tests alone miss rendered-page bugs","After merging user-visible files, run a live browser look pass before counting the wave verified","After any server rebuild or restart, hard-reload the page before judging — a stale SPA instance survives goto","Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'.","Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value.","When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence.","Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps."]},"inert_note":"Four staged qa lines are browser-specific (L-006 classic-script collisions, L-007 browser look, L-018 post-merge look pass, L-021 hard-reload) and are INERT for this target: aphorism-cli is a Node CLI with no browser surface. Staged faithfully rather than silently dropped — apply_mode is auto and the conductor does not get to edit the playbook's intent mid-run (hard rule 5)."}},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":23,"artifact":{"url":"","file":"/opt/swarm/runs/dashboard.html","publish_failures":0}}
 ```
+
+## cycle 25 — 2026-08-15T19:09Z — aphorism-cli — POLISH
+
+clock: now 1786820934 at open, stop_at 1786879464 (16h15m remaining). No WRAP_UP trigger, no
+  limp. Fresh pacer-spawned -p session, conductor pid 577707 (previous 564292); the PID walk
+  needed repair mid-cycle — the first version matched the substring "claude" inside the bash
+  tool wrapper's shell-snapshot PATH and returned the wrapper, not the conductor. Fixed by
+  matching argv[0]'s BASENAME instead of the whole command string, which resolved to
+  `claude -p /swarm cycle --add-dir /opt/targets/aphorism-cli`. Recorded because SKILL.md's
+  documented walk ("checking ps -o command= at each hop until the command matches the claude
+  binary") is exactly the ambiguous form that produced the wrong answer.
+budget: bin/swarm-budget.sh REFUSED by the permission layer again — TWENTY-FOURTH consecutive
+  cycle (KI-5). Attempted rather than skipped, per the standing cycle-14 rule: the sanctioned
+  path is tried every cycle and the gate is never assumed from history. It refused before the
+  command started, so probe_failures stays 0 on the standing reasoning.
+  CHANGED THIS CYCLE: bin/swarm-notify.sh poll RAN — it completed with empty output instead of
+  refusing, the first time in this run. The control poll was therefore a real poll, not the
+  file-only fallback of cycles 2-24. Result was the same either way: runs/control.json shows
+  pending[] and applied[] both empty and no inject[] array, so nothing to apply and nothing to
+  triage. Noted because it means the allowlist gap is narrower than KI-5 records — notify is
+  now reachable while budget and playbook are not — and a wrap-up that reports "the scripts are
+  blocked" without this distinction would be overstating it.
+  Gear re-derived by hand from runs/allocator.json (source=probe). Only week_elapsed_pct moved
+  since cycle 24: posture trickle, allow_premium_pct 0, allow_overall_pct 0, weekly_used_pct
+  86.0 (unchanged), opus_used_pct 97 (unchanged), week_elapsed_pct 79.85 (was 79.61).
+  weekly_heat 86.0/79.85 = 1.0770, under 1.1 → governor disengaged, ceiling 5. opus_heat
+  97/79.85 = 1.2148, over 1.2 → promote still blocked. trickle + guest 1-3 clamp → gear 1,
+  k_cap 1, demote true. Week resets 1786942799, after stop_at, so gear 1 stands for the rest
+  of the run.
+orient: target tree CLEAN at open (cycle 24 committed its own state stamp). node
+  bin/swarm-craft.mjs ran (not gated) and loaded clean, degraded[] empty; its ui/review/docs
+  packs are not applicable to a test-guard item on a Node CLI and were not spliced.
+re-anchor: cycle 25, 25 % 5 == 0 → FULL SPEC.md re-read plus backlog hygiene, both done.
+  SPEC unchanged and still governing; the item sits under improvement must-have I-2 (tests
+  hardened only where MEASUREMENT shows a hole) and touches no product surface.
+  Hygiene: 35 items, 8 live (7 todo + 1 blocked) against the ~30 cap — no dedupe needed, no
+  stale drops, ids unique (asserted, not eyeballed). One honest annotation added rather than a
+  reprioritisation: T-007 (M) and T-008 (L) are marked UNREACHABLE FOR THE REST OF THIS RUN on
+  the items themselves. Gear 1 admits S-effort builds only and the week resets at 1786942799,
+  AFTER stop_at 1786879464, so no cycle in this run can ever admit them. They keep their
+  priorities (8 and 9) and stay todo — they are valuable and out of reach, which is not the
+  same as low value, and dropping them would hide that from the morning report.
+
+work: T-022 — let the band-heading count parser tolerate a descriptive lead-in before the
+  "N tags" count. Routed sonnet (kind test, S effort, attempts 0; demote applies only to
+  docs/polish, so build/fix never drops below sonnet). Effective wave size = min(k_current 5,
+  gear cap 1) = 1 item, dispatched as a direct Agent call — Workflow is review-gated in a -p
+  session.
+
+PRE-DISPATCH BASELINE — .swarm/runs/cycle-025-baseline.{js,txt}, run BEFORE the builder was
+  dispatched, in whole-repo-minus-.git copies. Cycle 24 had seen this defect once, as a side
+  effect of a different item's gate (R3.GREEN) and on one heading only; it was re-MEASURED here
+  at the current 73-test suite, on both shipped headings, with the FAILURE REASON captured:
+
+    PASS  CTRL-PRISTINE                                  SURVIVED  tests 73 pass 73 fail 0
+    FAIL  B1  5+ heading, lead-in reword, numbers TRUE    KILLED    tests 73 pass 72 fail 1  [PARSE-FAILURE]
+    FAIL  B2  2-4 heading, lead-in reword, numbers TRUE   KILLED    tests 73 pass 72 fail 1  [PARSE-FAILURE]
+    PASS  B3  wrong count, heading format UNCHANGED       KILLED    tests 73 pass 72 fail 1  [COUNT-MISMATCH]
+    PASS  B4  wrong count UNDER a reworded heading        KILLED    tests 73 pass 72 fail 1  [PARSE-FAILURE]
+    PASS  B5  wrong count under reworded 2-4 heading      KILLED    tests 73 pass 72 fail 1  [PARSE-FAILURE]
+
+  B1/B2 confirm the false rejection on both shipped headings. B4/B5 are the finding the
+  acceptance clause did not ask for: the guard "caught" a wrong count under a reworded heading
+  only BY ACCIDENT — it died on the parse before it ever compared a number. So the fix had to
+  do more than turn B1/B2 green; it had to convert B4/B5 from an accidental kill into a real
+  one. That became a gate clause the backlog never carried.
+
+VERIFICATION EVIDENCE — conductor harness .swarm/runs/cycle-025-verify-T-022.js, authored AT
+  verification time, after the builder returned, and never shown to it; evidence
+  .swarm/runs/cycle-025-verify-T-022.txt. 34/35 checks passed.
+
+    PASS  G0.PRISTINE        tests 73 pass 73 fail 0
+    PASS  G0b.HEAD-GREEN     tests 73 pass 73 fail 0  (pre-fix HEAD, same 73 — nothing added or removed)
+    PASS  G0c.SUITE-LIVE     tests 73 pass 72 fail 1  (an unrelated wrong README number is still caught)
+    PASS  A1/A2.GREEN        the two baseline rewordings now SURVIVE at 73/73/0
+    PASS  A3.GREEN           NOVEL em-dash aside, no colon, count mid-sentence      73/73/0
+    PASS  A4.GREEN           NOVEL lead-in that itself contains a digit ("50")      73/73/0
+    PASS  A5.GREEN           NOVEL both headings at once, count AFTER the band token 73/73/0
+    PASS  A1-A5.ATTRIB       each identical reword against PRE-FIX HEAD: 73/72/1, this guard ALONE
+    PASS  A6-A9.FAILABLE     wrong counts, reworded and not: 73/72/1, this guard ALONE
+    PASS  A6-A9.REASON       all four fail on COUNT-MISMATCH — the accidental kill is now a real one
+    PASS  A10.LOUD           band token + table, NO count phrase at all: asserts, PARSE-FAILURE
+    PASS  A11.LOUD-OVERLAP   only candidate count overlaps the band token: excluded, then LOUD
+    PASS  R1.TRACKS / R1.STALE     see below
+    PASS  R2.TRACKS / R2.ATTRIB / R2.FAILABLE   see below
+    PASS  S1/S2/S3/S5 SCOPE  one file, +42 -8, nine product/doc/other-test files byte-identical
+    FAIL  S4.SCRATCH         empty .swarm/scratch left behind (KI-7)
+
+  test_cmd on the REAL tree, run by me, not by the agent: `node --test test/*.test.js` →
+  tests 73, pass 73, fail 0. Product smoke by hand: `node bin/aphorism.js --seed 42` printed
+  the Torvalds line, unchanged.
+
+ATTRIBUTION WITHOUT A NEW TEST. Every prior cycle this run proved attribution by FILTERING the
+  new test out and requiring the suite to return to its pre-cycle baseline. That technique does
+  not exist here: T-022 repaired an EXISTING guard, so the suite is 73 before and 73 after and
+  there is nothing to filter. The substitute is a HEAD-side control — each mutation is run twice,
+  once against the working tree and once against a copy whose test file is restored from
+  `git show HEAD:test/readme-tags.test.js`. Every green reading is therefore paired with the same
+  mutation being REJECTED at 73/72/1 on pre-fix HEAD, naming this guard alone. That is what makes
+  "it is green now" mean "the change made it green" rather than "it was never red".
+
+THE DECISIVE CHECKS ARE THE TWO R-PAIRS, and no acceptance clause asked for either. Every
+  acceptance-shaped check asks whether a reworded heading is tolerated, and a parser that simply
+  hardcoded today's counts (4 and 12) would pass all of them, because today's counts are correct.
+  The readings only separate on artifacts this repo has never had:
+
+    R1 changes the CORPUS *and* rewords at the same time. Promoting `yagni` from a 1-entry to a
+    2-entry tag, updating the README consistently (opening sentence 16/21 → 17/20, band count
+    12 → 13, a new row, the single-entry list shortened) AND rewording both headings with lead-in
+    prose stays GREEN at 73/73. A hardcoded count cannot pass that. The stale half — same corpus
+    change, count left at 12 under a reworded heading — fails at 73/68/5 with this guard among
+    them, on COUNT-MISMATCH.
+
+    R2 changes the README's SHAPE. The section was restructured into THREE bands (10+, 5-9, 2-4)
+    with all three headings reworded, corpus untouched, every stated fact still true: not falsely
+    rejected, 73/73. The same layout against pre-fix HEAD is rejected. Then a wrong count was put
+    on the MIDDLE band — a band position this repo does not have — and it fails naming this guard
+    alone, on COUNT-MISMATCH.
+
+  This matters concretely rather than academically: T-007 (retagging) is live on the backlog and
+  could legitimately change the band boundaries or the NUMBER of bands, at which point a
+  positionally-anchored guard fires on a CORRECT README. That is a false rejection a maintainer
+  resolves by deleting the guard, which is worse than never having written it.
+
+instrument repair — the gate's FIRST run returned 30/35, and four of the five failures were in my
+  harness, not in the change. A1-A4.ATTRIB require the HEAD-side rejection to carry reason
+  PARSE-FAILURE, and my reason-matcher was keyed to the POST-fix message wording ('could not parse
+  a "N tags" count (distinct from ...)') while HEAD emits 'could not parse a LEADING "N tags"
+  count'. So every HEAD-side reading came back reason-less. The readings themselves — 73/72/1,
+  naming this guard alone — were identical in both runs and are what the check is about. Repaired
+  by matching both wordings and by printing the failing-test NAMES into every line so the
+  attribution is visible rather than asserted, then re-run whole: 34/35. This is the FOURTH cycle
+  running where the instrument failed before the item did (cf. cycle 19's reporter parse bug,
+  cycle 23's TAP attribution bug, cycle 24's corpus-helper SyntaxError). The repair touched the
+  reason-matcher and the output format only; no check was relaxed, no threshold moved, and the
+  A-half and both R-pairs had already passed in run 1 under the stricter-by-accident matcher.
+
+failed check S4.SCRATCH — kept as a failure, and NOT charged to cycle 24. Directory mtimes put
+  both .swarm (19:13) and .swarm/scratch (19:16) inside this cycle's dispatch window, so this
+  builder created .swarm/scratch/cycle-025/, deleted the cycle-025 child exactly as instructed,
+  and left the parent it had created. KI-7's fifth occurrence, second consecutive cycle, and it
+  repeats cycle 24's shape precisely: the agent removes what it was told to name and leaves the
+  parent. Cycle 24's lesson ("name the exact path whose ABSENCE is checked") was NOT applied to
+  this cycle's dispatch prompt — I named the child path again — so this occurrence is evidence
+  about MY prompt, not about the builder. Nothing leaked: the directory was empty, git does not
+  track empty directories, and the SWARM write fence was clean (S5). Removed by hand.
+
+residual T-023 filed, from the gate's own probe rather than from a later maintainer's surprise.
+  Rewriting the 5+ heading to `Of 37 tags, 4 tags carry 5+ entries each.` — every number TRUE, the
+  corpus really does have 37 distinct tags, rows untouched — fails at 73/72/1 on COUNT-MISMATCH:
+  the parser takes the first non-band-token "N tags" match, which is `37 tags`, and then reports
+  "states 37 tags, but the corpus has 4". FIFTH member of the prose-anchor family (T-018 c20,
+  T-020 c22, T-021 c23, T-022 c24, T-023 c25). Filed at priority 6 rather than 7, with an explicit
+  BOUNDARY option: unlike its four siblings this case is genuinely AMBIGUOUS — a heading holding
+  two true "N tags" phrases has no ground truth in the prose saying which is the band count, and
+  preferring the last candidate or the one nearest the band token would only trade this false
+  rejection for a different one. SPEC I-2 permits documenting a BOUNDARY instead of hardening it,
+  and that argument must be made before another narrowing is shipped.
+
+decision recorded (cycle 25): the prose-anchor family is now being treated as ONE standing design
+  finding rather than five separate bugs. Every README guard this run has built extracts a number
+  by anchoring to a position or a literal in English, and every fix has NARROWED the anchor rather
+  than removed it. The failure direction has been safe every time — these guards reject a correct
+  README loudly, never pass a wrong one silently — but a maintainer's cheapest escape from a false
+  rejection is deleting the guard, so the cumulative risk is that the whole family goes at once.
+  Carried to RETRO as one lesson instead of five backlog corpses.
+
+wave autotune: CLEAN wave (zero reverts, zero failed verifies) → wave_streak 0 → 1. No increment
+  (it trips at 2), k_current stays 5, already the hard max. INERT this run either way: effective
+  wave size = min(k_current 5, gear cap 1) = 1, and gear 1 is structurally fixed because the week
+  resets after stop_at.
+
+outcome: T-022 VERIFIED done. Backlog: 26 done, 7 todo, 1 blocked, 1 dropped (35 total, 8 live).
+  Remaining gear-1-admissible work is T-018, T-020, T-021, T-023 — all S-effort, all LOUD false
+  rejections, no SILENT holes on the board. T-007/T-008 are annotated unreachable at gear 1.
+next: T-018, T-020 or T-021 — the three prose-anchor siblings that predate this cycle. T-023 is
+  the newest and its BOUNDARY question deserves a cycle that is not also fixing something.
+wakeup: next_wakeup_at 1786821948 (now + 90s, verified-value cycle). On the VPS the pacer
+  (swarm-pacer.timer, every 5 min) reads next_wakeup_at and spawns the cycle; ScheduleWakeup is
+  not the firing mechanism here and was not called.
+
+runtime runfile-mirror:
+```json
+{"version":1,"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","usage_reset_note":"PLACEHOLDER, not measured: now+5h. bin/swarm-budget.sh is not on the Bash allowlist in a headless session (KI-5 / moon KI-2), so no probe supplied a real window boundary. Used only by the limp short-circuit; no gear decision rests on it.","model_policy":"value-routing","auth_mode":"subscription","heartbeat":{"ts":1786821858,"next_wakeup_at":1786821948,"pid":577707,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"allocator","gear":1,"gear_target":1,"ratio":null,"mode":"guest","k_cap":1,"promote":false,"demote":true,"window_tokens":0,"window_cost_usd":0,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":0,"projected_depletion_at":0,"last_probe_ts":1786821858,"last_real_probe_ts":0,"probe_failures":0,"probe_note":"cycle 25: bin/swarm-budget.sh REFUSED by the permission layer again (TWENTY-FOURTH consecutive cycle, KI-5). Attempted rather than skipped on precedent, per the standing cycle-14 rule that the sanctioned path is tried every cycle and the gate is never assumed from history; it refused before the command started, so probe_failures stays 0 on the standing reasoning. CHANGED THIS CYCLE: bin/swarm-notify.sh poll RAN (completed, empty output) instead of refusing -- the first real control poll of this run. Result identical to the file-only fallback: runs/control.json pending[] and applied[] both empty, no inject[] array, nothing to apply or triage. The allowlist gap is therefore NARROWER than KI-5 records: notify is reachable, budget and playbook are not. node bin/swarm-craft.mjs DID run (not gated) and loaded clean, degraded[] empty; its ui/review/docs packs are not applicable to a test-guard item on a Node CLI and were not spliced. Gear re-derived by hand from runs/allocator.json (source=probe), which moved only in week_elapsed_pct since cycle 24: posture=trickle, allow_premium_pct 0, allow_overall_pct 0, weekly_used_pct 86.0 (unchanged), opus_used_pct 97 (unchanged), week_elapsed_pct 79.85 (was 79.61). weekly_heat 86.0/79.85 = 1.0770 < 1.1 -> governor disengaged, ceiling 5. opus_heat 97/79.85 = 1.2148 > 1.2 -> promote still blocked. trickle + guest 1-3 clamp -> gear 1, k_cap 1, demote true. Week resets 1786942799, AFTER stop_at (1786879464) -- gear 1 remains the standing gear for the rest of this run. The board carries four S-effort gear-1 items after this cycle (T-018, T-020, T-021, T-023), so the repo is still not out of gear-1 work.","weekly":{"ok":true,"weekly_used_pct":86.0,"opus_used_pct":97,"week_elapsed_pct":79.85,"weekly_heat":1.077,"opus_heat":1.2148,"ceiling":5,"promote_blocked":true}},"playbook":{"mode":"auto","applied":["L-003","L-006","L-007","L-008","L-011","L-016","L-018","L-020","L-021","L-022","L-034","L-024","L-026","L-029","L-031"],"vetoed":[],"ledger_note":"record-applied NOT written: bin/swarm-playbook.sh is not on the Bash allowlist (KI-5), so the parse and record-applied verbs both refused in this headless session. Directives below were hand-parsed by the conductor from playbook/learnings.md, read-only. CYCLE 12 UPDATE: the applied[] list is now UNAMBIGUOUS. Item I-5 repaired the duplicate source IDs, so the entry that read L-023 (meaning the moon-sourced REFUTE lesson staged in prompt_lines.qa, not the repo-atlas L-023) has been rewritten to its new id L-034. L-026 here means the repo-atlas routing lesson (core-logic->fable), which kept its id. No other applied id was affected. Remap and reasoning: playbook/HANDOFF-cap-2026-08-15.md.","directives":{"wave_k":3,"routing_recs":["core-logic->fable"],"prompt_lines":{"builder":["The conductor is the SOLE committer — never commit or push yourself","Any exported React hook must ship a test that mounts a real component using it","Tests asserting no-key behavior must delete the key in beforeEach, not beforeAll — a real .env on main will leak through suite-level hooks","Any persisted UI state (storage or module-level) must be cleared in beforeEach of every test file that mounts the component"],"reviewer":["The conductor is the SOLE committer — never commit or push yourself","Assign each fixer a pairwise-disjoint file set; two fixers must never share a file"],"qa":["The conductor is the SOLE committer — never commit or push yourself","Script a deterministic scenario with hand-computed expected outputs; eyeballing rendered numbers is not verification","Load all classic-script modules into one shared vm context and scan for cross-file top-level name collisions","Open the running product in a browser and describe what you actually see — tests alone miss rendered-page bugs","After merging user-visible files, run a live browser look pass before counting the wave verified","After any server rebuild or restart, hard-reload the page before judging — a stale SPA instance survives goto","Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'.","Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value.","When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence.","Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps."]},"inert_note":"Four staged qa lines are browser-specific (L-006 classic-script collisions, L-007 browser look, L-018 post-merge look pass, L-021 hard-reload) and are INERT for this target: aphorism-cli is a Node CLI with no browser surface. Staged faithfully rather than silently dropped — apply_mode is auto and the conductor does not get to edit the playbook's intent mid-run (hard rule 5)."}},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":24,"artifact":{"url":"","file":"/opt/swarm/runs/dashboard.html","publish_failures":0}}
+```

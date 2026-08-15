@@ -1,0 +1,56 @@
+=== CONTROLS ===
+PASS  G0.PRISTINE            tests 73 pass 73 fail 0
+PASS  G0b.HEAD-GREEN         tests 73 pass 73 fail 0 (HEAD test file)
+PASS  G0c.SUITE-LIVE         tests 73 pass 72 fail 1 :: failing=["README tag counts must match corpus"]
+
+=== ACCEPTANCE, GREEN HALF: honest rewordings must no longer be rejected ===
+PASS  A1.GREEN               tests 73 pass 73 fail 0 :: "Well-populated: 4 tags carry 5+ entries each."
+PASS  A1.ATTRIB              tests 73 pass 72 fail 1 [PARSE-FAILURE] :: failing=["README band table headings must state the correct count of tags in their band"] (HEAD test file)
+PASS  A2.GREEN               tests 73 pass 73 fail 0 :: "Mid-range: 12 tags land in the 2-4 band."
+PASS  A2.ATTRIB              tests 73 pass 72 fail 1 [PARSE-FAILURE] :: failing=["README band table headings must state the correct count of tags in their band"] (HEAD test file)
+PASS  A3.GREEN               tests 73 pass 73 fail 0 :: "Tags with a robust pool — 4 tags — carry 5+ entries."
+PASS  A3.ATTRIB              tests 73 pass 72 fail 1 [PARSE-FAILURE] :: failing=["README band table headings must state the correct count of tags in their band"] (HEAD test file)
+PASS  A4.GREEN               tests 73 pass 73 fail 0 :: "Of the 50 corpus entries, 12 tags land in the 2-4 band."
+PASS  A4.ATTRIB              tests 73 pass 72 fail 1 [PARSE-FAILURE] :: failing=["README band table headings must state the correct count of tags in their band"] (HEAD test file)
+PASS  A5.GREEN               tests 73 pass 73 fail 0
+PASS  A5.ATTRIB              tests 73 pass 72 fail 1 [PARSE-FAILURE] :: failing=["README band table headings must state the correct count of tags in their band"] (HEAD test file)
+
+=== ACCEPTANCE, RED HALF: a wrong count must still fail, and for the RIGHT reason ===
+PASS  A6.FAILABLE            tests 73 pass 72 fail 1 [COUNT-MISMATCH] :: failing=["README band table headings must state the correct count of tags in their band"]
+PASS  A6.REASON              reason=COUNT-MISMATCH
+PASS  A7.FAILABLE            tests 73 pass 72 fail 1 [COUNT-MISMATCH] :: failing=["README band table headings must state the correct count of tags in their band"]
+PASS  A7.REASON              reason=COUNT-MISMATCH
+PASS  A8.FAILABLE            tests 73 pass 72 fail 1 [COUNT-MISMATCH] :: failing=["README band table headings must state the correct count of tags in their band"]
+PASS  A8.REASON              reason=COUNT-MISMATCH
+PASS  A9.FAILABLE            tests 73 pass 72 fail 1 [COUNT-MISMATCH] :: failing=["README band table headings must state the correct count of tags in their band"]
+PASS  A9.REASON              reason=COUNT-MISMATCH
+
+=== CLAUSE 4: still LOUD when it genuinely cannot find a count ===
+PASS  A10.LOUD               tests 73 pass 72 fail 1 [PARSE-FAILURE] :: failing=["README band table headings must state the correct count of tags in their band"]
+PASS  A11.LOUD-OVERLAP       tests 73 pass 72 fail 1 [PARSE-FAILURE] :: failing=["README band table headings must state the correct count of tags in their band"]
+PASS  A11.CONTRAST           tests 73 pass 72 fail 1 [PARSE-FAILURE] :: failing=["README band table headings must state the correct count of tags in their band"] (HEAD test file)
+
+=== R1 DISCRIMINATOR: the expected count still tracks the CORPUS, under rewording ===
+PASS  R1.APPLIED             yagni=2 multi-entry tags=17 (was 16)
+PASS  R1.TRACKS              tests 73 pass 73 fail 0
+PASS  R1.STALE               tests 73 pass 68 fail 5 [COUNT-MISMATCH] :: failing=["README must correctly describe single-entry tag count","every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band","every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)","README band table headings must state the correct count of tags in their band","README opening sentence must state correct multi-entry and single-entry tag counts"] :: guard named=true
+
+=== R2 DISCRIMINATOR: a THREE-band layout this repo has never had, reworded ===
+PASS  R2.TRACKS              tests 73 pass 73 fail 0
+PASS  R2.ATTRIB              tests 73 pass 72 fail 1 [PARSE-FAILURE] :: failing=["README band table headings must state the correct count of tags in their band"] (HEAD test file)
+PASS  R2.FAILABLE            tests 73 pass 72 fail 1 [COUNT-MISMATCH] :: failing=["README band table headings must state the correct count of tags in their band"]
+
+=== RESIDUAL PROBE: a lead-in that carries its own "N tags" phrase ===
+      probe: lead-in contains "37 tags" (true) before the real count "4 tags" -> tests 73 pass 72 fail 1 [COUNT-MISMATCH] :: failing=["README band table headings must state the correct count of tags in their band"]
+      verdict: FALSE REJECTION -- residual, file it
+
+=== SCOPE ===
+PASS  S1.ONE-FILE            ["test/readme-tags.test.js"]
+PASS  S2.PRODUCT-INTACT      9/9 byte-identical
+PASS  S3.DIFFSTAT            42	8	test/readme-tags.test.js
+FAIL  S4.SCRATCH             STILL PRESENT: 
+PASS  S5.FENCE               clean
+
+root: /tmp/aph-c25-verify-Y0yoDG
+RESULT: 34/35 checks passed
+  FAILED S4.SCRATCH: builder left no scratch directory behind (KI-7) :: STILL PRESENT: 

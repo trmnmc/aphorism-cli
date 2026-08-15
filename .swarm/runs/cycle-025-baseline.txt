@@ -1,0 +1,22 @@
+PASS  CTRL-PRISTINE  SURVIVED (expected SURVIVED)  tests 73 pass 73 fail 0
+        unmutated copy of HEAD
+FAIL  B1  KILLED (expected SURVIVED)  tests 73 pass 72 fail 1  [PARSE-FAILURE]
+        lead-in before count, 5+ heading; every number still TRUE, rows untouched
+         failing: README band table headings must state the correct count of tags in their band
+FAIL  B2  KILLED (expected SURVIVED)  tests 73 pass 72 fail 1  [PARSE-FAILURE]
+        lead-in before count, 2-4 heading; every number still TRUE, rows untouched
+         failing: README band table headings must state the correct count of tags in their band
+PASS  B3  KILLED (expected KILLED)  tests 73 pass 72 fail 1  [COUNT-MISMATCH]
+        WRONG count, heading format UNCHANGED (guard must already catch this)
+         failing: README band table headings must state the correct count of tags in their band
+PASS  B4  KILLED (expected KILLED)  tests 73 pass 72 fail 1  [PARSE-FAILURE]
+        WRONG count UNDER a reworded heading (the case the fix must still catch)
+         failing: README band table headings must state the correct count of tags in their band
+PASS  B5  KILLED (expected KILLED)  tests 73 pass 72 fail 1  [PARSE-FAILURE]
+        WRONG count under a reworded 2-4 heading
+         failing: README band table headings must state the correct count of tags in their band
+
+root: /tmp/aph-c25-base-6aYMv6
+SUMMARY: 4/6 readings matched expectation
+  MISMATCH B1: got KILLED, expected SURVIVED
+  MISMATCH B2: got KILLED, expected SURVIVED
