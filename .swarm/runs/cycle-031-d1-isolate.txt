@@ -1,0 +1,7 @@
+marker /\bHIGH\b/ -- "want" is the number the sentence actually states
+
+case                                            want  FIXED  HEAD
+subject-first  "8 of the 50 entries are rated HIGH"8     8      50 X
+subject-last   "Of the 50 entries, 8 are rated HIGH"8     50 X   8
+subject-first, wrong claim (9)                  9     9      50 X
+subject-last,  wrong claim (9)                  9     50 X   9

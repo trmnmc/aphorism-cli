@@ -1,0 +1,9 @@
+B0  19/19/0   C1=GREEN              C2=GREEN
+B1  19/18/1   C1=GREEN              C2=MISMATCH(read 50)
+B2  19/18/1   C1=GREEN              C2=MISMATCH(read 9)
+B3  19/18/1   C1=MISMATCH(read 51)  C2=GREEN
+B4  19/18/1   C1=GREEN              C2=MISMATCH(read 50)
+B5  19/17/2   C1=MISMATCH(read 51)  C2=MISMATCH(read 51)
+B6  19/18/1   C1=GREEN              C2=PARSE-MISS
+
+README restored byte-identical: true
