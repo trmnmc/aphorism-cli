@@ -114,6 +114,6 @@
     "n": 6,
     "work": "I-2c — two parser-level negative-seed tests (direct Agent, sonnet, k=1, scoped to test/args.test.js) + conductor harness with a new DENOMINATOR control",
     "outcome": "1 verified; suite 56 -> 58 green; M21 failable and strictly attributable; product files byte-identical; I-2 mutation-hardening thread complete",
-    "commit": "pending"
+    "commit": "dbde196"
   }
 }
