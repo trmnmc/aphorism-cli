@@ -261,6 +261,6 @@
     "n": 21,
     "work": "test triage (one item, k_cap 1 at gear 1) -- T-015, guarding the four corpus-derived integers in the README Tag vocabulary section that cycle 19 measured as unprotected (A9, A10, A11 and the conductor-original V6).",
     "outcome": "VERIFIED done. 28/29 conductor gate checks (.swarm/runs/cycle-021-verify-T-015.txt); the single failure is the SCOPE.SCRATCH housekeeping control (builder left an EMPTY scratch dir -- 0 files inside, no content leaked, conductor removed it), not an acceptance clause. Recorded as failed rather than re-run to a manufactured green. 68 tests green (66 -> 68, pure insertion: 116 added, 0 removed, every pre-existing byte an unmodified prefix). Blindness was MEASURED before dispatch, not assumed (.swarm/runs/cycle-021-baseline.txt): all four claims survived at 66/66/0 while the paired controls V6b and C0 killed. All four proven twice per L-029 using conductor off-by-one mutations in both directions (16->17, 21->20, 4->3, 12->13) where the builder had used 99/88/77/55. The decisive check was R2, which no acceptance clause asked for: mutating the corpus AND updating the README consistently keeps the suite green at 68/68 (a hardcoded guard would fail), while the stale-README half fails at 3 -- so the guard provably tracks the corpus and will survive T-007. N3 confirms the two statements of `21` are guarded independently. Residual filed as T-019: deleting an ENTIRE band table still survives at 68/68.",
-    "commit": "PENDING"
+    "commit": "6fabaca"
   }
 }
