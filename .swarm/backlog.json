@@ -1,358 +1,358 @@
 {
-  "items": [
-    {
-      "id": "T-001",
-      "title": "Aphorism corpus + pure selection core",
-      "kind": "feature",
-      "priority": 1,
-      "value": "H",
-      "effort": "M",
-      "status": "done",
-      "deps": [],
-      "files_hint": [
-        "src/corpus.js",
-        "src/select.js",
-        "test/select.test.js"
-      ],
-      "acceptance": "corpus holds >= 40 entries with text/author/tags; filter and pick behave per Domain rules",
-      "packages": [],
-      "model": "sonnet",
-      "attempts": 0,
-      "notes": "verified cycle 1 (2026-08-14)"
-    },
-    {
-      "id": "T-002",
-      "title": "Pure CLI argument parser + help text",
-      "kind": "feature",
-      "priority": 1,
-      "value": "H",
-      "effort": "M",
-      "status": "done",
-      "deps": [],
-      "files_hint": [
-        "src/args.js",
-        "test/args.test.js"
-      ],
-      "acceptance": "every flag parses; malformed usage is reported via an error field, never a throw",
-      "packages": [],
-      "model": "sonnet",
-      "attempts": 0,
-      "notes": "verified cycle 1 (2026-08-14)"
-    },
-    {
-      "id": "T-003",
-      "title": "CLI entry point wiring corpus + select + args",
-      "kind": "feature",
-      "priority": 1,
-      "value": "H",
-      "effort": "S",
-      "status": "done",
-      "deps": [
-        "T-001",
-        "T-002"
-      ],
-      "files_hint": [
-        "bin/aphorism.js",
-        "test/cli.test.js"
-      ],
-      "acceptance": "node bin/aphorism.js prints one attributed aphorism to stdout, exit 0",
-      "packages": [],
-      "model": "sonnet",
-      "attempts": 0,
-      "notes": "verified cycle 1 (2026-08-14); conductor-authored integration"
-    },
-    {
-      "id": "T-004",
-      "title": "README documenting install-free usage and every flag",
-      "kind": "docs",
-      "priority": 3,
-      "value": "M",
-      "effort": "S",
-      "status": "done",
-      "deps": [
-        "T-003"
-      ],
-      "files_hint": [
-        "README.md"
-      ],
-      "acceptance": "README documents zero-install usage and every one of the six flags",
-      "packages": [],
-      "model": "haiku",
-      "attempts": 0,
-      "notes": "verified cycle 1 (2026-08-14)"
-    },
-    {
-      "id": "T-005",
-      "title": "No-repeat-until-exhausted rotation cursor",
-      "kind": "feature",
-      "priority": 9,
-      "value": "H",
-      "effort": "M",
-      "status": "todo",
-      "deps": [],
-      "files_hint": [
-        "src/rotation.js",
-        "test/rotation.test.js"
-      ],
-      "acceptance": "consecutive runs never repeat an aphorism until the corpus is spent",
-      "packages": [],
-      "model": "sonnet",
-      "attempts": 0,
-      "notes": "OUT OF SCOPE for the 2026-08-15 improvement run — it is a new user-visible feature and the allocator brief forbids features. Kept todo, NOT dropped: the kickoff taste judge scored use-twice 4/10 and named this deferral as the single cause, so this is the first item any future feature-bearing run should pick."
-    },
-    {
-      "id": "T-006",
-      "title": "Human audit of corpus attributions",
-      "kind": "qa",
-      "priority": 2,
-      "value": "H",
-      "effort": "M",
-      "status": "blocked",
-      "deps": [],
-      "files_hint": [
-        "src/corpus.js"
-      ],
-      "acceptance": "every corpus entry's attribution is confirmed against a primary source",
-      "packages": [],
-      "model": "sonnet",
-      "attempts": 0,
-      "notes": "BLOCKED on a human, permanently as far as this run is concerned: confirming an attribution needs sources this run has no access to (network is a product non-goal and MCP/web tools are outside the conductor's allowed surface). Superseded in practice by I-4, which produces the risk-ranked triage a human can act on. Tracked as KI-2."
-    },
-    {
-      "id": "I-1",
-      "title": "Close the --seed non-finite determinism hole in pick()",
-      "kind": "fix",
-      "priority": 1,
-      "value": "H",
-      "effort": "S",
-      "status": "done",
-      "deps": [],
-      "files_hint": [
-        "src/select.js",
-        "test/select.test.js"
-      ],
-      "acceptance": "--seed Infinity and --seed -Infinity each return the identical aphorism on every run at exit 0, with the same filters applied",
-      "packages": [],
-      "model": "sonnet",
-      "attempts": 0,
-      "notes": "CONDUCTOR-CONFIRMED defect (kickoff probe: 6 distinct aphorisms in 6 runs, exit 0). Resolution chosen: DETERMINISTIC PICK, not exit 2. Reasoning, judged against the SPEC's own rules: args.js already accepts Infinity as numeric (Number('Infinity') is not NaN) and the Domain rule promises determinism for --seed with no finiteness carve-out, so rejecting it would mean inventing a NEW undocumented validation rule rather than fixing the actual defect — which is that select.js gates its deterministic branch on Number.isFinite while toUint32Seed's IEEE-754 bit-fold already handles +/-Infinity deterministically. NaN stays exit 2 (parseSeedValue already rejects it) and that is correct and unchanged. Doc statement of this resolution belongs to I-3, which is why this item's files_hint is code+test only. NOT flagged route_class core despite playbook L-026: the allocator posture is trickle with allow_premium_pct 0 and opus at 96%, and gear 1's rule is S-effort sonnet builds — deliberately routing a 3-line fix to fable would spend premium the allocator has explicitly zeroed. || VERIFIED cycle 3 by the conductor with checks authored at verification time (the builder never saw them): full test_cmd 52/52 green, end-to-end CLI stability 1-distinct-of-8 for +Inf, -Inf, and +Inf under a --tag filter, and a discriminator that independently re-derived the expected corpus index for each seed (a degenerate index-pin would have passed the stability check alone). NaN contract and the unseeded random branch both confirmed unchanged. Evidence: .swarm/runs/cycle-003-verify-I-1.txt"
-    },
-    {
-      "id": "I-2a",
-      "title": "Mutation sweep of every documented behavior against the existing suite",
-      "kind": "qa",
-      "priority": 2,
-      "value": "H",
-      "effort": "M",
-      "status": "done",
-      "deps": [],
-      "files_hint": [],
-      "acceptance": "every documented flag and Domain-rule behavior has been mutated at least once against the current suite, and each surviving mutant is recorded with the exact mutation applied and the suite's response",
-      "packages": [],
-      "model": "sonnet",
-      "attempts": 0,
-      "notes": "MEASUREMENT, not reading (playbook L-031). Behaviors to mutate: seed determinism, unseeded selection, --author case-insensitive matching, --tag membership matching, author+tag AND intersection, empty-set error contract, --list completeness and corpus order, --json single-line shape, the three exit codes, HELP content. Produces a survivor list ONLY. The HOLE-vs-BOUNDARY classification (L-033) is the CONDUCTOR's judgment and is deliberately withheld from this item: a survivor at a genuinely indiscriminable point (unseeded uniformity is the expected example) is the check being correct, and 'hardening' it produces a test that false-rejects honest output. Scratch copies for mutation must be whole-repo-minus-.git, never a hand-enumerated file subset (L-030). || VERIFIED cycle 4 by the conductor. 27 mutants across every catalogued behavior; baseline 52/52. Agent reported 19 KILLED / 7 SURVIVED / 1 EQUIVALENT (M06-EQUIV, dropping .toLowerCase() on the tag ENTRY side, was a no-op because every corpus tag is already lowercase - correctly excluded and replaced by a query-side variant that killed). Conductor re-measurement re-derived all 7 survivors AND a 4-mutant control sample of claimed KILLS from the one-sentence descriptions only, never from the agent's diffs, each in its own whole-repo-minus-.git copy: 11/11 agree, and every survivor carries a conductor-authored observable-difference probe, so none is an equivalent mutant. Classification (conductor, per SPEC Domain rules): 5 HOLE (M07, M12, M13, M14, M21), 1 BOUNDARY (M22 - only the error-message wording changes; exit 2 + clean stdout + stderr message all still hold), 1 DEFERRED to I-3 (M16, --list --json, the surface SPEC lists as an OPEN AMBIGUITY - testing it now would promote today's implementation to a promise and pre-empt I-3). Evidence: .swarm/runs/cycle-004-verify-I-2a.txt, .swarm/runs/cycle-004-classification.md, .swarm/runs/cycle-004-mutation-sweep.json"
-    },
-    {
-      "id": "I-2b",
-      "title": "Close HOLE survivors in the CLI-level suite",
-      "kind": "test",
-      "priority": 3,
-      "value": "M",
-      "effort": "S",
-      "status": "done",
-      "deps": [
-        "I-2a"
-      ],
-      "files_hint": [
-        "test/cli.test.js"
-      ],
-      "acceptance": "each behavior the conductor classified HOLE is covered by a test that fails against its specific mutation, and whose removal lets that same mutation survive",
-      "packages": [],
-      "model": "sonnet",
-      "attempts": 0,
-      "notes": "Admits tests ONLY for survivors the conductor classified HOLE — never for a surface that merely looks untested. Each test must be proven twice (L-029): failable against its mutation AND attributable, i.e. removing it lets the mutation survive. Planning-time hypotheses, to be settled by I-2a's actual measurement and not assumed: the current --list test asserts only a line-count floor and never order, and the current --json test uses JSON.parse after trim() so a pretty-printed multi-line mutant may still parse. || SETTLED by I-2a (cycle 4). Four assigned HOLE survivors, all observable through the shipped binary: M07 (--tag test must exit 1 - membership, not substring; the corpus has a 'testing' tag and no 'test' tag), M12 (--list line count must equal the corpus size - the existing assertion is a FLOOR of 40 against 50 entries, so dropping an entry passes), M13 (--list first/last line must match corpus order - nothing asserts order today), M14 (--json must be exactly one line - the existing test JSON.parses a trimmed blob, which a pretty-printed object also satisfies). Both planning-time hypotheses in this item were CONFIRMED by measurement. Exact mutations: .swarm/runs/cycle-004-classification.md || VERIFIED cycle 5 by an independent conductor harness (.swarm/runs/cycle-005-verify-I-2b.py, builder never saw it). All four HOLEs proven twice: FAILABLE (mutation applied, suite fails and the designated new test is named) and ATTRIBUTABLE in the strict form (mutation applied + all four new tests skipped -> 52 pass / 0 fail, exactly the pre-sweep baseline, so no pre-existing test was doing the work). A skip-sanity control confirms --test-skip-pattern does not disable the whole run. Suite 52 -> 56 green. Recorded overlap: M12 is length-changing, so it also trips the M13 order test; isolation of M12 alone still leaves fail=1 by design, not by defect."
-    },
-    {
-      "id": "I-2c",
-      "title": "Close remaining HOLE survivors in the pure-module suite",
-      "kind": "test",
-      "priority": 4,
-      "value": "M",
-      "effort": "S",
-      "status": "done",
-      "deps": [
-        "I-2a",
-        "I-2b"
-      ],
-      "files_hint": [
-        "test/args.test.js"
-      ],
-      "acceptance": "each remaining conductor-classified HOLE survivor in the parser or selection layer is covered by a test that fails against its specific mutation and whose removal lets that mutation survive",
-      "packages": [],
-      "model": "sonnet",
-      "attempts": 0,
-      "notes": "Same twice-proven rule as I-2b. Scoped to test/args.test.js so it shares no file with I-2b (test/cli.test.js) or I-1 (test/select.test.js) — pairwise-disjoint even though this run's waves are size 1. If I-2a's survivors land entirely in one file, this item is closed as not-needed rather than padded with tests to justify its existence. || SETTLED by I-2a (cycle 4). Exactly ONE assigned HOLE survivor, and it does live in the parser, so this item is neither padded nor closed as not-needed: M21 - parseSeedValue rejecting negative seeds survives the whole suite, i.e. parseArgs(['--seed','-5']) yielding seed === -5 with no error is unprotected. Turning a valid invocation into exit 2 contradicts the Domain rule that exit 2 means unknown flag or missing flag argument. M22 (the other args.js survivor) is classified BOUNDARY and must NOT be hardened. Details: .swarm/runs/cycle-004-classification.md || CLOSED cycle 6. Two additive tests in test/args.test.js cover both argument forms ('--seed','-5') and ('--seed=-5'). Conductor harness .swarm/runs/cycle-006-verify-I-2c.py: FAILABLE (M21 -> fail=2, both failures named are the new tests), DENOMINATOR (pattern removes exactly 2 of 58, leaving the 56-test baseline green), ATTRIBUTABLE strict (M21 + new tests filtered -> tests=56 pass=56 fail=0, the pre-cycle baseline to the test), SKIP-SANITY (breaking control mutation under the same pattern -> 7 pre-existing failures). Product tree byte-identical to HEAD. M22 left unhardened as classified."
-    },
-    {
-      "id": "I-3",
-      "title": "Settle the four doc/behaviour divergences identically in SPEC.md and README.md",
-      "kind": "docs",
-      "priority": 5,
-      "value": "M",
-      "effort": "S",
-      "status": "done",
-      "deps": [
-        "I-1"
-      ],
-      "files_hint": [
-        ".swarm/SPEC.md",
-        "README.md"
-      ],
-      "acceptance": "SPEC.md Domain rules and README.md state in matching wording: how --author matches, what --list does with --seed, what --list --json emits, and how a non-finite --seed behaves; and SPEC.md's OPEN AMBIGUITIES comment is gone rather than left open",
-      "packages": [],
-      "model": "haiku",
-      "attempts": 0,
-      "notes": "Four divergences, not three: the I-1 resolution is the fourth and is documented here rather than in I-1, keeping code and prose in separate file scopes. Documentation follows the SHIPPED behavior (--author is substring containment, case-insensitive) rather than changing behavior to match prose — changing the match semantics would be a user-visible behavior change, which the brief forbids. Depends on I-1 so the seed prose describes a resolution that has actually landed. || MEASURED EVIDENCE from I-2a (cycle 4) for divergence (c): mutant M16 rewrote --list --json from NDJSON to a single pretty-printed JSON array and the full 52-test suite stayed green, so that surface is completely unprotected today. It is deliberately NOT being hardened by I-2b/I-2c - no Domain rule describes the combination, so a test would freeze the current implementation and pre-empt this item. Settle the rule here first. || NEW measured evidence (cycle 5): the --list LINE FORMAT (\"<text> — <author>\", em dash, single line) is now pinned by the M13 order test but is stated by no Domain rule — the rules describe order and completeness of --list, never its rendering. Same shape of gap as M16: a test now enforces something the spec does not promise. I-3 should either write the rule or loosen the assertion to order-only. Do not silently leave the test as the de-facto spec. || CLOSED cycle 7, as a SUPERSET of the three divergences the SPEC named. Conductor rulings, all following SHIPPED behavior: (a) --author is substring containment, case-insensitive; (b) --tag is WHOLE-TAG membership (stated adjacent to (a) so the asymmetry is visible — it is the most confusable thing about the tool); (c) --list accepts a valid --seed and ignores it, exit 0; (d) --list --json is NDJSON, one object per line in corpus order, NOT a JSON array; (e) --list plain form is `<text> — <author>`, em dash U+2014, one line per entry — the cycle-5 gap where a test pinned what no rule promised, resolved by WRITING THE RULE rather than loosening the test, because --list output is a real piped-into contract; (f) --seed accepts every value Number() parses to non-NaN (negative, non-integer, +/-Infinity), all deterministic, NaN alone is exit 2. SPEC's OPEN AMBIGUITIES comment block deleted, not edited. README's brittle '48 tests' count replaced with a description of coverage. || VERIFIED cycle 7 by EXECUTING the shipped binary, never by reading the prose — a docs item whose claims are all behavioral is verifiable the same way a code item is. Harness .swarm/runs/cycle-007-verify-I-3.js (authored at verification time; the agent never saw it): 36/36 checks pass, evidence .swarm/runs/cycle-007-verify-I-3.txt. Four discriminators included so a degenerate implementation could not pass: partial-author result set must EQUAL the full-name set (kills an equality reading of (a)); default 2-line indented output must DIFFER from --list's 1-line form (proves (e) describes two genuinely distinct formats); 7 distinct seeds must reach 7 distinct aphorisms (a determinism check alone is satisfied by an always-same-entry stub); NDJSON first/last line must match corpus[0]/corpus[49] (order, not just parseability). Suite 58/58 green throughout; zero product code touched. CONDUCTOR PRECISION EDIT after the first harness run: the agent's '--list accepts --seed but ignores it' read as though ANY seed value were fine under --list, but the harness EDGE check proved `--list --seed abc` still exits 2. Both files now say 'accepts a valid --seed' and name the parse-failure carve-out. Nothing was weakened to open the gate — the edit made the prose match a measurement that had already passed."
-    },
-    {
-      "id": "I-7",
-      "title": "Align the --help text with the Domain rules I-3 settled",
-      "kind": "docs",
-      "priority": 6,
-      "value": "M",
-      "effort": "S",
-      "status": "done",
-      "deps": [
-        "I-3"
-      ],
-      "files_hint": [
-        "src/args.js"
-      ],
-      "acceptance": "the HELP string describes --author as a substring match and --tag as a whole-tag match, in wording consistent with SPEC.md Domain rules and README.md, and the suite still passes",
-      "packages": [],
-      "model": "haiku",
-      "attempts": 0,
-      "notes": "FOUND cycle 7 while verifying I-3, and deliberately held OUT of I-3's scope: the HELP string lives in src/args.js, a product file, while I-3 was scoped to the two doc files, and mixing them would have broken the pairwise-disjoint file rule. HELP currently says '--author <name>  filter by author (case-insensitive)' and '--tag <tag>  filter by tag (case-insensitive)'. Neither line is FALSE — both flags are case-insensitive — but both are incomplete in exactly the way I-3 just closed elsewhere: they omit that --author is substring containment and --tag is whole-tag, which is the asymmetry users trip over. This is a third documentation surface that still carries the pre-I-3 wording. NOT a behavior change: only the help text's prose moves. Watch for a test that pins HELP content (I-2a mutated HELP and the sweep's notes should be consulted before editing) — if one exists it must be updated in the same item, and a green suite is part of the acceptance. || CLOSED cycle 8 as a SUPERSET of the two divergences this item named. Conductor pre-decided all wording against the shipped source and the landed I-3 rulings; the haiku agent transcribed, it decided nothing. Three HELP lines moved: --author now reads 'filter by author (substring match, case-insensitive)', --tag reads 'filter by tag (whole-tag, case-insensitive)' and sits adjacent so the asymmetry is readable at a glance, and --json reads 'output as JSON (single line, or NDJSON with --list)'. The --json line is the WIDENING, recorded as a decision rather than taken silently: it carried the identical pre-I-3 defect (a documentation surface describing only the non-list case), it lives in the same file and same edit, and drawing the scope line so as to leave one of three known incompletenesses standing in the very file being opened to fix that defect class would have been artificial. HELP-content tests DID exist as the item warned (test/args.test.js: all-flag-names-present, <= 24 lines) - both still pass unmodified, neither needed updating. --seed and --list lines deliberately untouched: they are incomplete but not misleading, and README already carries the detail. || VERIFIED cycle 8. Harness .swarm/runs/cycle-008-verify-I-7.js, authored at verification time and never shown to the agent; evidence .swarm/runs/cycle-008-verify-I-7.txt, 35/35 pass. Two things needed proving and reading the diff proves neither. SCOPE: HELP sits in a PRODUCT file, so the harness split src/args.js at the template-literal boundary and byte-compared prologue (216 B) and epilogue (2631 B) against HEAD - identical, so parseArgs and every constant are provably untouched; the literal itself changed 362 -> 397 B, which also proves the item was not a no-op. TRUTH: every new phrase is a claim about runtime behaviour, so each was executed rather than read, with three discriminators - the partial-author result set must EQUAL the full-name set (kills an equality reading of 'substring'), --tag test must exit 1 while --tag testing exits 0 (kills a substring reading of 'whole-tag'), and bare --json must be exactly 1 line while --list --json is 50 (proves the one HELP line names two genuinely distinct shapes, not NDJSON-of-one). End-to-end check confirms the binary prints the EDITED constant, not a stale duplicate. Suite 58/58 green, unchanged from HEAD."
-    },
-    {
-      "id": "I-8",
-      "title": "Harden --list --json now that a Domain rule finally describes it",
-      "kind": "test",
-      "priority": 6,
-      "value": "M",
-      "effort": "S",
-      "status": "done",
-      "deps": [
-        "I-3"
-      ],
-      "files_hint": [
-        "test/cli.test.js"
-      ],
-      "acceptance": "a test fails against mutant M16 (--list --json rewritten to emit one pretty-printed JSON array) and, when removed, lets M16 survive the rest of the suite",
-      "packages": [],
-      "model": "sonnet",
-      "attempts": 0,
-      "notes": "UNBLOCKED BY I-3, and only by I-3. Cycle 4's mutation sweep measured M16 — rewriting --list --json from NDJSON to a single pretty-printed JSON array — as surviving the entire 52-test suite, i.e. that surface is completely unprotected. Cycle 4 classified it DEFERRED rather than HOLE for a specific reason: no Domain rule described the combination, so a test written then would have promoted the day's implementation to a promise and pre-empted the decision I-3 existed to make. I-3 has now MADE that decision (NDJSON, one object per line, corpus order, explicitly not an array), so the surface has a rule and the deferral is spent. Same twice-proven bar as I-2b/I-2c (playbook L-029): failable against M16 specifically, and attributable in the strict form — mutation applied with the new test filtered out must leave the pre-cycle baseline green. The exact M16 mutation is recorded in .swarm/runs/cycle-004-classification.md. M22 stays BOUNDARY and is still not to be hardened. || CLOSED cycle 9. One test added to test/cli.test.js: '--list --json emits newline-delimited JSON, one object per line, in corpus order'. It asserts three things a weaker test would not: line count EQUALS the filtered-set size (an equality, not the floor the pre-existing --list test used), every line parses STANDALONE as a JSON object with text/author/tags (no line of a multi-line array can), and the parsed texts match corpus order. Suite 58 -> 59. || VERIFIED cycle 9 by a conductor harness authored at verification time and never shown to the builder (.swarm/runs/cycle-009-verify-I-8.js, evidence .swarm/runs/cycle-009-verify-I-8.txt, 24/24 pass). Proven twice per L-029: FAILABLE (M16 applied -> fail=1 and the ONLY failing test is the new one) and ATTRIBUTABLE in the strict form (M16 applied + the new test filtered -> tests 58 / pass 58 / fail 0, exactly the pre-cycle baseline the harness re-measured from HEAD rather than took from the builder). Controls: DENOMINATOR (pattern removes exactly 1 of 59 against pristine source, 58 green), SKIP-SANITY (an unrelated mutation still fails under the same pattern), and MUTATION-APPLIED on every scratch copy -- the last one matters most, because a mutation that silently failed to apply would make the ATTRIBUTABLE check pass VACUOUSLY, which is a pass-shaped false result. Three DISCRIMINATORS the new test also kills: a COMPACT single-line JSON array (still valid JSON, still every entry in order), REVERSED NDJSON order, and TRUNCATED NDJSON with the last entry dropped. The latter two also trip the pre-existing M12/M13 --list tests, which is the expected length/order overlap cycle 5 recorded, not a defect -- the claim is that the NEW test is among the failures, and it is. Product tree byte-identical to HEAD (bin/aphorism.js, src/args.js, src/select.js, src/corpus.js all compared against HEAD); git diff --name-only HEAD = test/cli.test.js alone. The I-2 hardening thread is now complete: every HOLE survivor from cycle 4's sweep is closed, and M22 remains BOUNDARY and unhardened as classified."
-    },
-    {
-      "id": "I-4",
-      "title": "Corpus attribution triage (umbrella — decomposed cycle 10 into I-4a + I-4b)",
-      "kind": "qa",
-      "priority": 1,
-      "value": "M",
-      "effort": "M",
-      "status": "done",
-      "deps": [
-        "I-4a",
-        "I-4b"
-      ],
-      "files_hint": [],
-      "acceptance": "a written risk-ranked list names the corpus entries most likely to carry a wrong or unverifiable attribution with a stated reason each, and no file in the repo describes the corpus as audited, verified, or fact-checked",
-      "packages": [],
-      "model": "conductor",
-      "attempts": 0,
-      "notes": "TRIAGE, never an audit — nothing here can be confirmed without sources this run cannot reach, and the deliverable is explicitly a list for a human to settle (KI-2, T-006). Rank by internally-observable risk signals only: folklore maxims historically credited to several different people, wording that looks paraphrased or compressed rather than verbatim, entries already hedged as Anonymous (lowest risk, already honest), and entries traceable to a specific well-documented publication (lower risk). The stress-test's demo-embarrassment lens put this ABOVE the test items in value: a programming-aphorism CLI with misattributed quotes fails in exactly the way a green suite cannot see. || DECOMPOSED cycle 10 into I-4a and I-4b, per the cycle-9 handoff's stated preference for S-effort slices over accepting one M-effort exception under gear 1. The split is NOT by risk band, which would have been circular — you cannot slice by a ranking the work exists to produce. It is by KIND of claim: I-4b is the ranked judgment artifact (what is likely wrong), I-4a is a mechanical repo sweep (does any file overclaim). Those need different evidence and different verification, which is what makes the seam real. This umbrella closes when I-4a lands; id retired from direct execution, not dropped. || UMBRELLA CLOSED cycle 11 — both acceptance clauses verified, each with its own evidence. Clause 1 (risk-ranked list with a stated reason each) closed by I-4b cycle 10. Clause 2 (no file describes the corpus as audited/verified/fact-checked) closed by I-4a cycle 11 and verified by a REPO-WIDE sweep over all 9 product files, not just the edited one. Method note worth keeping: the first sweep returned \"0 hits\" and was DISCARDED rather than banked, because its negative control did not fire — the detector could not even find the text I had just deleted (\"honest // attribution\" defeated \\s+ across the comment marker). The rewritten detector fires on the exact old header plus two synthetic overclaims, and only then was its 0-hit result admitted as evidence. A zero from a detector that has not been shown to be capable of a one is not a zero."
-    },
-    {
-      "id": "I-4a",
-      "title": "Sweep the repo for language that overclaims the corpus as audited or verified",
-      "kind": "fix",
-      "priority": 2,
-      "value": "M",
-      "effort": "S",
-      "status": "done",
-      "deps": [
-        "I-4b"
-      ],
-      "files_hint": [
-        "src/corpus.js"
-      ],
-      "acceptance": "no file in the repo describes the corpus as audited, verified, fact-checked, or its attributions as honest/correct, and any such wording is replaced with an accurate description that points at docs/corpus-attribution-triage.md",
-      "packages": [],
-      "model": "conductor",
-      "attempts": 0,
-      "notes": "The other half of I-4's acceptance clause. CONDUCTOR-SCOUTED cycle 10, not yet executed: a grep across README.md, REPORT.md and src/ found REPORT.md already honest (it states the attributions are unaudited and KI-2 open), but src/corpus.js carries a header comment claiming 'honest attribution' and that uncertain entries 'are attributed to Anonymous rather than guessing a famous name'. I-4b measured that claim as false in at least 8 places: exactly one of 50 entries is hedged to Anonymous, while eight carry HIGH-risk attributions to named people. So this is a real overclaim in a PRODUCT file, not a paperwork tidy. Ordered AFTER I-4b deliberately — the triage supplies the evidence for what the replacement wording may honestly say, and doing it first would have meant writing the comment twice. Conductor-executed and S-effort: it is a prose edit to a product file, which by the cycle-8 precedent must be gated by byte-comparing everything outside the edited comment against HEAD. || DONE cycle 11, conductor-executed. Two edits, both prose: (1) src/corpus.js header — the claim \"honest attribution\" and the policy sentence \"where the true author is uncertain ... the entry is attributed to Anonymous rather than guessing a famous name\" were REMOVED, not softened, because I-4b measured them false (1 of 50 hedged to Anonymous vs 8 HIGH-risk entries all naming famous people: Knuth, Karlton, Dijkstra, Beck, Wheeler, Hopper, Stroustrup, Kay). Restating a policy the file does not follow, in weaker words, would still have been fiction. Replacement states attribution is UNVERIFIED and points at the triage. (2) README.md gained an \"## Attribution\" section — this one is an ADDITION, not a correction: the README did not overclaim, it was simply silent, leaving the triage doc undiscoverable to the only reader who matters. Gated 19/19 incl. 3 negative controls; corpus data deep-equal to HEAD; suite 59/59."
-    },
-    {
-      "id": "I-4b",
-      "title": "Risk-ranked attribution triage document for the 50-entry corpus",
-      "kind": "qa",
-      "priority": 1,
-      "value": "H",
-      "effort": "S",
-      "status": "done",
-      "deps": [],
-      "files_hint": [
-        "docs/corpus-attribution-triage.md"
-      ],
-      "acceptance": "a written risk-ranked list names the corpus entries most likely to carry a wrong or unverifiable attribution, with an entry-specific stated reason for each of all 50 entries, and never presents itself as an audit",
-      "packages": [],
-      "model": "sonnet",
-      "attempts": 0,
-      "notes": "TRIAGE, never an audit (KI-2, T-006). Dispatched as ONE sonnet Agent, file scope exactly docs/corpus-attribution-triage.md, network use explicitly forbidden — the deliverable's whole value depends on it being honest about resting on recall alone. || VERIFIED cycle 10. The hard problem: a triage is a JUDGMENT artifact, so no command's exit code can prove it right, and the usual gate has nothing to bite on. Two-part answer. (1) Everything mechanically provable was proven by harness .swarm/runs/cycle-010-verify-I-4b.js (16/16, evidence .swarm/runs/cycle-010-verify-I-4b.txt): all 50 entries covered exactly once and keyed to the corpus by TWO independent columns (author verbatim + text prefix, so a shifted or invented row cannot pass), fixed risk/signal vocabularies, non-degeneracy (>=3 bands, no band over 60%, 7 distinct signals), 50 distinct non-boilerplate reasons, the self-hedged Anonymous entry anchored to LOW, product tree byte-identical to HEAD and suite 59/59 green. Two NEGATIVE CONTROLS prove the checks can fail: a corrupted table (row dropped + author swapped) is rejected, and a hypothetical all-MEDIUM table fails non-degeneracy. (2) The substantive claim was measured against a ranking SEALED BEFORE DISPATCH (.swarm/runs/cycle-010-precommit.md): the agent's HIGH band {0,3,10,27,38,39,45,48} contains 4 of the 5 sealed Tier A entries, and independently found 4 the conductor had not ranked HIGH. || CONDUCTOR ADDENDUM appended to the document, marked as separately authored: the four places the two independent derivations DISAGREED, recorded as disagreements between two unverified opinions rather than as corrections. Chief among them, row #45 asserts that Stroustrup's FAQ disclaims the foot-gun quote while the conductor recalls the opposite — that row is the only one in the table making a checkable claim about what a primary source says, so it was moved to the top of the human's queue precisely because the two passes conflict. Also added: the #25 Postel paraphrase the table rated LOW and missed."
-    },
-    {
-      "id": "I-5",
-      "title": "Repair or losslessly hand off the shared SWARM playbook file",
-      "kind": "fix",
-      "priority": 3,
-      "value": "M",
-      "effort": "S",
-      "status": "todo",
-      "deps": [],
-      "files_hint": [],
-      "acceptance": "the shared playbook holds at most 20 lessons with no duplicate ids, following the file's own documented overflow rule, or is accompanied by a lossless archive of everything not carried forward plus a named reason for the handoff",
-      "packages": [],
-      "model": "conductor",
-      "attempts": 0,
-      "notes": "CONDUCTOR-EXECUTED, never dispatched: the file lives outside the target repo and hard rule 5 gives workflow agents target paths only. Current state: 31 lessons against a documented cap of 20, with L-023, L-025 and L-026 each naming two different lessons. Nothing is deleted without an archive first. Tracked as KI-5. The curation script bin/swarm-playbook.sh cannot be invoked from a headless session (allowlist gap), so any repair is a hand edit performed against the file's documented rules in playbook/README.md."
-    },
-    {
-      "id": "I-6",
-      "title": "Refresh REPORT.md to the conductor-verified end-of-run state",
-      "kind": "docs",
-      "priority": 9,
-      "value": "H",
-      "effort": "S",
-      "status": "todo",
-      "deps": [
-        "I-1",
-        "I-2a",
-        "I-2b",
-        "I-2c",
-        "I-3",
-        "I-4",
-        "I-5"
-      ],
-      "files_hint": [
-        "REPORT.md"
-      ],
-      "acceptance": "REPORT.md states the actual verified outcome of every I-item, and every item that was not conductor-verified is labeled unverified rather than claimed done",
-      "packages": [],
-      "model": "conductor",
-      "attempts": 0,
-      "notes": "Runs at WRAP_UP by design; depends on every other item because it reports their outcomes. Conductor-owned: reporting what was verified is the one thing that must not be delegated to an agent whose work is being reported on."
-    }
-  ]
+ "items": [
+  {
+   "id": "T-001",
+   "title": "Aphorism corpus + pure selection core",
+   "kind": "feature",
+   "priority": 1,
+   "value": "H",
+   "effort": "M",
+   "status": "done",
+   "deps": [],
+   "files_hint": [
+    "src/corpus.js",
+    "src/select.js",
+    "test/select.test.js"
+   ],
+   "acceptance": "corpus holds >= 40 entries with text/author/tags; filter and pick behave per Domain rules",
+   "packages": [],
+   "model": "sonnet",
+   "attempts": 0,
+   "notes": "verified cycle 1 (2026-08-14)"
+  },
+  {
+   "id": "T-002",
+   "title": "Pure CLI argument parser + help text",
+   "kind": "feature",
+   "priority": 1,
+   "value": "H",
+   "effort": "M",
+   "status": "done",
+   "deps": [],
+   "files_hint": [
+    "src/args.js",
+    "test/args.test.js"
+   ],
+   "acceptance": "every flag parses; malformed usage is reported via an error field, never a throw",
+   "packages": [],
+   "model": "sonnet",
+   "attempts": 0,
+   "notes": "verified cycle 1 (2026-08-14)"
+  },
+  {
+   "id": "T-003",
+   "title": "CLI entry point wiring corpus + select + args",
+   "kind": "feature",
+   "priority": 1,
+   "value": "H",
+   "effort": "S",
+   "status": "done",
+   "deps": [
+    "T-001",
+    "T-002"
+   ],
+   "files_hint": [
+    "bin/aphorism.js",
+    "test/cli.test.js"
+   ],
+   "acceptance": "node bin/aphorism.js prints one attributed aphorism to stdout, exit 0",
+   "packages": [],
+   "model": "sonnet",
+   "attempts": 0,
+   "notes": "verified cycle 1 (2026-08-14); conductor-authored integration"
+  },
+  {
+   "id": "T-004",
+   "title": "README documenting install-free usage and every flag",
+   "kind": "docs",
+   "priority": 3,
+   "value": "M",
+   "effort": "S",
+   "status": "done",
+   "deps": [
+    "T-003"
+   ],
+   "files_hint": [
+    "README.md"
+   ],
+   "acceptance": "README documents zero-install usage and every one of the six flags",
+   "packages": [],
+   "model": "haiku",
+   "attempts": 0,
+   "notes": "verified cycle 1 (2026-08-14)"
+  },
+  {
+   "id": "T-005",
+   "title": "No-repeat-until-exhausted rotation cursor",
+   "kind": "feature",
+   "priority": 9,
+   "value": "H",
+   "effort": "M",
+   "status": "todo",
+   "deps": [],
+   "files_hint": [
+    "src/rotation.js",
+    "test/rotation.test.js"
+   ],
+   "acceptance": "consecutive runs never repeat an aphorism until the corpus is spent",
+   "packages": [],
+   "model": "sonnet",
+   "attempts": 0,
+   "notes": "OUT OF SCOPE for the 2026-08-15 improvement run — it is a new user-visible feature and the allocator brief forbids features. Kept todo, NOT dropped: the kickoff taste judge scored use-twice 4/10 and named this deferral as the single cause, so this is the first item any future feature-bearing run should pick."
+  },
+  {
+   "id": "T-006",
+   "title": "Human audit of corpus attributions",
+   "kind": "qa",
+   "priority": 2,
+   "value": "H",
+   "effort": "M",
+   "status": "blocked",
+   "deps": [],
+   "files_hint": [
+    "src/corpus.js"
+   ],
+   "acceptance": "every corpus entry's attribution is confirmed against a primary source",
+   "packages": [],
+   "model": "sonnet",
+   "attempts": 0,
+   "notes": "BLOCKED on a human, permanently as far as this run is concerned: confirming an attribution needs sources this run has no access to (network is a product non-goal and MCP/web tools are outside the conductor's allowed surface). Superseded in practice by I-4, which produces the risk-ranked triage a human can act on. Tracked as KI-2."
+  },
+  {
+   "id": "I-1",
+   "title": "Close the --seed non-finite determinism hole in pick()",
+   "kind": "fix",
+   "priority": 1,
+   "value": "H",
+   "effort": "S",
+   "status": "done",
+   "deps": [],
+   "files_hint": [
+    "src/select.js",
+    "test/select.test.js"
+   ],
+   "acceptance": "--seed Infinity and --seed -Infinity each return the identical aphorism on every run at exit 0, with the same filters applied",
+   "packages": [],
+   "model": "sonnet",
+   "attempts": 0,
+   "notes": "CONDUCTOR-CONFIRMED defect (kickoff probe: 6 distinct aphorisms in 6 runs, exit 0). Resolution chosen: DETERMINISTIC PICK, not exit 2. Reasoning, judged against the SPEC's own rules: args.js already accepts Infinity as numeric (Number('Infinity') is not NaN) and the Domain rule promises determinism for --seed with no finiteness carve-out, so rejecting it would mean inventing a NEW undocumented validation rule rather than fixing the actual defect — which is that select.js gates its deterministic branch on Number.isFinite while toUint32Seed's IEEE-754 bit-fold already handles +/-Infinity deterministically. NaN stays exit 2 (parseSeedValue already rejects it) and that is correct and unchanged. Doc statement of this resolution belongs to I-3, which is why this item's files_hint is code+test only. NOT flagged route_class core despite playbook L-026: the allocator posture is trickle with allow_premium_pct 0 and opus at 96%, and gear 1's rule is S-effort sonnet builds — deliberately routing a 3-line fix to fable would spend premium the allocator has explicitly zeroed. || VERIFIED cycle 3 by the conductor with checks authored at verification time (the builder never saw them): full test_cmd 52/52 green, end-to-end CLI stability 1-distinct-of-8 for +Inf, -Inf, and +Inf under a --tag filter, and a discriminator that independently re-derived the expected corpus index for each seed (a degenerate index-pin would have passed the stability check alone). NaN contract and the unseeded random branch both confirmed unchanged. Evidence: .swarm/runs/cycle-003-verify-I-1.txt"
+  },
+  {
+   "id": "I-2a",
+   "title": "Mutation sweep of every documented behavior against the existing suite",
+   "kind": "qa",
+   "priority": 2,
+   "value": "H",
+   "effort": "M",
+   "status": "done",
+   "deps": [],
+   "files_hint": [],
+   "acceptance": "every documented flag and Domain-rule behavior has been mutated at least once against the current suite, and each surviving mutant is recorded with the exact mutation applied and the suite's response",
+   "packages": [],
+   "model": "sonnet",
+   "attempts": 0,
+   "notes": "MEASUREMENT, not reading (playbook L-031). Behaviors to mutate: seed determinism, unseeded selection, --author case-insensitive matching, --tag membership matching, author+tag AND intersection, empty-set error contract, --list completeness and corpus order, --json single-line shape, the three exit codes, HELP content. Produces a survivor list ONLY. The HOLE-vs-BOUNDARY classification (L-033) is the CONDUCTOR's judgment and is deliberately withheld from this item: a survivor at a genuinely indiscriminable point (unseeded uniformity is the expected example) is the check being correct, and 'hardening' it produces a test that false-rejects honest output. Scratch copies for mutation must be whole-repo-minus-.git, never a hand-enumerated file subset (L-030). || VERIFIED cycle 4 by the conductor. 27 mutants across every catalogued behavior; baseline 52/52. Agent reported 19 KILLED / 7 SURVIVED / 1 EQUIVALENT (M06-EQUIV, dropping .toLowerCase() on the tag ENTRY side, was a no-op because every corpus tag is already lowercase - correctly excluded and replaced by a query-side variant that killed). Conductor re-measurement re-derived all 7 survivors AND a 4-mutant control sample of claimed KILLS from the one-sentence descriptions only, never from the agent's diffs, each in its own whole-repo-minus-.git copy: 11/11 agree, and every survivor carries a conductor-authored observable-difference probe, so none is an equivalent mutant. Classification (conductor, per SPEC Domain rules): 5 HOLE (M07, M12, M13, M14, M21), 1 BOUNDARY (M22 - only the error-message wording changes; exit 2 + clean stdout + stderr message all still hold), 1 DEFERRED to I-3 (M16, --list --json, the surface SPEC lists as an OPEN AMBIGUITY - testing it now would promote today's implementation to a promise and pre-empt I-3). Evidence: .swarm/runs/cycle-004-verify-I-2a.txt, .swarm/runs/cycle-004-classification.md, .swarm/runs/cycle-004-mutation-sweep.json"
+  },
+  {
+   "id": "I-2b",
+   "title": "Close HOLE survivors in the CLI-level suite",
+   "kind": "test",
+   "priority": 3,
+   "value": "M",
+   "effort": "S",
+   "status": "done",
+   "deps": [
+    "I-2a"
+   ],
+   "files_hint": [
+    "test/cli.test.js"
+   ],
+   "acceptance": "each behavior the conductor classified HOLE is covered by a test that fails against its specific mutation, and whose removal lets that same mutation survive",
+   "packages": [],
+   "model": "sonnet",
+   "attempts": 0,
+   "notes": "Admits tests ONLY for survivors the conductor classified HOLE — never for a surface that merely looks untested. Each test must be proven twice (L-029): failable against its mutation AND attributable, i.e. removing it lets the mutation survive. Planning-time hypotheses, to be settled by I-2a's actual measurement and not assumed: the current --list test asserts only a line-count floor and never order, and the current --json test uses JSON.parse after trim() so a pretty-printed multi-line mutant may still parse. || SETTLED by I-2a (cycle 4). Four assigned HOLE survivors, all observable through the shipped binary: M07 (--tag test must exit 1 - membership, not substring; the corpus has a 'testing' tag and no 'test' tag), M12 (--list line count must equal the corpus size - the existing assertion is a FLOOR of 40 against 50 entries, so dropping an entry passes), M13 (--list first/last line must match corpus order - nothing asserts order today), M14 (--json must be exactly one line - the existing test JSON.parses a trimmed blob, which a pretty-printed object also satisfies). Both planning-time hypotheses in this item were CONFIRMED by measurement. Exact mutations: .swarm/runs/cycle-004-classification.md || VERIFIED cycle 5 by an independent conductor harness (.swarm/runs/cycle-005-verify-I-2b.py, builder never saw it). All four HOLEs proven twice: FAILABLE (mutation applied, suite fails and the designated new test is named) and ATTRIBUTABLE in the strict form (mutation applied + all four new tests skipped -> 52 pass / 0 fail, exactly the pre-sweep baseline, so no pre-existing test was doing the work). A skip-sanity control confirms --test-skip-pattern does not disable the whole run. Suite 52 -> 56 green. Recorded overlap: M12 is length-changing, so it also trips the M13 order test; isolation of M12 alone still leaves fail=1 by design, not by defect."
+  },
+  {
+   "id": "I-2c",
+   "title": "Close remaining HOLE survivors in the pure-module suite",
+   "kind": "test",
+   "priority": 4,
+   "value": "M",
+   "effort": "S",
+   "status": "done",
+   "deps": [
+    "I-2a",
+    "I-2b"
+   ],
+   "files_hint": [
+    "test/args.test.js"
+   ],
+   "acceptance": "each remaining conductor-classified HOLE survivor in the parser or selection layer is covered by a test that fails against its specific mutation and whose removal lets that mutation survive",
+   "packages": [],
+   "model": "sonnet",
+   "attempts": 0,
+   "notes": "Same twice-proven rule as I-2b. Scoped to test/args.test.js so it shares no file with I-2b (test/cli.test.js) or I-1 (test/select.test.js) — pairwise-disjoint even though this run's waves are size 1. If I-2a's survivors land entirely in one file, this item is closed as not-needed rather than padded with tests to justify its existence. || SETTLED by I-2a (cycle 4). Exactly ONE assigned HOLE survivor, and it does live in the parser, so this item is neither padded nor closed as not-needed: M21 - parseSeedValue rejecting negative seeds survives the whole suite, i.e. parseArgs(['--seed','-5']) yielding seed === -5 with no error is unprotected. Turning a valid invocation into exit 2 contradicts the Domain rule that exit 2 means unknown flag or missing flag argument. M22 (the other args.js survivor) is classified BOUNDARY and must NOT be hardened. Details: .swarm/runs/cycle-004-classification.md || CLOSED cycle 6. Two additive tests in test/args.test.js cover both argument forms ('--seed','-5') and ('--seed=-5'). Conductor harness .swarm/runs/cycle-006-verify-I-2c.py: FAILABLE (M21 -> fail=2, both failures named are the new tests), DENOMINATOR (pattern removes exactly 2 of 58, leaving the 56-test baseline green), ATTRIBUTABLE strict (M21 + new tests filtered -> tests=56 pass=56 fail=0, the pre-cycle baseline to the test), SKIP-SANITY (breaking control mutation under the same pattern -> 7 pre-existing failures). Product tree byte-identical to HEAD. M22 left unhardened as classified."
+  },
+  {
+   "id": "I-3",
+   "title": "Settle the four doc/behaviour divergences identically in SPEC.md and README.md",
+   "kind": "docs",
+   "priority": 5,
+   "value": "M",
+   "effort": "S",
+   "status": "done",
+   "deps": [
+    "I-1"
+   ],
+   "files_hint": [
+    ".swarm/SPEC.md",
+    "README.md"
+   ],
+   "acceptance": "SPEC.md Domain rules and README.md state in matching wording: how --author matches, what --list does with --seed, what --list --json emits, and how a non-finite --seed behaves; and SPEC.md's OPEN AMBIGUITIES comment is gone rather than left open",
+   "packages": [],
+   "model": "haiku",
+   "attempts": 0,
+   "notes": "Four divergences, not three: the I-1 resolution is the fourth and is documented here rather than in I-1, keeping code and prose in separate file scopes. Documentation follows the SHIPPED behavior (--author is substring containment, case-insensitive) rather than changing behavior to match prose — changing the match semantics would be a user-visible behavior change, which the brief forbids. Depends on I-1 so the seed prose describes a resolution that has actually landed. || MEASURED EVIDENCE from I-2a (cycle 4) for divergence (c): mutant M16 rewrote --list --json from NDJSON to a single pretty-printed JSON array and the full 52-test suite stayed green, so that surface is completely unprotected today. It is deliberately NOT being hardened by I-2b/I-2c - no Domain rule describes the combination, so a test would freeze the current implementation and pre-empt this item. Settle the rule here first. || NEW measured evidence (cycle 5): the --list LINE FORMAT (\"<text> — <author>\", em dash, single line) is now pinned by the M13 order test but is stated by no Domain rule — the rules describe order and completeness of --list, never its rendering. Same shape of gap as M16: a test now enforces something the spec does not promise. I-3 should either write the rule or loosen the assertion to order-only. Do not silently leave the test as the de-facto spec. || CLOSED cycle 7, as a SUPERSET of the three divergences the SPEC named. Conductor rulings, all following SHIPPED behavior: (a) --author is substring containment, case-insensitive; (b) --tag is WHOLE-TAG membership (stated adjacent to (a) so the asymmetry is visible — it is the most confusable thing about the tool); (c) --list accepts a valid --seed and ignores it, exit 0; (d) --list --json is NDJSON, one object per line in corpus order, NOT a JSON array; (e) --list plain form is `<text> — <author>`, em dash U+2014, one line per entry — the cycle-5 gap where a test pinned what no rule promised, resolved by WRITING THE RULE rather than loosening the test, because --list output is a real piped-into contract; (f) --seed accepts every value Number() parses to non-NaN (negative, non-integer, +/-Infinity), all deterministic, NaN alone is exit 2. SPEC's OPEN AMBIGUITIES comment block deleted, not edited. README's brittle '48 tests' count replaced with a description of coverage. || VERIFIED cycle 7 by EXECUTING the shipped binary, never by reading the prose — a docs item whose claims are all behavioral is verifiable the same way a code item is. Harness .swarm/runs/cycle-007-verify-I-3.js (authored at verification time; the agent never saw it): 36/36 checks pass, evidence .swarm/runs/cycle-007-verify-I-3.txt. Four discriminators included so a degenerate implementation could not pass: partial-author result set must EQUAL the full-name set (kills an equality reading of (a)); default 2-line indented output must DIFFER from --list's 1-line form (proves (e) describes two genuinely distinct formats); 7 distinct seeds must reach 7 distinct aphorisms (a determinism check alone is satisfied by an always-same-entry stub); NDJSON first/last line must match corpus[0]/corpus[49] (order, not just parseability). Suite 58/58 green throughout; zero product code touched. CONDUCTOR PRECISION EDIT after the first harness run: the agent's '--list accepts --seed but ignores it' read as though ANY seed value were fine under --list, but the harness EDGE check proved `--list --seed abc` still exits 2. Both files now say 'accepts a valid --seed' and name the parse-failure carve-out. Nothing was weakened to open the gate — the edit made the prose match a measurement that had already passed."
+  },
+  {
+   "id": "I-7",
+   "title": "Align the --help text with the Domain rules I-3 settled",
+   "kind": "docs",
+   "priority": 6,
+   "value": "M",
+   "effort": "S",
+   "status": "done",
+   "deps": [
+    "I-3"
+   ],
+   "files_hint": [
+    "src/args.js"
+   ],
+   "acceptance": "the HELP string describes --author as a substring match and --tag as a whole-tag match, in wording consistent with SPEC.md Domain rules and README.md, and the suite still passes",
+   "packages": [],
+   "model": "haiku",
+   "attempts": 0,
+   "notes": "FOUND cycle 7 while verifying I-3, and deliberately held OUT of I-3's scope: the HELP string lives in src/args.js, a product file, while I-3 was scoped to the two doc files, and mixing them would have broken the pairwise-disjoint file rule. HELP currently says '--author <name>  filter by author (case-insensitive)' and '--tag <tag>  filter by tag (case-insensitive)'. Neither line is FALSE — both flags are case-insensitive — but both are incomplete in exactly the way I-3 just closed elsewhere: they omit that --author is substring containment and --tag is whole-tag, which is the asymmetry users trip over. This is a third documentation surface that still carries the pre-I-3 wording. NOT a behavior change: only the help text's prose moves. Watch for a test that pins HELP content (I-2a mutated HELP and the sweep's notes should be consulted before editing) — if one exists it must be updated in the same item, and a green suite is part of the acceptance. || CLOSED cycle 8 as a SUPERSET of the two divergences this item named. Conductor pre-decided all wording against the shipped source and the landed I-3 rulings; the haiku agent transcribed, it decided nothing. Three HELP lines moved: --author now reads 'filter by author (substring match, case-insensitive)', --tag reads 'filter by tag (whole-tag, case-insensitive)' and sits adjacent so the asymmetry is readable at a glance, and --json reads 'output as JSON (single line, or NDJSON with --list)'. The --json line is the WIDENING, recorded as a decision rather than taken silently: it carried the identical pre-I-3 defect (a documentation surface describing only the non-list case), it lives in the same file and same edit, and drawing the scope line so as to leave one of three known incompletenesses standing in the very file being opened to fix that defect class would have been artificial. HELP-content tests DID exist as the item warned (test/args.test.js: all-flag-names-present, <= 24 lines) - both still pass unmodified, neither needed updating. --seed and --list lines deliberately untouched: they are incomplete but not misleading, and README already carries the detail. || VERIFIED cycle 8. Harness .swarm/runs/cycle-008-verify-I-7.js, authored at verification time and never shown to the agent; evidence .swarm/runs/cycle-008-verify-I-7.txt, 35/35 pass. Two things needed proving and reading the diff proves neither. SCOPE: HELP sits in a PRODUCT file, so the harness split src/args.js at the template-literal boundary and byte-compared prologue (216 B) and epilogue (2631 B) against HEAD - identical, so parseArgs and every constant are provably untouched; the literal itself changed 362 -> 397 B, which also proves the item was not a no-op. TRUTH: every new phrase is a claim about runtime behaviour, so each was executed rather than read, with three discriminators - the partial-author result set must EQUAL the full-name set (kills an equality reading of 'substring'), --tag test must exit 1 while --tag testing exits 0 (kills a substring reading of 'whole-tag'), and bare --json must be exactly 1 line while --list --json is 50 (proves the one HELP line names two genuinely distinct shapes, not NDJSON-of-one). End-to-end check confirms the binary prints the EDITED constant, not a stale duplicate. Suite 58/58 green, unchanged from HEAD."
+  },
+  {
+   "id": "I-8",
+   "title": "Harden --list --json now that a Domain rule finally describes it",
+   "kind": "test",
+   "priority": 6,
+   "value": "M",
+   "effort": "S",
+   "status": "done",
+   "deps": [
+    "I-3"
+   ],
+   "files_hint": [
+    "test/cli.test.js"
+   ],
+   "acceptance": "a test fails against mutant M16 (--list --json rewritten to emit one pretty-printed JSON array) and, when removed, lets M16 survive the rest of the suite",
+   "packages": [],
+   "model": "sonnet",
+   "attempts": 0,
+   "notes": "UNBLOCKED BY I-3, and only by I-3. Cycle 4's mutation sweep measured M16 — rewriting --list --json from NDJSON to a single pretty-printed JSON array — as surviving the entire 52-test suite, i.e. that surface is completely unprotected. Cycle 4 classified it DEFERRED rather than HOLE for a specific reason: no Domain rule described the combination, so a test written then would have promoted the day's implementation to a promise and pre-empted the decision I-3 existed to make. I-3 has now MADE that decision (NDJSON, one object per line, corpus order, explicitly not an array), so the surface has a rule and the deferral is spent. Same twice-proven bar as I-2b/I-2c (playbook L-029): failable against M16 specifically, and attributable in the strict form — mutation applied with the new test filtered out must leave the pre-cycle baseline green. The exact M16 mutation is recorded in .swarm/runs/cycle-004-classification.md. M22 stays BOUNDARY and is still not to be hardened. || CLOSED cycle 9. One test added to test/cli.test.js: '--list --json emits newline-delimited JSON, one object per line, in corpus order'. It asserts three things a weaker test would not: line count EQUALS the filtered-set size (an equality, not the floor the pre-existing --list test used), every line parses STANDALONE as a JSON object with text/author/tags (no line of a multi-line array can), and the parsed texts match corpus order. Suite 58 -> 59. || VERIFIED cycle 9 by a conductor harness authored at verification time and never shown to the builder (.swarm/runs/cycle-009-verify-I-8.js, evidence .swarm/runs/cycle-009-verify-I-8.txt, 24/24 pass). Proven twice per L-029: FAILABLE (M16 applied -> fail=1 and the ONLY failing test is the new one) and ATTRIBUTABLE in the strict form (M16 applied + the new test filtered -> tests 58 / pass 58 / fail 0, exactly the pre-cycle baseline the harness re-measured from HEAD rather than took from the builder). Controls: DENOMINATOR (pattern removes exactly 1 of 59 against pristine source, 58 green), SKIP-SANITY (an unrelated mutation still fails under the same pattern), and MUTATION-APPLIED on every scratch copy -- the last one matters most, because a mutation that silently failed to apply would make the ATTRIBUTABLE check pass VACUOUSLY, which is a pass-shaped false result. Three DISCRIMINATORS the new test also kills: a COMPACT single-line JSON array (still valid JSON, still every entry in order), REVERSED NDJSON order, and TRUNCATED NDJSON with the last entry dropped. The latter two also trip the pre-existing M12/M13 --list tests, which is the expected length/order overlap cycle 5 recorded, not a defect -- the claim is that the NEW test is among the failures, and it is. Product tree byte-identical to HEAD (bin/aphorism.js, src/args.js, src/select.js, src/corpus.js all compared against HEAD); git diff --name-only HEAD = test/cli.test.js alone. The I-2 hardening thread is now complete: every HOLE survivor from cycle 4's sweep is closed, and M22 remains BOUNDARY and unhardened as classified."
+  },
+  {
+   "id": "I-4",
+   "title": "Corpus attribution triage (umbrella — decomposed cycle 10 into I-4a + I-4b)",
+   "kind": "qa",
+   "priority": 1,
+   "value": "M",
+   "effort": "M",
+   "status": "done",
+   "deps": [
+    "I-4a",
+    "I-4b"
+   ],
+   "files_hint": [],
+   "acceptance": "a written risk-ranked list names the corpus entries most likely to carry a wrong or unverifiable attribution with a stated reason each, and no file in the repo describes the corpus as audited, verified, or fact-checked",
+   "packages": [],
+   "model": "conductor",
+   "attempts": 0,
+   "notes": "TRIAGE, never an audit — nothing here can be confirmed without sources this run cannot reach, and the deliverable is explicitly a list for a human to settle (KI-2, T-006). Rank by internally-observable risk signals only: folklore maxims historically credited to several different people, wording that looks paraphrased or compressed rather than verbatim, entries already hedged as Anonymous (lowest risk, already honest), and entries traceable to a specific well-documented publication (lower risk). The stress-test's demo-embarrassment lens put this ABOVE the test items in value: a programming-aphorism CLI with misattributed quotes fails in exactly the way a green suite cannot see. || DECOMPOSED cycle 10 into I-4a and I-4b, per the cycle-9 handoff's stated preference for S-effort slices over accepting one M-effort exception under gear 1. The split is NOT by risk band, which would have been circular — you cannot slice by a ranking the work exists to produce. It is by KIND of claim: I-4b is the ranked judgment artifact (what is likely wrong), I-4a is a mechanical repo sweep (does any file overclaim). Those need different evidence and different verification, which is what makes the seam real. This umbrella closes when I-4a lands; id retired from direct execution, not dropped. || UMBRELLA CLOSED cycle 11 — both acceptance clauses verified, each with its own evidence. Clause 1 (risk-ranked list with a stated reason each) closed by I-4b cycle 10. Clause 2 (no file describes the corpus as audited/verified/fact-checked) closed by I-4a cycle 11 and verified by a REPO-WIDE sweep over all 9 product files, not just the edited one. Method note worth keeping: the first sweep returned \"0 hits\" and was DISCARDED rather than banked, because its negative control did not fire — the detector could not even find the text I had just deleted (\"honest // attribution\" defeated \\s+ across the comment marker). The rewritten detector fires on the exact old header plus two synthetic overclaims, and only then was its 0-hit result admitted as evidence. A zero from a detector that has not been shown to be capable of a one is not a zero."
+  },
+  {
+   "id": "I-4a",
+   "title": "Sweep the repo for language that overclaims the corpus as audited or verified",
+   "kind": "fix",
+   "priority": 2,
+   "value": "M",
+   "effort": "S",
+   "status": "done",
+   "deps": [
+    "I-4b"
+   ],
+   "files_hint": [
+    "src/corpus.js"
+   ],
+   "acceptance": "no file in the repo describes the corpus as audited, verified, fact-checked, or its attributions as honest/correct, and any such wording is replaced with an accurate description that points at docs/corpus-attribution-triage.md",
+   "packages": [],
+   "model": "conductor",
+   "attempts": 0,
+   "notes": "The other half of I-4's acceptance clause. CONDUCTOR-SCOUTED cycle 10, not yet executed: a grep across README.md, REPORT.md and src/ found REPORT.md already honest (it states the attributions are unaudited and KI-2 open), but src/corpus.js carries a header comment claiming 'honest attribution' and that uncertain entries 'are attributed to Anonymous rather than guessing a famous name'. I-4b measured that claim as false in at least 8 places: exactly one of 50 entries is hedged to Anonymous, while eight carry HIGH-risk attributions to named people. So this is a real overclaim in a PRODUCT file, not a paperwork tidy. Ordered AFTER I-4b deliberately — the triage supplies the evidence for what the replacement wording may honestly say, and doing it first would have meant writing the comment twice. Conductor-executed and S-effort: it is a prose edit to a product file, which by the cycle-8 precedent must be gated by byte-comparing everything outside the edited comment against HEAD. || DONE cycle 11, conductor-executed. Two edits, both prose: (1) src/corpus.js header — the claim \"honest attribution\" and the policy sentence \"where the true author is uncertain ... the entry is attributed to Anonymous rather than guessing a famous name\" were REMOVED, not softened, because I-4b measured them false (1 of 50 hedged to Anonymous vs 8 HIGH-risk entries all naming famous people: Knuth, Karlton, Dijkstra, Beck, Wheeler, Hopper, Stroustrup, Kay). Restating a policy the file does not follow, in weaker words, would still have been fiction. Replacement states attribution is UNVERIFIED and points at the triage. (2) README.md gained an \"## Attribution\" section — this one is an ADDITION, not a correction: the README did not overclaim, it was simply silent, leaving the triage doc undiscoverable to the only reader who matters. Gated 19/19 incl. 3 negative controls; corpus data deep-equal to HEAD; suite 59/59."
+  },
+  {
+   "id": "I-4b",
+   "title": "Risk-ranked attribution triage document for the 50-entry corpus",
+   "kind": "qa",
+   "priority": 1,
+   "value": "H",
+   "effort": "S",
+   "status": "done",
+   "deps": [],
+   "files_hint": [
+    "docs/corpus-attribution-triage.md"
+   ],
+   "acceptance": "a written risk-ranked list names the corpus entries most likely to carry a wrong or unverifiable attribution, with an entry-specific stated reason for each of all 50 entries, and never presents itself as an audit",
+   "packages": [],
+   "model": "sonnet",
+   "attempts": 0,
+   "notes": "TRIAGE, never an audit (KI-2, T-006). Dispatched as ONE sonnet Agent, file scope exactly docs/corpus-attribution-triage.md, network use explicitly forbidden — the deliverable's whole value depends on it being honest about resting on recall alone. || VERIFIED cycle 10. The hard problem: a triage is a JUDGMENT artifact, so no command's exit code can prove it right, and the usual gate has nothing to bite on. Two-part answer. (1) Everything mechanically provable was proven by harness .swarm/runs/cycle-010-verify-I-4b.js (16/16, evidence .swarm/runs/cycle-010-verify-I-4b.txt): all 50 entries covered exactly once and keyed to the corpus by TWO independent columns (author verbatim + text prefix, so a shifted or invented row cannot pass), fixed risk/signal vocabularies, non-degeneracy (>=3 bands, no band over 60%, 7 distinct signals), 50 distinct non-boilerplate reasons, the self-hedged Anonymous entry anchored to LOW, product tree byte-identical to HEAD and suite 59/59 green. Two NEGATIVE CONTROLS prove the checks can fail: a corrupted table (row dropped + author swapped) is rejected, and a hypothetical all-MEDIUM table fails non-degeneracy. (2) The substantive claim was measured against a ranking SEALED BEFORE DISPATCH (.swarm/runs/cycle-010-precommit.md): the agent's HIGH band {0,3,10,27,38,39,45,48} contains 4 of the 5 sealed Tier A entries, and independently found 4 the conductor had not ranked HIGH. || CONDUCTOR ADDENDUM appended to the document, marked as separately authored: the four places the two independent derivations DISAGREED, recorded as disagreements between two unverified opinions rather than as corrections. Chief among them, row #45 asserts that Stroustrup's FAQ disclaims the foot-gun quote while the conductor recalls the opposite — that row is the only one in the table making a checkable claim about what a primary source says, so it was moved to the top of the human's queue precisely because the two passes conflict. Also added: the #25 Postel paraphrase the table rated LOW and missed."
+  },
+  {
+   "id": "I-5",
+   "title": "Repair or losslessly hand off the shared SWARM playbook file",
+   "kind": "fix",
+   "priority": 3,
+   "value": "M",
+   "effort": "S",
+   "status": "done",
+   "deps": [],
+   "files_hint": [],
+   "acceptance": "the shared playbook holds at most 20 lessons with no duplicate ids, following the file's own documented overflow rule, or is accompanied by a lossless archive of everything not carried forward plus a named reason for the handoff",
+   "packages": [],
+   "model": "conductor",
+   "attempts": 0,
+   "notes": "CONDUCTOR-EXECUTED, never dispatched: the file lives outside the target repo and hard rule 5 gives workflow agents target paths only. Current state: 31 lessons against a documented cap of 20, with L-023, L-025 and L-026 each naming two different lessons. Nothing is deleted without an archive first. Tracked as KI-5. The curation script bin/swarm-playbook.sh cannot be invoked from a headless session (allowlist gap), so any repair is a hand edit performed against the file's documented rules in playbook/README.md. | CYCLE 12 OUTCOME: closed under acceptance clause 2, not clause 1. Duplicate IDs repaired losslessly (moon L-023/L-025/L-026 -> L-034/L-035/L-036, next_id 34 -> 37); byte-exact archive at playbook/learnings.md.pre-I5-1786803951; handoff at playbook/HANDOFF-cap-2026-08-15.md. The 20-cap breach is NOT fixed and is now owned by a human: the documented overflow rule covers one drop per append, not a bulk cull of 11, and the extrapolated cull would delete 5 [apply:]-bearing lessons. Verified 17/17 with 4 negative controls (cycle-012-verify-I-5.txt)."
+  },
+  {
+   "id": "I-6",
+   "title": "Refresh REPORT.md to the conductor-verified end-of-run state",
+   "kind": "docs",
+   "priority": 9,
+   "value": "H",
+   "effort": "S",
+   "status": "todo",
+   "deps": [
+    "I-1",
+    "I-2a",
+    "I-2b",
+    "I-2c",
+    "I-3",
+    "I-4",
+    "I-5"
+   ],
+   "files_hint": [
+    "REPORT.md"
+   ],
+   "acceptance": "REPORT.md states the actual verified outcome of every I-item, and every item that was not conductor-verified is labeled unverified rather than claimed done",
+   "packages": [],
+   "model": "conductor",
+   "attempts": 0,
+   "notes": "Runs at WRAP_UP by design; depends on every other item because it reports their outcomes. Conductor-owned: reporting what was verified is the one thing that must not be delegated to an agent whose work is being reported on."
+  }
+ ]
 }
