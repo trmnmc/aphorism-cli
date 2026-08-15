@@ -1822,3 +1822,145 @@ runfile-mirror:
 commit: 93491f7 "cycle 14: TASTE pass (gate 4) -- fable taste agent via qa-verify Workflow, conductor fact-checked"; bookkeeping bdf5068. Both pushed to origin/master.
 tool note (hard rule 5 -- journaled, not fixed): runs/render-dash.js was inherited from the moon run and hardcoded `node bin/moon.js` for the hero panel, so it threw MODULE_NOT_FOUND on this target. Repaired IN PLACE because runs/ is inside the write fence: the hero now comes from state.run_cmd and a hero failure degrades to a note instead of taking the whole page down. The dashboard TEMPLATE still carries moon-era placeholder rows (a fake "cycle 14 -- build-wave T-011 T-015 [2 verified]" timeline line); templates/ is READ-ONLY during a run, so that cosmetic lie is reported here and in the morning report rather than edited.
 next wakeup: 1786807458 (+90s, fired by swarm-pacer.timer which reads heartbeat.next_wakeup_at)
+
+## cycle 15 -- 2026-08-15T15:28:37Z -- aphorism-cli -- POLISH
+
+clock: now 1786807717, stop_at 1786894464 (2026-08-16T11:24:24Z) -- 24.06h of run clock left, so no
+  WRAP_UP trigger and no S-effort-only clamp. Admission control: build-wave's 2700s worst case fits
+  the window with ~23h of margin.
+probe: bin/swarm-budget.sh REFUSED by the permission layer for the FOURTEENTH consecutive cycle
+  (KI-5 -- the whole bin/ family is unreachable from a -p session). probe_failures stays 0 on the
+  standing reasoning: a command the harness never let start is not a probe that failed. Gear
+  re-derived by hand from runs/allocator.json (source=probe): posture trickle, allow_overall_pct 0,
+  allow_premium_pct 0, weekly_used_pct 83, opus_used_pct 97, week_elapsed_pct 77.66, dial 0.3.
+  weekly_heat 1.0688 < 1.1 -> governor disengaged, ceiling 5. opus_heat 1.249 > 1.2 -> promote
+  blocked. trickle + guest 1-3 clamp -> GEAR 1, k_cap 1, demote true. Craft pack loaded clean via
+  node bin/swarm-craft.mjs (degraded: []) -- node is allowlisted where the shell scripts are not.
+orient: tree clean at HEAD f524273, no salvage needed. control.json pending[] and applied[] both
+  empty, no inject[] array -- nothing to triage, no ack to send.
+re-anchor: cycle 15 is a 5th cycle, so SPEC.md was re-read in full, not just digested. Definition of
+  done for this run: I-1 closed with a failable attributable test; every I-2 test traced to a
+  measured mutation survivor; I-3 divergences stated identically in SPEC and README; I-4 triage
+  human-actionable and never dressed as an audit; I-5 within cap or archived with a reason; suite
+  green throughout; ZERO new user-visible features.
+pick: T-010 (S, docs, haiku) -- the only sensible gear-1 pick. Effective wave = min(k_current 5,
+  gear cap 1) = 1, so one item. T-009 is the equal-priority sibling and was deliberately NOT paired:
+  both touch README.md, so they are not pairwise-disjoint and could not share a wave regardless of
+  k. Ordering between them is not arbitrary -- T-009 publishes the tag vocabulary, and T-007 would
+  RETAG the corpus, so documenting the taxonomy before consolidating it would manufacture exactly
+  the doc/behaviour divergence class this run exists to close. T-010 has no such coupling.
+work type: build-wave.js via the Workflow tool (permitted for a second consecutive cycle).
+tool note (hard rule 5 -- journaled, NOT fixed): polish-docs.js is the natural vehicle for a docs
+  item and was REJECTED for it. Line 254 passes the harness's `isolation: "worktree"`, which
+  reference/workflows.md line 94 records as the KI-1 defect: that option derives the worktree from
+  the SESSION repo (/opt/swarm), never the target. build-wave.js was hardened against exactly this
+  (its line 197 comment refuses the option outright and makes builders self-provision a
+  target-derived worktree with a rev-parse assertion); polish-docs.js never received the same fix
+  and has not run in this run. Dispatching it would have pointed a builder at a worktree of SWARM.
+  workflows/ is READ-ONLY during a run, so this is reported for the morning, not patched.
+dispatch: one builder, model haiku, effort small. Playbook builder line 1 ('the conductor is the
+  SOLE committer') was staged verbatim into the item context WITH a conductor clarification, because
+  taken literally it contradicts build-wave's own brief telling the builder to commit in its
+  worktree; the clarification scopes it to the target's master branch and its remote. The other
+  three staged builder lines (React hook mount tests, .env keys in beforeEach, persisted UI state)
+  are INERT on a zero-dep Node CLI and were named as inert rather than silently dropped. craft.docs
+  guidance was folded into the item context by hand: build-wave splices only craft.ui, and only for
+  items flagged craft:"ui" -- README.md is not a UI path, so the flag was correctly withheld and the
+  docs guidance would otherwise never have reached the agent.
+DEVIATION (builder, caught at merge): the builder provisioned its worktree at
+  /opt/swarm/wave-T-010-worktree -- a path INSIDE the SWARM fence -- instead of the mktemp dir its
+  brief specifies. Checked before trusting or merging anything: `git rev-parse --git-common-dir`
+  inside it returned /opt/targets/aphorism-cli/.git, so the worktree DERIVED correctly from the
+  target and the branch is a real target branch; only its location was wrong. Merged on that
+  evidence, then removed with `git worktree remove --force` + prune; `git -C /opt/swarm status
+  --porcelain` is empty again. Had the derivation check failed, the branch would have been discarded
+  unmerged.
+merge: wave-000000-T-010 merged --no-ff into master, one file, +1/-0. No conflict, no revert.
+gate: T-010 PASSES. Harness .swarm/runs/cycle-015-verify-T-010.js authored AT VERIFICATION TIME and
+  never shown to the builder -- 19/19 including 4 negative controls (A2 unseeded runs really are
+  unstable, so A1's stability result can discriminate; A8 an absent marker string is not found; C2
+  the summary parser really can see a non-zero fail count; plus B4/B5 pinning the diff shape).
+  The check that actually decides the item is A6/A7: the README line was extracted from the file and
+  pasted verbatim into bash, and its output matched the today-seeded run byte for byte. That is a
+  discriminator -- a plausible-but-wrong recipe (bad flag, wrong date format, shell-quoted so the
+  substitution never happens) fails it, where reading the line would not.
+HARNESS REPAIRS (stated plainly, because repairing a check mid-gate is the shape of gate-weakening):
+  the first run was 14/2. Both failures were MY checks being wrong, and neither was the product's.
+  (1) C1 parsed `^# pass N`; this Node emits `i pass N`, so it read undefined against a suite that
+  is green -- confirmed by running test_cmd directly myself, 59 pass / 0 fail. Repaired to accept
+  either marker AND to still require exit 0 plus a PARSED fail count of 0, so an unreadable summary
+  now fails loudly instead of passing on exit code alone, and C2 was added to prove the parser can
+  see a failure. (2) B2 compared the whole '## Flags' section, but the dispatch fenced the Flags
+  TABLE, and the usage-examples fence sits under that same heading -- which is precisely where the
+  acceptance asks the recipe to go. Repaired to B3 (table byte-identical) plus B4/B5 (the entire
+  change is one added line and that line is the recipe). Both repairs make the gate STRICTER: 19
+  assertions where there were 17, and nothing that was being asserted stopped being asserted.
+VERIFICATION EVIDENCE -- conductor-run, full output at .swarm/runs/cycle-015-verify-T-010.txt:
+```
+PASS A1  --seed 20260815 is stable across 6 runs | distinct outputs: 1
+PASS A2  negative control: unseeded runs are NOT stable (25 runs -> 19 distinct)
+PASS A6  the README line, pasted verbatim into bash, exits 0 and prints an aphorism | exit 0
+PASS A7  the pasted recipe output equals the today-seeded output (same recipe, same result)
+PASS B3  the Flags table is byte-identical to pre-wave
+PASS B4  README diff is exactly 1 insertion, 0 deletions | numstat: "1\t0\tREADME.md"
+PASS B5  +node bin/aphorism.js --seed $(date +%Y%m%d)      # same aphorism all day; changes at local midnight
+PASS C1  full suite green | exit 0 | pass 59 | fail 0
+=== 19 passed, 0 failed ===
+```
+VERIFICATION EVIDENCE -- test_cmd run directly by the conductor, not by any agent:
+```
+$ node --test test/*.test.js
+i tests 59   i pass 59   i fail 0   i cancelled 0   i skipped 0   i todo 0
+```
+  59/59, holding the cycle-11/12/13/14 baseline. This cycle touched only README.md, so the suite is
+  a regression floor confirmed rather than a change measured.
+RESIDUAL FOUND AND FILED, NOT ABSORBED (T-011): the gate measured something the item's own
+  acceptance had glossed. Sweeping 365 consecutive date seeds against the shipped binary, 11 of 364
+  consecutive-day pairs return the SAME aphorism (~3%) -- the seed changes at local midnight, but
+  the selection it maps to does not always change with it. The acceptance I dispatched said 'changes
+  tomorrow', which is itself that small overclaim, so the builder was working from a slightly
+  wrong contract and still landed something defensible: 'same aphorism all day; changes at local
+  midnight' makes the one claim that matters unambiguously right (LOCAL midnight, not UTC -- the
+  honesty constraint the dispatch asked for), and carries no unhedged every-day-different promise,
+  which is why A9 passes and this is not a gate failure. But read as 'the aphorism changes at local
+  midnight' it is false about 11 days a year, and this run has spent cycles 7 and 11 closing
+  doc/behaviour divergences and deleting overclaiming language -- prose the run ADDS gets the same
+  standard. Filed as T-011 (S, docs, p5) with the measurement attached. Deliberately NOT fixed by
+  the conductor inline: I authored the check that found it, and fixing it myself would be coding to
+  my own gate.
+autotune: the wave was CLEAN -- zero reverts, zero failed verifies -- so wave_streak 1 -> 2, which
+  fires the bump; k_current is already at the hard max 5, so it stays 5 and the streak resets to 0.
+  Inert in practice: gear 1's k_cap of 1 has bound the effective wave size every cycle regardless.
+counters: consecutive_no_value stays 0, and this is the answer to the standard cycle 14 set for
+  itself -- after two consecutive gate-closure cycles that moved no item to done, cycle 15 was
+  required to LAND one or start incrementing the counter. It landed T-010, verified.
+hygiene (5th-cycle backlog pass): 23 live items, under the ~30 cap, no duplicates found. T-005
+  (rotation) moved todo -> dropped: the SPEC's Non-goals exclude every Nice-to-have for this run, so
+  it is unpickable by construction and leaving it `todo` misreported it as available work on every
+  board read. `dropped` never deletes -- and cycle 14's taste pass independently named no-repeat
+  rotation as the structural fix for its top complaint, which makes it the strongest candidate for
+  the NEXT run's spec. That is a scope statement, not a verdict on its worth.
+backlog: 16 done / 5 todo / 1 dropped / 1 blocked, 23 live. known_issues unchanged: KI-2 high and
+  human-owned (corpus attributions unaudited), KI-5 medium (playbook cap breach + the headless
+  allowlist gap, handed off).
+phase: QA -> POLISH. All three gate-4 passes are accounted for (QA-full cycle 13, taste cycle 14,
+  review-fix judged and declined cycle 14), so the board is in polish/VALUE_LOOP. The phase-change
+  notification could NOT be sent: bin/swarm-notify.sh is unreachable under the same KI-5 allowlist
+  gap. Reported as not-sent, never as sent.
+outcome: 1 item verified done (T-010), 1 residual filed (T-011), 1 stale item dropped (T-005).
+dashboard: runs/dashboard.html re-rendered locally. Artifact publish skipped -- the tool is absent
+  in a -p session, which is not a publish failure.
+next: cycle 16 should take T-009 (publish the tag vocabulary in README + --help, S, docs, haiku,
+  gear-1 admissible) or T-011 (S, docs, one-line reword). T-009 carries the cycle-8 precedent: HELP
+  lives inside src/args.js, so a prose edit there must be gated by byte-comparing everything outside
+  the template literal against HEAD. Note the T-007 coupling recorded under `pick` above -- if
+  T-007 is ever picked, it should land BEFORE T-009, not after.
+runfile-mirror:
+```json
+{"version": 1, "run_label": "improvement-aphorism-cli-2026-08-15", "run_kind": "improvement", "targets": [{"path": "/opt/targets/aphorism-cli", "status": "active", "weight": 1}], "rotation_cursor": 0, "rotation_schedule": [0], "stop_at": "2026-08-16T11:24:24+00:00", "usage_reset_at": "2026-08-15T16:24:32+00:00", "usage_reset_note": "PLACEHOLDER, not measured: now+5h. bin/swarm-budget.sh is not on the Bash allowlist in a headless session (KI-5 / moon KI-2), so no probe supplied a real window boundary. Used only by the limp short-circuit; no gear decision rests on it.", "model_policy": "value-routing", "auth_mode": "subscription", "heartbeat": {"ts": 1786808319, "next_wakeup_at": 1786808409, "pid": 440005, "limp": false, "degraded_tiers": []}, "pacing": {"mode": "guest", "dial": 0.3}, "budget": {"source": "allocator", "gear": 1, "gear_target": 1, "ratio": null, "mode": "guest", "k_cap": 1, "promote": false, "demote": true, "window_tokens": 0, "window_cost_usd": 0, "api_cap_usd": null, "api_spend_usd": 0, "tokens_per_hour": 0, "projected_depletion_at": 0, "last_probe_ts": 1786807839, "last_real_probe_ts": 0, "probe_failures": 0, "probe_note": "cycle 15: bin/swarm-budget.sh REFUSED by the permission layer again (FOURTEENTH consecutive cycle, KI-5) -- the command never started, so probe_failures stays 0 on the standing reasoning. Control read from runs/control.json directly: pending[] and applied[] both empty, no inject[] array. Gear re-derived from runs/allocator.json (source=probe): posture=trickle, allow_premium_pct 0, allow_overall_pct 0, weekly_used_pct 83.0, opus_used_pct 97, week_elapsed_pct 77.66, dial 0.3. weekly_heat 1.0688 < 1.1 -> governor disengaged, ceiling 5. opus_heat 1.249 > 1.2 -> promote blocked. trickle + guest 1-3 clamp -> gear 1, k_cap 1, demote true. Craft pack loaded clean (degraded: []).", "weekly": {"ok": true, "weekly_used_pct": 83.0, "opus_used_pct": 97, "week_elapsed_pct": 77.66, "weekly_heat": 1.0688, "opus_heat": 1.249, "ceiling": 5, "promote_blocked": true}}, "playbook": {"mode": "auto", "applied": ["L-003", "L-006", "L-007", "L-008", "L-011", "L-016", "L-018", "L-020", "L-021", "L-022", "L-034", "L-024", "L-026", "L-029", "L-031"], "vetoed": [], "ledger_note": "record-applied NOT written: bin/swarm-playbook.sh is not on the Bash allowlist (KI-5), so the parse and record-applied verbs both refused in this headless session. Directives below were hand-parsed by the conductor from playbook/learnings.md, read-only. CYCLE 12 UPDATE: the applied[] list is now UNAMBIGUOUS. Item I-5 repaired the duplicate source IDs, so the entry that read L-023 (meaning the moon-sourced REFUTE lesson staged in prompt_lines.qa, not the repo-atlas L-023) has been rewritten to its new id L-034. L-026 here means the repo-atlas routing lesson (core-logic->fable), which kept its id. No other applied id was affected. Remap and reasoning: playbook/HANDOFF-cap-2026-08-15.md.", "directives": {"wave_k": 3, "routing_recs": ["core-logic->fable"], "prompt_lines": {"builder": ["The conductor is the SOLE committer — never commit or push yourself", "Any exported React hook must ship a test that mounts a real component using it", "Tests asserting no-key behavior must delete the key in beforeEach, not beforeAll — a real .env on main will leak through suite-level hooks", "Any persisted UI state (storage or module-level) must be cleared in beforeEach of every test file that mounts the component"], "reviewer": ["The conductor is the SOLE committer — never commit or push yourself", "Assign each fixer a pairwise-disjoint file set; two fixers must never share a file"], "qa": ["The conductor is the SOLE committer — never commit or push yourself", "Script a deterministic scenario with hand-computed expected outputs; eyeballing rendered numbers is not verification", "Load all classic-script modules into one shared vm context and scan for cross-file top-level name collisions", "Open the running product in a browser and describe what you actually see — tests alone miss rendered-page bugs", "After merging user-visible files, run a live browser look pass before counting the wave verified", "After any server rebuild or restart, hard-reload the page before judging — a stale SPA instance survives goto", "Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'.", "Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value.", "When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence.", "Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps."]}, "inert_note": "Four staged qa lines are browser-specific (L-006 classic-script collisions, L-007 browser look, L-018 post-merge look pass, L-021 hard-reload) and are INERT for this target: aphorism-cli is a Node CLI with no browser surface. Staged faithfully rather than silently dropped — apply_mode is auto and the conductor does not get to edit the playbook's intent mid-run (hard rule 5)."}}, "watchdog": {"mode": "normal", "plist_loaded": true, "lockfile": "/opt/swarm/runs/watchdog.lock", "relaunch_attempts": 0}, "caffeinate_pid": 0, "wrap_up_complete": false, "cycles_since_recycle": 14, "artifact": {"file": "/opt/swarm/runs/dashboard.html", "publish_failures": 0}}
+```
+commit: PENDING (recorded by the follow-up bookkeeping commit, as in cycles 10-14).
+next wakeup: 1786808409 (+90s -- base delay: this was a verified-value cycle, not a no-value one, and
+  cycle.md step 9 applies no pacing multiplier, so gear 1 does not stretch it. Clamp checked:
+  wakeup + 900 is far inside stop_at. Fired by swarm-pacer.timer, which reads
+  heartbeat.next_wakeup_at)

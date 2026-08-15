@@ -2,8 +2,8 @@
  "idea": "tiny CLI that prints a random programming aphorism",
  "project_dir": "/opt/targets/aphorism-cli",
  "created_at": "2026-08-14T05:38:14+00:00",
- "phase": "QA",
- "cycle": 14,
+ "phase": "POLISH",
+ "cycle": 15,
  "run_cmd": "node bin/aphorism.js",
  "test_cmd": "node --test test/*.test.js",
  "preview": {
@@ -188,13 +188,13 @@
   "consecutive_no_value": 0,
   "consecutive_failures": 0,
   "k_current": 5,
-  "wave_streak": 1,
+  "wave_streak": 0,
   "window_tokens_attributed": 0
  },
  "last_cycle": {
-  "n": 14,
-  "work": "TASTE pass (step-4 gate 4, the last outstanding one) — ONE fable taste agent via the qa-verify.js Workflow, mode taste. 9 minutes of use, 32 core-loop pulls, 15 flows.",
-  "outcome": "verdict wears-thin, 4 boredom findings (2 notable, 2 minor), all 4 fact-checked by the conductor: 3 confirmed outright, 1 confirmed on corrected numbers (agent said 23 singleton tags, actual 21). 17/17 harness checks incl. 3 negative controls; suite 59/59; product tree untouched. 4 backlog items filed (T-007..T-010), 2 of them in-scope S-effort docs work.",
-  "commit": "93491f7"
+  "n": 15,
+  "work": "build-wave (one item, k_cap 1 at gear 1) -- T-010, the date-seeded quote-of-the-day recipe in the README usage examples. First build-wave.js dispatch of this run; the Workflow tool was permitted for the second consecutive cycle.",
+  "outcome": "VERIFIED done. 19/19 conductor harness checks including 4 negative controls; the README line was executed verbatim through bash and matched the today-seeded output; diff is exactly 1 insertion / 0 deletions; suite 59/59. Two harness checks were REPAIRED mid-gate (a wrong node --test summary marker and a section fence coarser than the dispatch's own scope) -- both repairs tightened the assertions. Residual overclaim measured and filed as T-011, not absorbed.",
+  "commit": "PENDING"
  }
 }

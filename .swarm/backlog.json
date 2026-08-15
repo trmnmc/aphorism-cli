@@ -88,7 +88,7 @@
    "priority": 9,
    "value": "H",
    "effort": "M",
-   "status": "todo",
+   "status": "dropped",
    "deps": [],
    "files_hint": [
     "src/rotation.js",
@@ -98,7 +98,7 @@
    "packages": [],
    "model": "sonnet",
    "attempts": 0,
-   "notes": "OUT OF SCOPE for the 2026-08-15 improvement run — it is a new user-visible feature and the allocator brief forbids features. Kept todo, NOT dropped: the kickoff taste judge scored use-twice 4/10 and named this deferral as the single cause, so this is the first item any future feature-bearing run should pick."
+   "notes": "OUT OF SCOPE for the 2026-08-15 improvement run — it is a new user-visible feature and the allocator brief forbids features. Kept todo, NOT dropped: the kickoff taste judge scored use-twice 4/10 and named this deferral as the single cause, so this is the first item any future feature-bearing run should pick. CYCLE 15 HYGIENE: dropped as out of scope, not as low value. SPEC Non-goals: 'This run only: any new user-visible feature, including every Nice-to-have above', and rotation is listed under Nice-to-haves. Kept for the record because the cycle-14 taste pass independently named no-repeat rotation as the structural fix for its top complaint (wears-thin) -- that makes it the strongest candidate for the NEXT run's spec, and dropping it here is a scope statement, not a verdict on its worth."
   },
   {
    "id": "T-006",
@@ -420,7 +420,7 @@
    "priority": 4,
    "value": "H",
    "effort": "S",
-   "status": "todo",
+   "status": "done",
    "deps": [],
    "files_hint": [
     "README.md"
@@ -429,7 +429,27 @@
    "model": "haiku",
    "attempts": 0,
    "acceptance": "README usage examples include the date-seeded one-liner (node bin/aphorism.js --seed $(date +%Y%m%d)) with a one-line explanation that it is stable all day and changes tomorrow. The claim must be true of the shipped binary, not just plausible.",
-   "notes": "Source: cycle-14 taste pass, finding 4 (minor). Conductor-verified that the recipe actually works before filing it: three consecutive date seeds are each stable across 3 runs and yield 3 distinct quotes (C5a, C5b), and the README currently shows only the fixture-shaped --tag simplicity --seed 42 with no date recipe (C5c). Best value-per-effort item on the board: it costs one README line and converts an existing, already-verified flag into the reason a user comes back tomorrow, without adding a feature or any rotation state. This is the taste pass paying for itself in scope."
+   "notes": "Source: cycle-14 taste pass, finding 4 (minor). Conductor-verified that the recipe actually works before filing it: three consecutive date seeds are each stable across 3 runs and yield 3 distinct quotes (C5a, C5b), and the README currently shows only the fixture-shaped --tag simplicity --seed 42 with no date recipe (C5c). Best value-per-effort item on the board: it costs one README line and converts an existing, already-verified flag into the reason a user comes back tomorrow, without adding a feature or any rotation state. This is the taste pass paying for itself in scope. CYCLE 15 VERIFIED: landed as a single README line inside the usage-examples fence -- `node bin/aphorism.js --seed $(date +%Y%m%d)      # same aphorism all day; changes at local midnight`. Conductor harness .swarm/runs/cycle-015-verify-T-010.{js,txt}: 19/19 with 4 negative controls. The line was pasted verbatim into bash and its output matched the today-seeded run byte for byte (A6/A7), so the recipe is proven against the shipped binary rather than read. Scope clean: 1 insertion, 0 deletions, Flags table and every fenced section byte-identical."
+  },
+  {
+   "id": "T-011",
+   "title": "Tighten the quote-of-the-day recipe's change claim to match the measured behaviour",
+   "kind": "docs",
+   "priority": 5,
+   "value": "M",
+   "effort": "S",
+   "status": "todo",
+   "deps": [
+    "T-010"
+   ],
+   "files_hint": [
+    "README.md"
+   ],
+   "packages": [],
+   "model": "haiku",
+   "attempts": 0,
+   "acceptance": "The README's date-seed recipe comment does not imply the aphorism always differs from one day to the next. Reworded so it stays true on the days it repeats, without adding a sentence of hedging clutter to a one-line example -- the comment must remain a single trailing comment on one line.",
+   "notes": "Source: conductor verification gate, cycle 15 (harness check A4/A9). MEASURED, not suspected: sweeping 365 consecutive date seeds against the shipped binary, 11 of 364 consecutive-day pairs return the SAME aphorism (~3%) -- the seed always changes at local midnight, but the selection it maps to does not. First few: 20261015->20261016, 20261107->20261108, 20270121->20270122. Over a year all 50 corpus entries appear. The shipped comment reads 'same aphorism all day; changes at local midnight', whose subject is ambiguous: read as 'the aphorism changes at local midnight' it is false about 11 days a year. It is NOT a gate failure -- A9 passed, since the phrasing carries no unhedged every-day-different promise, and the clause it does make unambiguously (local midnight, not UTC) is exactly right. Filed rather than absorbed because this run's identity is closing doc/behaviour divergences (I-3) and sweeping overclaiming language (I-4a); prose this run ADDS is held to the same standard. Deliberately not fixed by the conductor: the conductor authored the gate that found it, and fixing it inline would be coding to its own check."
   }
  ]
 }
