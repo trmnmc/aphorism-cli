@@ -1,9 +1,14 @@
 'use strict';
 
-// Curated corpus of real, well-known programming aphorisms with honest
-// attribution. Where the true author is uncertain or disputed beyond
-// reasonable confidence, the entry is attributed to "Anonymous" rather
-// than guessing a famous name.
+// Curated corpus of well-known programming aphorisms.
+//
+// ATTRIBUTION IS UNVERIFIED. The author on each entry is who the line is
+// commonly credited to -- not an author checked against a primary source.
+// Programming aphorisms are widely misattributed, and this corpus is not
+// an exception: a risk-ranked triage of all 50 entries lives in
+// docs/corpus-attribution-triage.md, which rates 8 of them HIGH risk.
+// Read every author field as "commonly attributed to", and consult that
+// document before repeating one of these as established fact.
 //
 // Each entry: { text: string, author: string, tags: string[] }
 // Tags are lowercase single words.

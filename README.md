@@ -60,6 +60,14 @@ entry in the filtered set, in corpus order.
 Errors always go to stderr, so `node bin/aphorism.js --tag nonexistent > out.txt`
 leaves `out.txt` empty rather than writing a diagnostic into your pipeline.
 
+## Attribution
+
+The author printed with each aphorism is who the line is **commonly credited to**, not an
+author checked against a primary source. Programming aphorisms are widely misattributed.
+[`docs/corpus-attribution-triage.md`](docs/corpus-attribution-triage.md) ranks all 50
+entries by how likely the attribution is to be wrong — 8 are rated HIGH — and says what
+would settle each one. Nothing in that list has been resolved yet.
+
 ## Layout
 
 ```

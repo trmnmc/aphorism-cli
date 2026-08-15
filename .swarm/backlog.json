@@ -262,7 +262,7 @@
       "priority": 1,
       "value": "M",
       "effort": "M",
-      "status": "todo",
+      "status": "done",
       "deps": [
         "I-4a",
         "I-4b"
@@ -272,7 +272,7 @@
       "packages": [],
       "model": "conductor",
       "attempts": 0,
-      "notes": "TRIAGE, never an audit — nothing here can be confirmed without sources this run cannot reach, and the deliverable is explicitly a list for a human to settle (KI-2, T-006). Rank by internally-observable risk signals only: folklore maxims historically credited to several different people, wording that looks paraphrased or compressed rather than verbatim, entries already hedged as Anonymous (lowest risk, already honest), and entries traceable to a specific well-documented publication (lower risk). The stress-test's demo-embarrassment lens put this ABOVE the test items in value: a programming-aphorism CLI with misattributed quotes fails in exactly the way a green suite cannot see. || DECOMPOSED cycle 10 into I-4a and I-4b, per the cycle-9 handoff's stated preference for S-effort slices over accepting one M-effort exception under gear 1. The split is NOT by risk band, which would have been circular — you cannot slice by a ranking the work exists to produce. It is by KIND of claim: I-4b is the ranked judgment artifact (what is likely wrong), I-4a is a mechanical repo sweep (does any file overclaim). Those need different evidence and different verification, which is what makes the seam real. This umbrella closes when I-4a lands; id retired from direct execution, not dropped."
+      "notes": "TRIAGE, never an audit — nothing here can be confirmed without sources this run cannot reach, and the deliverable is explicitly a list for a human to settle (KI-2, T-006). Rank by internally-observable risk signals only: folklore maxims historically credited to several different people, wording that looks paraphrased or compressed rather than verbatim, entries already hedged as Anonymous (lowest risk, already honest), and entries traceable to a specific well-documented publication (lower risk). The stress-test's demo-embarrassment lens put this ABOVE the test items in value: a programming-aphorism CLI with misattributed quotes fails in exactly the way a green suite cannot see. || DECOMPOSED cycle 10 into I-4a and I-4b, per the cycle-9 handoff's stated preference for S-effort slices over accepting one M-effort exception under gear 1. The split is NOT by risk band, which would have been circular — you cannot slice by a ranking the work exists to produce. It is by KIND of claim: I-4b is the ranked judgment artifact (what is likely wrong), I-4a is a mechanical repo sweep (does any file overclaim). Those need different evidence and different verification, which is what makes the seam real. This umbrella closes when I-4a lands; id retired from direct execution, not dropped. || UMBRELLA CLOSED cycle 11 — both acceptance clauses verified, each with its own evidence. Clause 1 (risk-ranked list with a stated reason each) closed by I-4b cycle 10. Clause 2 (no file describes the corpus as audited/verified/fact-checked) closed by I-4a cycle 11 and verified by a REPO-WIDE sweep over all 9 product files, not just the edited one. Method note worth keeping: the first sweep returned \"0 hits\" and was DISCARDED rather than banked, because its negative control did not fire — the detector could not even find the text I had just deleted (\"honest // attribution\" defeated \\s+ across the comment marker). The rewritten detector fires on the exact old header plus two synthetic overclaims, and only then was its 0-hit result admitted as evidence. A zero from a detector that has not been shown to be capable of a one is not a zero."
     },
     {
       "id": "I-4a",
@@ -281,7 +281,7 @@
       "priority": 2,
       "value": "M",
       "effort": "S",
-      "status": "todo",
+      "status": "done",
       "deps": [
         "I-4b"
       ],
@@ -292,7 +292,7 @@
       "packages": [],
       "model": "conductor",
       "attempts": 0,
-      "notes": "The other half of I-4's acceptance clause. CONDUCTOR-SCOUTED cycle 10, not yet executed: a grep across README.md, REPORT.md and src/ found REPORT.md already honest (it states the attributions are unaudited and KI-2 open), but src/corpus.js carries a header comment claiming 'honest attribution' and that uncertain entries 'are attributed to Anonymous rather than guessing a famous name'. I-4b measured that claim as false in at least 8 places: exactly one of 50 entries is hedged to Anonymous, while eight carry HIGH-risk attributions to named people. So this is a real overclaim in a PRODUCT file, not a paperwork tidy. Ordered AFTER I-4b deliberately — the triage supplies the evidence for what the replacement wording may honestly say, and doing it first would have meant writing the comment twice. Conductor-executed and S-effort: it is a prose edit to a product file, which by the cycle-8 precedent must be gated by byte-comparing everything outside the edited comment against HEAD."
+      "notes": "The other half of I-4's acceptance clause. CONDUCTOR-SCOUTED cycle 10, not yet executed: a grep across README.md, REPORT.md and src/ found REPORT.md already honest (it states the attributions are unaudited and KI-2 open), but src/corpus.js carries a header comment claiming 'honest attribution' and that uncertain entries 'are attributed to Anonymous rather than guessing a famous name'. I-4b measured that claim as false in at least 8 places: exactly one of 50 entries is hedged to Anonymous, while eight carry HIGH-risk attributions to named people. So this is a real overclaim in a PRODUCT file, not a paperwork tidy. Ordered AFTER I-4b deliberately — the triage supplies the evidence for what the replacement wording may honestly say, and doing it first would have meant writing the comment twice. Conductor-executed and S-effort: it is a prose edit to a product file, which by the cycle-8 precedent must be gated by byte-comparing everything outside the edited comment against HEAD. || DONE cycle 11, conductor-executed. Two edits, both prose: (1) src/corpus.js header — the claim \"honest attribution\" and the policy sentence \"where the true author is uncertain ... the entry is attributed to Anonymous rather than guessing a famous name\" were REMOVED, not softened, because I-4b measured them false (1 of 50 hedged to Anonymous vs 8 HIGH-risk entries all naming famous people: Knuth, Karlton, Dijkstra, Beck, Wheeler, Hopper, Stroustrup, Kay). Restating a policy the file does not follow, in weaker words, would still have been fiction. Replacement states attribution is UNVERIFIED and points at the triage. (2) README.md gained an \"## Attribution\" section — this one is an ADDITION, not a correction: the README did not overclaim, it was simply silent, leaving the triage doc undiscoverable to the only reader who matters. Gated 19/19 incl. 3 negative controls; corpus data deep-equal to HEAD; suite 59/59."
     },
     {
       "id": "I-4b",

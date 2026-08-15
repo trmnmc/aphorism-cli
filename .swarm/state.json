@@ -3,7 +3,7 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
   "phase": "BUILD",
-  "cycle": 10,
+  "cycle": 11,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -112,6 +112,11 @@
       "cycle": 10,
       "what": "The document was ACCEPTED and then extended with a separately-attributed conductor addendum recording the four disagreements, rather than being sent back for a fix.",
       "why": "The disagreements are not defects the author could resolve — neither party has a source, so a revision round would only have produced a more confident document with the same epistemic basis, which is the opposite of what this deliverable is for. Row #45 is the sharp case: it asserts a specific checkable fact about what Stroustrup's FAQ SAYS (that he disclaims the foot-gun line) and row #46 leans on the same asserted FAQ. The conductor recalls the reverse. Recording that conflict at the top of the human's queue is strictly more useful than silently picking a winner, because the fact that two independent passes disagree about a primary source is itself the finding. Suppressing it to make the artifact look cleaner would have been the dishonest option."
+    },
+    {
+      "cycle": 11,
+      "what": "removed the corpus.js attribution-policy claim outright rather than rewording it, and added a README Attribution section the item did not strictly require",
+      "why": "Two judgment calls worth recording. (1) The header did not merely overstate — it described a hedging policy the file does not follow (1 of 50 hedged vs 8 HIGH-risk named attributions). A softened version (\"we generally hedge...\") would have preserved the false shape while sounding careful, which is the more dangerous failure: it reads as a considered disclosure. Deleting the policy claim and stating the actual epistemic status is the only honest option. (2) The README did NOT overclaim, so clause 1 of I-4a's acceptance did not oblige an edit there. I added the section anyway and am labelling it an addition rather than a correction: the triage document is the run's main deliverable to a human and was reachable only by reading source comments or the internal REPORT. A truthful corpus header that no user ever opens does not discharge the duty the item exists to serve."
     }
   ],
   "known_issues": [
@@ -120,7 +125,8 @@
       "desc": "corpus attributions are unaudited — entry shape is machine-verified but no check available to this run can confirm each of the 50 quotes is correctly attributed; programming aphorisms are widely misattributed. Item I-4 produces a risk-ranked triage for a human, NOT an audit.",
       "severity": "high",
       "cycle_found": 1,
-      "note_cycle_10": "STILL OPEN and still high. Item I-4b delivered docs/corpus-attribution-triage.md this cycle: a risk-ranked list of all 50 entries (8 HIGH / 16 MEDIUM / 26 LOW) with an entry-specific reason each. That is the human-actionable triage KI-2 asked for; it is explicitly NOT an audit and does not resolve this issue. Nothing in the corpus was changed. The eight HIGH entries are the queue a human should work first."
+      "note_cycle_10": "STILL OPEN and still high. Item I-4b delivered docs/corpus-attribution-triage.md this cycle: a risk-ranked list of all 50 entries (8 HIGH / 16 MEDIUM / 26 LOW) with an entry-specific reason each. That is the human-actionable triage KI-2 asked for; it is explicitly NOT an audit and does not resolve this issue. Nothing in the corpus was changed. The eight HIGH entries are the queue a human should work first.",
+      "note_cycle_11": "STILL OPEN, still high, and deliberately so. I-4a removed the repo's false CLAIM about attribution quality and pointed both src/corpus.js and README.md at the triage; it changed no attribution and confirmed no quote. What changed is that the product now tells the truth about what it does not know — a reader is no longer told the uncertain entries are hedged to Anonymous when 8 of them name famous people. KI-2 closes only when a human checks the 8 HIGH entries against primary sources (backlog T-006, owner: human)."
     },
     {
       "id": "KI-3",
@@ -160,9 +166,9 @@
     "window_tokens_attributed": 0
   },
   "last_cycle": {
-    "n": 10,
-    "work": "I-4b — risk-ranked corpus attribution triage (direct Agent, sonnet, k=1, file scope docs/corpus-attribution-triage.md only) gated against a pre-dispatch sealed ranking",
-    "outcome": "1 verified; 16/16 harness checks green including 2 negative controls; 50/50 entries covered and double-keyed to the corpus; conductor addendum records 4 disagreements; suite 59/59 green, product tree byte-identical to HEAD",
-    "commit": "73b1687"
+    "n": 11,
+    "work": "I-4a — repo-wide overclaim sweep and repair (conductor-executed, k=1, gear 1, prose-only edits to src/corpus.js and README.md); closes the I-4 umbrella",
+    "outcome": "2 items verified (I-4a + I-4 umbrella); 19/19 harness checks incl. 3 negative controls; repo-wide sweep 0 overclaims across 9 product files with a detector proven live by 3 negative controls; corpus data deep-equal to HEAD; suite 59/59 green",
+    "commit": "pending"
   }
 }
