@@ -195,6 +195,6 @@
     "n": 16,
     "work": "build-wave (one item, k_cap 1 at gear 1) -- T-011, tightening the quote-of-the-day recipe comment to the behaviour the cycle-15 gate measured.",
     "outcome": "VERIFIED done. 20/20 conductor harness checks including 5 negative controls; the comment was decomposed into the factual claims it makes and each was machine-checked against the shipped binary and date(1), rather than judged as prose. Diff is exactly 1 insertion / 1 deletion. Suite 59/59. One harness check (F1) was REPAIRED mid-gate -- my summary-marker regex, not the product -- and the repair added two assertions rather than removing one. Builder relocated its worktree into the target working tree; caught before commit, derivation asserted, worktree removed.",
-    "commit": null
+    "commit": "f68b007"
   }
 }
