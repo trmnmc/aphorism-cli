@@ -1,0 +1,51 @@
+PASS A1  test/readme-tags.test.js is the ONLY modified path
+         git status --porcelain =
+         " M test/readme-tags.test.js\n"
+PASS A2  README.md is byte-identical to HEAD
+         len head=4528 now=4528
+PASS A3  src/ and bin/ untouched
+         ""
+PASS A4  the other five tests are byte-identical to HEAD
+         others=5 drifted=[]
+PASS A5  the target test still exists under its original name
+         names now = ["README tags must exist in corpus","README tag counts must match corpus","README must state total unique tags correctly","README must correctly describe single-entry tag count","README must list all single-entry tags","README should acknowledge single-entry tag limitation"]
+PASS A6  no test was skipped, todo-ed, or renamed
+         scanned for skip/todo markers
+PASS A7  the sentence-keyed regex is genuinely gone from the file
+         searched for the literal lead-in anchor
+PASS B1  suite is green on the shipped README with the new test file
+         fail=[]
+PASS B2  test count is unchanged at 65 (a refactor, not padding)
+         tests=65
+PASS C1  reworded lead-in that drops the "The remaining" prefix + bogus tag -> ONLY the tag test fails, by name
+         failed=["README tags must exist in corpus"] named=true
+PASS C2  reworded lead-in that replaces the colon with an em dash + bogus tag -> ONLY the tag test fails, by name
+         failed=["README tags must exist in corpus"] named=true
+PASS C3  reworded lead-in that restructures the clause entirely + bogus tag -> ONLY the tag test fails, by name
+         failed=["README tags must exist in corpus"] named=true
+PASS D1  ATTRIBUTION: the same mutation is MISSED by HEAD's test file (the fix is what kills it)
+         HEAD failed=[]  <- tag test absent = HEAD was blind
+PASS D2  control on the control: with the ORIGINAL lead-in, HEAD did catch it (regression is reword-specific)
+         HEAD failed=["README tags must exist in corpus"]
+PASS E1  NON-VACUITY: reworded lead-in with NO bogus tag stays fully green
+         failed=[]
+PASS F1  bogus tag in the prose list -> ONLY the tag test fails, by name
+         failed=["README tags must exist in corpus"] named=true
+PASS F2  bogus tag in the mid-section aside -> ONLY the tag test fails, by name
+         failed=["README tags must exist in corpus"] named=true
+PASS F3  bogus tag in a NEW sentence appended after the code fence -> ONLY the tag test fails, by name
+         failed=["README tags must exist in corpus"] named=true
+PASS F4  bogus tag in a TABLE ROW is caught by name (count test also fires; expected)
+         failed=["README tags must exist in corpus","README tag counts must match corpus"]
+PASS G1  FENCE STRIP: a backticked token INSIDE the ```sh block is NOT a tag claim
+         failed=[]
+PASS G2  flag-shaped tokens like `--zzzflag` are not mistaken for tags
+         failed=[]
+PASS G3  SECTION SCOPING: a bogus token OUTSIDE the Tag vocabulary section is not claimed
+         failed=[]
+PASS H1  the gate restored the tree exactly (only the test file modified, still)
+         " M test/readme-tags.test.js\n"
+PASS H2  README.md content restored byte-for-byte after all mutations
+         compared in memory
+
+================ GATE: 24 pass / 0 fail ================

@@ -62,28 +62,17 @@ test('README tags must exist in corpus', () => {
   const tagVocabEnd = nextSection > -1 ? nextSection : readmeContent.length;
   const tagVocabSection = readmeContent.substring(tagVocabStart, tagVocabEnd);
 
-  // Extract tags from table rows: | `tag` | count |
-  const tablePattern = /\| \`([a-z]+)\` \| \d+ \|/g;
-  let match;
-  const tagsFromTables = [];
-  while ((match = tablePattern.exec(tagVocabSection)) !== null) {
-    tagsFromTables.push(match[1]);
-  }
+  // Strip fenced code blocks (e.g. the trailing ```sh command-line example) so
+  // shell tokens inside them are never mistaken for tag claims.
+  const tagVocabProse = tagVocabSection.replace(/```[\s\S]*?```/g, '');
 
-  // Extract tags from single-entry list: `tag`, `tag`, ...
-  const singleEntryMatch = tagVocabSection.match(/The remaining \d+ tags appear exactly once: (.+?)\./);
-  const tagsFromProse = [];
-  if (singleEntryMatch) {
-    const proseList = singleEntryMatch[1];
-    const prosePattern = /\`([a-z]+)\`/g;
-    let proseTag;
-    while ((proseTag = prosePattern.exec(proseList)) !== null) {
-      tagsFromProse.push(proseTag[1]);
-    }
-  }
-
-  // Combine all tags claimed in the Tag vocabulary section
-  const allClaimedTags = tagsFromTables.concat(tagsFromProse);
+  // Every backtick-quoted lowercase-word token anywhere in what remains --
+  // table row, prose list, aside, whatever -- is a tag claim. This is
+  // deliberately NOT keyed to any specific lead-in sentence: rewording the
+  // prose around the list must not stop a claimed tag from being checked.
+  // Reuses the same extraction helper used elsewhere in this file so table
+  // rows and prose entries are not parsed by two independent regexes.
+  const allClaimedTags = extractTagsFromReadme(tagVocabProse);
 
   // Each claimed tag must exist in the corpus
   for (const tag of allClaimedTags) {
