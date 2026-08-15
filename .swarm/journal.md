@@ -984,3 +984,15 @@ runfile-mirror:
 ```json
 {"version":1,"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","usage_reset_note":"PLACEHOLDER, not measured: now+5h. bin/swarm-budget.sh is not on the Bash allowlist in a headless session (KI-5 / moon KI-2), so no probe supplied a real window boundary. Used only by the limp short-circuit; no gear decision rests on it.","model_policy":"value-routing","auth_mode":"subscription","heartbeat":{"ts":1786800041,"next_wakeup_at":1786800366,"pid":393355,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"allocator","gear":1,"gear_target":1,"ratio":null,"mode":"guest","k_cap":1,"promote":false,"demote":true,"window_tokens":0,"window_cost_usd":0,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":0,"projected_depletion_at":0,"last_probe_ts":1786800041,"last_real_probe_ts":0,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":81,"opus_used_pct":96,"week_elapsed_pct":76.38,"weekly_heat":1.0605,"opus_heat":1.2569,"ceiling":5,"promote_blocked":true}},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":7,"artifact":{"url":"","file":"/opt/swarm/runs/dashboard.html","publish_failures":0}}
 ```
+persist defect caught and fixed AFTER the cycle-8 commits: the two new decision objects were
+  inserted into state.json without a comma separating them from the cycle-7 entry, so d14f164's
+  successor committed a state.json that would not JSON.parse (position 9511). Caught by a
+  conductor parse check of all three state files run as the last step of persist, not by a
+  reader noticing later. Fixed in the follow-up commit below and re-validated: runfile, state
+  and backlog all parse, backlog counts 10 done / 5 todo / 1 blocked matching this block's
+  claim, I-7 status done, last_cycle.commit 34f4d17. Recorded rather than quietly amended --
+  a corrupt state.json is precisely the failure the resume path exists to survive (failure
+  table: 'state.json corrupt -> reconstruct from journal tail + git log'), and it briefly
+  existed on main. LESSON for the wrap-up distillation: hand-editing JSON state with Edit
+  needs a parse check in the same cycle, every cycle; the harness reports a successful string
+  replacement, which is not the same as a valid file.

@@ -77,7 +77,7 @@
       "cycle": 7,
       "what": "A docs item was gated by EXECUTING the shipped binary — 36 behavioral checks with four discriminators — not by reading the prose it produced.",
       "why": "Every claim I-3 wrote is a claim about runtime behavior, so the docs are falsifiable exactly like code and the same evidence standard applies (hard rule 2). Reading the diff would only have confirmed the agent wrote what it was told; it could not have caught the agent transcribing a ruling the code does not actually honor. The discriminators exist because the naive checks are all passable by degenerate implementations: determinism alone is satisfied by an always-same-entry stub, so 7 seeds must reach 7 distinct aphorisms; a substring rule is only distinguishable from equality if the partial-author result set is required to EQUAL the full-name set. One imprecision was caught this way and fixed (the --list/--seed carve-out), which reading could not have surfaced."
-    }
+    },
     {
       "cycle": 8,
       "what": "I-7 closed as a superset of the two divergences it named: the --json HELP line was widened to cover the --list/NDJSON case even though the item's acceptance named only --author and --tag.",
