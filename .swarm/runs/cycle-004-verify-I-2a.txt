@@ -1,0 +1,111 @@
+==============================================================================
+I-2a VERIFICATION — conductor-authored, run after the sweep returned
+==============================================================================
+
+BASELINE (pristine whole-repo copy): exit=0 pass=52 fail=0
+
+--- M07 [src/select.js] tag membership: swap === for .includes()
+    probe: aphorism --list --tag test
+    pristine: exit=1 stdout[0B]='' stderr='aphorism: no aphorism matches those filters'
+    mutant  : exit=0 stdout[169B]='Beware of bugs in the above code; I have only proved it correct, not tried it. — Donald Knuth\nTesting shows th' stderr=''
+    observable difference: True
+    suite: exit=0 pass=52 fail=0
+    claimed=SURVIVED  observed=SURVIVED  -> AGREES
+
+--- M12 [bin/aphorism.js] --list drops the last matching entry
+    probe: aphorism --list
+    pristine: exit=0 stdout[4528B]='Premature optimization is the root of all evil. — Donald Knuth\nBeware of bugs in the above code; I have only p' stderr=''
+    mutant  : exit=0 stdout[4470B]='Premature optimization is the root of all evil. — Donald Knuth\nBeware of bugs in the above code; I have only p' stderr=''
+    observable difference: True
+    suite: exit=0 pass=52 fail=0
+    claimed=SURVIVED  observed=SURVIVED  -> AGREES
+
+--- M13 [bin/aphorism.js] --list reverses corpus order
+    probe: aphorism --list
+    pristine: exit=0 stdout[4528B]='Premature optimization is the root of all evil. — Donald Knuth\nBeware of bugs in the above code; I have only p' stderr=''
+    mutant  : exit=0 stdout[4528B]="It's not a bug, it's an undocumented feature. — Anonymous\nThe best way to predict the future is to invent it. " stderr=''
+    observable difference: True
+    suite: exit=0 pass=52 fail=0
+    claimed=SURVIVED  observed=SURVIVED  -> AGREES
+
+--- M14 [bin/aphorism.js] --json pretty-prints instead of emitting one line
+    probe: aphorism --json --seed 7
+    pristine: exit=0 stdout[105B]='{"text":"The best way to predict the future is to invent it.","author":"Alan Kay","tags":["innovation"]}\n' stderr=''
+    mutant  : exit=0 stdout[126B]='{\n  "text": "The best way to predict the future is to invent it.",\n  "author": "Alan Kay",\n  "tags": [\n    "in' stderr=''
+    observable difference: True
+    suite: exit=0 pass=52 fail=0
+    claimed=SURVIVED  observed=SURVIVED  -> AGREES
+
+--- M16 [bin/aphorism.js] --list --json emits one pretty JSON array instead of NDJSON
+    probe: aphorism --list --json --tag yagni
+    pristine: exit=0 stdout[91B]='{"text":"You aren\'t gonna need it.","author":"Ron Jeffries","tags":["yagni","simplicity"]}\n' stderr=''
+    mutant  : exit=0 stdout[137B]='[\n  {\n    "text": "You aren\'t gonna need it.",\n    "author": "Ron Jeffries",\n    "tags": [\n      "yagni",\n    ' stderr=''
+    observable difference: True
+    suite: exit=0 pass=52 fail=0
+    claimed=SURVIVED  observed=SURVIVED  -> AGREES
+
+--- M21 [src/args.js] parseSeedValue rejects negative seeds
+    probe: aphorism --seed -5 --json
+    pristine: exit=0 stdout[134B]='{"text":"Fancy algorithms are slow when n is small, and n is usually small.","author":"Rob Pike","tags":["perf' stderr=''
+    mutant  : exit=2 stdout[0B]='' stderr='aphorism: flag --seed requires a numeric value'
+    observable difference: True
+    suite: exit=0 pass=52 fail=0
+    claimed=SURVIVED  observed=SURVIVED  -> AGREES
+
+--- M22 [src/args.js] --seed loses its flag-lookahead guard
+    probe: aphorism --seed --list
+    pristine: exit=2 stdout[0B]='' stderr='aphorism: flag --seed requires a value'
+    mutant  : exit=2 stdout[0B]='' stderr='aphorism: flag --seed requires a numeric value'
+    observable difference: True
+    suite: exit=0 pass=52 fail=0
+    claimed=SURVIVED  observed=SURVIVED  -> AGREES
+
+--- K-M04 [src/select.js] author match loses case-insensitivity on the entry side
+    probe: aphorism --list --author dijkstra
+    pristine: exit=0 stdout[714B]='Simplicity is prerequisite for reliability. — Edsger W. Dijkstra\nThe competent programmer is fully aware of th' stderr=''
+    mutant  : exit=1 stdout[0B]='' stderr='aphorism: no aphorism matches those filters'
+    observable difference: True
+    suite: exit=1 pass=49 fail=3
+    claimed=KILLED  observed=KILLED  -> AGREES
+
+--- K-M08 [src/select.js] author+tag stops being an AND: the tag filter discards the author narrowing
+    probe: aphorism --list --author dijkstra --tag management
+    pristine: exit=1 stdout[0B]='' stderr='aphorism: no aphorism matches those filters'
+    mutant  : exit=0 stdout[168B]='Adding manpower to a late software project makes it later. — Fred Brooks\nThe bearing of a child takes nine mon' stderr=''
+    observable difference: True
+    suite: exit=1 pass=51 fail=1
+    claimed=KILLED  observed=KILLED  -> AGREES
+
+--- K-M09 [bin/aphorism.js] empty-match exit code becomes 0
+    probe: aphorism --author nobody-said-this-ever
+    pristine: exit=1 stdout[0B]='' stderr='aphorism: no aphorism matches those filters'
+    mutant  : exit=0 stdout[0B]='' stderr='aphorism: no aphorism matches those filters'
+    observable difference: True
+    suite: exit=1 pass=51 fail=1
+    claimed=KILLED  observed=KILLED  -> AGREES
+
+--- K-M15 [bin/aphorism.js] --json drops the tags field
+    probe: aphorism --json --seed 7
+    pristine: exit=0 stdout[105B]='{"text":"The best way to predict the future is to invent it.","author":"Alan Kay","tags":["innovation"]}\n' stderr=''
+    mutant  : exit=0 stdout[83B]='{"text":"The best way to predict the future is to invent it.","author":"Alan Kay"}\n' stderr=''
+    observable difference: True
+    suite: exit=1 pass=51 fail=1
+    claimed=KILLED  observed=KILLED  -> AGREES
+
+==============================================================================
+SUMMARY
+==============================================================================
+  ok   M07    claimed=SURVIVED   observed=SURVIVED
+  ok   M12    claimed=SURVIVED   observed=SURVIVED
+  ok   M13    claimed=SURVIVED   observed=SURVIVED
+  ok   M14    claimed=SURVIVED   observed=SURVIVED
+  ok   M16    claimed=SURVIVED   observed=SURVIVED
+  ok   M21    claimed=SURVIVED   observed=SURVIVED
+  ok   M22    claimed=SURVIVED   observed=SURVIVED
+  ok   K-M04  claimed=KILLED     observed=KILLED
+  ok   K-M08  claimed=KILLED     observed=KILLED
+  ok   K-M09  claimed=KILLED     observed=KILLED
+  ok   K-M15  claimed=KILLED     observed=KILLED
+
+11/11 agree with the agent's claim; 0 disagree.
+scratch removed: /opt/swarm/runs/verify-scratch-c4

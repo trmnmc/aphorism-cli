@@ -144,14 +144,14 @@
       "priority": 2,
       "value": "H",
       "effort": "M",
-      "status": "todo",
+      "status": "done",
       "deps": [],
       "files_hint": [],
       "acceptance": "every documented flag and Domain-rule behavior has been mutated at least once against the current suite, and each surviving mutant is recorded with the exact mutation applied and the suite's response",
       "packages": [],
       "model": "sonnet",
       "attempts": 0,
-      "notes": "MEASUREMENT, not reading (playbook L-031). Behaviors to mutate: seed determinism, unseeded selection, --author case-insensitive matching, --tag membership matching, author+tag AND intersection, empty-set error contract, --list completeness and corpus order, --json single-line shape, the three exit codes, HELP content. Produces a survivor list ONLY. The HOLE-vs-BOUNDARY classification (L-033) is the CONDUCTOR's judgment and is deliberately withheld from this item: a survivor at a genuinely indiscriminable point (unseeded uniformity is the expected example) is the check being correct, and 'hardening' it produces a test that false-rejects honest output. Scratch copies for mutation must be whole-repo-minus-.git, never a hand-enumerated file subset (L-030)."
+      "notes": "MEASUREMENT, not reading (playbook L-031). Behaviors to mutate: seed determinism, unseeded selection, --author case-insensitive matching, --tag membership matching, author+tag AND intersection, empty-set error contract, --list completeness and corpus order, --json single-line shape, the three exit codes, HELP content. Produces a survivor list ONLY. The HOLE-vs-BOUNDARY classification (L-033) is the CONDUCTOR's judgment and is deliberately withheld from this item: a survivor at a genuinely indiscriminable point (unseeded uniformity is the expected example) is the check being correct, and 'hardening' it produces a test that false-rejects honest output. Scratch copies for mutation must be whole-repo-minus-.git, never a hand-enumerated file subset (L-030). || VERIFIED cycle 4 by the conductor. 27 mutants across every catalogued behavior; baseline 52/52. Agent reported 19 KILLED / 7 SURVIVED / 1 EQUIVALENT (M06-EQUIV, dropping .toLowerCase() on the tag ENTRY side, was a no-op because every corpus tag is already lowercase - correctly excluded and replaced by a query-side variant that killed). Conductor re-measurement re-derived all 7 survivors AND a 4-mutant control sample of claimed KILLS from the one-sentence descriptions only, never from the agent's diffs, each in its own whole-repo-minus-.git copy: 11/11 agree, and every survivor carries a conductor-authored observable-difference probe, so none is an equivalent mutant. Classification (conductor, per SPEC Domain rules): 5 HOLE (M07, M12, M13, M14, M21), 1 BOUNDARY (M22 - only the error-message wording changes; exit 2 + clean stdout + stderr message all still hold), 1 DEFERRED to I-3 (M16, --list --json, the surface SPEC lists as an OPEN AMBIGUITY - testing it now would promote today's implementation to a promise and pre-empt I-3). Evidence: .swarm/runs/cycle-004-verify-I-2a.txt, .swarm/runs/cycle-004-classification.md, .swarm/runs/cycle-004-mutation-sweep.json"
     },
     {
       "id": "I-2b",
@@ -171,7 +171,7 @@
       "packages": [],
       "model": "sonnet",
       "attempts": 0,
-      "notes": "Admits tests ONLY for survivors the conductor classified HOLE — never for a surface that merely looks untested. Each test must be proven twice (L-029): failable against its mutation AND attributable, i.e. removing it lets the mutation survive. Planning-time hypotheses, to be settled by I-2a's actual measurement and not assumed: the current --list test asserts only a line-count floor and never order, and the current --json test uses JSON.parse after trim() so a pretty-printed multi-line mutant may still parse."
+      "notes": "Admits tests ONLY for survivors the conductor classified HOLE — never for a surface that merely looks untested. Each test must be proven twice (L-029): failable against its mutation AND attributable, i.e. removing it lets the mutation survive. Planning-time hypotheses, to be settled by I-2a's actual measurement and not assumed: the current --list test asserts only a line-count floor and never order, and the current --json test uses JSON.parse after trim() so a pretty-printed multi-line mutant may still parse. || SETTLED by I-2a (cycle 4). Four assigned HOLE survivors, all observable through the shipped binary: M07 (--tag test must exit 1 - membership, not substring; the corpus has a 'testing' tag and no 'test' tag), M12 (--list line count must equal the corpus size - the existing assertion is a FLOOR of 40 against 50 entries, so dropping an entry passes), M13 (--list first/last line must match corpus order - nothing asserts order today), M14 (--json must be exactly one line - the existing test JSON.parses a trimmed blob, which a pretty-printed object also satisfies). Both planning-time hypotheses in this item were CONFIRMED by measurement. Exact mutations: .swarm/runs/cycle-004-classification.md"
     },
     {
       "id": "I-2c",
@@ -192,7 +192,7 @@
       "packages": [],
       "model": "sonnet",
       "attempts": 0,
-      "notes": "Same twice-proven rule as I-2b. Scoped to test/args.test.js so it shares no file with I-2b (test/cli.test.js) or I-1 (test/select.test.js) — pairwise-disjoint even though this run's waves are size 1. If I-2a's survivors land entirely in one file, this item is closed as not-needed rather than padded with tests to justify its existence."
+      "notes": "Same twice-proven rule as I-2b. Scoped to test/args.test.js so it shares no file with I-2b (test/cli.test.js) or I-1 (test/select.test.js) — pairwise-disjoint even though this run's waves are size 1. If I-2a's survivors land entirely in one file, this item is closed as not-needed rather than padded with tests to justify its existence. || SETTLED by I-2a (cycle 4). Exactly ONE assigned HOLE survivor, and it does live in the parser, so this item is neither padded nor closed as not-needed: M21 - parseSeedValue rejecting negative seeds survives the whole suite, i.e. parseArgs(['--seed','-5']) yielding seed === -5 with no error is unprotected. Turning a valid invocation into exit 2 contradicts the Domain rule that exit 2 means unknown flag or missing flag argument. M22 (the other args.js survivor) is classified BOUNDARY and must NOT be hardened. Details: .swarm/runs/cycle-004-classification.md"
     },
     {
       "id": "I-3",
@@ -213,7 +213,7 @@
       "packages": [],
       "model": "haiku",
       "attempts": 0,
-      "notes": "Four divergences, not three: the I-1 resolution is the fourth and is documented here rather than in I-1, keeping code and prose in separate file scopes. Documentation follows the SHIPPED behavior (--author is substring containment, case-insensitive) rather than changing behavior to match prose — changing the match semantics would be a user-visible behavior change, which the brief forbids. Depends on I-1 so the seed prose describes a resolution that has actually landed."
+      "notes": "Four divergences, not three: the I-1 resolution is the fourth and is documented here rather than in I-1, keeping code and prose in separate file scopes. Documentation follows the SHIPPED behavior (--author is substring containment, case-insensitive) rather than changing behavior to match prose — changing the match semantics would be a user-visible behavior change, which the brief forbids. Depends on I-1 so the seed prose describes a resolution that has actually landed. || MEASURED EVIDENCE from I-2a (cycle 4) for divergence (c): mutant M16 rewrote --list --json from NDJSON to a single pretty-printed JSON array and the full 52-test suite stayed green, so that surface is completely unprotected today. It is deliberately NOT being hardened by I-2b/I-2c - no Domain rule describes the combination, so a test would freeze the current implementation and pre-empt this item. Settle the rule here first."
     },
     {
       "id": "I-4",

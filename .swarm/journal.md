@@ -343,3 +343,128 @@ runfile-mirror:
 ```json
 {"version":1,"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","usage_reset_note":"PLACEHOLDER, not measured: now+5h. bin/swarm-budget.sh is not on the Bash allowlist in a headless session (KI-5 / moon KI-2), so no probe supplied a real window boundary. Used only by the limp short-circuit; no gear decision rests on it.","model_policy":"value-routing","auth_mode":"subscription","heartbeat":{"ts":1786794592,"next_wakeup_at":1786797292,"pid":358087,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"allocator","gear":1,"gear_target":1,"ratio":null,"mode":"guest","k_cap":1,"promote":false,"demote":true,"window_tokens":0,"window_cost_usd":0,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":0,"projected_depletion_at":0,"last_probe_ts":1786794798,"last_real_probe_ts":0,"probe_failures":0,"probe_note":"cycle 3: bin/swarm-budget.sh still NOT invoked — /opt/swarm/.claude/settings.json re-read this cycle and its allow[] carries node/npm/npx/git/gh but no entry of any form for swarm-budget.sh or swarm-playbook.sh (only swarm-notify.sh, twice). probe_failures stays 0: an attempt not made is not a failure (KI-5). Gear re-derived from runs/allocator.json (source=probe, refreshed): posture=trickle, allow_premium_pct 0, allow_overall_pct 0, weekly_used_pct 80, opus_used_pct 96, week_elapsed_pct 75.48, dial 0.3. weekly_heat 1.0599 < 1.1 -> governor disengaged, ceiling 5. opus_heat 1.2719 > 1.2 -> promote blocked. trickle + guest 1-3 clamp -> gear 1, k_cap 1, demote true. Unchanged from cycle 2 and structurally fixed for the run: week_resets_at 1786942799 falls after stop_at 1786879464.","weekly":{"ok":true,"weekly_used_pct":80,"opus_used_pct":96,"week_elapsed_pct":75.48,"weekly_heat":1.0599,"opus_heat":1.2719,"ceiling":5,"promote_blocked":true}},"playbook":{"mode":"auto","applied":["L-003","L-006","L-007","L-008","L-011","L-016","L-018","L-020","L-021","L-022","L-023","L-024","L-026","L-029","L-031"],"vetoed":[],"ledger_note":"record-applied NOT written: bin/swarm-playbook.sh is not on the Bash allowlist (KI-5), so the parse and record-applied verbs both refused in this headless session. Directives below were hand-parsed by the conductor from playbook/learnings.md, read-only. NOTE: the applied[] list carries duplicate source IDs — L-023, L-025 and L-026 each name two different lessons in the file (the defect item I-5 exists to fix); the ids here refer to the lessons whose text is staged in prompt_lines below.","directives":{"wave_k":3,"routing_recs":["core-logic->fable"],"prompt_lines":{"builder":["The conductor is the SOLE committer — never commit or push yourself","Any exported React hook must ship a test that mounts a real component using it","Tests asserting no-key behavior must delete the key in beforeEach, not beforeAll — a real .env on main will leak through suite-level hooks","Any persisted UI state (storage or module-level) must be cleared in beforeEach of every test file that mounts the component"],"reviewer":["The conductor is the SOLE committer — never commit or push yourself","Assign each fixer a pairwise-disjoint file set; two fixers must never share a file"],"qa":["The conductor is the SOLE committer — never commit or push yourself","Script a deterministic scenario with hand-computed expected outputs; eyeballing rendered numbers is not verification","Load all classic-script modules into one shared vm context and scan for cross-file top-level name collisions","Open the running product in a browser and describe what you actually see — tests alone miss rendered-page bugs","After merging user-visible files, run a live browser look pass before counting the wave verified","After any server rebuild or restart, hard-reload the page before judging — a stale SPA instance survives goto","Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'.","Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value.","When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence.","Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps."]},"inert_note":"Four staged qa lines are browser-specific (L-006 classic-script collisions, L-007 browser look, L-018 post-merge look pass, L-021 hard-reload) and are INERT for this target: aphorism-cli is a Node CLI with no browser surface. Staged faithfully rather than silently dropped — apply_mode is auto and the conductor does not get to edit the playbook's intent mid-run (hard rule 5)."}},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":2,"artifact":{"file":"/opt/swarm/runs/dashboard.html","publish_failures":0}}
 ```
+
+## cycle 4 | 2026-08-15T12:20:34+00:00 | aphorism-cli | BUILD
+work: I-2a, the mutation sweep. Why: gates 1 and 2 are satisfied (design decisions exist; the
+  backlog covers all six SPEC must-haves) and must-have items remain todo, so step 4 gate 3
+  selects BUILD. Within BUILD, I-2a is the only unblocked priority-2 item, it is measurement
+  rather than code (so it fits gear 1's haiku-priced/test-triage work class cleanly), and both
+  I-2b and I-2c depend on it.
+clock: 1786795294 at open, stop_at 1786879464 -> 84170s (23.4h) remaining. Admission control:
+  the 2700s worst-case wave budget fits with enormous margin.
+gear: 1 (guest, dial 0.30, trickle posture). k_cap 1, demote true, promote blocked.
+  weekly_heat 80.0/75.61 = 1.0581 < 1.1 -> governor disengaged, ceiling 5. opus_heat
+  96/75.61 = 1.2697 > 1.2 -> promote blocked. Effective wave size = min(k_current 4, gear
+  cap 1, hard max 5) = 1. No probe invoked: /opt/swarm/.claude/settings.json was re-read this
+  cycle and grepping its allow[] for swarm-*.sh returns only swarm-notify.sh, so there is still
+  no entry for bin/swarm-budget.sh (KI-5). probe_failures stays 0 -- an attempt not made is not
+  a failure -- and the gear rests on runs/allocator.json (source=probe, refreshed this cycle).
+control: bin/swarm-notify.sh poll ok; runs/control.json pending[] empty, applied[] empty, no
+  inject[] array. Nothing to apply.
+orient: git status --porcelain clean at open (HEAD 9c1c3b5).
+craft pack: node bin/swarm-craft.mjs ran clean, degraded: []. NOT passed to the agent -- I-2a
+  produces no product code at all, and this target has no browser surface, so craft.ui is inert.
+  Recorded rather than silently skipped.
+
+dispatch: DIRECT Agent call, sonnet, NOT Workflow -- the Workflow tool is review-gated in a
+  headless -p session, so this is the documented failure-table fallback. Model derivation:
+  routing table -> I-2a is kind qa, effort M, so it matches no specific row and lands on
+  sonnet, the default for anything unmatched. attempts 0, no ladder escalation. Gear-1 demote
+  does NOT bite: the sonnet->haiku rung is gated to docs/polish items and I-2a is neither.
+  NOT a judgment seat -- the HOLE-vs-BOUNDARY judgment was deliberately withheld from the
+  agent and kept by the conductor, so what was dispatched is mechanical measurement.
+  Playbook qa prompt_lines applied: the SOLE-committer line, L-031 (measure by mutation, do
+  not read the suite for gaps), L-020 (refute, distinguish verified-wrong from suspicious),
+  L-022 (discriminator over remembered reference), L-030 (whole-repo-minus-.git scratch copies,
+  never a hand-enumerated subset). The four browser-specific staged lines stayed inert.
+
+agent return (CLAIM, not fact): 27 mutants; baseline 52/52; 19 KILLED, 7 SURVIVED,
+  1 EQUIVALENT (M06-EQUIV: dropping .toLowerCase() on the tag ENTRY side is a no-op because
+  every corpus tag is already lowercase -- correctly self-reported as equivalent, excluded from
+  the survivor list, and replaced with a query-side variant that did kill).
+
+VERIFICATION EVIDENCE (conductor-authored AT verification time, after the agent returned).
+  Full output: .swarm/runs/cycle-004-verify-I-2a.txt | script: cycle-004-verify-I-2a.py
+
+  Method: every mutation was RE-DERIVED by the conductor from the agent's one-SENTENCE
+  description and never copied from its recorded diff -- copying the diff would reproduce a
+  subtle no-op and pass vacuously. Each mutant got its own whole-repo-minus-.git copy (L-030),
+  exactly one edit, a conductor-authored observable-difference probe against the pristine
+  binary, then the full suite. Sample = ALL 7 claimed survivors PLUS a 4-mutant control sample
+  of claimed KILLS, because under-reporting survivors is the worse error.
+
+  BASELINE (pristine whole-repo copy): exit=0 pass=52 fail=0
+
+    ok   M07    claimed=SURVIVED   observed=SURVIVED    (--tag test: pristine exit 1 -> mutant exit 0, 169B)
+    ok   M12    claimed=SURVIVED   observed=SURVIVED    (--list: 4528B -> 4470B, one entry gone)
+    ok   M13    claimed=SURVIVED   observed=SURVIVED    (--list: same 4528B, first line differs -> reversed)
+    ok   M14    claimed=SURVIVED   observed=SURVIVED    (--json: 105B one line -> 126B multi-line)
+    ok   M16    claimed=SURVIVED   observed=SURVIVED    (--list --json: NDJSON 91B -> pretty array 137B)
+    ok   M21    claimed=SURVIVED   observed=SURVIVED    (--seed -5: exit 0 -> exit 2)
+    ok   M22    claimed=SURVIVED   observed=SURVIVED    (--seed --list: stderr wording changes only)
+    ok   K-M04  claimed=KILLED     observed=KILLED      (suite 49 pass / 3 fail)
+    ok   K-M08  claimed=KILLED     observed=KILLED      (suite 51 pass / 1 fail)
+    ok   K-M09  claimed=KILLED     observed=KILLED      (suite 51 pass / 1 fail)
+    ok   K-M15  claimed=KILLED     observed=KILLED      (suite 51 pass / 1 fail)
+
+    11/11 agree with the agent's claim; 0 disagree.
+
+  Every survivor row carries its own observable-difference probe, so none of the 7 is an
+  equivalent mutant dressed up as a survivor -- that check is what makes SURVIVED mean
+  "the suite cannot see a real behavior change" rather than "nothing actually changed".
+  The 4 KILLED controls are the falsification half: they confirm the suite really does fail
+  when it should, so a green suite under a survivor is informative rather than a broken runner.
+  Real repo after the sweep: node --test test/*.test.js -> 52 pass / 0 fail, and git status
+  shows only new .swarm/runs/ artifacts -- no source or test file was touched by anyone.
+
+  FIRST ATTEMPT WAS WRONG AND IS RECORDED AS SUCH: the initial verify run reported
+  M12/M13/M16 as PATCH-FAILED because the conductor's patch anchors used 6-space indentation
+  against a file that uses 4. That was a defect in the CHECK, not evidence about the claim,
+  and it was fixed and re-run rather than being reported as a disagreement. Journaled because
+  a check that silently fails to apply is exactly the failure mode that looks like a pass.
+
+gate: I-2a PASS -> done. No test_cmd regression possible (the item changes no product code),
+  but test_cmd was run on the real repo anyway and is 52/52.
+
+CLASSIFICATION (conductor judgment, withheld from the agent by design; anchored to SPEC.md
+  Domain rules, not intuition). Full reasoning: .swarm/runs/cycle-004-classification.md
+    HOLE     M07 --tag membership vs substring     -> rule: "membership in the tags array"
+    HOLE     M12 --list drops an entry             -> rule: "prints EVERY aphorism"
+    HOLE     M13 --list order reversed             -> rule: "in corpus order"
+    HOLE     M14 --json pretty-printed             -> rule: "a SINGLE-LINE JSON object"
+    HOLE     M21 negative --seed rejected          -> exit 2 means unknown flag / missing arg; -5 is neither
+    BOUNDARY M22 --seed lookahead guard dropped    -> exit 2 + clean stdout + stderr message ALL still hold;
+                                                      only the message wording changes
+    DEFER    M16 --list --json array vs NDJSON     -> no rule exists; SPEC lists it under OPEN
+                                                      AMBIGUITIES as item I-3(c)
+  M22 and M16 both produce no test, for OPPOSITE reasons, and the distinction is the point:
+  M22 has a rule and satisfies it, so pinning the exact error string would freeze prose no
+  rule fixes and false-reject an honest reword. M16 has no rule at all, so a test would
+  silently promote today's NDJSON implementation to a promise and pre-empt the decision I-3
+  exists to make. Hardening all 7 would have been the easy, wrong answer; test-count is not
+  a deliverable (cycle-1 decision).
+assignment: I-2b (test/cli.test.js) takes M07, M12, M13, M14 -- all observable through the
+  shipped binary. I-2c (test/args.test.js) takes M21, and exactly M21: the item is neither
+  padded nor closed as not-needed, because measurement put precisely one survivor in the
+  parser. Files stay pairwise-disjoint. Both planning-time hypotheses recorded in I-2b at
+  cycle 2 were CONFIRMED by measurement: the --list test asserts only a line-count floor of
+  40 against a 50-entry corpus, and the --json test JSON.parses a trimmed blob that a
+  pretty-printed object also satisfies. I-3 gains M16 as measured evidence that the
+  --list --json surface is completely unprotected today.
+autotune: not applicable -- no build wave, no branches, no merges this cycle. k_current stays
+  4, wave_streak stays 0.
+counters: consecutive_no_value 0 (verified value this cycle). backlog: 6 done / 7 todo / 1 blocked.
+outcome: 1 item verified. No product code changed by design; the deliverable is measurement
+  plus the classification that turns it into scoped work.
+
+dashboard: runs/dashboard.html re-rendered locally. Artifact publish skipped -- the tool is
+  absent in a -p session, which is not a publish failure.
+next: cycle 5 -- I-2b, the four CLI-level HOLE tests, as a single-item wave (k=1) to a sonnet
+  builder scoped to test/cli.test.js only. The builder is handed the exact mutations and the
+  twice-proven requirement (fails against its mutation AND removing it lets the mutation
+  survive); the conductor re-proves both halves itself at the gate. Cycle 5 is also a
+  cycle % 5 == 0 cycle, so it carries a full SPEC.md re-read plus backlog hygiene.
+runfile-mirror:
+```json
+{"version":1,"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","usage_reset_note":"PLACEHOLDER, not measured: now+5h. bin/swarm-budget.sh is not on the Bash allowlist in a headless session (KI-5 / moon KI-2), so no probe supplied a real window boundary. Used only by the limp short-circuit; no gear decision rests on it.","model_policy":"value-routing","auth_mode":"subscription","heartbeat":{"ts":1786795373,"next_wakeup_at":1786798073,"pid":360032,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"allocator","gear":1,"gear_target":1,"ratio":null,"mode":"guest","k_cap":1,"promote":false,"demote":true,"window_tokens":0,"window_cost_usd":0,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":0,"projected_depletion_at":0,"last_probe_ts":1786795373,"last_real_probe_ts":0,"probe_failures":0,"probe_note":"cycle 4: bin/swarm-budget.sh still NOT invoked - /opt/swarm/.claude/settings.json re-read this cycle; grepping its allow[] for swarm-*.sh returns only swarm-notify.sh (twice), so there is still no entry of any form for swarm-budget.sh or swarm-playbook.sh. probe_failures stays 0: an attempt not made is not a failure (KI-5). Gear re-derived from runs/allocator.json (source=probe, refreshed this cycle): posture=trickle, allow_premium_pct 0, allow_overall_pct 0, weekly_used_pct 80.0, opus_used_pct 96, week_elapsed_pct 75.61, dial 0.3. weekly_heat 80.0/75.61 = 1.0581 < 1.1 -> governor disengaged, ceiling 5. opus_heat 96/75.61 = 1.2697 > 1.2 -> promote blocked. trickle + guest 1-3 clamp -> gear 1, k_cap 1, demote true. Structurally fixed for the run: week_resets_at 1786942799 falls after stop_at 1786879464.","weekly":{"ok":true,"weekly_used_pct":80.0,"opus_used_pct":96,"week_elapsed_pct":75.61,"weekly_heat":1.0581,"opus_heat":1.2697,"ceiling":5,"promote_blocked":true}},"playbook":{"mode":"auto","applied":["L-003","L-006","L-007","L-008","L-011","L-016","L-018","L-020","L-021","L-022","L-023","L-024","L-026","L-029","L-031"],"vetoed":[],"ledger_note":"record-applied NOT written: bin/swarm-playbook.sh is not on the Bash allowlist (KI-5), so the parse and record-applied verbs both refused in this headless session. Directives below were hand-parsed by the conductor from playbook/learnings.md, read-only. NOTE: the applied[] list carries duplicate source IDs — L-023, L-025 and L-026 each name two different lessons in the file (the defect item I-5 exists to fix); the ids here refer to the lessons whose text is staged in prompt_lines below.","directives":{"wave_k":3,"routing_recs":["core-logic->fable"],"prompt_lines":{"builder":["The conductor is the SOLE committer — never commit or push yourself","Any exported React hook must ship a test that mounts a real component using it","Tests asserting no-key behavior must delete the key in beforeEach, not beforeAll — a real .env on main will leak through suite-level hooks","Any persisted UI state (storage or module-level) must be cleared in beforeEach of every test file that mounts the component"],"reviewer":["The conductor is the SOLE committer — never commit or push yourself","Assign each fixer a pairwise-disjoint file set; two fixers must never share a file"],"qa":["The conductor is the SOLE committer — never commit or push yourself","Script a deterministic scenario with hand-computed expected outputs; eyeballing rendered numbers is not verification","Load all classic-script modules into one shared vm context and scan for cross-file top-level name collisions","Open the running product in a browser and describe what you actually see — tests alone miss rendered-page bugs","After merging user-visible files, run a live browser look pass before counting the wave verified","After any server rebuild or restart, hard-reload the page before judging — a stale SPA instance survives goto","Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'.","Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value.","When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence.","Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps."]},"inert_note":"Four staged qa lines are browser-specific (L-006 classic-script collisions, L-007 browser look, L-018 post-merge look pass, L-021 hard-reload) and are INERT for this target: aphorism-cli is a Node CLI with no browser surface. Staged faithfully rather than silently dropped — apply_mode is auto and the conductor does not get to edit the playbook's intent mid-run (hard rule 5)."}},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":3,"artifact":{"url":"","file":"/opt/swarm/runs/dashboard.html","publish_failures":0}}
+```

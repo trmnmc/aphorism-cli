@@ -3,7 +3,7 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
   "phase": "BUILD",
-  "cycle": 3,
+  "cycle": 4,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -52,6 +52,11 @@
       "cycle": 3,
       "what": "Wave autotune raised k_current 3->4 on the second consecutive clean wave, but effective wave size stays 1",
       "why": "cycle.md Wave autotune: a clean wave (zero reverts, zero failed verifies) increments wave_streak, and at 2 it raises k_current and resets the streak. Recorded explicitly because it is INERT this run: effective size = min(k_current, gear cap 1) = 1, and gear 1 is fixed for the whole run (week_resets_at falls after stop_at). Carried so a future run on a healthier window inherits the learned number rather than re-deriving it."
+    },
+    {
+      "cycle": 4,
+      "what": "HOLE/BOUNDARY classification of the 7 I-2a survivors is anchored to SPEC.md Domain rules, not to intuition: 5 HOLE, 1 BOUNDARY (M22), 1 DEFERRED to I-3 (M16). M16 produces no test this cycle even though it is completely unprotected.",
+      "why": "The two non-hardened survivors are non-hardened for OPPOSITE reasons and the distinction is load-bearing. M22 has a rule and satisfies it - the mutant still exits 2 with clean stdout and a stderr message, and only the message wording changes, so a test would freeze prose no rule fixes and would false-reject an honest reword. M16 has NO rule at all: --list --json is the surface SPEC itself lists under OPEN AMBIGUITIES for item I-3, so writing a test now would silently promote today's NDJSON implementation to a promise and pre-empt the decision I-3 exists to make. Hardening every survivor would have been the easy, wrong answer."
     }
   ],
   "known_issues": [
@@ -96,9 +101,9 @@
     "window_tokens_attributed": 0
   },
   "last_cycle": {
-    "n": 3,
-    "work": "build-wave (direct Agent, k=1) — I-1 seed-determinism fix",
-    "outcome": "1 verified, 52 tests green (was 48), KI-4 resolved",
-    "commit": "85c34dc"
+    "n": 4,
+    "work": "I-2a mutation sweep (direct Agent, sonnet, k=1) + conductor re-measurement and classification",
+    "outcome": "1 verified; 27 mutants, 7 survivors, 11/11 independent re-measurements agree; 5 HOLE / 1 BOUNDARY / 1 deferred to I-3",
+    "commit": "PENDING"
   }
 }

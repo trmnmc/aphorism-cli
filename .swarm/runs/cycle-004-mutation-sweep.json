@@ -1,0 +1,589 @@
+{
+  "baseline": {
+    "cmd": "node --test test/*.test.js",
+    "pass": 52,
+    "fail": 0,
+    "exit": 0
+  },
+  "node_version": "v24.19.0",
+  "mutants": [
+    {
+      "id": "M01",
+      "behavior": "seed determinism for ordinary finite seeds",
+      "file": "src/select.js",
+      "mutation": "toUint32Seed drops the XOR fold and returns only the low 32 bits of the seed's IEEE-754 bit pattern (ints[0] instead of ints[0] ^ ints[1]).",
+      "diff": "--- src/select.js\n+++ src/select.js (M01)\n@@ -55,7 +55,7 @@\n   const buf = new ArrayBuffer(8);\n   new Float64Array(buf)[0] = seed;\n   const ints = new Uint32Array(buf);\n-  return (ints[0] ^ ints[1]) >>> 0;\n+  return ints[0] >>> 0;\n }",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --seed=42 --json",
+        "pristine": "{\"text\":\"Bad programmers worry about the code. Good programmers worry about data structures and their relationships.\",\"author\":\"Linus Torvalds\",\"tags\":[\"design\",\"data\"]}",
+        "mutant": "{\"text\":\"The most effective debugging tool is still careful thought, coupled with judiciously placed print statements.\",\"author\":\"Brian Kernighan\",\"tags\":[\"debugging\"]}"
+      },
+      "suite": {
+        "pass": 50,
+        "fail": 2,
+        "exit": 1,
+        "failing_tests": [
+          "different seeds do not all collapse to one aphorism",
+          "pick: different seeds generally produce different results"
+        ]
+      },
+      "verdict": "KILLED"
+    },
+    {
+      "id": "M02",
+      "behavior": "seed determinism for non-finite seeds (+Infinity / -Infinity)",
+      "file": "src/select.js",
+      "mutation": "The finite-seed guard is reverted from !Number.isNaN(seed) to Number.isFinite(seed), so +Infinity/-Infinity fall back to the random path instead of being deterministic.",
+      "diff": "--- src/select.js\n+++ src/select.js (M02)\n@@ -77,7 +77,7 @@\n   let index;\n-  if (typeof seed === 'number' && !Number.isNaN(seed)) {\n+  if (typeof seed === 'number' && Number.isFinite(seed)) {\n     const rng = mulberry32(toUint32Seed(seed));",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --seed=Infinity --json  (run 3x)",
+        "pristine": "same aphorism (Alan Perlis, 'Simplicity does not precede complexity...') on every run",
+        "mutant": "different aphorisms across the three runs (Alan Perlis 'Optimization hinders evolution.', Alan Perlis 'It is better to have 100 functions...', Martin Fowler 'Any fool can write code...')"
+      },
+      "suite": {
+        "pass": 50,
+        "fail": 2,
+        "exit": 1,
+        "failing_tests": [
+          "pick: Infinity seed is deterministic and returns a valid member",
+          "pick: -Infinity seed is deterministic and returns a valid member"
+        ]
+      },
+      "verdict": "KILLED"
+    },
+    {
+      "id": "M03",
+      "behavior": "the unseeded (random) selection path",
+      "file": "src/select.js",
+      "mutation": "Math.floor() is dropped from the random-path index computation, leaving a fractional index that (almost always) indexes past the array as undefined.",
+      "diff": "--- src/select.js\n+++ src/select.js (M03)\n@@ -82,7 +82,7 @@\n   } else {\n-    index = Math.floor(Math.random() * candidates.length);\n+    index = Math.random() * candidates.length;\n   }",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js  (run 5x)",
+        "pristine": "prints one attributed aphorism, exit 0, every run",
+        "mutant": "TypeError: Cannot read properties of undefined (reading 'text') at format(), crashes on every run"
+      },
+      "suite": {
+        "pass": 47,
+        "fail": 5,
+        "exit": 1,
+        "failing_tests": [
+          "bare invocation prints one attributed aphorism and exits 0",
+          "pick: undefined seed picks a valid member (random mode)",
+          "pick: null seed also triggers random mode and returns a valid member",
+          "pick: NaN seed still uses the random branch and returns a valid member",
+          "pick: single-element candidates always returns that element regardless of seed"
+        ]
+      },
+      "verdict": "KILLED"
+    },
+    {
+      "id": "M04",
+      "behavior": "--author matching: case-insensitivity",
+      "file": "src/select.js",
+      "mutation": "Dropped .toLowerCase() on the entry side of the author comparison, so author matching becomes case-sensitive.",
+      "diff": "--- src/select.js\n+++ src/select.js (M04)\n@@ -20,7 +20,7 @@\n   if (author !== undefined && author !== null) {\n     const needle = String(author).toLowerCase();\n     result = result.filter((entry) =>\n-      entry.author.toLowerCase().includes(needle)\n+      entry.author.includes(needle)\n     );\n   }",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --author \"donald knuth\" --list",
+        "pristine": "2 lines, both Donald Knuth aphorisms",
+        "mutant": "aphorism: no aphorism matches those filters (exit 1)"
+      },
+      "suite": {
+        "pass": 49,
+        "fail": 3,
+        "exit": 1,
+        "failing_tests": [
+          "author filter is case-insensitive and narrows the list",
+          "filter: author match is case-insensitive",
+          "filter: author and tag together narrow to the intersection (AND)"
+        ]
+      },
+      "verdict": "KILLED"
+    },
+    {
+      "id": "M05",
+      "behavior": "--author matching: substring-containment vs exact-equality",
+      "file": "src/select.js",
+      "mutation": "Swapped .includes(needle) for === needle in the author filter, turning substring matching into exact-equality matching.",
+      "diff": "--- src/select.js\n+++ src/select.js (M05)\n@@ -20,7 +20,7 @@\n   if (author !== undefined && author !== null) {\n     const needle = String(author).toLowerCase();\n     result = result.filter((entry) =>\n-      entry.author.toLowerCase().includes(needle)\n+      entry.author.toLowerCase() === needle\n     );\n   }",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --author Fowler --list",
+        "pristine": "1 line: Martin Fowler aphorism",
+        "mutant": "aphorism: no aphorism matches those filters (exit 1)"
+      },
+      "suite": {
+        "pass": 49,
+        "fail": 3,
+        "exit": 1,
+        "failing_tests": [
+          "author filter is case-insensitive and narrows the list",
+          "filter: author match is case-insensitive",
+          "filter: author and tag together narrow to the intersection (AND)"
+        ]
+      },
+      "verdict": "KILLED"
+    },
+    {
+      "id": "M06-EQUIV",
+      "behavior": "--tag matching: case-insensitivity",
+      "file": "src/select.js",
+      "mutation": "Dropped .toLowerCase() on the entry side of the tag comparison (t.toLowerCase() === needle -> t === needle). First attempt at this behavior; discarded and replaced by M06 below.",
+      "diff": "--- src/select.js\n+++ src/select.js (M06 first attempt)\n@@ -27,7 +27,7 @@\n   if (tag !== undefined && tag !== null) {\n     const needle = String(tag).toLowerCase();\n     result = result.filter((entry) =>\n-      entry.tags.some((t) => t.toLowerCase() === needle)\n+      entry.tags.some((t) => t === needle)\n     );\n   }",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --tag HUMOR --list  and  node bin/aphorism.js --tag Design --list",
+        "pristine": "identical multi-line listing to the mutant in both cases",
+        "mutant": "byte-for-byte identical output to pristine (corpus.js tags are all pre-lowercased, so t.toLowerCase()===t for every entry; dropping the entry-side .toLowerCase() has no effect on this corpus)"
+      },
+      "suite": {
+        "pass": null,
+        "fail": null,
+        "exit": null,
+        "failing_tests": []
+      },
+      "verdict": "EQUIVALENT"
+    },
+    {
+      "id": "M06",
+      "behavior": "--tag matching: case-insensitivity",
+      "file": "src/select.js",
+      "mutation": "Dropped .toLowerCase() on the query (needle) side of the tag comparison instead, so an uppercase/mixed-case --tag value no longer matches the lowercase corpus tags.",
+      "diff": "--- src/select.js\n+++ src/select.js (M06)\n@@ -27,7 +27,7 @@\n   if (tag !== undefined && tag !== null) {\n-    const needle = String(tag).toLowerCase();\n+    const needle = String(tag);\n     result = result.filter((entry) =>\n       entry.tags.some((t) => t.toLowerCase() === needle)\n     );\n   }",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --tag HUMOR --list",
+        "pristine": "9-line listing of humor-tagged aphorisms",
+        "mutant": "aphorism: no aphorism matches those filters (exit 1)"
+      },
+      "suite": {
+        "pass": 51,
+        "fail": 1,
+        "exit": 1,
+        "failing_tests": [
+          "filter: tag match is case-insensitive"
+        ]
+      },
+      "verdict": "KILLED"
+    },
+    {
+      "id": "M07",
+      "behavior": "--tag matching: membership-equality vs substring",
+      "file": "src/select.js",
+      "mutation": "Swapped === needle for .includes(needle) in the tag filter, turning exact-membership tag matching into substring matching.",
+      "diff": "--- src/select.js\n+++ src/select.js (M07)\n@@ -27,7 +27,7 @@\n   if (tag !== undefined && tag !== null) {\n     const needle = String(tag).toLowerCase();\n     result = result.filter((entry) =>\n-      entry.tags.some((t) => t.toLowerCase() === needle)\n+      entry.tags.some((t) => t.toLowerCase().includes(needle))\n     );\n   }",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --tag desig --list",
+        "pristine": "aphorism: no aphorism matches those filters (exit 1)",
+        "mutant": "13-line listing of every entry whose tags contain the substring \"desig\" (i.e. all \"design\"-tagged entries)"
+      },
+      "suite": {
+        "pass": 52,
+        "fail": 0,
+        "exit": 0,
+        "failing_tests": []
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "id": "M08",
+      "behavior": "--author + --tag combining as AND (intersection) rather than OR (union)",
+      "file": "src/select.js",
+      "mutation": "Rewrote filter() so that when both --author and --tag are supplied, entries matching either one are returned (union) instead of requiring both (intersection).",
+      "diff": "--- src/select.js\n+++ src/select.js (M08)\n@@ -15,23 +15,23 @@\n function filter(corpus, options) {\n   const { author, tag } = options || {};\n-  let result = corpus.slice();\n-  if (author !== undefined && author !== null) {\n-    const needle = String(author).toLowerCase();\n-    result = result.filter((entry) =>\n-      entry.author.toLowerCase().includes(needle)\n-    );\n-  }\n-  if (tag !== undefined && tag !== null) {\n-    const needle = String(tag).toLowerCase();\n-    result = result.filter((entry) =>\n-      entry.tags.some((t) => t.toLowerCase() === needle)\n-    );\n-  }\n-  return result;\n+  const hasAuthor = author !== undefined && author !== null;\n+  const hasTag = tag !== undefined && tag !== null;\n+  if (!hasAuthor && !hasTag) return corpus.slice();\n+  const authorNeedle = hasAuthor ? String(author).toLowerCase() : null;\n+  const tagNeedle = hasTag ? String(tag).toLowerCase() : null;\n+  return corpus.filter((entry) => {\n+    const authorMatch = hasAuthor && entry.author.toLowerCase().includes(authorNeedle);\n+    const tagMatch = hasTag && entry.tags.some((t) => t.toLowerCase() === tagNeedle);\n+    if (hasAuthor && hasTag) return authorMatch || tagMatch;\n+    if (hasAuthor) return authorMatch;\n+    return tagMatch;\n+  });\n }",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --author Pike --tag debugging --list",
+        "pristine": "aphorism: no aphorism matches those filters (exit 1) -- Pike has no debugging-tagged entries",
+        "mutant": "10-line listing (all debugging-tagged entries plus all Pike entries, unioned)"
+      },
+      "suite": {
+        "pass": 51,
+        "fail": 1,
+        "exit": 1,
+        "failing_tests": [
+          "filter: author and tag together narrow to the intersection (AND)"
+        ]
+      },
+      "verdict": "KILLED"
+    },
+    {
+      "id": "M09",
+      "behavior": "the empty-match contract: exit code 1",
+      "file": "bin/aphorism.js",
+      "mutation": "The no-match branch returns EXIT_OK (0) instead of EXIT_NO_MATCH (1).",
+      "diff": "--- bin/aphorism.js\n+++ bin/aphorism.js (M09)\n@@ -33,7 +33,7 @@\n   if (candidates.length === 0) {\n     process.stderr.write('aphorism: no aphorism matches those filters\\n');\n-    return EXIT_NO_MATCH;\n+    return EXIT_OK;\n   }",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --author zzzNoSuchAuthor",
+        "pristine": "same stderr text, exit code 1",
+        "mutant": "same stderr text, exit code 0"
+      },
+      "suite": {
+        "pass": 51,
+        "fail": 1,
+        "exit": 1,
+        "failing_tests": [
+          "no match exits 1 with stderr only and zero bytes on stdout"
+        ]
+      },
+      "verdict": "KILLED"
+    },
+    {
+      "id": "M10",
+      "behavior": "the empty-match contract: message on stderr",
+      "file": "bin/aphorism.js",
+      "mutation": "The no-match message is written to process.stdout instead of process.stderr.",
+      "diff": "--- bin/aphorism.js\n+++ bin/aphorism.js (M10)\n@@ -32,7 +32,7 @@\n   if (candidates.length === 0) {\n-    process.stderr.write('aphorism: no aphorism matches those filters\\n');\n+    process.stdout.write('aphorism: no aphorism matches those filters\\n');\n     return EXIT_NO_MATCH;\n   }",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --author zzzNoSuchAuthor  1>out.txt 2>err.txt ; wc -c out.txt err.txt",
+        "pristine": "out.txt=0 bytes, err.txt=44 bytes",
+        "mutant": "out.txt=44 bytes, err.txt=0 bytes"
+      },
+      "suite": {
+        "pass": 51,
+        "fail": 1,
+        "exit": 1,
+        "failing_tests": [
+          "no match exits 1 with stderr only and zero bytes on stdout"
+        ]
+      },
+      "verdict": "KILLED"
+    },
+    {
+      "id": "M11",
+      "behavior": "the empty-match contract: ZERO bytes on stdout",
+      "file": "bin/aphorism.js",
+      "mutation": "Added a stray write of a newline to stdout alongside the correct stderr message in the no-match branch, leaking 1 byte onto stdout.",
+      "diff": "--- bin/aphorism.js\n+++ bin/aphorism.js (M11)\n@@ -32,7 +32,9 @@\n   if (candidates.length === 0) {\n+    process.stdout.write('');\n     process.stderr.write('aphorism: no aphorism matches those filters\\n');\n+    process.stdout.write('\\n');\n     return EXIT_NO_MATCH;\n   }",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --author zzzNoSuchAuthor  1>out.txt 2>err.txt ; wc -c out.txt err.txt",
+        "pristine": "out.txt=0 bytes",
+        "mutant": "out.txt=1 byte"
+      },
+      "suite": {
+        "pass": 51,
+        "fail": 1,
+        "exit": 1,
+        "failing_tests": [
+          "no match exits 1 with stderr only and zero bytes on stdout"
+        ]
+      },
+      "verdict": "KILLED"
+    },
+    {
+      "id": "M12",
+      "behavior": "--list completeness (does it print every matching entry?)",
+      "file": "bin/aphorism.js",
+      "mutation": "Added .slice(0, -1) before mapping the candidates in the --list branch, dropping the last matching entry from the output.",
+      "diff": "--- bin/aphorism.js\n+++ bin/aphorism.js (M12)\n@@ -38,6 +38,7 @@\n   if (opts.list) {\n     const body = candidates\n+      .slice(0, -1)\n       .map((e) => (opts.json ? JSON.stringify(e) : `${e.text} \u2014 ${e.author}`))\n       .join('\\n');",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --tag design --list | wc -l",
+        "pristine": "13",
+        "mutant": "12"
+      },
+      "suite": {
+        "pass": 52,
+        "fail": 0,
+        "exit": 0,
+        "failing_tests": []
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "id": "M13",
+      "behavior": "--list corpus ORDER (does it preserve corpus order?)",
+      "file": "bin/aphorism.js",
+      "mutation": "Added .slice().reverse() before mapping the candidates in the --list branch, printing matches in reverse corpus order.",
+      "diff": "--- bin/aphorism.js\n+++ bin/aphorism.js (M13)\n@@ -38,6 +38,8 @@\n   if (opts.list) {\n     const body = candidates\n+      .slice()\n+      .reverse()\n       .map((e) => (opts.json ? JSON.stringify(e) : `${e.text} \u2014 ${e.author}`))\n       .join('\\n');",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --tag design --list | head -1",
+        "pristine": "\"Any fool can write code that a computer can understand...\" \u2014 Martin Fowler",
+        "mutant": "\"Simple things should be simple, complex things should be possible.\" \u2014 Alan Kay"
+      },
+      "suite": {
+        "pass": 52,
+        "fail": 0,
+        "exit": 0,
+        "failing_tests": []
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "id": "M14",
+      "behavior": "--json output shape: single line",
+      "file": "bin/aphorism.js",
+      "mutation": "Pretty-printed the single selected aphorism's JSON with JSON.stringify(chosen, null, 2) instead of a compact single-line JSON.stringify(chosen).",
+      "diff": "--- bin/aphorism.js\n+++ bin/aphorism.js (M14)\n@@ -45,7 +45,7 @@\n   const chosen = pick(candidates, opts.seed);\n-  process.stdout.write(`${opts.json ? JSON.stringify(chosen) : format(chosen)}\\n`);\n+  process.stdout.write(`${opts.json ? JSON.stringify(chosen, null, 2) : format(chosen)}\\n`);\n   return EXIT_OK;\n }",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --json --seed=1",
+        "pristine": "single-line: {\"text\":\"Debugging is twice as hard...\",\"author\":\"Brian Kernighan\",\"tags\":[\"debugging\",\"simplicity\"]}",
+        "mutant": "8-line pretty-printed JSON object with 2-space indentation"
+      },
+      "suite": {
+        "pass": 52,
+        "fail": 0,
+        "exit": 0,
+        "failing_tests": []
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "id": "M15",
+      "behavior": "--json output shape: the object's field set",
+      "file": "bin/aphorism.js",
+      "mutation": "The --json output for the single selected aphorism is rebuilt from only { text, author }, dropping the tags field.",
+      "diff": "--- bin/aphorism.js\n+++ bin/aphorism.js (M15)\n@@ -45,7 +45,8 @@\n   const chosen = pick(candidates, opts.seed);\n-  process.stdout.write(`${opts.json ? JSON.stringify(chosen) : format(chosen)}\\n`);\n+  const jsonOut = JSON.stringify({ text: chosen.text, author: chosen.author });\n+  process.stdout.write(`${opts.json ? jsonOut : format(chosen)}\\n`);\n   return EXIT_OK;\n }",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --json --seed=1",
+        "pristine": "{\"text\":\"...\",\"author\":\"Brian Kernighan\",\"tags\":[\"debugging\",\"simplicity\"]}",
+        "mutant": "{\"text\":\"...\",\"author\":\"Brian Kernighan\"}  (no tags field)"
+      },
+      "suite": {
+        "pass": 51,
+        "fail": 1,
+        "exit": 1,
+        "failing_tests": [
+          "--json emits a single-line JSON object with text/author/tags"
+        ]
+      },
+      "verdict": "KILLED"
+    },
+    {
+      "id": "M16",
+      "behavior": "--list --json output shape",
+      "file": "bin/aphorism.js",
+      "mutation": "When --list and --json are combined, output is now one pretty-printed JSON array (JSON.stringify(candidates, null, 2)) instead of newline-delimited single-line JSON objects.",
+      "diff": "--- bin/aphorism.js\n+++ bin/aphorism.js (M16)\n@@ -37,9 +37,9 @@\n   if (opts.list) {\n-    const body = candidates\n-      .map((e) => (opts.json ? JSON.stringify(e) : `${e.text} \u2014 ${e.author}`))\n-      .join('\\n');\n+    const body = opts.json\n+      ? JSON.stringify(candidates, null, 2)\n+      : candidates.map((e) => `${e.text} \u2014 ${e.author}`).join('\\n');\n     process.stdout.write(`${body}\\n`);\n     return EXIT_OK;\n   }",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --list --json --tag humor",
+        "pristine": "9 lines, each a single-line compact JSON object (NDJSON)",
+        "mutant": "one multi-line pretty-printed JSON array wrapping all 9 objects"
+      },
+      "suite": {
+        "pass": 52,
+        "fail": 0,
+        "exit": 0,
+        "failing_tests": []
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "id": "M17",
+      "behavior": "each of the three exit codes independently: 0 success",
+      "file": "bin/aphorism.js",
+      "mutation": "Changed the EXIT_OK constant from 0 to 1.",
+      "diff": "--- bin/aphorism.js\n+++ bin/aphorism.js (M17)\n@@ -8,7 +8,7 @@\n-const EXIT_OK = 0;\n+const EXIT_OK = 1;\n const EXIT_NO_MATCH = 1;\n const EXIT_USAGE = 2;",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --seed=1 --json",
+        "pristine": "prints JSON, exit code 0",
+        "mutant": "prints identical JSON, but exit code 1"
+      },
+      "suite": {
+        "pass": 45,
+        "fail": 7,
+        "exit": 1,
+        "failing_tests": [
+          "bare invocation prints one attributed aphorism and exits 0",
+          "--seed is deterministic across separate processes",
+          "--json emits a single-line JSON object with text/author/tags",
+          "--list prints every entry in the filtered set",
+          "--help prints usage to stdout and exits 0",
+          "author filter is case-insensitive and narrows the list",
+          "output is pipe-safe — no ANSI escapes when not a TTY"
+        ]
+      },
+      "verdict": "KILLED"
+    },
+    {
+      "id": "M18",
+      "behavior": "each of the three exit codes independently: 2 usage error",
+      "file": "bin/aphorism.js",
+      "mutation": "Changed the EXIT_USAGE constant from 2 to 1.",
+      "diff": "--- bin/aphorism.js\n+++ bin/aphorism.js (M18)\n@@ -10,7 +10,7 @@\n const EXIT_OK = 0;\n const EXIT_NO_MATCH = 1;\n-const EXIT_USAGE = 2;\n+const EXIT_USAGE = 1;",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --bogus",
+        "pristine": "aphorism: unknown flag: --bogus, exit code 2",
+        "mutant": "aphorism: unknown flag: --bogus, exit code 1"
+      },
+      "suite": {
+        "pass": 50,
+        "fail": 2,
+        "exit": 1,
+        "failing_tests": [
+          "unknown flag is a usage error, exit 2, stdout clean",
+          "non-numeric seed is a usage error, exit 2"
+        ]
+      },
+      "verdict": "KILLED"
+    },
+    {
+      "id": "M19",
+      "behavior": "HELP text content (src/args.js)",
+      "file": "src/args.js",
+      "mutation": "Removed the --tag description line from the HELP text constant.",
+      "diff": "--- src/args.js\n+++ src/args.js (M19)\n@@ -8,7 +8,6 @@\n Options:\n   --author <name>  filter by author (case-insensitive)\n-  --tag <tag>      filter by tag (case-insensitive)\n   --seed <n>       deterministic pick using seed n",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --help",
+        "pristine": "6-line Options block including the --tag line",
+        "mutant": "5-line Options block, --tag line missing"
+      },
+      "suite": {
+        "pass": 51,
+        "fail": 1,
+        "exit": 1,
+        "failing_tests": [
+          "HELP is a non-empty string mentioning every flag name"
+        ]
+      },
+      "verdict": "KILLED"
+    },
+    {
+      "id": "M20",
+      "behavior": "seed argument parsing: the --seed=N equals-form",
+      "file": "src/args.js",
+      "mutation": "In the --seed=N equals-form branch only, the value string is sliced with .slice(0, -1) before numeric parsing, dropping its last character (e.g. \"42\" becomes \"4\").",
+      "diff": "--- src/args.js\n+++ src/args.js (M20)\n@@ -82,7 +82,7 @@\n       if (flag === '--seed') {\n-        const parsed = parseSeedValue(value);\n+        const parsed = parseSeedValue(value.slice(0, -1));\n         if (!parsed.ok) {",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --seed=42 --json",
+        "pristine": "{\"text\":\"Bad programmers worry about the code...\",\"author\":\"Linus Torvalds\",...}",
+        "mutant": "{\"text\":\"If you have a procedure with 10 parameters...\",\"author\":\"Alan Perlis\",...} (used seed 4, not 42)"
+      },
+      "suite": {
+        "pass": 51,
+        "fail": 1,
+        "exit": 1,
+        "failing_tests": [
+          "--seed=<n> equals form parses as a number"
+        ]
+      },
+      "verdict": "KILLED"
+    },
+    {
+      "id": "M21",
+      "behavior": "seed argument parsing: negative seed values",
+      "file": "src/args.js",
+      "mutation": "parseSeedValue now rejects any numeric value less than 0, turning negative seeds into a usage error.",
+      "diff": "--- src/args.js\n+++ src/args.js (M21)\n@@ -52,6 +52,7 @@\n   const n = Number(raw);\n   if (Number.isNaN(n)) return { ok: false };\n+  if (n < 0) return { ok: false };\n   return { ok: true, value: n };",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --seed=-5 --json",
+        "pristine": "prints selected aphorism JSON, exit 0",
+        "mutant": "aphorism: flag --seed requires a numeric value, exit 2"
+      },
+      "suite": {
+        "pass": 52,
+        "fail": 0,
+        "exit": 0,
+        "failing_tests": []
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "id": "M22",
+      "behavior": "seed argument parsing: a missing value after --seed",
+      "file": "src/args.js",
+      "mutation": "For --seed specifically, the lookahead guard no longer treats a following flag-looking token as \"missing value\" (looksLikeFlag(next) check dropped only for the --seed branch), so `--seed --list` swallows \"--list\" as an attempted (invalid) seed value instead of reporting a missing-value error.",
+      "diff": "--- src/args.js\n+++ src/args.js (M22)\n@@ -101,7 +101,8 @@\n     if (arg in VALUE_FLAGS) {\n       const next = argv[i + 1];\n-      if (next === undefined || looksLikeFlag(next)) {\n+      const missingValue = arg === '--seed' ? next === undefined : (next === undefined || looksLikeFlag(next));\n+      if (missingValue) {\n         result.error = `flag ${arg} requires a value`;",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --seed --list",
+        "pristine": "aphorism: flag --seed requires a value, exit 2",
+        "mutant": "aphorism: flag --seed requires a numeric value, exit 2 (different stderr text; --list token consumed as the attempted seed value)"
+      },
+      "suite": {
+        "pass": 52,
+        "fail": 0,
+        "exit": 0,
+        "failing_tests": []
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "id": "M23",
+      "behavior": "seed argument parsing: a non-numeric seed",
+      "file": "src/args.js",
+      "mutation": "Inverted the Number.isNaN(n) check in parseSeedValue (!Number.isNaN(n) instead of Number.isNaN(n)), so non-numeric seeds are now accepted and numeric seeds are now rejected.",
+      "diff": "--- src/args.js\n+++ src/args.js (M23)\n@@ -51,7 +51,7 @@\n   const n = Number(raw);\n-  if (Number.isNaN(n)) return { ok: false };\n+  if (!Number.isNaN(n)) return { ok: false };\n   return { ok: true, value: n };",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --seed=abc",
+        "pristine": "aphorism: flag --seed requires a numeric value, exit 2",
+        "mutant": "prints a selected aphorism (non-numeric seed silently accepted, becomes NaN internally), exit 0"
+      },
+      "suite": {
+        "pass": 43,
+        "fail": 9,
+        "exit": 1,
+        "failing_tests": [
+          "--seed <n> parses as a number",
+          "--seed=<n> equals form parses as a number",
+          "non-numeric --seed is a usage error",
+          "non-numeric --seed= equals form is a usage error",
+          "--seed is deterministic across separate processes",
+          "different seeds do not all collapse to one aphorism",
+          "--json emits a single-line JSON object with text/author/tags",
+          "non-numeric seed is a usage error, exit 2",
+          "output is pipe-safe — no ANSI escapes when not a TTY"
+        ]
+      },
+      "verdict": "KILLED"
+    },
+    {
+      "id": "M24",
+      "behavior": "unknown-flag handling",
+      "file": "src/args.js",
+      "mutation": "The fallthrough branch for an unrecognized flag token no longer sets result.error; it silently continues the loop, so unknown flags are ignored instead of rejected.",
+      "diff": "--- src/args.js\n+++ src/args.js (M24)\n@@ -120,8 +120,7 @@\n       continue;\n     }\n-    result.error = `unknown flag: ${arg}`;\n-    return result;\n+    continue;\n   }",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --bogus",
+        "pristine": "aphorism: unknown flag: --bogus, exit 2",
+        "mutant": "prints a selected aphorism, exit 0 (--bogus silently ignored)"
+      },
+      "suite": {
+        "pass": 49,
+        "fail": 3,
+        "exit": 1,
+        "failing_tests": [
+          "unknown flag is a usage error",
+          "unknown short flag is a usage error",
+          "unknown flag is a usage error, exit 2, stdout clean"
+        ]
+      },
+      "verdict": "KILLED"
+    },
+    {
+      "id": "M25",
+      "behavior": "unexpected-positional-argument handling",
+      "file": "src/args.js",
+      "mutation": "The check that rejects a bare positional argument (one not starting with \"-\") no longer sets result.error; it silently continues the loop instead.",
+      "diff": "--- src/args.js\n+++ src/args.js (M25)\n@@ -62,8 +62,7 @@\n     const arg = argv[i];\n     if (typeof arg !== 'string' || !arg.startsWith('-')) {\n-      result.error = `unexpected argument: ${arg}`;\n-      return result;\n+      continue;\n     }",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js positional-junk",
+        "pristine": "aphorism: unexpected argument: positional-junk, exit 2",
+        "mutant": "prints a selected aphorism, exit 0 (positional-junk silently ignored)"
+      },
+      "suite": {
+        "pass": 51,
+        "fail": 1,
+        "exit": 1,
+        "failing_tests": [
+          "a bare positional argument (not a flag) is a usage error"
+        ]
+      },
+      "verdict": "KILLED"
+    },
+    {
+      "id": "M26",
+      "behavior": "pipe-safety (no escape sequences on a non-TTY stdout)",
+      "file": "bin/aphorism.js",
+      "mutation": "format() unconditionally wraps the aphorism text in ANSI color escape codes (\\x1b[36m ... \\x1b[0m), regardless of whether stdout is a TTY.",
+      "diff": "--- bin/aphorism.js\n+++ bin/aphorism.js (M26)\n@@ -13,7 +13,7 @@\n function format(entry) {\n-  return `${entry.text}\\n    \u2014 ${entry.author}`;\n+  return `\\x1b[36m${entry.text}\\x1b[0m\\n    \u2014 ${entry.author}`;\n }",
+      "observable_difference": {
+        "cmd": "node bin/aphorism.js --seed=1 | od -c | head -3",
+        "pristine": "raw text bytes only, no escape bytes",
+        "mutant": "leading byte sequence 033 [ 3 6 m  (ESC[36m) before the text"
+      },
+      "suite": {
+        "pass": 51,
+        "fail": 1,
+        "exit": 1,
+        "failing_tests": [
+          "output is pipe-safe — no ANSI escapes when not a TTY"
+        ]
+      },
+      "verdict": "KILLED"
+    }
+  ]
+}
