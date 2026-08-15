@@ -3,7 +3,7 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
   "phase": "POLISH",
-  "cycle": 21,
+  "cycle": 22,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -192,6 +192,21 @@
       "cycle": 21,
       "what": "Conductor probe N2 found a survivor one level above the item's scope -- deleting an entire band table leaves the suite green -- and it was FILED as T-019 rather than fixed inside this cycle.",
       "why": "It is the T-014/A7 blindness one level up: T-014 made each band table's rows bidirectional and T-015 made each heading's cardinality checkable, but both iterate only the bands that are PRESENT, so a band that stops being claimed is never examined and every remaining stated fact is still true. Fixing it inside T-015 would have meant widening a passing acceptance to cover a mechanism it does not have (an expected-band-partition check is a different design, not an extra assertion), and the cycle-8 boundary applies: widening is principled when the same defect sits in the same edit at zero extra risk, and artificial when it needs new machinery. Filed at priority 5, below T-016/T-017, because a whole table vanishing is a much less likely edit than the single-row and cross-file cases and -- unlike A7 -- it is not on T-007's path, since retagging edits rows rather than deleting tables."
+    },
+    {
+      "cycle": 22,
+      "what": "All three of T-016's claims were guarded; C2 was NOT dropped, even though the item explicitly authorised dropping it honestly.",
+      "why": "The item's permission was conditional -- \"may honestly be dropped if it proves fiddly to parse; say so rather than forcing it\" -- and the condition did not hold. I checked before dispatch rather than after: docs/corpus-attribution-triage.md parses structurally into 50 rows with ids 0-49 distinct and risk bands HIGH 8 / MEDIUM 16 / LOW 26, keyed on the first cell being a bare integer, which excludes the header and separator rows without depending on any wording. A conditional escape hatch that is taken without testing its condition is just a dropped requirement with a citation attached. Recorded because the opposite call -- dropping C2 and citing the item's own words -- would have looked equally authorised in the journal."
+    },
+    {
+      "cycle": 22,
+      "what": "The R2 consistent-change check, invented at cycle 21 against the corpus, was generalised this cycle to THREE different kinds of ground truth: a source module (corpus.length), another document in the repo (the triage doc's HIGH count), and the filesystem itself (Layout paths).",
+      "why": "Cycle 21 established that every other check asks whether a WRONG README is caught, and a guard hardcoding today's numbers passes all of them -- only changing the real artifact and the README TOGETHER, and requiring green, separates the two. T-016 is the first item where that question has three different answers, because its three claims are checked against three unrelated sources, and a guard could plausibly be derived for one and hardcoded for another. So the pair was run three times rather than once: corpus 50->51 with the README updated stays green (stale half fails naming C1); a triage row flipped MEDIUM->HIGH with the README updated stays green (stale half fails naming C2); a real new file plus its Layout line stays green (a Layout line for a file never created fails naming C6). All six halves landed as required. This matters concretely because T-007 (retagging) and any future corpus growth would walk a hardcoded guard straight into a false rejection on a CORRECT README, which a maintainer resolves by deleting the guard."
+    },
+    {
+      "cycle": 22,
+      "what": "Conductor probe N1 found a false-rejection case and it was FILED as T-020 rather than fixed in-cycle; the probe existed only because the builder volunteered the weakness in its own report.",
+      "why": "Two things worth recording. (1) The classification: rewording the Attribution aside to \"8 of the 50 entries carry a rating of HIGH\" -- every number still true -- fails the suite at 71/70/1 because the extraction takes the digit nearest BEFORE the marker and, with the em dashes gone, 50 sits nearer to HIGH than 8 does. That is a false REJECTION of an honest edit, not a silent hole: it fails loud and names the C2 test, so a maintainer who trips it is told what happened. Same direction, and therefore the same LOW classification, as T-018 at cycle 20. (2) The provenance: the builder's report named this exact edge case under \"things I was unsure about\" instead of omitting it, and that is the only reason I probed the dash-free word order at all. An honest uncertainty note converted directly into a measured backlog item, which is the behaviour the dispatch prompt asked for and got."
     }
   ],
   "known_issues": [
@@ -242,7 +257,8 @@
       "cycle_found": 19,
       "status": "open",
       "note_cycle_21": "THIRD occurrence, in a new and milder variant: the dispatch prompt named the explicit in-target scratch path as the remedy prescribes, and the builder honored it AND deleted its mutation copies -- but left the bare empty .swarm/scratch directory behind. Measured at 0 files inside, so nothing leaked and no untracked scratch reached git status; this is the same residue cycle 9 recorded (agent removes copies, conductor removes the empty directory). Caught only because the conductor gate carries a standing SCOPE.SCRATCH control, which is the reason to keep that control even on cycles where it looks like a formality. Remedy refinement for the wrap-up distillation: the prompt should say remove the scratch DIRECTORY, not just its contents.",
-      "remedy": "Name an explicit scratch directory in every dispatch prompt. NOT /tmp -- KI-6 established subagents are sandboxed to the session --add-dir list, so /tmp is unreachable. Use <target>/.swarm/scratch/ and require the agent to remove it, with a conductor gate check confirming the removal. Done this way at cycle 19 (T-013) and the agent left nothing behind (harness controls CTRL-SCRATCH, CTRL-TREE). Cycle 9 proposed this as a candidate playbook lesson and it was never made standing, which is why it recurred; it belongs in the wrap-up distillation."
+      "remedy": "Name an explicit scratch directory in every dispatch prompt. NOT /tmp -- KI-6 established subagents are sandboxed to the session --add-dir list, so /tmp is unreachable. Use <target>/.swarm/scratch/ and require the agent to remove it, with a conductor gate check confirming the removal. Done this way at cycle 19 (T-013) and the agent left nothing behind (harness controls CTRL-SCRATCH, CTRL-TREE). Cycle 9 proposed this as a candidate playbook lesson and it was never made standing, which is why it recurred; it belongs in the wrap-up distillation.",
+      "note_cycle_22": "NO occurrence this cycle, and that is evidence rather than luck. The cycle-21 remedy refinement was applied verbatim in the dispatch prompt -- it named the in-target scratch path AND required removing the scratch DIRECTORY itself, not merely its contents, calling out that an empty directory counts as debris and is checked. The builder honoured both: the standing SCOPE.SCRATCH control passed for the first time since the refinement was written (.swarm/runs/cycle-022-verify-T-016.txt), and the SWARM root carried no debris at orient either. The issue stays OPEN because one clean cycle does not close a structural hole -- the fence is still enforced by what the prompt says, and a prompt that forgot the line would reproduce it -- but the remedy is now measured to work, which is what the wrap-up distillation needs."
     }
   ],
   "qa": {
@@ -254,13 +270,13 @@
     "consecutive_no_value": 0,
     "consecutive_failures": 0,
     "k_current": 5,
-    "wave_streak": 1,
+    "wave_streak": 0,
     "window_tokens_attributed": 0
   },
   "last_cycle": {
-    "n": 21,
-    "work": "test triage (one item, k_cap 1 at gear 1) -- T-015, guarding the four corpus-derived integers in the README Tag vocabulary section that cycle 19 measured as unprotected (A9, A10, A11 and the conductor-original V6).",
-    "outcome": "VERIFIED done. 28/29 conductor gate checks (.swarm/runs/cycle-021-verify-T-015.txt); the single failure is the SCOPE.SCRATCH housekeeping control (builder left an EMPTY scratch dir -- 0 files inside, no content leaked, conductor removed it), not an acceptance clause. Recorded as failed rather than re-run to a manufactured green. 68 tests green (66 -> 68, pure insertion: 116 added, 0 removed, every pre-existing byte an unmodified prefix). Blindness was MEASURED before dispatch, not assumed (.swarm/runs/cycle-021-baseline.txt): all four claims survived at 66/66/0 while the paired controls V6b and C0 killed. All four proven twice per L-029 using conductor off-by-one mutations in both directions (16->17, 21->20, 4->3, 12->13) where the builder had used 99/88/77/55. The decisive check was R2, which no acceptance clause asked for: mutating the corpus AND updating the README consistently keeps the suite green at 68/68 (a hardcoded guard would fail), while the stale-README half fails at 3 -- so the guard provably tracks the corpus and will survive T-007. N3 confirms the two statements of `21` are guarded independently. Residual filed as T-019: deleting an ENTIRE band table still survives at 68/68.",
-    "commit": "6fabaca"
+    "n": 22,
+    "work": "test triage (one item, k_cap 1 at gear 1) -- T-016, guarding the three README claims that live outside the Tag vocabulary section and were checked by nothing: the corpus-size figure in Attribution (C1), the HIGH-risk count in Attribution (C2), and every path named in the Layout block (C6).",
+    "outcome": "VERIFIED done. 23/23 conductor gate checks, zero failures (.swarm/runs/cycle-022-verify-T-016.txt). Suite 68 -> 71, pure insertion (186 added, 0 removed, every pre-existing byte an unmodified prefix); test_cmd on the real tree 71/71/0, run by me. Blindness MEASURED before dispatch (.swarm/runs/cycle-022-baseline.txt): all three claims survived at 68/68/0 while the paired control C0 killed, so the suite was provably live and provably blind to exactly these three. All three proven twice per L-029 with conductor mutations the builder never saw, in the opposite direction or on a different target (50->51 UP, 8->7 DOWN, bin/aphorism.js and the test/ entry). The decisive checks were the three R2 TRACKS/STALE pairs no acceptance clause asked for: the guard provably tracks corpus.length, the triage document, and the filesystem, rather than hardcoding 50 / 8 / a path list. R1 clean both directions, R5 confirms parse misses fail loud. C2 was kept in scope rather than taken up on the item's own permission to drop it. Residual filed as T-020 (false rejection, loud, T-018 class).",
+    "commit": "PENDING"
   }
 }

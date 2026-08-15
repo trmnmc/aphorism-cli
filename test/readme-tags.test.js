@@ -425,3 +425,189 @@ test('README opening sentence must state correct multi-entry and single-entry ta
       expectedSingleEntryCount
   );
 });
+
+// ---------------------------------------------------------------------------
+// Guard the README's cross-file and on-disk claims (T-016).
+//
+// Three claims live outside the Tag vocabulary section entirely and were
+// previously checked by nothing:
+//
+//   C1 -- the ## Attribution section says the triage doc "ranks all 50
+//         entries": that number must match corpus.length.
+//   C2 -- the same section says "8 are rated HIGH": that number must match
+//         the count of HIGH rows in docs/corpus-attribution-triage.md's
+//         table.
+//   C6 -- the ## Layout section's fenced block names a handful of paths
+//         (bin/aphorism.js, src/corpus.js, ...): every one of them must
+//         actually exist on disk.
+//
+// All three follow the same "derive, never hardcode" rule as the tests
+// above: nothing here compares a stated number to a literal digit written
+// in this file. C1 and C2 read corpus.length and the triage table at test
+// time; C6 reads the filesystem at test time. A legitimate future change to
+// the corpus, the triage doc, or the file layout -- paired with a correct
+// README update -- must leave these tests green.
+// ---------------------------------------------------------------------------
+
+// Helper: return the Attribution section's raw text (heading through the
+// line before the next top-level "## " heading). Mirrors getTagVocabSection.
+function getAttributionSection(readmeContent) {
+  const start = readmeContent.indexOf('## Attribution');
+  assert(start !== -1, 'README must have an Attribution section');
+  const nextSection = readmeContent.indexOf('\n## ', start + 1);
+  const end = nextSection > -1 ? nextSection : readmeContent.length;
+  return readmeContent.substring(start, end);
+}
+
+// Helper: return the Layout section's raw text, same slicing convention.
+function getLayoutSection(readmeContent) {
+  const start = readmeContent.indexOf('## Layout');
+  assert(start !== -1, 'README must have a Layout section');
+  const nextSection = readmeContent.indexOf('\n## ', start + 1);
+  const end = nextSection > -1 ? nextSection : readmeContent.length;
+  return readmeContent.substring(start, end);
+}
+
+// Helper: within a block of text, split on em/en dashes (the punctuation
+// this README actually uses to set off parenthetical asides -- see the
+// Attribution section's "... to be wrong -- 8 are rated HIGH -- and says
+// ..." construction) and, in whichever dash-delimited clause contains
+// `marker`, return the digit run closest to (immediately preceding) that
+// marker. This is keyed to the marker word/token that carries the claim's
+// actual meaning ("entries", "HIGH"), never to the verb or descriptive
+// prose around it, so rewording "ranks all 50 entries" to "catalogs all 50
+// entries" or "8 are rated HIGH" to "8 fall into the HIGH tier" leaves the
+// extraction unaffected. Returns null (never a wrong number) if the marker
+// cannot be found anywhere, so callers can fail loud on a parse miss
+// instead of silently comparing null-derived data.
+function extractNearestPrecedingCount(text, markerPattern) {
+  const clauses = text.split(/[–—]/); // en dash, em dash
+  for (const clause of clauses) {
+    const markerIdx = clause.search(markerPattern);
+    if (markerIdx === -1) continue;
+    const before = clause.slice(0, markerIdx);
+    const digitMatches = before.match(/\d+/g);
+    if (digitMatches && digitMatches.length > 0) {
+      return parseInt(digitMatches[digitMatches.length - 1], 10);
+    }
+  }
+  return null;
+}
+
+// Helper: parse the triage doc's "| # | Aphorism | Author | Risk | Signal |
+// Why |" table and return the Risk value of every real data row. A data
+// row is identified structurally -- its first cell is a bare integer --
+// which is true only for actual rows, never the header ("#") or the
+// separator ("---") line, so this cannot double-count either of those.
+function parseTriageRiskRows(triageContent) {
+  const rows = [];
+  for (const line of triageContent.split('\n')) {
+    const trimmed = line.trim();
+    if (!trimmed.startsWith('|') || !trimmed.endsWith('|')) continue;
+    const cells = trimmed.split('|').map(cell => cell.trim());
+    // ['', id, aphorism, author, risk, signal, why, ''] for a real row.
+    if (cells.length < 7) continue;
+    if (!/^\d+$/.test(cells[1])) continue;
+    const risk = cells[4];
+    if (risk === 'HIGH' || risk === 'MEDIUM' || risk === 'LOW') {
+      rows.push(risk);
+    }
+  }
+  return rows;
+}
+
+// Helper: pull every path named in the Layout section's fenced code block.
+// Each line in that block is "<path>    <description>"; the path is
+// whatever leading non-whitespace token contains a "/", which is true of
+// every real entry (bin/aphorism.js, src/corpus.js, ..., test/) and false
+// of nothing that block currently contains. Returns null if no fenced
+// block can be found at all, so the caller can fail loud rather than
+// silently checking zero paths.
+function extractLayoutPaths(layoutSection) {
+  const fenceMatch = layoutSection.match(/```[^\n]*\n([\s\S]*?)```/);
+  if (!fenceMatch) return null;
+  const paths = [];
+  for (const line of fenceMatch[1].split('\n')) {
+    const tokenMatch = line.match(/^(\S+)/);
+    if (tokenMatch && tokenMatch[1].includes('/')) {
+      paths.push(tokenMatch[1]);
+    }
+  }
+  return paths;
+}
+
+test('README Attribution section corpus-size claim must match corpus.length (C1)', () => {
+  const readmePath = path.join(__dirname, '..', 'README.md');
+  const readmeContent = fs.readFileSync(readmePath, 'utf8');
+  const attributionSection = getAttributionSection(readmeContent);
+
+  const statedEntries = extractNearestPrecedingCount(attributionSection, /\bentries\b/);
+  assert(
+    statedEntries !== null,
+    'could not find a "<N> entries" claim in the Attribution section -- ' +
+      'this claim must fail loud, not pass silently, when it cannot be parsed'
+  );
+
+  assert.equal(
+    statedEntries,
+    corpus.length,
+    'README Attribution section states the triage doc ranks ' + statedEntries +
+      ' entries, but corpus.length is ' + corpus.length
+  );
+});
+
+test('README Attribution section HIGH-risk count must match the triage doc table (C2)', () => {
+  const readmePath = path.join(__dirname, '..', 'README.md');
+  const readmeContent = fs.readFileSync(readmePath, 'utf8');
+  const attributionSection = getAttributionSection(readmeContent);
+
+  const statedHigh = extractNearestPrecedingCount(attributionSection, /\bHIGH\b/);
+  assert(
+    statedHigh !== null,
+    'could not find a "<N> are rated HIGH" claim in the Attribution section -- ' +
+      'this claim must fail loud, not pass silently, when it cannot be parsed'
+  );
+
+  const triagePath = path.join(__dirname, '..', 'docs', 'corpus-attribution-triage.md');
+  const triageContent = fs.readFileSync(triagePath, 'utf8');
+  const riskRows = parseTriageRiskRows(triageContent);
+  assert(
+    riskRows.length > 0,
+    'could not parse any rows out of the docs/corpus-attribution-triage.md Risk table -- ' +
+      'the table shape may have changed; this claim must fail loud, not pass silently, when it cannot be parsed'
+  );
+  const actualHigh = riskRows.filter(risk => risk === 'HIGH').length;
+
+  assert.equal(
+    statedHigh,
+    actualHigh,
+    'README Attribution section states ' + statedHigh + ' entries are rated HIGH, but ' +
+      'docs/corpus-attribution-triage.md has ' + actualHigh + ' rows rated HIGH'
+  );
+});
+
+test('README Layout section paths must exist on disk (C6)', () => {
+  const readmePath = path.join(__dirname, '..', 'README.md');
+  const readmeContent = fs.readFileSync(readmePath, 'utf8');
+  const layoutSection = getLayoutSection(readmeContent);
+
+  const layoutPaths = extractLayoutPaths(layoutSection);
+  assert(
+    layoutPaths !== null,
+    'could not find a fenced code block in the Layout section -- ' +
+      'this claim must fail loud, not pass silently, when it cannot be parsed'
+  );
+  assert(
+    layoutPaths.length > 0,
+    'found a fenced code block in the Layout section but no path-like tokens in it -- ' +
+      'this claim must fail loud, not pass silently, when it cannot be parsed'
+  );
+
+  for (const layoutPath of layoutPaths) {
+    const absolutePath = path.join(__dirname, '..', layoutPath);
+    assert(
+      fs.existsSync(absolutePath),
+      'README Layout section names `' + layoutPath + '` but it does not exist on disk at ' + absolutePath
+    );
+  }
+});

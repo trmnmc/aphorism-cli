@@ -1,0 +1,40 @@
+--- controls ---
+PASS  CTRL-PRISTINE       tests=71 pass=71 fail=0  (expect 71/71/0)
+PASS  CTRL-DENOM          tests=68 pass=68 fail=0  (skip pattern must remove exactly the 3 new tests: 68/68/0)
+PASS  CTRL-SKIPSANE       tests=68 pass=67 fail=1  (unrelated mutation still fails under the same pattern)
+
+--- failable / attributable (conductor mutations) ---
+PASS  C1.FAILABLE         tests=71 pass=70 fail=1  failing: README Attribution section corpus-size claim must match corpus.length (C1)  :: "ranks all 50" -> 51 (UP)
+PASS  C1.ATTRIB           tests=68 pass=68 fail=0  (expect 68/68/0)
+PASS  C2.FAILABLE         tests=71 pass=70 fail=1  failing: README Attribution section HIGH-risk count must match the triage doc table (C2)  :: "8 are rated HIGH" -> 7 (DOWN)
+PASS  C2.ATTRIB           tests=68 pass=68 fail=0  (expect 68/68/0)
+PASS  C6.FAILABLE         tests=71 pass=70 fail=1  failing: README Layout section paths must exist on disk (C6)  :: Layout bin/aphorism.js -> bin/aphorisms.js
+PASS  C6.ATTRIB           tests=68 pass=68 fail=0  (expect 68/68/0)
+PASS  C6b.FAILABLE        tests=71 pass=70 fail=1  :: Layout directory entry test/ -> tests/ (different path shape)
+
+--- R2: does the guard TRACK the real artifact, or hardcode today's numbers? ---
+PASS  R2a.C1.TRACKS       tests=71 pass=71 fail=0  :: corpus 50->51 + README updated consistently must stay GREEN
+PASS  R2a.C1.STALE        tests=71 pass=70 fail=1  :: same corpus change, README left stale must FAIL naming C1
+PASS  R2b.C2.TRACKS       tests=71 pass=71 fail=0  :: triage HIGH 8->9 + README updated must stay GREEN
+PASS  R2b.C2.STALE        tests=71 pass=70 fail=1  :: same triage change, README left stale must FAIL naming C2
+PASS  R2c.C6.TRACKS       tests=71 pass=71 fail=0  :: real new file + matching Layout line must stay GREEN
+PASS  R2c.C6.STALE        tests=71 pass=70 fail=1  :: Layout line for a file that was never created must FAIL naming C6
+
+--- R1: prose-keying (the T-012 hazard) ---
+PASS  R1.NOFALSEREJECT    tests=71 pass=71 fail=0  :: prose reworded, digits and paths intact, must stay GREEN
+PASS  R1.STILLKILLS       tests=71 pass=70 fail=1  :: reworded prose + wrong number must still FAIL naming C1
+
+--- R5: parse failure must be LOUD, never a silent pass ---
+PASS  R5.NOSECTION        tests=71 pass=69 fail=2  failing: README Attribution section corpus-size claim must match corpus.length (C1) | README Attribution section HIGH-risk count must match the triage doc table (C2)  :: whole Attribution section deleted
+PASS  R5.NOFENCE          tests=71 pass=70 fail=1  :: Layout fenced block replaced by prose
+
+--- N1: conductor probe, RECORDED not gated ---
+      N1.REORDER          tests=71 pass=70 fail=1  failing: README Attribution section HIGH-risk count must match the triage doc table (C2)
+                          :: honest reword putting 50 nearer to HIGH than 8 ("8 of the 50 entries carry a rating of HIGH")
+
+--- scope ---
+PASS  SCOPE.PREFIX        every pre-existing byte is an unmodified prefix (HEAD 18823 B, now 27189 B)
+PASS  SCOPE.ONEFILE       tracked files changed: ["test/readme-tags.test.js"]
+PASS  SCOPE.SCRATCH       builder scratch DIRECTORY removed: true
+
+=== 23 pass / 0 fail ===

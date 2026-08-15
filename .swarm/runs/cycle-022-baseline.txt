@@ -1,0 +1,8 @@
+CTRL-PRISTINE  OK  tests=68 pass=68 fail=0
+C1    SURVIVED  tests=68 pass=68 fail=0  [expect SURVIVED]  :: Attribution section corpus-size figure 50 -> 49 (corpus.length is 50)
+C2    SURVIVED  tests=68 pass=68 fail=0  [expect SURVIVED]  :: Attribution section HIGH-risk count 8 -> 9 (triage doc rates 8 HIGH)
+C6    SURVIVED  tests=68 pass=68 fail=0  [expect SURVIVED]  :: Layout block names a path that does not exist on disk
+C0    KILLED    tests=68 pass=67 fail=1  [expect KILLED]  :: CONTROL: a claim the suite provably DOES guard (proves pipeline + suite are live)
+            failing: README must state total unique tags correctly
+
+=== disagreements with expectation: 0 ===

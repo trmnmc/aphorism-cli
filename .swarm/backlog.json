@@ -534,7 +534,7 @@
       "priority": 5,
       "value": "M",
       "effort": "S",
-      "status": "todo",
+      "status": "done",
       "deps": [
         "T-013"
       ],
@@ -545,7 +545,8 @@
       "model": "sonnet",
       "attempts": 0,
       "acceptance": "The corpus-size figure in the Attribution section ('ranks all N entries') must match corpus.length; the HIGH-risk count ('N are rated HIGH') must match docs/corpus-attribution-triage.md; and every path named in the Layout block must exist on disk. Each proven twice per L-029.",
-      "notes": "Source: T-013 survivors C1, C2, C6, cycle 19. All three are machine-checkable against something real (corpus length, another file in the repo, the filesystem) rather than against prose, which is why they are HOLE and the Flags/Exit-code table survivors are BOUNDARY. C6 is the cheapest real protection on the board: a file rename currently makes the Layout block lie with nothing noticing. C2 is the weakest of the three -- the triage doc is stable and human-owned -- and may honestly be dropped if it proves fiddly to parse; say so rather than forcing it."
+      "notes": "Source: T-013 survivors C1, C2, C6, cycle 19. All three are machine-checkable against something real (corpus length, another file in the repo, the filesystem) rather than against prose, which is why they are HOLE and the Flags/Exit-code table survivors are BOUNDARY. C6 is the cheapest real protection on the board: a file rename currently makes the Layout block lie with nothing noticing. C2 is the weakest of the three -- the triage doc is stable and human-owned -- and may honestly be dropped if it proves fiddly to parse; say so rather than forcing it. || VERIFIED cycle 22, 23/23 conductor gate checks (.swarm/runs/cycle-022-verify-T-016.txt), zero failures. All three claims stayed in scope and none was dropped: C2 proved machine-parseable (the triage table holds 50 rows, ids 0-49 distinct, HIGH 8 / MEDIUM 16 / LOW 26), so the item’s standing permission to drop C2 honestly was not needed and dropping it would have needed a reason I did not have. PRE-DISPATCH BASELINE (.swarm/runs/cycle-022-baseline.txt) MEASURED the blindness rather than inheriting cycle 19’s survivor list: C1, C2 and C6 all SURVIVED at 68/68/0 while the paired control C0 (37 distinct tags -> 38, a claim the suite provably DOES guard) KILLED at 68/67/1 -- so the existing suite was provably live and provably blind to exactly these three. Three tests added, 186 insertions / 0 deletions, suite 68 -> 71. All three proven twice per L-029 using conductor mutations the builder never saw, deliberately in the opposite direction or on a different target: 50->51 (UP, where the builder used 49 DOWN), 8->7 (DOWN, where the builder used 9 UP), and bin/aphorism.js plus the test/ directory entry (where the builder used src/select.js). Every FAILABLE run names the matching new test; every ATTRIBUTABLE run returns exactly 68/68/0, the pre-cycle baseline. The decisive checks are the three R2 TRACKS/STALE pairs, which no acceptance clause asked for and which are the only form that separates a guard derived from the real artifact from one hardcoding today’s numbers: adding a 51st corpus entry AND updating the README consistently stays GREEN at 71/71 while the stale half fails naming C1; flipping a triage row MEDIUM->HIGH AND updating the README stays GREEN while the stale half fails naming C2; creating a real new file AND adding its Layout line stays GREEN while a Layout line for a file that was never created fails naming C6. A hardcoded guard fails all three TRACKS halves. R1 (the T-012 prose-keying hazard) measured clean in both directions: prose reworded with digits and paths intact stays green, and reworded prose plus a wrong number still kills naming C1. R5 confirms a parse miss is LOUD, never a silent pass -- deleting the whole Attribution section fails 2 tests by name, and replacing the Layout fence with prose fails C6. Residual filed as T-020.",
+      "verified_cycle": 22
     },
     {
       "id": "T-017",
@@ -606,6 +607,26 @@
       "attempts": 0,
       "acceptance": "Deleting an entire band table (its heading AND all its rows) from the Tag vocabulary section fails the suite. Proven twice per L-029: failable against that specific deletion, and attributable -- removing the new assertion lets the same deletion survive the rest of the suite.",
       "notes": "Source: conductor probe N2, cycle 21 -- .swarm/runs/cycle-021-verify-T-015.txt. MEASURED, not suspected: removing the whole '12 tags appear 2-4 times:' heading and its 12-row table leaves the suite GREEN at 68/68. This is the T-014/A7 blindness one level up. T-014 made each band table's row set bidirectional, and T-015 made each band heading's stated cardinality checkable, but BOTH iterate only over the bands that are PRESENT -- a band that stops being claimed at all is not iterated, so nothing notices. Every stated fact remains true; the README has simply gone quiet about 12 tags. Fix shape: derive the expected PARTITION of bands from the corpus (or assert the union of all band tables' rows equals the set of tags with count >= 2) instead of only validating the bands that happen to appear. Note the interaction with T-018: whatever mechanism is chosen must still fail LOUD rather than quiet when the section is reformatted, and must not be keyed to lead-in prose (T-012 hazard). Lower priority than T-016/T-017 because a whole table vanishing is a far less likely edit than the single-row and cross-file cases those cover, and unlike A7 it is not on the path of T-007 (retagging edits rows, it does not delete tables)."
+    },
+    {
+      "id": "T-020",
+      "title": "Make the Attribution count extraction robust to digits reordered within one clause",
+      "kind": "test",
+      "priority": 7,
+      "value": "L",
+      "effort": "S",
+      "status": "todo",
+      "deps": [
+        "T-016"
+      ],
+      "files_hint": [
+        "test/readme-tags.test.js"
+      ],
+      "packages": [],
+      "model": "sonnet",
+      "attempts": 0,
+      "acceptance": "Rewording the Attribution sentence so that a different CORRECT digit sits nearer the HIGH marker than the HIGH count itself -- e.g. `8 of the 50 entries carry a rating of HIGH` -- leaves the suite GREEN, while the same reworded prose carrying a WRONG HIGH count still fails. Proven twice per L-029.",
+      "notes": "Source: conductor probe N1, cycle 22 -- .swarm/runs/cycle-022-verify-T-016.txt. MEASURED, not suspected: rewriting the Attribution aside as `covers every entry. 8 of the 50 entries carry a rating of HIGH, and it says what would settle each one.` -- with every number still TRUE -- fails the suite at 71/70/1, naming the C2 test. Cause: extractNearestPrecedingCount splits the section on em/en dashes and then takes the digit run NEAREST BEFORE the marker within that clause; with the dashes gone the whole paragraph collapses into one clause, and in that word order 50 sits nearer to HIGH than 8 does. The builder flagged exactly this edge case in its own report rather than hiding it, which is the only reason it was probed -- an honest uncertainty report converted directly into a measured backlog item. IMPORTANT, and the reason this is LOW value rather than a repeat of T-012: the guard does NOT go quiet. It fails LOUD and names the claim, so a maintainer who trips it is told exactly what happened. This is a false REJECTION of an honest edit -- the safe direction -- and it gets the same classification T-018 got at cycle 20 for the same reason. Fix shape: bind the digit to its marker by proximity in BOTH directions within the clause, or match the two claims as a pair (`N ... entries` and `M ... HIGH`), rather than assuming the README will keep using dash-delimited asides. Whatever is chosen must still fail LOUD on a genuine parse miss (R5, verified this cycle) and must not be keyed to lead-in prose (the standing T-012 hazard)."
     }
   ]
 }
