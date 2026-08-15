@@ -513,7 +513,7 @@
       "priority": 4,
       "value": "M",
       "effort": "S",
-      "status": "todo",
+      "status": "done",
       "deps": [
         "T-013"
       ],
@@ -523,8 +523,9 @@
       "packages": [],
       "model": "sonnet",
       "attempts": 0,
+      "verified_cycle": 21,
       "acceptance": "Changing any of 'N tags appear on 2 or more entries', 'N tags have a robust pool (5+ entries)', 'N tags appear 2-4 times', or the second statement of the single-entry count ('the remaining N appear on exactly one entry') to a wrong number fails the suite. Keyed to the numbers and their meaning, not to one exact sentence -- rewording a lead-in must not make a check go quiet.",
-      "notes": "Source: T-013 survivors A9, A10, A11 and the conductor-original V6, cycle 19. These integers are the same kind as the two that ARE guarded ('37 distinct tags', '21 appear exactly once'); nothing distinguishes them except which sentences someone happened to write a regex for. V6 is the sharpest: the single-entry count is stated TWICE in README.md and guarded ONCE -- V6 (line 55 phrasing) survives while V6b (line 81 phrasing) kills, so the README can contradict itself about the same number and stay green. The agent's sweep never tested it; it came from the conductor harness. NOTE the standing hazard from T-012: do not key the new assertions to literal lead-in sentences, or this item recreates the very defect cycle 18 removed."
+      "notes": "Source: T-013 survivors A9, A10, A11 and the conductor-original V6, cycle 19. These integers are the same kind as the two that ARE guarded ('37 distinct tags', '21 appear exactly once'); nothing distinguishes them except which sentences someone happened to write a regex for. V6 is the sharpest: the single-entry count is stated TWICE in README.md and guarded ONCE -- V6 (line 55 phrasing) survives while V6b (line 81 phrasing) kills, so the README can contradict itself about the same number and stay green. The agent's sweep never tested it; it came from the conductor harness. NOTE the standing hazard from T-012: do not key the new assertions to literal lead-in sentences, or this item recreates the very defect cycle 18 removed. || VERIFIED cycle 21, 28/29 conductor gate checks (.swarm/runs/cycle-021-verify-T-015.txt); the one failure was the SCOPE.SCRATCH housekeeping control, not an acceptance clause -- see below. Two tests added, 116 insertions / 0 deletions, suite 66 -> 68. PRE-DISPATCH BASELINE (.swarm/runs/cycle-021-baseline.txt) measured the blindness rather than assuming it: all four claims SURVIVED at 66/66/0, while the paired controls V6b (line-81 phrasing of the SAME integer 21) and C0 (the 37 total) both KILLED -- so the existing guards were provably live and provably blind to exactly these four. All four proven twice per L-029 with conductor mutations the builder never saw: I used OFF-BY-ONE errors in both directions (16->17, 21->20, 4->3, 12->13) where the builder had used 99/88/77/55, and each FAILABLE run names one of the two NEW tests while each ATTRIBUTABLE run returns exactly 66/66/0. R2 is the check no acceptance clause asked for and the one that matters most for T-007: I mutated the CORPUS (one entry gains tag `performance`, 4 -> 5) and updated the README to the new TRUE numbers -- the suite stayed GREEN at 68/68, which a hardcoded 4/12 could not do; the paired stale-README half fails at 3 tests. R1 (T-012 hazard) measured clean in both directions: all four lead-ins reworded with digits intact stays green, and a wrong cardinality under the reworded prose still kills. N3 confirms the two statements of `21` are guarded INDEPENDENTLY -- mutating the line-81 phrasing alone fires the pre-existing test and leaves the new ones quiet. SCOPE.SCRATCH: the builder deleted its mutation copies but left an EMPTY .swarm/scratch directory; measured at 0 files inside, no content leaked, conductor removed it (cycle-9 pattern, KI-7). Recorded as a failed control rather than re-run to a manufactured green. Residual filed as T-019."
     },
     {
       "id": "T-016",
@@ -585,6 +586,26 @@
       "attempts": 0,
       "acceptance": "Inserting a blank line between a band heading and its `| Tag | Count |` table (idiomatic markdown, and it makes no README claim false) leaves the suite green, while a row deletion under that reformatted heading still fails. Proven twice per L-029.",
       "notes": "Source: conductor probe N3, cycle 20 -- .swarm/runs/cycle-020-verify-T-014.txt. extractBandTablesFromReadme requires the heading at line i and the table header at i+1, so a blank line makes the band undetectable. IMPORTANT and the reason this is LOW priority, not a repeat of T-012: the guard does NOT go quiet. Its bands.length>0 sanity assertion fires and the suite FAILS LOUDLY, naming the parse as the cause -- measured, reformat alone gives fail 1, and reformat+row-deletion is still KILLED. So this is a false REJECTION of an honest edit, the safe direction, not a silent hole. Fix shape: skip blank lines between the heading and the table header rather than requiring adjacency."
+    },
+    {
+      "id": "T-019",
+      "title": "Guard against an entire band table disappearing from the Tag vocabulary section",
+      "kind": "test",
+      "priority": 5,
+      "value": "M",
+      "effort": "S",
+      "status": "todo",
+      "deps": [
+        "T-015"
+      ],
+      "files_hint": [
+        "test/readme-tags.test.js"
+      ],
+      "packages": [],
+      "model": "sonnet",
+      "attempts": 0,
+      "acceptance": "Deleting an entire band table (its heading AND all its rows) from the Tag vocabulary section fails the suite. Proven twice per L-029: failable against that specific deletion, and attributable -- removing the new assertion lets the same deletion survive the rest of the suite.",
+      "notes": "Source: conductor probe N2, cycle 21 -- .swarm/runs/cycle-021-verify-T-015.txt. MEASURED, not suspected: removing the whole '12 tags appear 2-4 times:' heading and its 12-row table leaves the suite GREEN at 68/68. This is the T-014/A7 blindness one level up. T-014 made each band table's row set bidirectional, and T-015 made each band heading's stated cardinality checkable, but BOTH iterate only over the bands that are PRESENT -- a band that stops being claimed at all is not iterated, so nothing notices. Every stated fact remains true; the README has simply gone quiet about 12 tags. Fix shape: derive the expected PARTITION of bands from the corpus (or assert the union of all band tables' rows equals the set of tags with count >= 2) instead of only validating the bands that happen to appear. Note the interaction with T-018: whatever mechanism is chosen must still fail LOUD rather than quiet when the section is reformatted, and must not be keyed to lead-in prose (T-012 hazard). Lower priority than T-016/T-017 because a whole table vanishing is a far less likely edit than the single-row and cross-file cases those cover, and unlike A7 it is not on the path of T-007 (retagging edits rows, it does not delete tables)."
     }
   ]
 }

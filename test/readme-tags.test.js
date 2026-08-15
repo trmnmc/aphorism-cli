@@ -309,3 +309,119 @@ test('every band table in README Tag vocabulary contains exactly the corpus tags
     }
   }
 });
+
+// ---------------------------------------------------------------------------
+// Guard the remaining corpus-derived cardinalities in the Tag vocabulary
+// section that the tests above do not touch:
+//
+//   - line 57 / 65: each band table heading also states, up front, HOW MANY
+//     tags belong to that band (e.g. "4 tags have a robust pool (5+
+//     entries):", "12 tags appear 2-4 times:"). The band-table test above
+//     only checks that the table's ROWS match the corpus set for that band's
+//     numeric range -- it never looks at this leading count, so editing it
+//     to a wrong number while leaving the table's rows untouched was
+//     previously undetected.
+//
+//   - line 55: the section's opening sentence states, in prose, how many
+//     tags appear on 2-or-more entries and how many appear on exactly one
+//     entry. The "exactly one" figure here is a SEPARATE textual claim from
+//     the "tags appear exactly once" figure later in the section (line 81,
+//     already guarded) -- the two could be made to disagree with each other
+//     while this one stayed unchecked.
+//
+// Every expected number below is derived from `corpus` at test time, never
+// hardcoded. Extraction is keyed to the digits plus the minimal structural
+// tokens that carry their mathematical meaning ("tags" immediately after
+// the band-heading count; "or more" / "exactly one" for the prose claims),
+// never to the surrounding descriptive wording, so rewording "have a robust
+// pool" to "have a deep pool", "appear" to "occur", or "They are not evenly
+// distributed:" to anything else must not change whether this guard fires.
+// ---------------------------------------------------------------------------
+
+test('README band table headings must state the correct count of tags in their band', () => {
+  const readmePath = path.join(__dirname, '..', 'README.md');
+  const readmeContent = fs.readFileSync(readmePath, 'utf8');
+  const tagVocabSection = getTagVocabSection(readmeContent);
+  const tagsInCorpus = countTagsInCorpus();
+
+  const bands = extractBandTablesFromReadme(tagVocabSection);
+  assert(bands.length > 0, 'expected at least one parseable band table (heading with an N+ or N-M token, followed by a | Tag | Count | table) in the Tag vocabulary section');
+
+  for (const band of bands) {
+    // The leading "N tags ..." count on the heading line itself -- parsed
+    // from the digits immediately followed by the word "tags", independent
+    // of whatever descriptive phrase follows (which may be reworded freely).
+    const leadingCountMatch = band.headingLine.match(/^\s*(\d+)\s+tags\b/);
+    assert(
+      leadingCountMatch,
+      'could not parse a leading "N tags" count from band heading "' + band.headingLine.trim() +
+        '" -- this claim must fail loud, not pass silently, when it cannot be parsed'
+    );
+    const statedBandCount = parseInt(leadingCountMatch[1], 10);
+
+    // Derived independently from the corpus using this band's own [min, max]
+    // bounds (themselves parsed from the OTHER digits in the same heading,
+    // e.g. the "5+" or "2-4" token) -- not from the table's rows, so this
+    // cannot degenerate into checking the README against itself.
+    const expectedBandCount = Object.keys(tagsInCorpus)
+      .filter(tag => tagsInCorpus[tag] >= band.min && tagsInCorpus[tag] <= band.max)
+      .length;
+
+    assert.equal(
+      statedBandCount,
+      expectedBandCount,
+      'Band heading "' + band.headingLine.trim() + '" states ' + statedBandCount +
+        ' tags, but the corpus has ' + expectedBandCount + ' tags with count in [' +
+        band.min + ', ' + (band.max === Infinity ? 'inf' : band.max) + ']'
+    );
+  }
+});
+
+test('README opening sentence must state correct multi-entry and single-entry tag counts', () => {
+  const readmePath = path.join(__dirname, '..', 'README.md');
+  const readmeContent = fs.readFileSync(readmePath, 'utf8');
+  const tagVocabSection = getTagVocabSection(readmeContent);
+  const tagsInCorpus = countTagsInCorpus();
+
+  // "<N> tags ... or more <...>" -- the count of tags appearing on 2+
+  // entries. Keyed to "or more" (the mathematical content of the claim,
+  // i.e. an inclusive lower bound), not to any of the words around it, and
+  // scoped to a single clause (no '.', ';' or newline crossed) so it cannot
+  // accidentally span into an unrelated sentence or table heading.
+  const multiEntryMatch = tagVocabSection.match(/(\d+)\s+tags?\b[^.;\n]*\bor more\b/i);
+  assert(
+    multiEntryMatch,
+    'could not find a "<N> tags ... or more" claim in the Tag vocabulary section -- ' +
+      'this claim must fail loud, not pass silently, when it cannot be parsed'
+  );
+  const statedMultiEntryCount = parseInt(multiEntryMatch[1], 10);
+  const expectedMultiEntryCount = Object.keys(tagsInCorpus).filter(tag => tagsInCorpus[tag] >= 2).length;
+  assert.equal(
+    statedMultiEntryCount,
+    expectedMultiEntryCount,
+    'README states ' + statedMultiEntryCount + ' tags appear on 2 or more entries, but the corpus has ' +
+      expectedMultiEntryCount
+  );
+
+  // "<N> ... exactly one <...>" -- the count of tags appearing on exactly
+  // one entry, as stated in the section's OPENING sentence. Deliberately
+  // distinct from (and must independently agree with) the later "<N> tags
+  // appear exactly once" claim guarded elsewhere in this file: "exactly
+  // one" here does not match "exactly once" there, so the two claims are
+  // checked against the corpus separately and cannot silently drift from
+  // each other.
+  const singleEntryMatch = tagVocabSection.match(/(\d+)\b[^.;\n]*\bexactly one\b/i);
+  assert(
+    singleEntryMatch,
+    'could not find a "<N> ... exactly one" claim in the Tag vocabulary section -- ' +
+      'this claim must fail loud, not pass silently, when it cannot be parsed'
+  );
+  const statedSingleEntryCount = parseInt(singleEntryMatch[1], 10);
+  const expectedSingleEntryCount = Object.keys(tagsInCorpus).filter(tag => tagsInCorpus[tag] === 1).length;
+  assert.equal(
+    statedSingleEntryCount,
+    expectedSingleEntryCount,
+    'README states ' + statedSingleEntryCount + ' tags appear on exactly one entry, but the corpus has ' +
+      expectedSingleEntryCount
+  );
+});

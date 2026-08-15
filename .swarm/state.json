@@ -3,7 +3,7 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
   "phase": "POLISH",
-  "cycle": 20,
+  "cycle": 21,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -177,6 +177,21 @@
       "cycle": 20,
       "what": "Accepted the T-014 guard as-is despite a measured false-rejection case (a blank line between a band heading and its table fails the suite), and filed it as T-018 rather than sending the item back.",
       "why": "The failure direction is what decides this. T-012 and the whole A7/A8 family are guards that go QUIET on an innocuous edit -- they hide. This one fails loudly and names the parse as the cause, so it cannot hide anything; a reader who trips it is told exactly what happened. Measured, not assumed: reformat alone gives fail 1, and reformat plus a row deletion is still KILLED, so the guard is not disarmed by the reformat. Sending the item back would spend a gear-1 cycle re-opening a passing acceptance to improve ergonomics, when three higher-value HOLEs (T-015..T-017) are still open."
+    },
+    {
+      "cycle": 21,
+      "what": "The T-015 gate's decisive check is one no acceptance clause asked for: mutate the CORPUS, update the README to the new true numbers, and require the suite to stay GREEN.",
+      "why": "Every other check this cycle asks whether a WRONG README is caught. None of them can distinguish a guard that derives its expectations from the corpus from one that hardcodes 16/4/12/21, because both catch a wrong number today. That distinction is the entire point of the item: T-007 (retagging) is live on the backlog and would change all four numbers at once, and a hardcoded guard would then fire on a CORRECT README -- a false rejection that a maintainer resolves by deleting the guard, which is worse than never having written it. The consistent-change check is the only form that separates the two: I gave one entry the existing tag `performance` (4 -> 5 occurrences), independently re-derived the new truth (ge5 4->5, band2-4 12->11, ge2/eq1/distinct unchanged), edited the README to match, and required 68/68. A hardcoded guard fails there. It passed, and the paired stale-README half fails at 3 tests, so the guard is provably corpus-derived in both directions."
+    },
+    {
+      "cycle": 21,
+      "what": "SCOPE.SCRATCH is recorded as a FAILED gate check even though the item passed, and the gate was NOT re-run to a 29/29.",
+      "why": "The builder deleted its mutation copies but left an empty .swarm/scratch directory, so the check I authored (directory removed) failed while the claim it exists to protect (no scratch content leaked) held -- measured at 0 files inside, and git status showed no untracked scratch. The tempting move is to relax the check to 'directory is empty' and re-run for a clean sheet, which would be opening a gate by weakening it. The honest record is that the control failed as written, what it did and did not establish, and that the conductor removed the directory by hand. It is also a housekeeping control rather than one of T-015's four acceptance clauses, all of which passed FAILABLE and ATTRIBUTABLE -- so the item is done and the control is a KI-7 data point, which is the third occurrence of that structural hole and now has an empty-directory variant."
+    },
+    {
+      "cycle": 21,
+      "what": "Conductor probe N2 found a survivor one level above the item's scope -- deleting an entire band table leaves the suite green -- and it was FILED as T-019 rather than fixed inside this cycle.",
+      "why": "It is the T-014/A7 blindness one level up: T-014 made each band table's rows bidirectional and T-015 made each heading's cardinality checkable, but both iterate only the bands that are PRESENT, so a band that stops being claimed is never examined and every remaining stated fact is still true. Fixing it inside T-015 would have meant widening a passing acceptance to cover a mechanism it does not have (an expected-band-partition check is a different design, not an extra assertion), and the cycle-8 boundary applies: widening is principled when the same defect sits in the same edit at zero extra risk, and artificial when it needs new machinery. Filed at priority 5, below T-016/T-017, because a whole table vanishing is a much less likely edit than the single-row and cross-file cases and -- unlike A7 -- it is not on T-007's path, since retagging edits rows rather than deleting tables."
     }
   ],
   "known_issues": [
@@ -226,6 +241,7 @@
       "severity": "low",
       "cycle_found": 19,
       "status": "open",
+      "note_cycle_21": "THIRD occurrence, in a new and milder variant: the dispatch prompt named the explicit in-target scratch path as the remedy prescribes, and the builder honored it AND deleted its mutation copies -- but left the bare empty .swarm/scratch directory behind. Measured at 0 files inside, so nothing leaked and no untracked scratch reached git status; this is the same residue cycle 9 recorded (agent removes copies, conductor removes the empty directory). Caught only because the conductor gate carries a standing SCOPE.SCRATCH control, which is the reason to keep that control even on cycles where it looks like a formality. Remedy refinement for the wrap-up distillation: the prompt should say remove the scratch DIRECTORY, not just its contents.",
       "remedy": "Name an explicit scratch directory in every dispatch prompt. NOT /tmp -- KI-6 established subagents are sandboxed to the session --add-dir list, so /tmp is unreachable. Use <target>/.swarm/scratch/ and require the agent to remove it, with a conductor gate check confirming the removal. Done this way at cycle 19 (T-013) and the agent left nothing behind (harness controls CTRL-SCRATCH, CTRL-TREE). Cycle 9 proposed this as a candidate playbook lesson and it was never made standing, which is why it recurred; it belongs in the wrap-up distillation."
     }
   ],
@@ -238,13 +254,13 @@
     "consecutive_no_value": 0,
     "consecutive_failures": 0,
     "k_current": 5,
-    "wave_streak": 0,
+    "wave_streak": 1,
     "window_tokens_attributed": 0
   },
   "last_cycle": {
-    "n": 20,
-    "work": "test triage (one item, k_cap 1 at gear 1) -- T-014, making the README tag-table guard bidirectional and band-aware, closing cycle 19's two Class A survivors A7 and A8.",
-    "outcome": "VERIFIED done. 17/17 conductor gate checks (.swarm/runs/cycle-020-verify-T-014.txt), 66 tests green (65 -> 66, pure insertion: 142 lines added, 0 removed, every existing test and helper byte-identical per git diff). The gate deliberately used mutations the builder never ran -- it proved A7 by deleting the `testing` row from the 2-4 table, I deleted the `debugging` row from the 5+ table -- and both were proven FAILABLE and ATTRIBUTABLE (stripping the new block lets the same mutation survive at 65/0). Added a third kill the item never asked for: a spurious count-13 row in the 2-4 table, invisible to the old guard because it makes no stated fact false. Negative control passed: rewording both band headings with digits intact stays green, so the T-012 hazard named in the item's own notes was avoided. One residual found by conductor probe N3 and filed as T-018 -- fails loud, not quiet.",
-    "commit": "cbcb651"
+    "n": 21,
+    "work": "test triage (one item, k_cap 1 at gear 1) -- T-015, guarding the four corpus-derived integers in the README Tag vocabulary section that cycle 19 measured as unprotected (A9, A10, A11 and the conductor-original V6).",
+    "outcome": "VERIFIED done. 28/29 conductor gate checks (.swarm/runs/cycle-021-verify-T-015.txt); the single failure is the SCOPE.SCRATCH housekeeping control (builder left an EMPTY scratch dir -- 0 files inside, no content leaked, conductor removed it), not an acceptance clause. Recorded as failed rather than re-run to a manufactured green. 68 tests green (66 -> 68, pure insertion: 116 added, 0 removed, every pre-existing byte an unmodified prefix). Blindness was MEASURED before dispatch, not assumed (.swarm/runs/cycle-021-baseline.txt): all four claims survived at 66/66/0 while the paired controls V6b and C0 killed. All four proven twice per L-029 using conductor off-by-one mutations in both directions (16->17, 21->20, 4->3, 12->13) where the builder had used 99/88/77/55. The decisive check was R2, which no acceptance clause asked for: mutating the corpus AND updating the README consistently keeps the suite green at 68/68 (a hardcoded guard would fail), while the stale-README half fails at 3 -- so the guard provably tracks the corpus and will survive T-007. N3 confirms the two statements of `21` are guarded independently. Residual filed as T-019: deleting an ENTIRE band table still survives at 68/68.",
+    "commit": "PENDING"
   }
 }
