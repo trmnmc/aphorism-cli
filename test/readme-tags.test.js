@@ -884,16 +884,74 @@ test('README Layout section paths must exist on disk (C6)', () => {
 // literal that no longer matches the unchanged binary must fail this test.
 // ---------------------------------------------------------------------------
 
-// Helper: return the "### `--list` behaviour" section's raw text (heading
-// through the line before the next "### " or "## " heading, whichever
-// comes first). Located by the heading token itself, not by any prose
-// sentence underneath it.
-function getListBehaviourSection(readmeContent) {
-  const headingPattern = /^### `--list` behaviour\s*$/m;
-  const headingMatch = headingPattern.exec(readmeContent);
-  assert(headingMatch, 'README must have a "### `--list` behaviour" section');
-  const start = headingMatch.index;
+// Helper: does this "### " heading LINE plausibly name the `--list`
+// behaviour section? Two independent structural conditions, both required:
+//
+//   1. It carries the `--list` flag as a STANDALONE token -- backticks are
+//      stripped first (so a backtick-quoted flag and a bare one normalize
+//      the same way, tolerating the T-021 reformat), then the token must
+//      not be glued to more flag-name characters on either side. This is
+//      what keeps a heading for a DIFFERENT flag, e.g. "### `--list-only`
+//      behaviour", from qualifying: "--list" is a substring of
+//      "--list-only" but not a standalone token there.
+//   2. It carries the word "behaviour" (case-insensitive, own word).
+//
+// Deliberately NOT anchored to any specific lead-in phrase or position in
+// the document (T-012 hazard) -- this reads heading STRUCTURE (the flag
+// token, the word) rather than a full literal heading string, which is
+// exactly what lets an honest reformat like "### --list behaviour" (no
+// backticks) keep working.
+function headingNamesListBehaviourSection(headingText) {
+  const normalized = headingText.replace(/`/g, '');
+  const hasListToken = /(^|[^A-Za-z0-9-])--list(?![A-Za-z0-9-])/.test(normalized);
+  const hasBehaviourWord = /\bbehaviour\b/i.test(normalized);
+  return hasListToken && hasBehaviourWord;
+}
 
+// Helper: return the "--list behaviour" section's raw text (heading through
+// the line before the next "### " or "## " heading, whichever comes first).
+//
+// Located by scanning every "### " heading in the document and testing each
+// one structurally (see headingNamesListBehaviourSection) rather than by
+// matching one fixed, fully-formatted heading string -- that fixed-string
+// match is what broke on the honest "### --list behaviour" reformat (no
+// backticks) that this item exists to tolerate.
+//
+// Critically, this does NOT take the first heading that qualifies. An
+// earlier decoy heading that happens to carry both the `--list` token and
+// the word "behaviour" (e.g. "### Notes on `--list` behaviour") would, under
+// a first-match scan, silently steal the section -- and if that decoy's own
+// body contains a correct-looking format literal while the REAL section's
+// literal has been mutated to something false, the whole guard goes green
+// on a wrong README. That is strictly worse than failing loud, so instead:
+// every heading in the document is tested, and if more than one qualifies,
+// this throws an ambiguity error naming all of them rather than picking a
+// winner. Zero qualifying headings is also a loud, named failure -- not a
+// silent empty section.
+function getListBehaviourSection(readmeContent) {
+  const headingLinePattern = /^### (.+)$/gm;
+  const candidates = [];
+  let match;
+  while ((match = headingLinePattern.exec(readmeContent)) !== null) {
+    if (headingNamesListBehaviourSection(match[1])) {
+      candidates.push({ index: match.index, headingLine: match[0].trim() });
+    }
+  }
+
+  assert(
+    candidates.length > 0,
+    'README must have a "### " heading naming the standalone `--list` token and the word "behaviour" ' +
+      '(e.g. "### `--list` behaviour" or "### --list behaviour") -- none found'
+  );
+  assert.equal(
+    candidates.length,
+    1,
+    'found ' + candidates.length + ' "### " headings that could each plausibly be the `--list` behaviour ' +
+      'section (' + candidates.map((c) => JSON.stringify(c.headingLine)).join(', ') + ') -- ambiguous, ' +
+      'refusing to silently pick one'
+  );
+
+  const start = candidates[0].index;
   const nextH3 = readmeContent.indexOf('\n### ', start + 1);
   const nextH2 = readmeContent.indexOf('\n## ', start + 1);
   const boundaries = [nextH3, nextH2].filter((i) => i > -1);
@@ -918,6 +976,93 @@ function extractListFormatSeparator(listBehaviourSection) {
   );
   return literalMatch[1];
 }
+
+// ---------------------------------------------------------------------------
+// Pin getListBehaviourSection's own locator behaviour (T-021), independent
+// of whatever README.md happens to say today. Exercises it directly on
+// hand-built document text, the same style as the T-025 extractor tests
+// above.
+// ---------------------------------------------------------------------------
+
+test('getListBehaviourSection tolerates a reformatted "--list behaviour" heading with no backticks (T-021)', () => {
+  const doc = [
+    '## Flags',
+    '',
+    '### --list behaviour',
+    '',
+    'Format: `<text> — <author>`',
+    '',
+    '## Tag vocabulary',
+  ].join('\n');
+
+  const section = getListBehaviourSection(doc);
+  assert(
+    section.includes('<text> — <author>'),
+    'the reformatted heading (no backticks) must still locate its own section body'
+  );
+});
+
+test('getListBehaviourSection still fails on a SEPARATOR MISMATCH (not a heading-parse error) when a reformatted heading\'s literal is mutated (T-021)', () => {
+  const doc = [
+    '## Flags',
+    '',
+    '### --list behaviour',
+    '',
+    'Format: `<text> - <author>`', // mutated: ASCII hyphen, not em dash
+    '',
+    '## Tag vocabulary',
+  ].join('\n');
+
+  // The heading itself must resolve cleanly -- no parse-error throw here.
+  const section = getListBehaviourSection(doc);
+  const separator = extractListFormatSeparator(section);
+
+  // The mutation must be visible as a wrong separator, not hidden behind a
+  // heading-parse failure that masks it (the exact trap this item warns
+  // about: B1/B2 must both fail, but on DIFFERENT assertions).
+  assert.notEqual(separator, ' — ', 'a mutated separator under a reformatted heading must still be detectably wrong');
+});
+
+test('getListBehaviourSection reports ambiguity loudly instead of taking the first of two qualifying headings (T-021)', () => {
+  const doc = [
+    '## Flags',
+    '',
+    '### Notes on `--list` behaviour',
+    '',
+    'Format: `<text> — <author>`', // decoy: looks correct',
+    '',
+    '### --list behaviour',
+    '',
+    'Format: `<text> - <author>`', // real section, mutated -- must NOT be silently skipped
+    '',
+    '## Tag vocabulary',
+  ].join('\n');
+
+  assert.throws(
+    () => getListBehaviourSection(doc),
+    /ambiguous/,
+    'two headings that both plausibly name the --list behaviour section must raise an ambiguity error, ' +
+      'not silently resolve to whichever comes first in the document'
+  );
+});
+
+test('getListBehaviourSection does not let "--list-only" satisfy the standalone `--list` token (T-021)', () => {
+  const doc = [
+    '## Flags',
+    '',
+    '### --list-only behaviour',
+    '',
+    'Format: `<text> — <author>`',
+    '',
+    '## Tag vocabulary',
+  ].join('\n');
+
+  assert.throws(
+    () => getListBehaviourSection(doc),
+    /none found/,
+    'a heading for a different flag (--list-only) must not be mistaken for the --list behaviour section'
+  );
+});
 
 test('README `--list` format literal matches the shipped binary\'s actual --list output (T-017)', () => {
   const readmePath = path.join(__dirname, '..', 'README.md');

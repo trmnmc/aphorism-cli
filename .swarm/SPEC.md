@@ -60,14 +60,34 @@ MOTD, or `.bashrc` — and who will be annoyed by anything that prints more than
            verified by executing the shipped binary, not by reading the prose:
            36/36 checks, .swarm/runs/cycle-007-verify-I-3.txt. -->
 
-- [ ] **I-4 Corpus attribution triage (KI-2).** A risk-ranked, reasoned list of the corpus
+- [x] **I-4 Corpus attribution triage (KI-2).** A risk-ranked, reasoned list of the corpus
       entries most likely to be misattributed, written for a human to settle. The corpus is
       NEVER to be reported as "audited" — no check available to this run can establish that.
-- [ ] **I-5 SWARM playbook file repaired or handed off losslessly.** `SWARM/playbook/learnings.md`
+      <!-- Closed cycle 11, both clauses separately verified. Clause 1 (the ranked list)
+           landed cycle 10 as docs/corpus-attribution-triage.md, gated 16/16 against a
+           ranking SEALED to disk before dispatch. Clause 2 (no file overclaims) landed
+           cycle 11 via a repo-wide sweep over all 9 product files, 19/19 with 3 negative
+           controls. KI-2 itself stays OPEN at high severity and is NOT closed by this
+           box: a triage is not an audit, and only a human can settle the 8 HIGH entries
+           (backlog T-006). -->
+- [x] **I-5 SWARM playbook file repaired or handed off losslessly.** `SWARM/playbook/learnings.md`
       holds 31 lessons against its documented cap of 20 and carries three duplicate IDs
       (L-023, L-025, L-026 each appear twice). Either brought within cap with unique IDs by
       the file's own documented overflow rule, or handed off with a lossless archive and a
       named reason. Nothing is deleted without an archive.
+      <!-- Closed cycle 12 on the SECOND branch of this clause, not the first, and the
+           box is ticked on that basis only. Duplicate IDs were repaired losslessly
+           (31 lessons in, 31 out, bodies an identical multiset; 17/17 with 4 negative
+           controls). The 20-cap breach was NOT culled and is handed to a human with a
+           computed drop-list: the file's overflow rule sheds ONE lesson per append and
+           extrapolating it to shed 11 at once would delete 5 [apply:]-bearing lessons.
+           Archive: playbook/learnings.md.pre-I5-1786803951. Handoff:
+           playbook/HANDOFF-cap-2026-08-15.md. Tracked as KI-5, still open. -->
+      <!-- Ticked at cycle 30 hygiene, not at closure — a bookkeeping lag, not a late
+           verification. Both items were conductor-verified at cycles 11 and 12; the
+           boxes were simply never updated. Recorded so the tick is not read as new
+           evidence. -->
+
 - [ ] **I-6 REPORT.md refreshed** to the verified state at wrap-up, with every unverified
       item named as unverified.
 

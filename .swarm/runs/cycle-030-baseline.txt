@@ -1,0 +1,37 @@
+CYCLE 30 PRE-DISPATCH BASELINE — T-021 attempt 2
+target: /opt/targets/aphorism-cli
+
+B0  PRISTINE control
+    signature  74/74/0   (tests/pass/fail)
+    reasons    (none)
+    failing    (none)
+
+B1  heading backticks dropped
+    signature  74/73/1   (tests/pass/fail)
+    reasons    HEADING-PARSE
+    failing    
+                 - README `--list` format literal matches the shipped binary's actual --list output (T-017)
+
+B2  backticks dropped + literal mutated
+    signature  74/73/1   (tests/pass/fail)
+    reasons    HEADING-PARSE
+    failing    
+                 - README `--list` format literal matches the shipped binary's actual --list output (T-017)
+
+B3  literal mutated only
+    signature  74/73/1   (tests/pass/fail)
+    reasons    SEPARATOR-MISMATCH
+    failing    
+                 - README `--list` format literal matches the shipped binary's actual --list output (T-017)
+
+P3  decoy heading w/ plausible literal + real literal mutated
+    signature  74/73/1   (tests/pass/fail)
+    reasons    SEPARATOR-MISMATCH
+    failing    
+                 - README `--list` format literal matches the shipped binary's actual --list output (T-017)
+
+--- readings ---------------------------------------------------------
+B0 must be 74/74/0 for any other cell to mean anything: OK
+B1 vs B2 identical signature => heading parse MASKS the literal mutation, so "still fails" is satisfiable without restoring detection: CONFIRMED (masked)
+B3 reason must be SEPARATOR-MISMATCH (the detection that must survive a fix): CONFIRMED
+P3 must be RED at HEAD (the case a first-match fix turned silent at cycle 28): RED — HEAD catches it
