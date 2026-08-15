@@ -195,6 +195,6 @@
   "n": 15,
   "work": "build-wave (one item, k_cap 1 at gear 1) -- T-010, the date-seeded quote-of-the-day recipe in the README usage examples. First build-wave.js dispatch of this run; the Workflow tool was permitted for the second consecutive cycle.",
   "outcome": "VERIFIED done. 19/19 conductor harness checks including 4 negative controls; the README line was executed verbatim through bash and matched the today-seeded output; diff is exactly 1 insertion / 0 deletions; suite 59/59. Two harness checks were REPAIRED mid-gate (a wrong node --test summary marker and a section fence coarser than the dispatch's own scope) -- both repairs tightened the assertions. Residual overclaim measured and filed as T-011, not absorbed.",
-  "commit": "PENDING"
+  "commit": "de4488e"
  }
 }
