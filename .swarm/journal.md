@@ -110,3 +110,86 @@ runfile-mirror:
 ```json
 {"version":1,"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":"2026-08-14T06:03:14+00:00","usage_reset_at":"2026-08-14T06:03:14+00:00","model_policy":"value-routing","auth_mode":"subscription","smoke":true,"heartbeat":{"ts":1786686136,"next_wakeup_at":1786686494,"pid":44574,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"full","dial":1.0},"budget":{"source":"clock","gear":5,"gear_target":5,"ratio":0.0,"mode":"full","k_cap":2,"promote":false,"demote":false,"window_tokens":0,"window_cost_usd":0.0,"api_cap_usd":null,"api_spend_usd":0.0,"tokens_per_hour":0,"projected_depletion_at":0,"last_probe_ts":1786685894,"last_real_probe_ts":0,"probe_failures":1,"weekly":{"ok":false,"weekly_used_pct":0,"opus_used_pct":0,"week_elapsed_pct":0,"weekly_heat":0,"opus_heat":0,"ceiling":5,"promote_blocked":false}},"watchdog":{"mode":"normal","plist_loaded":false,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":0,"artifact":{"file":"/opt/swarm/runs/dashboard.html","publish_failures":0}}
 ```
+
+## KICKOFF | 2026-08-15T11:32:33+00:00 | aphorism-cli | PLAN
+run: improvement-aphorism-cli-2026-08-15 (run_kind improvement), stop_at 2026-08-16T11:24:24+00:00
+source: allocator auto-kickoff. runs/kickoff-hints.json = {"mode":"guest","dial":0.30,
+  "brief":"TRICKLE POSTURE: housekeeping only - harden tests, fix playbook items, polish
+  docs - no new features","source":"allocator","stop_at":1786879464}. Hints consumed and
+  the file DELETED per SKILL.md guard 1d, so it can never steer a later human kickoff.
+guards: 1a no live runfile (runs/current.json absent; moon run archived, .bak wrap_up_complete).
+  1b non-empty-dir refusal WAIVED by the improvement-run carve-out (idea text begins
+  "improve existing target "). 1c cwd = /opt/swarm. 1d hints applied, interactive Q&A skipped.
+  Existing repo REUSED: no dir creation, no git init, no gh repo create; verified git worktree
+  with remote origin https://github.com/trmnmc/aphorism-cli.git (KI-1 from the build run is
+  therefore RESOLVED - a remote now exists and push is live).
+
+STRESS-TEST: verdict proceed, confidence 7. Two attacks bounced (nobody is reading this repo
+  again as it stands; housekeeping on a finished artifact competes with nothing). The
+  toy-version trap LANDED and forced a cut, recorded as a decision: "harden tests" on an
+  already-48-green suite is the exact work that produces test-count churn, so tests are
+  admitted ONLY for measured mutation survivors (playbook L-031/L-029/L-033). Second landing:
+  the demo-embarrassment lens put the corpus attribution triage (I-4) above every test item.
+
+PRIOR-ART SCOUT: reported NOT RUN, not "nothing found". gh is authed (scopes gist, read:org,
+  repo, workflow) but `gh search repos` returned zero bytes on all three queries INCLUDING an
+  unfiltered control - instrument-shaped, not finding-shaped. Claiming "no prior art exists"
+  off a blind instrument would be a false negative (the L-030 failure mode). Decision impact
+  nil: the artifact is already built and the brief forbids new features, so no adopt/extend
+  call is live.
+
+TASTE JUDGE (fresh sonnet subagent, taste-judge.md only): use-twice 4, product-not-demo 8,
+  scope-fits-night 5, one-memorable-thing 3. Verdict: "worth the night as a hardening pass,
+  but scope-fits-night is load-bearing - the promised rigor is what gets shortcut if the
+  minimum-burn clock runs out first." ACTED ON, not just recorded: rigor items (I-1, I-2, I-3)
+  are sequenced first, and the two shortcut-prone items (I-4 corpus triage, I-5 playbook
+  repair) are scoped as honestly-partial-with-handoff rather than as completion claims.
+
+DEVIATION (recorded as a decision, not silently treated as confirmed): proceeded past the
+  spec-confirmation gate with NO user confirmation. Headless allocator auto-kickoff has no
+  user, and SKILL.md defines no non-interactive behaviour for that gate - the exact house-rules
+  gap this target's own RETRO (2026-08-14) proposed be settled. The taste critique (a/b/c) was
+  printed in the kickoff transcript against an absent audience.
+
+VERIFICATION EVIDENCE (kickoff probe, conductor-authored, run before any file was written):
+  KI-4 check: node -e "6x execFileSync('node',['bin/aphorism.js','--seed','Infinity','--json'])"
+    -> 6 distinct aphorisms, exit 0 every run, distinct:6  DEFECT CONFIRMED
+    (Domain rule says a seeded pick is deterministic; args.js accepts Infinity because
+     Number('Infinity') is not NaN, then select.js's Number.isFinite guard silently falls
+     through to Math.random(). Both halves are individually defensible; the seam is the bug.)
+  corpus shape: node -e "corpus.length / authors / dup texts" -> entries 50, authors 24,
+    dupe texts 0  PASS (>= 40 must-have holds)
+  test_cmd baseline: deferred to cycle 2 step 6 - no code changed at kickoff, and a baseline
+    run with nothing to compare it against is not evidence.
+
+playbook: apply_mode auto, 15 lessons staged. bin/swarm-playbook.sh parse REFUSED (not on the
+  Bash allowlist) so directives were HAND-PARSED from playbook/learnings.md read-only, and
+  record-applied could NOT be written - the ledger line for this run is missing and that is
+  reported, not papered over. wave_k: no lesson sets it -> default 3 (gear caps it to 1 anyway).
+  Four staged qa lines are browser-specific and INERT on a Node CLI; staged faithfully rather
+  than silently dropped, since hard rule 5 bars editing the playbook's intent mid-run.
+  The playbook FILE ITSELF is now item I-5: 31 lessons vs a documented cap of 20, and three
+  duplicate ids (L-023, L-025, L-026 each name two different lessons).
+
+budget: gear 1, k_cap 1, demote true, mode guest, dial 0.30. bin/swarm-budget.sh NOT invoked
+  (allowlist gap, re-checked this kickoff - settings.json still carries no entry of any form
+  for swarm-budget.sh or swarm-playbook.sh). probe_failures stays 0: an attempt not made is
+  not a failure. Gear rests on runs/allocator.json (source=probe): posture trickle,
+  allow_premium_pct 0, weekly_used_pct 80.0, opus_used_pct 96, week_elapsed_pct 75.24.
+  weekly_heat 1.0633 < 1.1 -> governor disengaged; opus_heat 1.2759 > 1.2 -> promote blocked.
+  Direction-free structural fact: week_resets_at 1786942799 falls AFTER stop_at 1786879464,
+  so gear 1 is fixed for the whole run regardless of any trend (L-032 - no trend claimed).
+
+DENIED CAPABILITIES this kickoff, each reported as not-run rather than as passed:
+  - settings.json write (additionalDirectories + allowlist entries for swarm-budget.sh /
+    swarm-playbook.sh / swarm-craft.mjs): DENIED headless. This is KI-5 and it cannot be
+    self-healed from a headless session - a human must add the entries. Third run in a row.
+  - headless zero-prompt assert (`claude -p "/swarm status ..."`): NOT RUN, `claude` is not on
+    the Bash allowlist. Watchdog relaunches may stall; mitigating evidence is that the pacer
+    spawned 47 headless cycles on the previous run under these same permissions.
+  - Artifact publish: tool absent in a -p session. runs/dashboard.html written locally, which
+    IS the publication on the VPS. publish_failures left at 0 - no attempt was made.
+infra verified live, not assumed: systemctl is-enabled swarm-watchdog.timer -> enabled;
+  systemctl is-active swarm-pacer.timer -> active; .ntfy.json present; goodnight push ->
+  "2026-08-15T11:32:33+0000 send goodnight ok" in runs/notify.log.
+next: cycle 2 - inline PLAN pass to cover I-1..I-6 in the backlog (PLAN gate, cycle.md step 4).

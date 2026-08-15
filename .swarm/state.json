@@ -2,17 +2,17 @@
   "idea": "tiny CLI that prints a random programming aphorism",
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
-  "phase": "DONE",
+  "phase": "PLAN",
   "cycle": 1,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": { "launch_name": "", "port": 0 },
   "spec_digest": [
-    "zero-dep Node CLI: prints one random programming aphorism + attribution to stdout",
-    "must: >=40-entry corpus, flags --author/--tag/--seed/--list/--json/--help, node --test suite",
-    "rules: seed is deterministic, filters AND together, empty match = exit 1 + stderr only",
-    "non-goals: network, LLM, database, npm publishing",
-    "taste: unix-quiet, pipeable, errors to stderr, aphorism is the product"
+    "IMPROVEMENT RUN on a shipped zero-dep Node CLI: harden, document, repair — no new features",
+    "must: close the --seed non-finite determinism hole; mutation-measured tests only; 3 doc divergences; corpus triage; playbook repair",
+    "rules unchanged: seed deterministic, filters AND together, empty match = exit 1 + stderr only",
+    "non-goals this run: rotation, --width, NO_COLOR dim, network, npm publishing — all features",
+    "taste: unix-quiet, pipeable, errors to stderr, the aphorism is the product"
   ],
   "decisions": [
     {
@@ -29,26 +29,47 @@
       "cycle": 1,
       "what": "corrected test_cmd from `node --test test/` to `node --test test/*.test.js` in SPEC.md and README.md",
       "why": "the documented command fails on Node 24 with MODULE_NOT_FOUND; the glob form runs all 48 tests green. Correcting a broken command string, NOT weakening a gate — the suite and its assertions are unchanged."
+    },
+    {
+      "cycle": 1,
+      "what": "IMPROVEMENT RUN kickoff 2026-08-15: SPEC.md rewritten additively — the 2026-08-14 product spec is preserved verbatim and marked verified-done; a new 'Improvement run must-haves' section (I-1..I-6) scopes this run only",
+      "why": "allocator auto-kickoff (source=allocator, brief 'harden tests, fix playbook items, polish docs — no new features'). The product spec is the floor this run must not break, not the work; keeping it verbatim makes a regression visible as a diff against a frozen block rather than as a rewrite."
+    },
+    {
+      "cycle": 1,
+      "what": "DEVIATION: proceeded past the kickoff spec-confirmation gate with no user confirmation, under stated assumptions printed in the kickoff transcript with the taste critique",
+      "why": "headless allocator auto-kickoff has no user to confirm and SKILL.md defines no non-interactive behaviour for that gate — the exact house-rules gap this target's own RETRO (2026-08-14) proposed be settled. Recorded as a deviation rather than silently treated as confirmed."
+    },
+    {
+      "cycle": 1,
+      "what": "New tests are admitted ONLY for measured mutation survivors, classified HOLE or BOUNDARY before any hardening",
+      "why": "taste judge scored scope-fits-night 5/10 and named shortcut risk as load-bearing; the stress-test's toy-version trap landed on exactly this work type. Playbook L-031 (mutation-measure, don't read for gaps), L-029 (failable AND attributable), L-033 (HOLE vs BOUNDARY) are the guard. Test-count is not a deliverable."
     }
   ],
   "known_issues": [
     {
-      "id": "KI-1",
-      "desc": "no git remote — two commits are local-only; gh repo create needed a settings.json allowlist edit that the headless session was denied",
-      "severity": "medium",
-      "cycle_found": 1
-    },
-    {
       "id": "KI-2",
-      "desc": "corpus attributions are unaudited — entry shape is machine-verified but no check can confirm each of the 50 quotes is correctly attributed; programming aphorisms are widely misattributed",
+      "desc": "corpus attributions are unaudited — entry shape is machine-verified but no check available to this run can confirm each of the 50 quotes is correctly attributed; programming aphorisms are widely misattributed. Item I-4 produces a risk-ranked triage for a human, NOT an audit.",
       "severity": "high",
       "cycle_found": 1
     },
     {
       "id": "KI-3",
-      "desc": "--list silently ignores --seed; defensible but not stated in the SPEC Domain rules",
+      "desc": "--list silently ignores --seed; defensible but not stated in the SPEC Domain rules. Scoped to item I-3(b) this run.",
       "severity": "low",
       "cycle_found": 1
+    },
+    {
+      "id": "KI-4",
+      "desc": "--seed with a numeric-but-non-finite value (Infinity, -Infinity) is accepted by args.js (Number('Infinity') is not NaN) and then silently falls through select.js's Number.isFinite guard to Math.random() — exit 0, non-deterministic. VERIFIED at 2026-08-15 kickoff: 6 distinct aphorisms in 6 runs of `--seed Infinity --json`. Violates the Domain rule that a seeded pick is deterministic. Scoped to item I-1.",
+      "severity": "high",
+      "cycle_found": 2
+    },
+    {
+      "id": "KI-5",
+      "desc": "SWARM playbook file (SWARM/playbook/learnings.md) holds 31 lessons against its documented cap of 20 and carries three duplicate IDs (L-023, L-025, L-026 each appear twice); bin/swarm-playbook.sh is not on the Bash allowlist so the curation script cannot be run from a headless session. Scoped to item I-5.",
+      "severity": "medium",
+      "cycle_found": 2
     }
   ],
   "qa": { "last_full_qa_cycle": 0, "last_look_cycle": 0, "last_taste_cycle": 0 },
