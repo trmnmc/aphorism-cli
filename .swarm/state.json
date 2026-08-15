@@ -363,6 +363,6 @@
     "n": 29,
     "work": "T-025 -- decide the band heading separated from its table by prose: harden or document as BOUNDARY. Pre-dispatch conductor probe (18 cells) + sealed pre-commitment, then ONE sonnet builder (k_cap 1), direct Agent call into the target tree, file scope test/readme-tags.test.js alone.",
     "outcome": "VERIFIED DONE, and the item's filed BOUNDARY premise was refuted by measurement. Classified HOLE; extractBandTablesFromReadme now tolerates ordinary prose between a heading and its table, stopping at any line carrying its own band token. Gate 20/20 (.swarm/runs/cycle-029-verify-T-025.txt): scope clean, one test added (73 -> 74), the false rejection removed (RED 73/72/1 at HEAD -> GREEN 74/74/0), still loud on a real defect (74/72/2), no wrong README traded RED->GREEN, no new false rejection on a correct README, and attribution proven both ways (new test fails alone at 74/73/1 against the old scan; without it the old scan is 73/73/0). Conductor probe N1 then closed the gate's own blind spot -- orphan tables under band-token-less headings -- both caught LOUD. T-026 filed from the builder's volunteered uncertainty. counters.consecutive_no_value 1 -> 0.",
-    "commit": "PENDING"
+    "commit": "5556018"
   }
 }
