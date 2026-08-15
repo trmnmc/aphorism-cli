@@ -4634,3 +4634,26 @@ conductor-owned WRAP_UP item and is untouched.
 ```runfile-mirror
 {"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":8,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","promote":false,"demote":true,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":90,"opus_used_pct":97,"week_elapsed_pct":82.43,"weekly_heat":1.0918,"opus_heat":1.1767,"ceiling":5,"promote_blocked":false}},"watchdog":{"mode":"normal","plist_loaded":true},"caffeinate_pid":0,"wrap_up_complete":false}
 ```
+
+### cycle 34 addendum — step 8: the carried-forward renderer's timeline substitution is DEAD
+
+`runs/cycle-034-render.js` (carried from cycle 33 unchanged in structure) made 8 of its 9
+substitutions and printed `!! NO-OP substitution: timeline`. Its tail anchor expects the timeline
+to close with `</div></section>` or `</div><!-- /TIMELINE -->`; the live markup closes with
+`</span></div></div>` followed by the Hero comment, so the regex cannot match. The cycle-33 tick is
+in the file, so that render hit the same no-op and its tick reached the page by some other path.
+
+It fails QUIETLY in the way that matters: the script warns on stdout but still writes the file, so a
+conductor who does not read the render output publishes a dashboard whose timeline silently stopped
+growing while every other panel updated. That is the same failure DIRECTION this cycle spent itself
+removing from the target's own guards, in the orchestrator's reporting layer instead of the product.
+
+Repaired this cycle by inserting the tick against a uniqueness-checked literal anchor (anchor count
+asserted == 1 before writing; 32 ticks present afterwards, cycle 34 confirmed). The renderer is a
+per-cycle script under `runs/`, not a fenced tool, so the next conductor should fix the anchor in
+their own copy rather than inherit the dead regex a third time.
+
+Step-8 notifications: none due — phase unchanged (POLISH), no target became stalled, and
+`publish_failures` stayed 0. Artifact publish skipped silently: no Artifact tool in a headless VPS
+session, which cycle.md states is not a publish failure. The local `runs/dashboard.html` write IS
+the publication here.
