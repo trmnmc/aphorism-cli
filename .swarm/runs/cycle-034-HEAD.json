@@ -1,0 +1,94 @@
+[
+ {
+  "cell": "B0",
+  "arm": "HEAD",
+  "tests": 78,
+  "pass": 78,
+  "fail": 0,
+  "verdict": "GREEN",
+  "failing": []
+ },
+ {
+  "cell": "B1",
+  "arm": "HEAD",
+  "tests": 78,
+  "pass": 78,
+  "fail": 0,
+  "verdict": "GREEN",
+  "failing": []
+ },
+ {
+  "cell": "B2",
+  "arm": "HEAD",
+  "tests": 78,
+  "pass": 77,
+  "fail": 1,
+  "verdict": "RED",
+  "failing": [
+   {
+    "name": "README Attribution section HIGH-risk count must match the triage doc table (C2)",
+    "message": "README Attribution section states 9 entries are rated HIGH, but docs/corpus-attribution-triage.md has 8 rows rated HIGH"
+   }
+  ]
+ },
+ {
+  "cell": "B3",
+  "arm": "HEAD",
+  "tests": 78,
+  "pass": 78,
+  "fail": 0,
+  "verdict": "GREEN",
+  "failing": []
+ },
+ {
+  "cell": "B4",
+  "arm": "HEAD",
+  "tests": 78,
+  "pass": 77,
+  "fail": 1,
+  "verdict": "RED",
+  "failing": [
+   {
+    "name": "README Attribution section HIGH-risk count must match the triage doc table (C2)",
+    "message": "README Attribution section states 9 entries are rated HIGH, but docs/corpus-attribution-triage.md has 8 rows rated HIGH"
+   }
+  ]
+ },
+ {
+  "cell": "B5",
+  "arm": "HEAD",
+  "tests": 78,
+  "pass": 77,
+  "fail": 1,
+  "verdict": "RED",
+  "failing": [
+   {
+    "name": "README Attribution section HIGH-risk count must match the triage doc table (C2)",
+    "message": "could not find a \"<N> are rated HIGH\" claim in the Attribution section -- this claim must fail loud, not pass silently, when it cannot be parsed"
+   }
+  ]
+ },
+ {
+  "cell": "B6",
+  "arm": "HEAD",
+  "tests": 78,
+  "pass": 78,
+  "fail": 0,
+  "verdict": "GREEN",
+  "failing": []
+ },
+ {
+  "cell": "B7",
+  "arm": "HEAD",
+  "tests": 78,
+  "pass": 77,
+  "fail": 1,
+  "verdict": "RED",
+  "failing": [
+   {
+    "name": "README Attribution section corpus-size claim must match corpus.length (C1)",
+    "message": "README Attribution section states the triage doc ranks 51 entries, but corpus.length is 50"
+   }
+  ]
+ }
+]

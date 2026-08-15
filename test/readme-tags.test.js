@@ -721,27 +721,109 @@ function getLayoutSection(readmeContent) {
 // Helper: within a block of text, split on em/en dashes (the punctuation
 // this README actually uses to set off parenthetical asides -- see the
 // Attribution section's "... to be wrong -- 8 are rated HIGH -- and says
-// ..." construction) and, in whichever dash-delimited clause contains
-// `marker`, return the digit run closest to (immediately preceding) that
-// marker. This is keyed to the marker word/token that carries the claim's
-// actual meaning ("entries", "HIGH"), never to the verb or descriptive
-// prose around it, so rewording "ranks all 50 entries" to "catalogs all 50
-// entries" or "8 are rated HIGH" to "8 fall into the HIGH tier" leaves the
-// extraction unaffected. Returns null (never a wrong number) if the marker
-// cannot be found anywhere, so callers can fail loud on a parse miss
-// instead of silently comparing null-derived data.
-function extractNearestPrecedingCount(text, markerPattern) {
+// ..." construction) and return the digit binding for EVERY occurrence of
+// `marker` anywhere in the text -- not just the first clause that contains
+// one, and not just the first (or last) occurrence within a clause.
+//
+// Why "every occurrence", not "first" or "last": a README that states a
+// count once correctly and once incorrectly is self-contradictory, and a
+// reader trusts whichever occurrence they happen to read. Binding to only
+// one position (first OR last) makes the guard's behaviour depend on which
+// of two contradictory claims happens to appear earlier in the prose --
+// that is a hole, not a fix, no matter which position wins. Collecting
+// every occurrence and later requiring ALL of them to agree with the truth
+// (see the two C1/C2 tests below) is symmetric in document order: it does
+// not matter whether the true claim or the false one comes first.
+//
+// Digit-window scoping, decided deliberately: each occurrence's bound digit
+// is the nearest preceding digit run WITHIN THAT OCCURRENCE'S OWN CLAUSE,
+// searched only up to that occurrence's own position (not the whole
+// clause). Two things this rules out:
+//   - Scoping to the whole SECTION (not the clause) would let an unrelated
+//     number from a different parenthetical aside bind to this marker.
+//   - Scoping each occurrence to "nearest digit anywhere in the clause"
+//     (rather than "nearest digit before THIS occurrence") would make two
+//     occurrences of the same marker within one clause re-bind the SAME
+//     digit run instead of two different ones -- e.g. "8 are rated HIGH
+//     and 9 are rated HIGH" must yield bindings [8, 9], not [8, 8] (which
+//     would hide the fact that the clause states two different numbers).
+//     Advancing the window to "up to this occurrence's own index" is what
+//     keeps the second HIGH from grabbing the first HIGH's digit.
+//
+// Keyed to the marker word/token that carries the claim's actual meaning
+// ("entries", "HIGH"), never to the verb or descriptive prose around it, so
+// rewording "ranks all 50 entries" to "catalogs all 50 entries" or "8 are
+// rated HIGH" to "8 fall into the HIGH tier" leaves the extraction
+// unaffected.
+//
+// Returns an array of { value, context } bindings -- context is the
+// trimmed, whitespace-collapsed clause the binding came from, kept so a
+// mismatch assertion can tell a reader WHICH sentence in their README holds
+// which number, not merely that two numbers disagree. A marker occurrence
+// with no preceding digit in its own clause contributes no binding (it is
+// not evidence either way -- mirrors the previous null-return for an
+// unparseable clause). An empty return means the marker never occurred
+// anywhere with a bindable digit, which callers must treat as a loud parse
+// failure, never a silent pass.
+function collectMarkerBindings(text, markerPattern) {
   const clauses = text.split(/[–—]/); // en dash, em dash
+  const globalMarker = new RegExp(
+    markerPattern.source,
+    markerPattern.flags.includes('g') ? markerPattern.flags : markerPattern.flags + 'g'
+  );
+  const bindings = [];
+
   for (const clause of clauses) {
-    const markerIdx = clause.search(markerPattern);
-    if (markerIdx === -1) continue;
-    const before = clause.slice(0, markerIdx);
-    const digitMatches = before.match(/\d+/g);
-    if (digitMatches && digitMatches.length > 0) {
-      return parseInt(digitMatches[digitMatches.length - 1], 10);
+    globalMarker.lastIndex = 0;
+    let match;
+    while ((match = globalMarker.exec(clause)) !== null) {
+      const before = clause.slice(0, match.index);
+      const digitMatches = before.match(/\d+/g);
+      if (digitMatches && digitMatches.length > 0) {
+        bindings.push({
+          value: parseInt(digitMatches[digitMatches.length - 1], 10),
+          context: clause.trim().replace(/\s+/g, ' '),
+        });
+      }
+      // Defensive only: markerPattern here is always \b-anchored, so
+      // matches are never zero-width, but guard against an infinite loop
+      // regardless.
+      if (globalMarker.lastIndex === match.index) globalMarker.lastIndex++;
     }
   }
-  return null;
+
+  return bindings;
+}
+
+// Helper: turn a set of bindings (from collectMarkerBindings) and the
+// independently-derived true value into an assertion message that NAMES the
+// wrong number(s), rather than just reporting "mismatch". Handles both
+// shapes a reader can hit:
+//   - one binding is right, another is wrong -- names the wrong one(s) and
+//     says they contradict the true value.
+//   - EVERY binding is wrong (including the case where two bindings
+//     disagree with each other and neither happens to equal the truth) --
+//     says plainly that none of the stated figures match, and lists all of
+//     them, so a reader is not told "matches nothing" without being told
+//     what the nothing was.
+function formatBindingMismatch(bindings, truth, subjectLabel) {
+  const wrongBindings = bindings.filter((b) => b.value !== truth);
+  const correctCount = bindings.length - wrongBindings.length;
+  const wrongList = wrongBindings
+    .map((b) => b.value + ' (in "...' + b.context + '...")')
+    .join(', and also as ');
+
+  if (correctCount > 0) {
+    return (
+      'README Attribution section states ' + subjectLabel + ' as ' + truth +
+      ' in one place, but ALSO states it as ' + wrongList + ' elsewhere -- these contradict ' +
+      'each other; the true value is ' + truth
+    );
+  }
+  return (
+    'README Attribution section states ' + subjectLabel + ' as ' + wrongList +
+    ' -- NONE of these match the true value: ' + subjectLabel + ' is ' + truth
+  );
 }
 
 // Helper: parse the triage doc's "| # | Aphorism | Author | Risk | Signal |
@@ -791,18 +873,21 @@ test('README Attribution section corpus-size claim must match corpus.length (C1)
   const readmeContent = fs.readFileSync(readmePath, 'utf8');
   const attributionSection = getAttributionSection(readmeContent);
 
-  const statedEntries = extractNearestPrecedingCount(attributionSection, /\bentries\b/);
+  const bindings = collectMarkerBindings(attributionSection, /\bentries\b/);
   assert(
-    statedEntries !== null,
+    bindings.length > 0,
     'could not find a "<N> entries" claim in the Attribution section -- ' +
       'this claim must fail loud, not pass silently, when it cannot be parsed'
   );
 
+  // ALL occurrences of the claim must agree with corpus.length -- not just
+  // whichever one appears first or last in the section (see
+  // collectMarkerBindings above for why picking a position is disqualified).
+  const wrongBindings = bindings.filter((b) => b.value !== corpus.length);
   assert.equal(
-    statedEntries,
-    corpus.length,
-    'README Attribution section states the triage doc ranks ' + statedEntries +
-      ' entries, but corpus.length is ' + corpus.length
+    wrongBindings.length,
+    0,
+    formatBindingMismatch(bindings, corpus.length, 'the corpus-size ("entries") claim')
   );
 });
 
@@ -811,9 +896,9 @@ test('README Attribution section HIGH-risk count must match the triage doc table
   const readmeContent = fs.readFileSync(readmePath, 'utf8');
   const attributionSection = getAttributionSection(readmeContent);
 
-  const statedHigh = extractNearestPrecedingCount(attributionSection, /\bHIGH\b/);
+  const bindings = collectMarkerBindings(attributionSection, /\bHIGH\b/);
   assert(
-    statedHigh !== null,
+    bindings.length > 0,
     'could not find a "<N> are rated HIGH" claim in the Attribution section -- ' +
       'this claim must fail loud, not pass silently, when it cannot be parsed'
   );
@@ -828,11 +913,15 @@ test('README Attribution section HIGH-risk count must match the triage doc table
   );
   const actualHigh = riskRows.filter(risk => risk === 'HIGH').length;
 
+  // ALL occurrences of the claim must agree with the triage doc's actual
+  // HIGH count -- not just whichever one appears first or last in the
+  // section (see collectMarkerBindings above for why picking a position is
+  // disqualified).
+  const wrongBindings = bindings.filter((b) => b.value !== actualHigh);
   assert.equal(
-    statedHigh,
-    actualHigh,
-    'README Attribution section states ' + statedHigh + ' entries are rated HIGH, but ' +
-      'docs/corpus-attribution-triage.md has ' + actualHigh + ' rows rated HIGH'
+    wrongBindings.length,
+    0,
+    formatBindingMismatch(bindings, actualHigh, 'the HIGH-risk count claim')
   );
 });
 
