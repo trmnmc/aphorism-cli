@@ -1,0 +1,293 @@
+{
+  "results": {
+    "S1": {
+      "runs": {
+        "r1": {
+          "argv": [
+            "--seed",
+            "42",
+            "--json"
+          ],
+          "status": 0,
+          "signal": null,
+          "stdout": "{\"text\":\"Bad programmers worry about the code. Good programmers worry about data structures and their relationships.\",\"author\":\"Linus Torvalds\",\"tags\":[\"design\",\"data\"]}\n",
+          "stderr": ""
+        },
+        "r2": {
+          "argv": [
+            "--seed",
+            "42",
+            "--json"
+          ],
+          "status": 0,
+          "signal": null,
+          "stdout": "{\"text\":\"Bad programmers worry about the code. Good programmers worry about data structures and their relationships.\",\"author\":\"Linus Torvalds\",\"tags\":[\"design\",\"data\"]}\n",
+          "stderr": ""
+        },
+        "r3": {
+          "argv": [
+            "--seed",
+            "42"
+          ],
+          "status": 0,
+          "signal": null,
+          "stdout": "Bad programmers worry about the code. Good programmers worry about data structures and their relationships.\n    — Linus Torvalds\n",
+          "stderr": ""
+        },
+        "r4": {
+          "argv": [
+            "--seed",
+            "Infinity",
+            "--json"
+          ],
+          "status": 0,
+          "signal": null,
+          "stdout": "{\"text\":\"Simplicity does not precede complexity, but follows it.\",\"author\":\"Alan Perlis\",\"tags\":[\"simplicity\",\"complexity\"]}\n",
+          "stderr": ""
+        },
+        "r5": {
+          "argv": [
+            "--seed",
+            "Infinity",
+            "--json"
+          ],
+          "status": 0,
+          "signal": null,
+          "stdout": "{\"text\":\"Simplicity does not precede complexity, but follows it.\",\"author\":\"Alan Perlis\",\"tags\":[\"simplicity\",\"complexity\"]}\n",
+          "stderr": ""
+        },
+        "r6": {
+          "argv": [
+            "--seed",
+            "-2.5",
+            "--json"
+          ],
+          "status": 0,
+          "signal": null,
+          "stdout": "{\"text\":\"Elegance is not a dispensable luxury but a quality that decides between success and failure.\",\"author\":\"Edsger W. Dijkstra\",\"tags\":[\"elegance\",\"design\"]}\n",
+          "stderr": ""
+        },
+        "r7": {
+          "argv": [
+            "--seed",
+            "-2.5",
+            "--json"
+          ],
+          "status": 0,
+          "signal": null,
+          "stdout": "{\"text\":\"Elegance is not a dispensable luxury but a quality that decides between success and failure.\",\"author\":\"Edsger W. Dijkstra\",\"tags\":[\"elegance\",\"design\"]}\n",
+          "stderr": ""
+        }
+      },
+      "allExit0": true,
+      "allStderrEmpty": true,
+      "r1Json": {
+        "text": "Bad programmers worry about the code. Good programmers worry about data structures and their relationships.",
+        "author": "Linus Torvalds",
+        "tags": [
+          "design",
+          "data"
+        ]
+      },
+      "r1ParseErr": null,
+      "pair12": true,
+      "pair45": true,
+      "pair67": true,
+      "r3ContainsText": true
+    },
+    "S2": {
+      "r1": {
+        "status": 0,
+        "stderr": "",
+        "lineCount": 50,
+        "allLinesMatchEmDash": true,
+        "sampleLines": [
+          "Premature optimization is the root of all evil. — Donald Knuth",
+          "Beware of bugs in the above code; I have only proved it correct, not tried it. — Donald Knuth",
+          "Any fool can write code that a computer can understand. Good programmers write code that humans can understand. — Martin Fowler"
+        ],
+        "hasPlainHyphenInstead": false
+      },
+      "r2": {
+        "status": 0,
+        "stderr": "",
+        "byteIdenticalToR1": true
+      },
+      "r3": {
+        "status": 2,
+        "stdout": "",
+        "stdoutBytes": 0,
+        "stderr": "aphorism: flag --seed requires a numeric value\n"
+      }
+    },
+    "S3": {
+      "substitutions": {
+        "T": "performance",
+        "TCaseSwapped": "PERFORMANCE",
+        "P": "performanc"
+      },
+      "tagLenCheck": {
+        "held": true,
+        "how_checked": "harvested tags of length>=2: [\"performance\",\"optimization\",\"testing\",\"humor\",\"readability\",\"design\",\"naming\",\"caching\",\"simplicity\",\"reliability\"]"
+      },
+      "S_T_count": 4,
+      "S_P_count": 0,
+      "sMinusP_count": 4,
+      "run2": {
+        "status": 0,
+        "stderr": "",
+        "run2ParseErr": null,
+        "run2MatchesST": true,
+        "count": 4
+      },
+      "run3": {
+        "status": 0,
+        "run3ByteIdenticalToRun2": true
+      },
+      "run4": {
+        "status": 1,
+        "stdout": "",
+        "stderr": "aphorism: no aphorism matches those filters\n",
+        "run4ParseErr": null,
+        "verdict": {
+          "expectExit1": true,
+          "actualExit": 1,
+          "stdoutBytes": 0,
+          "stderrNonEmpty": true,
+          "ok": true
+        },
+        "leakedTOnlyEntriesCount": 0,
+        "leakedTOnlyEntries": []
+      }
+    },
+    "S4": {
+      "substitutions": {
+        "chosenAuthor": "Donald Knuth",
+        "A": "ONAL",
+        "T": "performance"
+      },
+      "S_A_count": 2,
+      "S_T_count": 4,
+      "S_AT_count": 1,
+      "unionCount": 5,
+      "unionStrictlyLargerThanIntersection": true,
+      "run2": {
+        "status": 0,
+        "stderr": "",
+        "matchesSA": true,
+        "count": 2
+      },
+      "run3": {
+        "status": 0,
+        "stderr": "",
+        "matchesST": true,
+        "count": 4
+      },
+      "run4": {
+        "status": 0,
+        "stdout": "{\"text\":\"Premature optimization is the root of all evil.\",\"author\":\"Donald Knuth\",\"tags\":[\"performance\",\"optimization\"]}\n",
+        "stderr": "",
+        "verdict": {
+          "expectExit1": false,
+          "actualExit": 0,
+          "matchesSAT": true,
+          "matchesUnionInstead": false,
+          "S_AT_count": 1,
+          "run4Count": 1
+        }
+      }
+    },
+    "S5": {
+      "probeAuthor": "qxzv-no-such-author-31337",
+      "probeTag": "qxzv-no-such-tag-31337",
+      "realAuthorFragment": "Donald",
+      "assumptionAuthorHeld": true,
+      "assumptionTagHeld": true,
+      "r2": {
+        "status": 1,
+        "stdoutBytes": 0,
+        "stderrBytes": 44,
+        "stdoutRaw": "\"\"",
+        "stderrRaw": "\"aphorism: no aphorism matches those filters\\n\"",
+        "ok": true
+      },
+      "r3": {
+        "status": 1,
+        "stdoutBytes": 0,
+        "stderrBytes": 44,
+        "stdoutRaw": "\"\"",
+        "stderrRaw": "\"aphorism: no aphorism matches those filters\\n\"",
+        "ok": true
+      },
+      "r4": {
+        "status": 1,
+        "stdoutBytes": 0,
+        "stderrBytes": 44,
+        "stdoutRaw": "\"\"",
+        "stderrRaw": "\"aphorism: no aphorism matches those filters\\n\"",
+        "ok": true
+      }
+    },
+    "S6": {
+      "r1": {
+        "status": 2,
+        "stdoutBytes": 0,
+        "stderrBytes": 37,
+        "stdoutRaw": "\"\"",
+        "stderrRaw": "\"aphorism: unknown flag: --frobnicate\\n\"",
+        "ok": true
+      },
+      "r2": {
+        "status": 2,
+        "stdoutBytes": 0,
+        "stderrBytes": 39,
+        "stdoutRaw": "\"\"",
+        "stderrRaw": "\"aphorism: flag --seed requires a value\\n\"",
+        "ok": true
+      },
+      "r3": {
+        "status": 0,
+        "stderr": "",
+        "stdoutLineCount": 1,
+        "r3Obj": {
+          "text": "The best way to predict the future is to invent it.",
+          "author": "Alan Kay",
+          "tags": [
+            "innovation"
+          ]
+        },
+        "r3ParseErr": null,
+        "hasRequiredKeys": true
+      },
+      "r4": {
+        "status": 0,
+        "stderr": ""
+      },
+      "pair34": true
+    }
+  },
+  "harvest_meta": {
+    "status": 0,
+    "stderr": "",
+    "count": 50,
+    "harvestErr": null,
+    "sample": [
+      {
+        "text": "Premature optimization is the root of all evil.",
+        "author": "Donald Knuth",
+        "tags": [
+          "performance",
+          "optimization"
+        ]
+      },
+      {
+        "text": "Beware of bugs in the above code; I have only proved it correct, not tried it.",
+        "author": "Donald Knuth",
+        "tags": [
+          "testing",
+          "humor"
+        ]
+      }
+    ]
+  }
+}
