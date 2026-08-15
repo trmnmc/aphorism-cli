@@ -35,7 +35,7 @@ filters and with `--seed`.
 ```sh
 node bin/aphorism.js --author dijkstra
 node bin/aphorism.js --tag simplicity --seed 42
-node bin/aphorism.js --seed $(date +%Y%m%d)      # same aphorism all day; changes at local midnight
+node bin/aphorism.js --seed $(date +%Y%m%d)      # same aphorism all day; seed refreshes at local midnight
 node bin/aphorism.js --json | jq -r .author
 node bin/aphorism.js --list --tag debugging
 ```
