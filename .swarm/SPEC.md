@@ -38,21 +38,28 @@ MOTD, or `.bashrc` — and who will be annoyed by anything that prints more than
 <!-- The PLAN gate (cycle.md step 4) holds until every box below is covered by a
      backlog item. Checked off only after conductor verification, never by claim. -->
 
-- [ ] **I-1 Determinism hole closed.** `--seed Infinity` (and `-Infinity`) currently exits 0
+- [x] **I-1 Determinism hole closed.** `--seed Infinity` (and `-Infinity`) currently exits 0
       and picks a DIFFERENT aphorism every run — verified at kickoff, 6 distinct outputs in
       6 runs — silently violating the Domain rule that a seeded pick is deterministic.
       Resolved to ONE of: deterministic pick, or exit 2 as a usage error. Whichever is
       chosen is stated in Domain rules and README, and proven by a test that is both
       failable and attributable.
-- [ ] **I-2 Tests hardened where measurement — not reading — shows a hole.** Each documented
+- [x] **I-2 Tests hardened where measurement — not reading — shows a hole.** Each documented
       behavior is mutated against the existing suite; a test is added ONLY for a mutant that
       survives. Every added test is proven twice: it fails against its specific mutation, and
       removing it lets that mutation survive. Survivors are first classified HOLE or
       BOUNDARY; a BOUNDARY survivor is documented, never "hardened".
-- [ ] **I-3 Three doc/behaviour divergences closed, identically in SPEC.md and README.md.**
+- [x] **I-3 Three doc/behaviour divergences closed, identically in SPEC.md and README.md.**
       (a) `--author` is documented as a case-insensitive match but implemented as substring
       containment; (b) `--list` silently ignores `--seed` (KI-3); (c) `--list --json` emits
       one JSON object per line, a combination no rule describes.
+      <!-- Closed cycle 7 as a SUPERSET of the three named above: six rulings landed —
+           (a), (b), (c) plus the I-1 non-finite-seed resolution, the `--tag` whole-tag
+           contrast, and the `--list` line format (`<text> — <author>`), which cycle 5
+           found was pinned by a test while no rule described it. Every ruling was
+           verified by executing the shipped binary, not by reading the prose:
+           36/36 checks, .swarm/runs/cycle-007-verify-I-3.txt. -->
+
 - [ ] **I-4 Corpus attribution triage (KI-2).** A risk-ranked, reasoned list of the corpus
       entries most likely to be misattributed, written for a human to settle. The corpus is
       NEVER to be reported as "audited" — no check available to this run can establish that.
@@ -92,29 +99,27 @@ loud; the aphorism is the product.
 ## Domain rules
 
 - Selection: with `--seed <n>`, the chosen index is deterministic — the same seed and the
-  same filtered candidate set always yield the same aphorism. Without `--seed`, selection
-  is uniform over the filtered candidate set.
-- Filtering: `--author` matches case-insensitively against the aphorism's `author` field;
-  `--tag` matches case-insensitively against membership in the aphorism's `tags` array.
-  Supplying both narrows to the intersection (AND, not OR).
+  same filtered candidate set always yield the same aphorism. `--seed` accepts any value
+  that `Number()` parses to a non-NaN number, including negative numbers, non-integers, and
+  `Infinity` / `-Infinity`; all are deterministic. Without `--seed`, selection is uniform
+  over the filtered candidate set.
+- Filtering: `--author` matches by substring containment, case-insensitively, against the
+  aphorism's `author` field (e.g., `--author dijk` matches "Edsger W. Dijkstra"); `--tag`
+  matches a whole tag, case-insensitively, for membership in the aphorism's `tags` array
+  (e.g., `--tag test` does not match a `testing` tag). Supplying both narrows to the
+  intersection (AND, not OR).
 - Empty candidate set after filtering is an error, not an empty success: exit code 1,
   a human-readable message on stderr, and zero bytes on stdout.
-- `--list` prints every aphorism in the filtered set, one per line, in corpus order.
+- `--list` prints every aphorism in the filtered set in corpus order, one per line, in the
+  form `<text> — <author>` (text, space, EM DASH U+2014, space, author). It accepts a valid
+  `--seed` but ignores it; no random selection occurs. Exit code 0. A seed that fails to
+  parse is still a usage error under `--list` — see Exit codes.
 - `--json` emits the selected aphorism as a single-line JSON object with at minimum the
-  keys `text`, `author`, and `tags`; it composes with the filter and seed flags.
-- Exit codes: 0 success, 1 no match, 2 bad usage (unknown flag or missing flag argument).
-
-<!-- OPEN AMBIGUITIES, to be resolved by item I-3 and then written into the rules above
-     as settled prose. Listed here so the divergence is visible while it is open, rather
-     than being silently carried by the implementation:
-       * --author: rule says "matches"; src/select.js implements substring containment
-         (`includes`), so `--author dijk` matches "Edsger W. Dijkstra". One of these is
-         the truth and both files must say it.
-       * --seed with --list: --list ignores --seed entirely (no pick happens). Defensible,
-         undocumented (KI-3).
-       * --list --json: emits one JSON object per line for the whole filtered set. No rule
-         describes the combination.
-       * --seed non-finite: see I-1. The rule says deterministic; the code silently is not. -->
+  keys `text`, `author`, and `tags`; it composes with the filter and seed flags. When combined
+  with `--list`, `--json` emits one JSON object per line (newline-delimited JSON) for each
+  entry in the filtered set, in corpus order.
+- Exit codes: 0 success, 1 no match, 2 bad usage (unknown flag, missing flag argument, or
+  seed value that `Number()` parses to NaN).
 
 ## Definition of done
 

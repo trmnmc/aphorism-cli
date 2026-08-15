@@ -22,11 +22,11 @@ Simplicity is prerequisite for reliability.
 
 | Flag | Effect |
 |---|---|
-| `--author <name>` | Only aphorisms whose author matches (case-insensitive) |
-| `--tag <tag>` | Only aphorisms carrying that tag (case-insensitive) |
-| `--seed <n>` | Deterministic pick — the same seed always yields the same aphorism |
-| `--list` | Print every aphorism in the filtered set, one per line |
-| `--json` | Emit the selected aphorism as a single-line JSON object |
+| `--author <name>` | Substring match in author, case-insensitive |
+| `--tag <tag>` | Whole tag match, case-insensitive |
+| `--seed <n>` | Deterministic for any value `Number()` parses to non-NaN |
+| `--list` | Print all aphorisms in filtered set, corpus order, one per line |
+| `--json` | Single-line JSON object |
 | `--help`, `-h` | Usage summary |
 
 `--author` and `--tag` narrow together (AND, not OR). `--json` composes with the
@@ -39,13 +39,23 @@ node bin/aphorism.js --json | jq -r .author
 node bin/aphorism.js --list --tag debugging
 ```
 
+### `--list` behaviour
+
+`--list` prints every aphorism in the filtered set in corpus order, one per line. Each
+aphorism is printed in the form `<text> — <author>` (text, space, EM DASH, space, author).
+
+`--list` accepts a valid `--seed` but ignores it — no random selection occurs. A seed that
+fails to parse is still a usage error (exit 2), even with `--list`. When combined with
+`--json`, `--list` emits one JSON object per line (newline-delimited JSON / NDJSON) for each
+entry in the filtered set, in corpus order.
+
 ## Exit codes
 
 | Code | Meaning |
 |---|---|
 | `0` | Success — an aphorism (or the help text) was printed to stdout |
 | `1` | No aphorism matched the given filters; message on stderr, stdout empty |
-| `2` | Usage error — unknown flag, non-numeric seed, or a flag missing its value |
+| `2` | Usage error — unknown flag, seed that `Number()` parses to NaN, or missing flag argument |
 
 Errors always go to stderr, so `node bin/aphorism.js --tag nonexistent > out.txt`
 leaves `out.txt` empty rather than writing a diagnostic into your pipeline.
@@ -69,5 +79,5 @@ entry point stays thin.
 node --test test/*.test.js
 ```
 
-48 tests: pure-module coverage of the selection and parsing rules, plus end-to-end tests
+Coverage of the selection and parsing rules (pure-module tests), plus end-to-end CLI tests
 that spawn the real binary and assert on stdout, stderr, and exit codes.

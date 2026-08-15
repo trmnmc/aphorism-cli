@@ -3,7 +3,7 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
   "phase": "BUILD",
-  "cycle": 6,
+  "cycle": 7,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -67,6 +67,16 @@
       "cycle": 6,
       "what": "The strict-attribution gate is measured on the TEST COUNT, not on node's skipped counter: --test-skip-pattern FILTERS matched tests out of the run (tests 58 -> 56, # skipped stays 0) rather than marking them skipped. A DENOMINATOR control was added to the harness alongside the cycle-5 SKIP-SANITY control.",
       "why": "Cycle 5's harness asserted skipped == <number of new tests> and this cycle that assertion failed while the substantive claim held (M21 + new tests filtered gave pass=56 fail=0, exactly the pre-cycle baseline). The assertion was measuring the reporter, not the claim. The fix STRENGTHENS the gate rather than relaxing it: the new DENOMINATOR control runs the pattern against PRISTINE source and requires it to remove exactly the tests added this cycle (58 -> 56, all green), which pins what was excluded; the old assertion only counted a field node never populates for filtered tests. Recorded because cycle 5's journal presents the skipped-count form as the precedent and a later cycle would otherwise re-derive this the hard way."
+    },
+    {
+      "cycle": 7,
+      "what": "The --list line format and the --list --json NDJSON shape were settled by WRITING THE RULE, not by loosening the test that had been pinning them. I-3 closed six divergences where SPEC named three.",
+      "why": "Cycle 5 surfaced a genuine tension and named both exits: a test now asserts --list's `<text> — <author>` line format, but no Domain rule promises it, so a test was acting as the de-facto spec. The two honest exits are write the rule or loosen the assertion to order-only; the dishonest one is leaving it. Chose to write the rule because --list is the flag people pipe into other tools — its line shape is a real contract in practice, and loosening would have deleted protection from a live surface to resolve a paperwork problem. Same reasoning applied to --list --json (M16): cycle 4 deferred hardening it precisely because no rule existed, so writing the NDJSON rule here is what unblocks hardening it later (new item I-8), rather than the rule being invented to bless whatever the code did."
+    },
+    {
+      "cycle": 7,
+      "what": "A docs item was gated by EXECUTING the shipped binary — 36 behavioral checks with four discriminators — not by reading the prose it produced.",
+      "why": "Every claim I-3 wrote is a claim about runtime behavior, so the docs are falsifiable exactly like code and the same evidence standard applies (hard rule 2). Reading the diff would only have confirmed the agent wrote what it was told; it could not have caught the agent transcribing a ruling the code does not actually honor. The discriminators exist because the naive checks are all passable by degenerate implementations: determinism alone is satisfied by an always-same-entry stub, so 7 seeds must reach 7 distinct aphorisms; a substring rule is only distinguishable from equality if the partial-author result set is required to EQUAL the full-name set. One imprecision was caught this way and fixed (the --list/--seed carve-out), which reading could not have surfaced."
     }
   ],
   "known_issues": [
@@ -80,7 +90,10 @@
       "id": "KI-3",
       "desc": "--list silently ignores --seed; defensible but not stated in the SPEC Domain rules. Scoped to item I-3(b) this run.",
       "severity": "low",
-      "cycle_found": 1
+      "cycle_found": 1,
+      "status": "resolved",
+      "resolved_cycle": 7,
+      "resolution": "Item I-3 landed cycle 7: the behavior was DOCUMENTED, not changed — SPEC.md Domain rules and README.md now both state that --list accepts a valid --seed and ignores it (no pick happens; exit 0), with the parse-failure carve-out named so `--list --seed abc` reading as exit 0 is impossible. Conductor-verified by execution: --list output is byte-identical across unseeded, --seed 1, --seed 999999 and --seed Infinity, while --list --seed abc still exits 2 with empty stdout. Evidence: .swarm/runs/cycle-007-verify-I-3.txt"
     },
     {
       "id": "KI-4",
@@ -111,9 +124,9 @@
     "window_tokens_attributed": 0
   },
   "last_cycle": {
-    "n": 6,
-    "work": "I-2c — two parser-level negative-seed tests (direct Agent, sonnet, k=1, scoped to test/args.test.js) + conductor harness with a new DENOMINATOR control",
-    "outcome": "1 verified; suite 56 -> 58 green; M21 failable and strictly attributable; product files byte-identical; I-2 mutation-hardening thread complete",
-    "commit": "dbde196"
+    "n": 7,
+    "work": "I-3 — six doc/behaviour divergences settled identically in SPEC.md + README.md (direct Agent, haiku, k=1, scoped to the two doc files) + conductor execution harness",
+    "outcome": "1 verified; 36/36 behavioral checks green with four discriminators; suite 58/58; zero product code touched; KI-3 resolved; OPEN AMBIGUITIES block deleted; follow-ups I-7 and I-8 opened",
+    "commit": "pending"
   }
 }

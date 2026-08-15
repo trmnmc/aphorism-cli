@@ -201,7 +201,7 @@
       "priority": 5,
       "value": "M",
       "effort": "S",
-      "status": "todo",
+      "status": "done",
       "deps": [
         "I-1"
       ],
@@ -213,7 +213,47 @@
       "packages": [],
       "model": "haiku",
       "attempts": 0,
-      "notes": "Four divergences, not three: the I-1 resolution is the fourth and is documented here rather than in I-1, keeping code and prose in separate file scopes. Documentation follows the SHIPPED behavior (--author is substring containment, case-insensitive) rather than changing behavior to match prose — changing the match semantics would be a user-visible behavior change, which the brief forbids. Depends on I-1 so the seed prose describes a resolution that has actually landed. || MEASURED EVIDENCE from I-2a (cycle 4) for divergence (c): mutant M16 rewrote --list --json from NDJSON to a single pretty-printed JSON array and the full 52-test suite stayed green, so that surface is completely unprotected today. It is deliberately NOT being hardened by I-2b/I-2c - no Domain rule describes the combination, so a test would freeze the current implementation and pre-empt this item. Settle the rule here first. || NEW measured evidence (cycle 5): the --list LINE FORMAT (\"<text> — <author>\", em dash, single line) is now pinned by the M13 order test but is stated by no Domain rule — the rules describe order and completeness of --list, never its rendering. Same shape of gap as M16: a test now enforces something the spec does not promise. I-3 should either write the rule or loosen the assertion to order-only. Do not silently leave the test as the de-facto spec."
+      "notes": "Four divergences, not three: the I-1 resolution is the fourth and is documented here rather than in I-1, keeping code and prose in separate file scopes. Documentation follows the SHIPPED behavior (--author is substring containment, case-insensitive) rather than changing behavior to match prose — changing the match semantics would be a user-visible behavior change, which the brief forbids. Depends on I-1 so the seed prose describes a resolution that has actually landed. || MEASURED EVIDENCE from I-2a (cycle 4) for divergence (c): mutant M16 rewrote --list --json from NDJSON to a single pretty-printed JSON array and the full 52-test suite stayed green, so that surface is completely unprotected today. It is deliberately NOT being hardened by I-2b/I-2c - no Domain rule describes the combination, so a test would freeze the current implementation and pre-empt this item. Settle the rule here first. || NEW measured evidence (cycle 5): the --list LINE FORMAT (\"<text> — <author>\", em dash, single line) is now pinned by the M13 order test but is stated by no Domain rule — the rules describe order and completeness of --list, never its rendering. Same shape of gap as M16: a test now enforces something the spec does not promise. I-3 should either write the rule or loosen the assertion to order-only. Do not silently leave the test as the de-facto spec. || CLOSED cycle 7, as a SUPERSET of the three divergences the SPEC named. Conductor rulings, all following SHIPPED behavior: (a) --author is substring containment, case-insensitive; (b) --tag is WHOLE-TAG membership (stated adjacent to (a) so the asymmetry is visible — it is the most confusable thing about the tool); (c) --list accepts a valid --seed and ignores it, exit 0; (d) --list --json is NDJSON, one object per line in corpus order, NOT a JSON array; (e) --list plain form is `<text> — <author>`, em dash U+2014, one line per entry — the cycle-5 gap where a test pinned what no rule promised, resolved by WRITING THE RULE rather than loosening the test, because --list output is a real piped-into contract; (f) --seed accepts every value Number() parses to non-NaN (negative, non-integer, +/-Infinity), all deterministic, NaN alone is exit 2. SPEC's OPEN AMBIGUITIES comment block deleted, not edited. README's brittle '48 tests' count replaced with a description of coverage. || VERIFIED cycle 7 by EXECUTING the shipped binary, never by reading the prose — a docs item whose claims are all behavioral is verifiable the same way a code item is. Harness .swarm/runs/cycle-007-verify-I-3.js (authored at verification time; the agent never saw it): 36/36 checks pass, evidence .swarm/runs/cycle-007-verify-I-3.txt. Four discriminators included so a degenerate implementation could not pass: partial-author result set must EQUAL the full-name set (kills an equality reading of (a)); default 2-line indented output must DIFFER from --list's 1-line form (proves (e) describes two genuinely distinct formats); 7 distinct seeds must reach 7 distinct aphorisms (a determinism check alone is satisfied by an always-same-entry stub); NDJSON first/last line must match corpus[0]/corpus[49] (order, not just parseability). Suite 58/58 green throughout; zero product code touched. CONDUCTOR PRECISION EDIT after the first harness run: the agent's '--list accepts --seed but ignores it' read as though ANY seed value were fine under --list, but the harness EDGE check proved `--list --seed abc` still exits 2. Both files now say 'accepts a valid --seed' and name the parse-failure carve-out. Nothing was weakened to open the gate — the edit made the prose match a measurement that had already passed."
+    },
+    {
+      "id": "I-7",
+      "title": "Align the --help text with the Domain rules I-3 settled",
+      "kind": "docs",
+      "priority": 6,
+      "value": "M",
+      "effort": "S",
+      "status": "todo",
+      "deps": [
+        "I-3"
+      ],
+      "files_hint": [
+        "src/args.js"
+      ],
+      "acceptance": "the HELP string describes --author as a substring match and --tag as a whole-tag match, in wording consistent with SPEC.md Domain rules and README.md, and the suite still passes",
+      "packages": [],
+      "model": "haiku",
+      "attempts": 0,
+      "notes": "FOUND cycle 7 while verifying I-3, and deliberately held OUT of I-3's scope: the HELP string lives in src/args.js, a product file, while I-3 was scoped to the two doc files, and mixing them would have broken the pairwise-disjoint file rule. HELP currently says '--author <name>  filter by author (case-insensitive)' and '--tag <tag>  filter by tag (case-insensitive)'. Neither line is FALSE — both flags are case-insensitive — but both are incomplete in exactly the way I-3 just closed elsewhere: they omit that --author is substring containment and --tag is whole-tag, which is the asymmetry users trip over. This is a third documentation surface that still carries the pre-I-3 wording. NOT a behavior change: only the help text's prose moves. Watch for a test that pins HELP content (I-2a mutated HELP and the sweep's notes should be consulted before editing) — if one exists it must be updated in the same item, and a green suite is part of the acceptance."
+    },
+    {
+      "id": "I-8",
+      "title": "Harden --list --json now that a Domain rule finally describes it",
+      "kind": "test",
+      "priority": 6,
+      "value": "M",
+      "effort": "S",
+      "status": "todo",
+      "deps": [
+        "I-3"
+      ],
+      "files_hint": [
+        "test/cli.test.js"
+      ],
+      "acceptance": "a test fails against mutant M16 (--list --json rewritten to emit one pretty-printed JSON array) and, when removed, lets M16 survive the rest of the suite",
+      "packages": [],
+      "model": "sonnet",
+      "attempts": 0,
+      "notes": "UNBLOCKED BY I-3, and only by I-3. Cycle 4's mutation sweep measured M16 — rewriting --list --json from NDJSON to a single pretty-printed JSON array — as surviving the entire 52-test suite, i.e. that surface is completely unprotected. Cycle 4 classified it DEFERRED rather than HOLE for a specific reason: no Domain rule described the combination, so a test written then would have promoted the day's implementation to a promise and pre-empted the decision I-3 existed to make. I-3 has now MADE that decision (NDJSON, one object per line, corpus order, explicitly not an array), so the surface has a rule and the deferral is spent. Same twice-proven bar as I-2b/I-2c (playbook L-029): failable against M16 specifically, and attributable in the strict form — mutation applied with the new test filtered out must leave the pre-cycle baseline green. The exact M16 mutation is recorded in .swarm/runs/cycle-004-classification.md. M22 stays BOUNDARY and is still not to be hardened."
     },
     {
       "id": "I-4",
