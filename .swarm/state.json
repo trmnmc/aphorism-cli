@@ -145,8 +145,8 @@
     },
     {
       "cycle": 18,
-      "title": "Headless builder dispatch: no /tmp worktrees",
-      "detail": "Dispatched T-012's builder into a /tmp worktree, per cycles 16-17 practice; the builder could not reach the path and reported the blocker instead of fabricating a diff. Re-dispatched into the target tree directly, which SKILL.md's headless rule prescribed all along. Recorded as KI-6 so the next cycle does not re-learn it."
+      "what": "Headless builder dispatch: no /tmp worktrees",
+      "why": "Dispatched T-012's builder into a /tmp worktree, per cycles 16-17 practice; the builder could not reach the path and reported the blocker instead of fabricating a diff. Re-dispatched into the target tree directly, which SKILL.md's headless rule prescribed all along. Recorded as KI-6 so the next cycle does not re-learn it."
     },
     {
       "cycle": 19,
