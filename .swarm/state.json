@@ -99,6 +99,6 @@
     "n": 3,
     "work": "build-wave (direct Agent, k=1) — I-1 seed-determinism fix",
     "outcome": "1 verified, 52 tests green (was 48), KI-4 resolved",
-    "commit": "pending — recorded by the follow-up commit this same cycle"
+    "commit": "85c34dc"
   }
 }
