@@ -3,7 +3,7 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
   "phase": "BUILD",
-  "cycle": 4,
+  "cycle": 5,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -57,6 +57,11 @@
       "cycle": 4,
       "what": "HOLE/BOUNDARY classification of the 7 I-2a survivors is anchored to SPEC.md Domain rules, not to intuition: 5 HOLE, 1 BOUNDARY (M22), 1 DEFERRED to I-3 (M16). M16 produces no test this cycle even though it is completely unprotected.",
       "why": "The two non-hardened survivors are non-hardened for OPPOSITE reasons and the distinction is load-bearing. M22 has a rule and satisfies it - the mutant still exits 2 with clean stdout and a stderr message, and only the message wording changes, so a test would freeze prose no rule fixes and would false-reject an honest reword. M16 has NO rule at all: --list --json is the surface SPEC itself lists under OPEN AMBIGUITIES for item I-3, so writing a test now would silently promote today's NDJSON implementation to a promise and pre-empt the decision I-3 exists to make. Hardening every survivor would have been the easy, wrong answer."
+    },
+    {
+      "cycle": 5,
+      "what": "Attribution at the gate is proven in the STRICT form — mutation applied with ALL FOUR new tests skipped must leave the suite green — rather than by removing one test at a time, and the harness carries a skip-sanity control.",
+      "why": "Per-test isolation is ambiguous when two tests observe the same mutation: M12 drops the last --list entry, which is length-changing, so it trips the M13 order test too, and isolating M12 alone still shows fail=1. That reads like a failed attribution when it is really an expected overlap. The strict form asks the question that actually matters — does the mutation survive everything that existed before this cycle? — and it landed on exactly 52 pass / 0 fail, the pre-sweep baseline, for all four. The skip-sanity control exists because ATTRIBUTABLE is a PASS-shaped result: if --test-skip-pattern had silently matched everything, all four would have 'passed' vacuously."
     }
   ],
   "known_issues": [
@@ -97,13 +102,13 @@
     "consecutive_no_value": 0,
     "consecutive_failures": 0,
     "k_current": 4,
-    "wave_streak": 0,
+    "wave_streak": 1,
     "window_tokens_attributed": 0
   },
   "last_cycle": {
-    "n": 4,
-    "work": "I-2a mutation sweep (direct Agent, sonnet, k=1) + conductor re-measurement and classification",
-    "outcome": "1 verified; 27 mutants, 7 survivors, 11/11 independent re-measurements agree; 5 HOLE / 1 BOUNDARY / 1 deferred to I-3",
-    "commit": "e1ca260"
+    "n": 5,
+    "work": "I-2b — four CLI-level HOLE tests (direct Agent, sonnet, k=1, scoped to test/cli.test.js) + independent conductor mutation harness at the gate",
+    "outcome": "1 verified; suite 52 -> 56 green; M07/M12/M13/M14 each failable and strictly attributable; product files byte-identical",
+    "commit": "PENDING"
   }
 }

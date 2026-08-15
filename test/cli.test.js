@@ -8,6 +8,7 @@ const test = require('node:test');
 const assert = require('node:assert');
 const { execFileSync, spawnSync } = require('node:child_process');
 const path = require('node:path');
+const { corpus } = require('../src/corpus.js');
 
 const BIN = path.join(__dirname, '..', 'bin', 'aphorism.js');
 
@@ -93,4 +94,59 @@ test('output is pipe-safe — no ANSI escapes when not a TTY', () => {
   const out = execFileSync(process.execPath, [BIN, '--seed', '3'], { encoding: 'utf8' });
   // eslint-disable-next-line no-control-regex
   assert.doesNotMatch(out, /\[/, 'no ANSI escapes should reach a pipe');
+});
+
+test('--tag matches membership, not substring containment', () => {
+  // Fixture assumptions, derived from the live corpus rather than hardcoded:
+  // no tag is the literal string "test", but at least one tag (e.g. "testing")
+  // contains "test" as a substring. That makes "--tag test" a probe that only
+  // a substring-matching implementation would satisfy.
+  const hasExactTagMatch = corpus.some((e) => e.tags.includes('test'));
+  assert.strictEqual(
+    hasExactTagMatch,
+    false,
+    'fixture assumption violated: corpus now has a literal "test" tag'
+  );
+  const hasSubstringTagMatch = corpus.some((e) =>
+    e.tags.some((t) => t.includes('test'))
+  );
+  assert.ok(
+    hasSubstringTagMatch,
+    'fixture assumption violated: corpus no longer has any tag containing "test" as a substring'
+  );
+
+  const r = run(['--tag', 'test']);
+  assert.strictEqual(r.status, 1, '--tag test should match nothing by membership');
+  assert.strictEqual(r.stdout, '');
+});
+
+test('--list prints exactly one line per matching entry, no drops', () => {
+  const expected = corpus.filter((e) => e.tags.includes('design'));
+  assert.ok(expected.length > 1, 'fixture assumption: need multiple "design" entries');
+  const r = run(['--tag', 'design', '--list']);
+  assert.strictEqual(r.status, 0);
+  const lines = r.stdout.trim().split('\n');
+  assert.strictEqual(lines.length, expected.length);
+});
+
+test('--list preserves corpus order (first and last line match)', () => {
+  const expected = corpus.filter((e) => e.tags.includes('design'));
+  assert.ok(expected.length > 1, 'fixture assumption: need multiple "design" entries');
+  const r = run(['--tag', 'design', '--list']);
+  assert.strictEqual(r.status, 0);
+  const lines = r.stdout.trim().split('\n');
+  const first = expected[0];
+  const last = expected[expected.length - 1];
+  assert.strictEqual(lines[0], `${first.text} — ${first.author}`);
+  assert.strictEqual(
+    lines[lines.length - 1],
+    `${last.text} — ${last.author}`
+  );
+});
+
+test('--json output is exactly one line, never pretty-printed', () => {
+  const r = run(['--json', '--seed', '1']);
+  assert.strictEqual(r.status, 0);
+  const lines = r.stdout.split('\n').filter((l) => l.length > 0);
+  assert.strictEqual(lines.length, 1, 'expected --json output to be a single line');
 });
