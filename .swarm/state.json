@@ -3,7 +3,7 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
   "phase": "POLISH",
-  "cycle": 27,
+  "cycle": 28,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -262,6 +262,21 @@
       "cycle": 27,
       "what": "The allowlist gap (KI-5) is PATH-FORM sensitive, which two cycles of journal entries had generalised wrongly: `bin/swarm-notify.sh poll` runs, `/opt/swarm/bin/swarm-notify.sh poll` is REFUSED.",
       "why": "Cycles 25 and 26 both recorded that notify poll 'RAN clean' and cycle 26 promoted it to a property -- 'one sample was luck, two is a property: notify is reachable, budget and playbook are not'. This cycle the absolute-path form was tried first and refused; the relative form then ran clean against the same binary. So the reachable/unreachable split is not a property of the SCRIPT, it is a property of the literal command string matched against the allowlist. bin/swarm-budget.sh was attempted in BOTH forms this cycle and refused in both, so its unreachability is genuine and KI-5's substance stands. Recorded because a future conductor reading cycles 25-26 would conclude the script is what matters and could log a spurious probe failure after invoking a reachable tool by its absolute path."
+    },
+    {
+      "cycle": 28,
+      "what": "T-021's fix was REJECTED and reverted after passing all 22 gate checks, including both halves of its own acceptance, both discriminators, and every loudness check. The rejection rests entirely on a follow-up probe the acceptance never asked for.",
+      "why": "The fix (scan every '### ' heading, strip backticks, take the FIRST carrying both the --list token and the word 'behaviour') did exactly what the item asked and removed the false rejection. What it also did was introduce FIRST-MATCH THEFT, and the consequence is in the dangerous direction. Probe .swarm/runs/cycle-028-probe-B4.txt, cell P3: an earlier decoy heading carrying both tokens, whose section holds a correct-looking `<text> - <author>` literal, lets the REAL section's format literal be mutated to something FALSE and the suite passes at 73/73/0. Cell P4 proves HEAD catches that identical input at 73/72/1. So the fix converts a case HEAD caught into a case nothing catches. Every member of this guard family (T-018 c20, T-020 c22, T-021 c23, T-022 c24, T-023 c25, T-025 c27) has been a LOUD false rejection, and the standing classification rule is that loud-and-wrong is the safe direction while silent-and-wrong is the failure class this run was chartered to remove. Trading the first for the second is strictly worse than leaving T-021 open, so the item goes back to todo at attempts 1 rather than being accepted with a follow-up filed. Recorded at length because the tempting reading of 22/22 is acceptance: the gate as authored was SATISFIED, and only a probe motivated by the builder's own uncertainty note found the reason not to."
+    },
+    {
+      "cycle": 28,
+      "what": "The gate demanded attribution by ASSERTION MESSAGE rather than by failing-test name, because the pre-dispatch baseline proved test-name attribution could not settle this item.",
+      "why": "Second cycle running that the pre-dispatch baseline redefined what an acceptance clause could honestly mean (cf. cycle 27, T-018). T-021's clause reads: a mutated format literal under the reformatted heading must still FAIL. Baseline cells B1 and B3 measured 73/72/1 naming the IDENTICAL test for reformat-alone and for reformat-plus-mutated-literal -- the heading parse failure masks the literal mutation, so the clause is ALREADY satisfied at HEAD and is satisfiable by a fix that never restores detection. The gate therefore captured the assertion TEXT from the TAP output and classified each red as HEADING-PARSE, LITERAL-PARSE or SEPARATOR-MISMATCH, requiring the red half to be SEPARATOR-MISMATCH. Checks A2 and A2b are the pair that makes the point: identical signatures, different causes. This is the cycle-27 A7-equals-A8 method pushed one level finer, from test identity down to failure cause, and it generalises -- any guard whose parse failure and whose substantive failure land in the same test cannot be verified by name alone."
+    },
+    {
+      "cycle": 28,
+      "what": "A harness imprecision is recorded rather than back-edited: the gate's `reason` classifier is only meaningful on a RED run.",
+      "why": "The SEPARATOR-MISMATCH branch keys on text including '--list output', which also appears in the passing test's NAME, so every GREEN run reports reason=SEPARATOR-MISMATCH spuriously (visible in probe cells P2, P3, P5). It affected no verdict: every gate check that asserted on `reason` also asserted a red signature (C1, A1b, A2, A2b, L1, L2, B2, B3), and P3's verdict rests on its 73/73/0 signature, not on its reason field. Recorded because cycle 19's harness bug -- a parse failure silently manufacturing a verdict -- is the precedent for treating instrument defects as findings in their own right, and because a later reader scanning the probe output would otherwise see 'SEPARATOR-MISMATCH' next to a green run and mistrust the whole file. Fourth cycle in this run where the instrument needed comment (cf. c19 reporter parse, c23 TAP attribution, c24 mutation helper)."
     }
   ],
   "known_issues": [
@@ -323,16 +338,16 @@
     "last_taste_cycle": 14
   },
   "counters": {
-    "consecutive_no_value": 0,
+    "consecutive_no_value": 1,
     "consecutive_failures": 0,
     "k_current": 5,
     "wave_streak": 0,
     "window_tokens_attributed": 0
   },
   "last_cycle": {
-    "n": 27,
-    "work": "T-018 -- let the README band-table parser tolerate blank lines between a band heading and its `| Tag | Count |` table. ONE sonnet builder (k_cap 1), direct Agent call into the target tree, file scope test/readme-tags.test.js alone. Fix: skip blank lines forward from i+1 and require the FIRST non-blank line to be the header row, so a heading with no table never has a later table grafted onto it.",
-    "outcome": "VERIFIED. 24/25 conductor gate checks (.swarm/runs/cycle-027-verify-T-018.txt); the one red is A9, proven by probe (.swarm/runs/cycle-027-probe-A9.txt) to be a defect in the conductor's predicate and not to belong to the item -- recorded as failed-as-authored rather than rewritten. test_cmd on the real tree, run by the conductor: 73/73/0. Scope clean: one tracked file changed, README and every product file byte-identical to HEAD, no assertion removed, no scratch residue. Two new items filed from the gate's own measurements: T-024 (M, the prose-anchor re-shape, unreachable this run) and T-025 (S, the heading-separated-by-prose BOUNDARY question).",
-    "commit": "f64fa1f"
+    "n": 28,
+    "work": "T-021 -- let the `--list` behaviour section locator tolerate a heading whose backticks were dropped. ONE sonnet builder (k_cap 1), direct Agent call into the target tree, file scope test/readme-tags.test.js alone. Fix delivered as asked: scan every '### ' heading, strip backticks, take the FIRST whose text carries both the --list token and the word 'behaviour'.",
+    "outcome": "REJECTED AT THE GATE, work REVERTED, item back to todo at attempts 1. No verified value this cycle; counters.consecutive_no_value 0 -> 1. The fix passed 22/22 conductor gate checks (.swarm/runs/cycle-028-verify-T-021.txt) including both acceptance halves, the degenerate-fix discriminator and every loudness check -- and was still rejected on probe .swarm/runs/cycle-028-probe-B4.txt. Cell P3: FIRST-MATCH-WINS lets an earlier decoy '### ' heading carrying both tokens capture the section, so a README whose REAL format literal is FALSE passes at 73/73/0; cell P4 proves HEAD catches that same input at 73/72/1. A silent hole traded for a loud false rejection is backwards on this repo's standard, so the change was reverted rather than accepted with a follow-up. test_cmd on the reverted real tree, run by the conductor: 73/73/0. T-021's acceptance has been AMENDED by measurement (fail-for-the-right-reason; no first-match theft) so the next attempt cannot repeat this. Two findings carried: the baseline's masking discovery (attribution must be by assertion message, not test name) and a harness imprecision recorded rather than back-edited.",
+    "commit": "PENDING"
   }
 }

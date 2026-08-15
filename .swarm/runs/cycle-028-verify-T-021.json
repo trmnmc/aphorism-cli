@@ -1,0 +1,174 @@
+[
+  {
+    "id": "C0.PRISTINE",
+    "ok": true,
+    "desc": "unmutated copy of the WORKED tree is green",
+    "got": "73/73/0",
+    "want": "73/73/0",
+    "detail": "if this fails, every result below is meaningless"
+  },
+  {
+    "id": "C1.NEGATIVE",
+    "ok": true,
+    "desc": "harness can produce a RED (mutated literal, heading untouched)",
+    "got": "73/72/1|SEPARATOR-MISMATCH",
+    "want": "73/72/1|SEPARATOR-MISMATCH",
+    "detail": "also proves the guard is still LIVE on the literal after the fix"
+  },
+  {
+    "id": "C2.REVERT-SOUND",
+    "ok": true,
+    "desc": "HEAD test file on an UNMUTATED README is green",
+    "got": "73/73/0",
+    "want": "73/73/0",
+    "detail": "so a red in any A*b check below measures the fix, not the swap"
+  },
+  {
+    "id": "A1.GREEN",
+    "ok": true,
+    "desc": "T-021 case: backticks dropped from the heading -> suite GREEN",
+    "got": "73/73/0",
+    "want": "73/73/0",
+    "detail": "the false rejection is removed"
+  },
+  {
+    "id": "A1b.ATTRIB",
+    "ok": true,
+    "desc": "same README against HEAD test file -> REJECTED",
+    "got": "73/72/1|HEADING-PARSE",
+    "want": "73/72/1|HEADING-PARSE",
+    "detail": "attributes A1 to this fix rather than to anything else"
+  },
+  {
+    "id": "A2.RED-REASON",
+    "ok": true,
+    "desc": "reformatted heading + mutated literal -> fails as SEPARATOR-MISMATCH",
+    "got": "73/72/1|SEPARATOR-MISMATCH",
+    "want": "73/72/1|SEPARATOR-MISMATCH",
+    "detail": "at HEAD this same input failed as HEADING-PARSE (baseline B3) -- detection is genuinely restored, not merely still-red"
+  },
+  {
+    "id": "A2b.MASK-PROOF",
+    "ok": true,
+    "desc": "the SAME input at HEAD fails as HEADING-PARSE (the masking)",
+    "got": "73/72/1|HEADING-PARSE",
+    "want": "73/72/1|HEADING-PARSE",
+    "detail": "identical test-name signature to A2, different cause -- this is exactly why the acceptance clause as written could not have settled this item"
+  },
+  {
+    "id": "D1.DECOY",
+    "ok": true,
+    "desc": "decoy literal in an EARLIER section, heading untouched -> GREEN",
+    "got": "73/73/0",
+    "want": "73/73/0",
+    "detail": "a whole-README search would hit the decoy and go red"
+  },
+  {
+    "id": "D2.DECOY+REFORMAT",
+    "ok": true,
+    "desc": "decoy literal AND reformatted heading -> GREEN",
+    "got": "73/73/0",
+    "want": "73/73/0",
+    "detail": "the shape a degenerate fix provably cannot reach; section scope survived the fix"
+  },
+  {
+    "id": "L1.NO-SECTION",
+    "ok": true,
+    "desc": "heading with NEITHER token -> loud HEADING-PARSE assert",
+    "got": "73/72/1|HEADING-PARSE",
+    "want": "73/72/1|HEADING-PARSE",
+    "detail": "a parse miss must never pass silently"
+  },
+  {
+    "id": "L2.NO-LITERAL",
+    "ok": true,
+    "desc": "format literal removed -> loud LITERAL-PARSE assert",
+    "got": "73/72/1|LITERAL-PARSE",
+    "want": "73/72/1|LITERAL-PARSE",
+    "detail": "second helper kept its loudness"
+  },
+  {
+    "id": "B1.REVERSE-ORDER",
+    "ok": true,
+    "desc": "builder said untested: \"### behaviour of --list\" -> GREEN",
+    "got": "73/73/0",
+    "want": "73/73/0",
+    "detail": "tokens in either order, as it reasoned but did not run"
+  },
+  {
+    "id": "B2.CASE",
+    "ok": true,
+    "desc": "builder said deliberate: capitalised \"Behaviour\" -> still REJECTED loud",
+    "got": "73/72/1|HEADING-PARSE",
+    "want": "73/72/1|HEADING-PARSE",
+    "detail": "scope was backtick tolerance only; case tolerance was NOT requested and is not silently added"
+  },
+  {
+    "id": "B3.SPELLING",
+    "ok": true,
+    "desc": "builder said deliberate: American \"behavior\" -> still REJECTED loud",
+    "got": "73/72/1|HEADING-PARSE",
+    "want": "73/72/1|HEADING-PARSE",
+    "detail": "same reasoning as B2"
+  },
+  {
+    "id": "B4.MISPICK",
+    "ok": true,
+    "desc": "builder's own adversarial case: an EARLIER heading carrying both tokens",
+    "got": "73/72/1",
+    "want": "73/72/1",
+    "detail": "FIRST-MATCH-WINS means the decoy heading is picked and the real section is missed. Recorded as a MEASUREMENT: red here is the newly-introduced surface, not a pass/fail of T-021 -- see the gate note. want is set to the OBSERVED-at-authoring value so the row is honest either way; the finding is reported regardless."
+  },
+  {
+    "id": "B4b.MISPICK-ATTRIB",
+    "ok": true,
+    "desc": "the SAME decoy-heading README against HEAD test file",
+    "got": "73/73/0",
+    "want": "73/73/0",
+    "detail": "HEAD matched the exact backticked heading, so it skipped the decoy. If HEAD is green and the fix is red, the mis-pick is INTRODUCED by this fix and must be filed."
+  },
+  {
+    "id": "S1.SCOPE",
+    "ok": true,
+    "desc": "exactly one tracked file changed",
+    "got": "test/readme-tags.test.js",
+    "want": "test/readme-tags.test.js"
+  },
+  {
+    "id": "S2.README",
+    "ok": true,
+    "desc": "README.md byte-identical to HEAD",
+    "got": "true",
+    "want": "true"
+  },
+  {
+    "id": "S3.PRODUCT",
+    "ok": true,
+    "desc": "every product file byte-identical to HEAD",
+    "got": "true",
+    "want": "true"
+  },
+  {
+    "id": "S4.NO-WEAKEN",
+    "ok": true,
+    "desc": "assertion count not reduced",
+    "got": "true",
+    "want": "true",
+    "detail": "HEAD=35 now=35"
+  },
+  {
+    "id": "S5.TESTCOUNT",
+    "ok": true,
+    "desc": "no test added or removed (this item changes a helper only)",
+    "got": "14",
+    "want": "14"
+  },
+  {
+    "id": "S6.SCRATCH",
+    "ok": true,
+    "desc": "builder scratch directory removed",
+    "got": "false",
+    "want": "false",
+    "detail": "KI-7 standing control"
+  }
+]

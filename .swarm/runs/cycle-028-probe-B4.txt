@@ -1,0 +1,43 @@
+=== CYCLE 28 PROBE B4 -- the check that rejected T-021 ===
+
+Motivated by the builder's own honest uncertainty note, which flagged that
+/--list\b/ would also match the --list- prefix of a longer flag and declined
+to construct the adversarial fixture ("it felt like a stretch"). It was not
+a stretch.
+
+Gate checks B4/B4b had already established the surface exists and is
+INTRODUCED by the fix (fix red, HEAD green). This probe settles the only
+question that decides the item: is the mis-pick LOUD or SILENT?
+
+[P1] decoy heading, decoy section has NO format literal
+   -> 73/72/1  reason=HEADING-PARSE
+   LOUD. Safe direction. This is the shape B4 measured.
+
+[P2] decoy section carries a CORRECT literal
+   -> 73/73/0
+   Green, and benign-LOOKING -- but it means the guard is reading the DECOY
+   section rather than the real one. Sets up P3.
+
+[P3] decoy has the CORRECT literal, the REAL section literal is FALSE
+   -> 73/73/0
+   *** SILENT HOLE. A README whose real format claim is FALSE passes. ***
+
+[P4] the SAME input as P3, against HEAD's test file
+   -> 73/72/1  reason=SEPARATOR-MISMATCH
+   HEAD CATCHES IT. So the fix converts a case the shipped suite catches
+   into a case nothing catches. This cell is the rejection.
+
+[P5] earlier heading with the --list token but WITHOUT "behaviour"
+   -> 73/73/0
+   BOTH tokens are required in the decoy heading, so the shape is narrow --
+   '### --list-only mode' alone is harmless. Narrow is not the same as
+   acceptable: the trade is still loud-wrong for silent-wrong.
+
+CONDUCTOR VERDICT: T-021 rejected, working tree reverted to HEAD, item back
+to todo with attempts 0 -> 1 and its acceptance amended by measurement.
+Conductor re-ran test_cmd on the reverted real tree: tests 73 / pass 73 /
+fail 0.
+
+Note: the `reason` field is only meaningful on a red run (see the harness
+note in cycle-028-verify-T-021.txt); P2/P3/P5 report it spuriously. The
+verdict rests on the 73/73/0 signatures, not on those labels.
