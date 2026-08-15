@@ -287,6 +287,6 @@
     "n": 23,
     "work": "test triage (one item, k_cap 1 at gear 1) -- T-017, checking the README's `--list` format literal `<text> — <author>` against what the shipped binary actually prints. Last open HOLE from the cycle-19 mutation sweep (survivor C5).",
     "outcome": "VERIFIED done. 18/18 conductor gate checks after two harness repairs (v1 had 12 false FAILs from a reporter mismatch, all in the harness, none in the item), plus 4/4 on the TRACKS addendum with a non-vacuity control. Suite 71 -> 72, pure insertion (+95 -0); test_cmd on the real tree 72/72/0, run by me. Attribution proven twice in the STRICT form with mutations the builder never saw: README literal -> \"<text> | <author>\" and README literal with the spaces removed each fail exactly one test BY NAME and each survives at the pre-cycle baseline 71/71/0 when that test is filtered out. Scope clean: +95/-0 on one file, no scratch residue. Residual filed as T-021 (LOW): the section locator requires the heading's backticks, so an honest reformat is rejected -- loudly, by name, the safe direction.",
-    "commit": null
+    "commit": "451d49a5b340941959013337345c921e06aba8d6"
   }
 }
