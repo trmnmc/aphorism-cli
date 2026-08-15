@@ -3,7 +3,7 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
   "phase": "BUILD",
-  "cycle": 5,
+  "cycle": 6,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -62,6 +62,11 @@
       "cycle": 5,
       "what": "Attribution at the gate is proven in the STRICT form — mutation applied with ALL FOUR new tests skipped must leave the suite green — rather than by removing one test at a time, and the harness carries a skip-sanity control.",
       "why": "Per-test isolation is ambiguous when two tests observe the same mutation: M12 drops the last --list entry, which is length-changing, so it trips the M13 order test too, and isolating M12 alone still shows fail=1. That reads like a failed attribution when it is really an expected overlap. The strict form asks the question that actually matters — does the mutation survive everything that existed before this cycle? — and it landed on exactly 52 pass / 0 fail, the pre-sweep baseline, for all four. The skip-sanity control exists because ATTRIBUTABLE is a PASS-shaped result: if --test-skip-pattern had silently matched everything, all four would have 'passed' vacuously."
+    },
+    {
+      "cycle": 6,
+      "what": "The strict-attribution gate is measured on the TEST COUNT, not on node's skipped counter: --test-skip-pattern FILTERS matched tests out of the run (tests 58 -> 56, # skipped stays 0) rather than marking them skipped. A DENOMINATOR control was added to the harness alongside the cycle-5 SKIP-SANITY control.",
+      "why": "Cycle 5's harness asserted skipped == <number of new tests> and this cycle that assertion failed while the substantive claim held (M21 + new tests filtered gave pass=56 fail=0, exactly the pre-cycle baseline). The assertion was measuring the reporter, not the claim. The fix STRENGTHENS the gate rather than relaxing it: the new DENOMINATOR control runs the pattern against PRISTINE source and requires it to remove exactly the tests added this cycle (58 -> 56, all green), which pins what was excluded; the old assertion only counted a field node never populates for filtered tests. Recorded because cycle 5's journal presents the skipped-count form as the precedent and a later cycle would otherwise re-derive this the hard way."
     }
   ],
   "known_issues": [
@@ -101,14 +106,14 @@
   "counters": {
     "consecutive_no_value": 0,
     "consecutive_failures": 0,
-    "k_current": 4,
-    "wave_streak": 1,
+    "k_current": 5,
+    "wave_streak": 0,
     "window_tokens_attributed": 0
   },
   "last_cycle": {
-    "n": 5,
-    "work": "I-2b — four CLI-level HOLE tests (direct Agent, sonnet, k=1, scoped to test/cli.test.js) + independent conductor mutation harness at the gate",
-    "outcome": "1 verified; suite 52 -> 56 green; M07/M12/M13/M14 each failable and strictly attributable; product files byte-identical",
-    "commit": "18d1d1e"
+    "n": 6,
+    "work": "I-2c — two parser-level negative-seed tests (direct Agent, sonnet, k=1, scoped to test/args.test.js) + conductor harness with a new DENOMINATOR control",
+    "outcome": "1 verified; suite 56 -> 58 green; M21 failable and strictly attributable; product files byte-identical; I-2 mutation-hardening thread complete",
+    "commit": "pending"
   }
 }

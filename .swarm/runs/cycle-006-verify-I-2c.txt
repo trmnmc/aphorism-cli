@@ -1,0 +1,38 @@
+TEST NAMES IN args.test.js MATCHING SKIP PATTERN 'accepts a negative number': 2
+    --seed <n> accepts a negative number
+    --seed=<n> equals form accepts a negative number
+
+--- FAILABLE: M21 applied, new tests active ---
+pass=56 fail=2 exit=1
+  FAILING: --seed <n> accepts a negative number
+  FAILING: --seed=<n> equals form accepts a negative number
+FAILABLE: PASS
+
+--- DENOMINATOR: pristine, new tests filtered out by the skip pattern ---
+tests=56 pass=56 fail=0 skipped=0
+DENOMINATOR: PASS (pattern must remove exactly the 2 tests added this cycle, leaving the 56-test baseline green)
+
+--- ATTRIBUTABLE (strict): M21 applied, new tests filtered out ---
+tests=56 pass=56 fail=0 exit=0
+ATTRIBUTABLE: PASS (expect tests=56 pass=56 fail=0)
+
+--- SKIP-SANITY: breaking control mutation, same skip pattern ---
+pass=49 fail=7 skipped=0 exit=1
+  FAILING: --seed <n> parses as a number
+  FAILING: --seed=<n> equals form parses as a number
+  FAILING: --seed is deterministic across separate processes
+  FAILING: different seeds do not all collapse to one aphorism
+  FAILING: --json emits a single-line JSON object with text/author/tags
+  FAILING: output is pipe-safe — no ANSI escapes when not a TTY
+  FAILING: --json output is exactly one line, never pretty-printed
+SKIP-SANITY: PASS (pre-existing tests must catch it)
+
+--- PRISTINE: source restored, full suite ---
+pass=58 fail=0 exit=0
+
+TREE AFTER HARNESS:
+ M test/args.test.js
+?? .swarm/runs/cycle-006-verify-I-2c.py
+?? .swarm/runs/cycle-006-verify-I-2c.txt
+
+GATE: PASS

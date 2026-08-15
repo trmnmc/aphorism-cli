@@ -180,7 +180,7 @@
       "priority": 4,
       "value": "M",
       "effort": "S",
-      "status": "todo",
+      "status": "done",
       "deps": [
         "I-2a",
         "I-2b"
@@ -192,7 +192,7 @@
       "packages": [],
       "model": "sonnet",
       "attempts": 0,
-      "notes": "Same twice-proven rule as I-2b. Scoped to test/args.test.js so it shares no file with I-2b (test/cli.test.js) or I-1 (test/select.test.js) — pairwise-disjoint even though this run's waves are size 1. If I-2a's survivors land entirely in one file, this item is closed as not-needed rather than padded with tests to justify its existence. || SETTLED by I-2a (cycle 4). Exactly ONE assigned HOLE survivor, and it does live in the parser, so this item is neither padded nor closed as not-needed: M21 - parseSeedValue rejecting negative seeds survives the whole suite, i.e. parseArgs(['--seed','-5']) yielding seed === -5 with no error is unprotected. Turning a valid invocation into exit 2 contradicts the Domain rule that exit 2 means unknown flag or missing flag argument. M22 (the other args.js survivor) is classified BOUNDARY and must NOT be hardened. Details: .swarm/runs/cycle-004-classification.md"
+      "notes": "Same twice-proven rule as I-2b. Scoped to test/args.test.js so it shares no file with I-2b (test/cli.test.js) or I-1 (test/select.test.js) — pairwise-disjoint even though this run's waves are size 1. If I-2a's survivors land entirely in one file, this item is closed as not-needed rather than padded with tests to justify its existence. || SETTLED by I-2a (cycle 4). Exactly ONE assigned HOLE survivor, and it does live in the parser, so this item is neither padded nor closed as not-needed: M21 - parseSeedValue rejecting negative seeds survives the whole suite, i.e. parseArgs(['--seed','-5']) yielding seed === -5 with no error is unprotected. Turning a valid invocation into exit 2 contradicts the Domain rule that exit 2 means unknown flag or missing flag argument. M22 (the other args.js survivor) is classified BOUNDARY and must NOT be hardened. Details: .swarm/runs/cycle-004-classification.md || CLOSED cycle 6. Two additive tests in test/args.test.js cover both argument forms ('--seed','-5') and ('--seed=-5'). Conductor harness .swarm/runs/cycle-006-verify-I-2c.py: FAILABLE (M21 -> fail=2, both failures named are the new tests), DENOMINATOR (pattern removes exactly 2 of 58, leaving the 56-test baseline green), ATTRIBUTABLE strict (M21 + new tests filtered -> tests=56 pass=56 fail=0, the pre-cycle baseline to the test), SKIP-SANITY (breaking control mutation under the same pattern -> 7 pre-existing failures). Product tree byte-identical to HEAD. M22 left unhardened as classified."
     },
     {
       "id": "I-3",

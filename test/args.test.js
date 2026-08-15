@@ -61,6 +61,20 @@ test('--seed=<n> equals form parses as a number', () => {
   assert.equal(typeof result.seed, 'number');
 });
 
+test('--seed <n> accepts a negative number', () => {
+  const result = parseArgs(['--seed', '-5']);
+  assert.equal(result.error, undefined);
+  assert.equal(result.seed, -5);
+  assert.equal(typeof result.seed, 'number');
+});
+
+test('--seed=<n> equals form accepts a negative number', () => {
+  const result = parseArgs(['--seed=-5']);
+  assert.equal(result.error, undefined);
+  assert.equal(result.seed, -5);
+  assert.equal(typeof result.seed, 'number');
+});
+
 test('non-numeric --seed is a usage error', () => {
   const result = parseArgs(['--seed', 'banana']);
   assert.equal(typeof result.error, 'string');
