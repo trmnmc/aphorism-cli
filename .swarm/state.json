@@ -240,6 +240,6 @@
     "n": 19,
     "work": "test triage (one item, k_cap 1 at gear 1) -- T-013, a mutation sweep asking which README claims could silently stop being true without the suite noticing.",
     "outcome": "VERIFIED done. 37/37 conductor gate checks (.swarm/runs/cycle-019-verify-T-013.txt), 65 tests green, product tree untouched (the sweep changed no repo file by construction). Agent measured 21 mutants, 9 KILLED / 12 SURVIVED; the conductor independently re-derived 8 survivors and a 4-mutant control sample of claimed kills from one-sentence descriptions only, never from the agent's diffs, and agreed on all 12. A sealed pre-commitment written BEFORE dispatch (.swarm/runs/cycle-019-precommit.md) predicted all 12 survivors correctly, and the harness added one the agent never tested (V6: the single-entry tag count is stated twice in README.md and guarded once). Both Class A findings are ATTRIBUTED via paired positive controls, not merely observed. Classified 10 HOLE / 3 BOUNDARY (.swarm/runs/cycle-019-classification.md) and filed as T-014..T-017. Honest note: the harness's FIRST run was wrong in the dangerous direction -- a spec-vs-TAP reporter mismatch made every mutant read as KILLED, including the unmutated control -- and it was the PRISTINE control that caught it, not inspection.",
-    "commit": "PENDING"
+    "commit": "44cad8c"
   }
 }
