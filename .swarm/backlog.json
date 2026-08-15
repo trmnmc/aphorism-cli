@@ -492,7 +492,7 @@
       "priority": 3,
       "value": "H",
       "effort": "S",
-      "status": "todo",
+      "status": "done",
       "deps": [
         "T-013"
       ],
@@ -503,7 +503,8 @@
       "model": "sonnet",
       "attempts": 0,
       "acceptance": "Deleting an entire tag row from either README count table fails the suite, and moving a row into a band whose stated range its count does not satisfy fails the suite. Both must be proven twice per L-029: failable against the specific mutation, and attributable -- removing the new assertion lets that mutation survive the rest of the suite.",
-      "notes": "Source: T-013 survivors A7 and A8, cycle 19. The ONLY Class A finding in the sweep -- a guard that exists, passes, and is blind in one direction, which is the exact T-012 failure class this run has already fixed once. Both are ATTRIBUTED, not merely observed: V1 (row deleted) survives while V1b (wrong count, same table) kills, and V2 (row moved to the wrong band, count untouched) survives while V2b (same row, wrong count) kills. So the count check is provably live and provably one-directional. Highest-value follow-up because T-007 (retagging) is live on the backlog and would walk straight into it. Exact mutations pre-specified in .swarm/runs/cycle-019-classification.md, so the failability targets do not need re-deriving."
+      "notes": "Source: T-013 survivors A7 and A8, cycle 19. The ONLY Class A finding in the sweep -- a guard that exists, passes, and is blind in one direction, which is the exact T-012 failure class this run has already fixed once. Both are ATTRIBUTED, not merely observed: V1 (row deleted) survives while V1b (wrong count, same table) kills, and V2 (row moved to the wrong band, count untouched) survives while V2b (same row, wrong count) kills. So the count check is provably live and provably one-directional. Highest-value follow-up because T-007 (retagging) is live on the backlog and would walk straight into it. Exact mutations pre-specified in .swarm/runs/cycle-019-classification.md, so the failability targets do not need re-deriving. VERIFIED cycle 20: 17/17 conductor gate checks (.swarm/runs/cycle-020-verify-T-014.txt). Both acceptance mutations killed AND attributed using mutations the builder never ran (I deleted the `debugging` row from the 5+ table; it had proved A7 on `testing` in the other table). Residual filed as T-018.",
+      "verified_cycle": 20
     },
     {
       "id": "T-015",
@@ -564,6 +565,26 @@
       "attempts": 0,
       "acceptance": "Changing the separator in the README's --list format literal (`<text> — <author>`, U+2014) so it no longer matches what the shipped binary actually prints fails the suite. Proven twice per L-029.",
       "notes": "Source: T-013 survivor C5, cycle 19. The interesting property that makes this a HOLE rather than a BOUNDARY: the README states the format BOTH as English prose ('text, space, EM DASH, space, author') AND as a literal inside backticks. Asserting against the literal is a literal-vs-behaviour check, so it freezes no wording -- the prose sentence stays free to be reworded. Do NOT write the check against the English sentence; that would be the C3/C4/C7 boundary mistake."
+    },
+    {
+      "id": "T-018",
+      "title": "Let the band-table parser tolerate a blank line between a heading and its table",
+      "kind": "test",
+      "priority": 7,
+      "value": "L",
+      "effort": "S",
+      "status": "todo",
+      "deps": [
+        "T-014"
+      ],
+      "files_hint": [
+        "test/readme-tags.test.js"
+      ],
+      "packages": [],
+      "model": "sonnet",
+      "attempts": 0,
+      "acceptance": "Inserting a blank line between a band heading and its `| Tag | Count |` table (idiomatic markdown, and it makes no README claim false) leaves the suite green, while a row deletion under that reformatted heading still fails. Proven twice per L-029.",
+      "notes": "Source: conductor probe N3, cycle 20 -- .swarm/runs/cycle-020-verify-T-014.txt. extractBandTablesFromReadme requires the heading at line i and the table header at i+1, so a blank line makes the band undetectable. IMPORTANT and the reason this is LOW priority, not a repeat of T-012: the guard does NOT go quiet. Its bands.length>0 sanity assertion fires and the suite FAILS LOUDLY, naming the parse as the cause -- measured, reformat alone gives fail 1, and reformat+row-deletion is still KILLED. So this is a false REJECTION of an honest edit, the safe direction, not a silent hole. Fix shape: skip blank lines between the heading and the table header rather than requiring adjacency."
     }
   ]
 }

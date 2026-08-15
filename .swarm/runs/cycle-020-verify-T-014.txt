@@ -1,0 +1,60 @@
+Cycle 20 — conductor verification gate for T-014
+Harness: .swarm/runs/cycle-020-verify-T-014.js (authored AT VERIFICATION TIME, after the
+builder returned; never shown to it). Sealed prediction: .swarm/runs/cycle-020-precommit.md
+Command: node /opt/targets/aphorism-cli/.swarm/runs/cycle-020-verify-T-014.js
+Exit code: 0
+
+PASS  CTRL-PRISTINE   unmutated copy: tests 66 pass 66 fail 0 (expect 66/66/0)
+PASS  A7.APPLIED      mutation applied to README (delete `debugging` row from the 5+ table)
+PASS  A7.FAILABLE     expected KILLED, measured KILLED (fail 1/66)
+PASS  A7.STRIPPED     new assertion block removed from the attribution copy
+PASS  A7.ATTRIB       without the new test the SAME mutation must SURVIVE: tests 65 fail 0 (expect 65/0)
+PASS  A8.APPLIED      mutation applied (move count-4 `performance` row into the 5+ table)
+PASS  A8.FAILABLE     expected KILLED, measured KILLED (fail 1/66)
+PASS  A8.ATTRIB       without the new test the SAME mutation must SURVIVE: tests 65 fail 0 (expect 65/0)
+PASS  SPUR.APPLIED    mutation applied (count-13 `design` row added to the 2–4 table)
+PASS  SPUR.FAILABLE   expected KILLED, measured KILLED (fail 1/66)
+PASS  SPUR.ATTRIB     without the new test it must SURVIVE: tests 65 fail 0 (expect 65/0)
+PASS  N1.APPLIED      both band headings reworded, digits and dashes untouched
+PASS  N1.NOFALSEREJECThonest reword must NOT be rejected: tests 66 fail 0 (expect 0 fail)
+PASS  N3.APPLIED      blank line inserted between each band heading and its table
+PASS  N3.PARSE        reformat-only run parsed: fail 1
+PASS  N3.RESULT       DIAGNOSTIC (not a gate): reformat alone FAILS; reformat + row deletion still KILLED (guard survives reformat)
+PASS  CTRL-SCRATCH    builder scratch dir .swarm/scratch removed: true
+=== 17 pass / 0 fail ===
+
+--- notes on what this gate did and did not establish ---
+
+INDEPENDENCE. The two acceptance mutations here are deliberately NOT the builder's. It
+proved A7 by deleting the `testing` row from the 2–4 table; this gate deletes the
+`debugging` row from the OTHER table (the 5+ band), which is the mutation named in the
+sealed precommit written before dispatch. A guard coded to the builder's own example
+would pass its check and fail this one.
+
+ATTRIBUTION. Every kill is paired with a strip run: the appended assertion block is cut
+from a copy carrying the same mutation, and the mutation must then SURVIVE at exactly the
+pre-cycle baseline of 65 tests / 0 fail. A kill that cannot be attributed to the new
+assertion is not evidence that the new assertion did anything (L-029).
+
+THIRD KILL, not requested by the item. SPUR adds a count-13 `design` row to the 2–4 table.
+No stated fact becomes false — design's real count is still stated correctly in the 5+
+table — so the pre-existing README→corpus count guard is structurally blind to it. It is
+killed by the new set-equality assertion and survives without it.
+
+NEGATIVE CONTROL. N1 rewords both band headings ("robust pool" → "deep bench", "appear" →
+"crop up") leaving digits and dashes intact. The suite stays 66-green, so the band parse is
+keyed to the numbers, not to English. This is the specific hazard the item's own notes
+flagged (the T-012 failure class), and it was measured rather than assumed.
+
+RESIDUAL, found by conductor probe N3, filed as T-018. The parser requires the heading and
+the table header to be adjacent lines, so inserting a blank line between them — idiomatic
+markdown that makes no README claim false — fails the suite. Two measurements decide how
+bad this is: reformat alone gives fail 1 (the bands.length>0 sanity assertion fires and
+names the parse as the cause), and reformat PLUS a row deletion is still KILLED. So the
+guard is not disarmed by the reformat and does not go quiet; it false-REJECTS an honest
+edit, loudly and self-diagnosingly. That is the safe failure direction and the opposite of
+the T-012 shape, which is why it was filed at low priority rather than sent back.
+
+NOT ESTABLISHED BY THIS GATE. That the README's current numbers are correct — that is the
+pre-existing count guard's job, unchanged this cycle. That the tag taxonomy is sensible
+(T-007, open). That the corpus attributions are right (KI-2, human hand-off, never claimed).

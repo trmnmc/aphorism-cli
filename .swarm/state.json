@@ -3,7 +3,7 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
   "phase": "POLISH",
-  "cycle": 19,
+  "cycle": 20,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -172,6 +172,11 @@
       "cycle": 19,
       "what": "Removed 9 untracked scratch files (create_test.js, edit_readme.js, final_report.json and kin) left in the SWARM root at /opt/swarm by cycle-17 and cycle-18 builder dispatches.",
       "why": "SECOND occurrence of the structural hole cycle 9 recorded and named as a candidate lesson: agents are handed target paths only, per hard rule 5, but the session cwd IS /opt/swarm, so any relative scratch path lands inside the write fence by default. Cycle 9 said the fix is for dispatch prompts to name an explicit scratch location, since 'do not write to SWARM' is not something an agent can honor if it does not know where it is standing. That fix was recorded but never made standing, and it recurred twice. This cycle's dispatch DID name an explicit scratch path (/opt/targets/aphorism-cli/.swarm/scratch/, chosen over /tmp because KI-6 established /tmp is unreachable from the subagent sandbox) and the agent left nothing behind -- harness control CTRL-SCRATCH confirms the directory is gone and CTRL-TREE confirms the target tree carries only cycle-019 artifacts. Nothing under bin/, reference/, workflows/ or templates/ was ever touched; the debris was inert scratch. Promoted to KI-7 so it stops being re-learned once per run."
+    },
+    {
+      "cycle": 20,
+      "what": "Accepted the T-014 guard as-is despite a measured false-rejection case (a blank line between a band heading and its table fails the suite), and filed it as T-018 rather than sending the item back.",
+      "why": "The failure direction is what decides this. T-012 and the whole A7/A8 family are guards that go QUIET on an innocuous edit -- they hide. This one fails loudly and names the parse as the cause, so it cannot hide anything; a reader who trips it is told exactly what happened. Measured, not assumed: reformat alone gives fail 1, and reformat plus a row deletion is still KILLED, so the guard is not disarmed by the reformat. Sending the item back would spend a gear-1 cycle re-opening a passing acceptance to improve ergonomics, when three higher-value HOLEs (T-015..T-017) are still open."
     }
   ],
   "known_issues": [
@@ -233,13 +238,13 @@
     "consecutive_no_value": 0,
     "consecutive_failures": 0,
     "k_current": 5,
-    "wave_streak": 1,
+    "wave_streak": 0,
     "window_tokens_attributed": 0
   },
   "last_cycle": {
-    "n": 19,
-    "work": "test triage (one item, k_cap 1 at gear 1) -- T-013, a mutation sweep asking which README claims could silently stop being true without the suite noticing.",
-    "outcome": "VERIFIED done. 37/37 conductor gate checks (.swarm/runs/cycle-019-verify-T-013.txt), 65 tests green, product tree untouched (the sweep changed no repo file by construction). Agent measured 21 mutants, 9 KILLED / 12 SURVIVED; the conductor independently re-derived 8 survivors and a 4-mutant control sample of claimed kills from one-sentence descriptions only, never from the agent's diffs, and agreed on all 12. A sealed pre-commitment written BEFORE dispatch (.swarm/runs/cycle-019-precommit.md) predicted all 12 survivors correctly, and the harness added one the agent never tested (V6: the single-entry tag count is stated twice in README.md and guarded once). Both Class A findings are ATTRIBUTED via paired positive controls, not merely observed. Classified 10 HOLE / 3 BOUNDARY (.swarm/runs/cycle-019-classification.md) and filed as T-014..T-017. Honest note: the harness's FIRST run was wrong in the dangerous direction -- a spec-vs-TAP reporter mismatch made every mutant read as KILLED, including the unmutated control -- and it was the PRISTINE control that caught it, not inspection.",
-    "commit": "44cad8c"
+    "n": 20,
+    "work": "test triage (one item, k_cap 1 at gear 1) -- T-014, making the README tag-table guard bidirectional and band-aware, closing cycle 19's two Class A survivors A7 and A8.",
+    "outcome": "VERIFIED done. 17/17 conductor gate checks (.swarm/runs/cycle-020-verify-T-014.txt), 66 tests green (65 -> 66, pure insertion: 142 lines added, 0 removed, every existing test and helper byte-identical per git diff). The gate deliberately used mutations the builder never ran -- it proved A7 by deleting the `testing` row from the 2-4 table, I deleted the `debugging` row from the 5+ table -- and both were proven FAILABLE and ATTRIBUTABLE (stripping the new block lets the same mutation survive at 65/0). Added a third kill the item never asked for: a spurious count-13 row in the 2-4 table, invisible to the old guard because it makes no stated fact false. Negative control passed: rewording both band headings with digits intact stays green, so the T-012 hazard named in the item's own notes was avoided. One residual found by conductor probe N3 and filed as T-018 -- fails loud, not quiet.",
+    "commit": "PENDING"
   }
 }

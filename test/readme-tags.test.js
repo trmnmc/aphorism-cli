@@ -167,3 +167,145 @@ test('README should acknowledge single-entry tag limitation', () => {
 
   assert(hasWarning, 'README should acknowledge that some tags appear only once');
 });
+
+// ---------------------------------------------------------------------------
+// Bidirectional, band-aware guard on the Tag vocabulary count tables.
+//
+// The tests above already check that every *stated* claim (a count that
+// appears somewhere in the README) matches the corpus. What they cannot
+// catch is a whole row going missing (the README simply stops claiming
+// something the corpus still has), or a row surviving but landing under
+// the wrong band heading (its count no longer satisfies the range that
+// heading states). Both are silent under a "does every stated fact match"
+// check, because deleting or relocating a row does not make any remaining
+// stated fact false on its own.
+//
+// The fix compares, per band table, the SET of tags the corpus says belong
+// in that band against the SET of tags actually present as rows in that
+// table -- not just their counts. A deleted row shrinks the actual set.
+// A relocated row moves a tag into a table whose expected set (derived
+// from the corpus, independently of the table) does not contain it.
+//
+// Band boundaries are parsed from the NUMBERS in each heading line only
+// (an "N+" token, or an "N<dash>M" token), never from the surrounding
+// English, so rewording "robust pool" to "deep pool" or "appear" to
+// "occur" cannot silence this guard -- only changing the digits can.
+// ---------------------------------------------------------------------------
+
+// Helper: return the Tag vocabulary section's raw text (heading through the
+// line before the next top-level "## " heading). Shared by the tests below;
+// mirrors the slicing already done inline in the first test in this file.
+function getTagVocabSection(readmeContent) {
+  const tagVocabStart = readmeContent.indexOf('## Tag vocabulary');
+  assert(tagVocabStart !== -1, 'README must have a Tag vocabulary section');
+  const nextSection = readmeContent.indexOf('\n## ', tagVocabStart + 1);
+  const tagVocabEnd = nextSection > -1 ? nextSection : readmeContent.length;
+  return readmeContent.substring(tagVocabStart, tagVocabEnd);
+}
+
+// Helper: find every "heading line immediately followed by a `| Tag | Count |`
+// table" in the given text, and for each one derive its band's [min, max]
+// bounds purely from digits/punctuation in that heading line -- never from
+// the words around them -- plus the set of {tag, count} rows actually
+// present in that specific table (as opposed to the whole document, so two
+// tables' rows are never conflated).
+//
+// Recognised band shapes in a heading line:
+//   - an "N+" token (e.g. "(5+ entries)")   -> band is [N, Infinity)
+//   - an "N<dash>M" token (e.g. "2-4 times", "2–4 times") -> band is [N, M]
+// Any dash character (hyphen, en dash, em dash) is accepted so a stylistic
+// dash swap does not break parsing.
+function extractBandTablesFromReadme(sectionText) {
+  const lines = sectionText.split('\n');
+  const tableRowPattern = /\| `([a-z]+)` \| (\d+) \|/;
+  const bands = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const headingLine = lines[i];
+    const headerRowLine = lines[i + 1];
+    const separatorRowLine = lines[i + 2];
+
+    if (!headerRowLine || !/^\|\s*Tag\s*\|\s*Count\s*\|\s*$/.test(headerRowLine.trim())) {
+      continue;
+    }
+    if (!separatorRowLine || !/^\|[-\s|]+\|$/.test(separatorRowLine.trim())) {
+      continue;
+    }
+
+    // Derive the band's numeric bounds from the heading line's digits only.
+    const openEnded = headingLine.match(/(\d+)\s*\+/);
+    const rangePair = headingLine.match(/(\d+)\s*[-‐‑‒–—―]\s*(\d+)/);
+
+    let min, max;
+    if (openEnded) {
+      min = parseInt(openEnded[1], 10);
+      max = Infinity;
+    } else if (rangePair) {
+      min = parseInt(rangePair[1], 10);
+      max = parseInt(rangePair[2], 10);
+    } else {
+      // A table with no parseable band token in its heading -- nothing to
+      // check it against, skip rather than guess.
+      continue;
+    }
+
+    // Collect this table's own rows (starting right after the separator
+    // row) until a line that is not itself a table row.
+    const rows = {};
+    let k = i + 3;
+    while (k < lines.length) {
+      const rowMatch = lines[k].match(tableRowPattern);
+      if (!rowMatch) break;
+      rows[rowMatch[1]] = parseInt(rowMatch[2], 10);
+      k++;
+    }
+
+    bands.push({ headingLine, min, max, rows });
+  }
+
+  return bands;
+}
+
+test('every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band', () => {
+  const readmePath = path.join(__dirname, '..', 'README.md');
+  const readmeContent = fs.readFileSync(readmePath, 'utf8');
+  const tagVocabSection = getTagVocabSection(readmeContent);
+  const tagsInCorpus = countTagsInCorpus();
+
+  const bands = extractBandTablesFromReadme(tagVocabSection);
+  assert(bands.length > 0, 'expected at least one parseable band table (heading with an N+ or N-M token, followed by a | Tag | Count | table) in the Tag vocabulary section');
+
+  for (const band of bands) {
+    // What the corpus says should be in this band, independent of the
+    // table's own content: every tag whose corpus count falls in [min, max].
+    const expectedTags = Object.keys(tagsInCorpus)
+      .filter(tag => tagsInCorpus[tag] >= band.min && tagsInCorpus[tag] <= band.max)
+      .sort();
+    const actualTags = Object.keys(band.rows).sort();
+
+    // Assertion 1 (kills row deletion, A7): nothing the corpus places in
+    // this band may be missing from the table's actual rows.
+    for (const tag of expectedTags) {
+      assert(
+        actualTags.includes(tag),
+        'Tag `' + tag + '` (corpus count ' + tagsInCorpus[tag] + ') belongs in the band "' +
+          band.headingLine.trim() + '" (' + band.min + '-' + (band.max === Infinity ? 'inf' : band.max) +
+          ') but is missing a row in that table'
+      );
+    }
+
+    // Assertion 2 (kills band relocation, A8): nothing present in this
+    // table's actual rows may be a tag whose corpus count is outside the
+    // band's own stated numeric range -- this also catches a row whose
+    // count was edited without moving it, since expectedTags is computed
+    // from the corpus's real count for that tag, not the table's claim.
+    for (const tag of actualTags) {
+      assert(
+        expectedTags.includes(tag),
+        'Tag `' + tag + '` has a row in the band "' + band.headingLine.trim() + '" (' +
+          band.min + '-' + (band.max === Infinity ? 'inf' : band.max) +
+          ') but its actual corpus count is ' + tagsInCorpus[tag] + ', which does not fit that band'
+      );
+    }
+  }
+});
