@@ -1,0 +1,77 @@
+V0:HEAD          md=Y js=Y  tests=78 pass=78 fail=0  GREEN
+V1:HEAD          md=Y js=Y  tests=78 pass=76 fail=2  RED
+       X every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+       X README band table headings must state the correct count of tags in their band
+V1b:HEAD         md=Y js=Y  tests=78 pass=76 fail=2  RED
+       X every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+       X README band table headings must state the correct count of tags in their band
+V3:HEAD          md=Y js=Y  tests=78 pass=78 fail=0  GREEN
+V4:HEAD          md=Y js=Y  tests=78 pass=77 fail=1  RED
+       X README `--list` format literal matches the shipped binary's actual --list output (T-017)
+V5:HEAD          md=Y js=Y  tests=78 pass=77 fail=1  RED
+       X README `--list` format literal matches the shipped binary's actual --list output (T-017)
+V6:HEAD          md=Y js=Y  tests=78 pass=78 fail=0  GREEN
+V7:HEAD          md=Y js=Y  tests=78 pass=77 fail=1  RED
+       X README `--list` format literal matches the shipped binary's actual --list output (T-017)
+V8CTL:HEAD       md=Y js=Y  tests=78 pass=77 fail=1  RED
+       X README band table headings must state the correct count of tags in their band
+V8:HEAD          md=Y js=Y  tests=78 pass=77 fail=1  RED
+       X README band table headings must state the correct count of tags in their band
+VTHEFT:HEAD      md=Y js=Y  tests=78 pass=77 fail=1  RED
+       X every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+VORPHAN:HEAD     md=Y js=Y  tests=78 pass=76 fail=2  RED
+       X every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+       X every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+V0:F_MD          md=Y js=Y  tests=78 pass=77 fail=1  RED
+       X extractBandTablesFromReadme tolerates a prose sentence between a band heading and its table (T-025), without mis-attaching a table when the real one is missing
+V1:F_MD          md=Y js=Y  tests=78 pass=75 fail=3  RED
+       X extractBandTablesFromReadme tolerates a prose sentence between a band heading and its table (T-025), without mis-attaching a table when the real one is missing
+       X every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+       X README band table headings must state the correct count of tags in their band
+V2:F_MD          md=Y js=Y  tests=78 pass=74 fail=4  RED
+       X extractBandTablesFromReadme tolerates a prose sentence between a band heading and its table (T-025), without mis-attaching a table when the real one is missing
+       X every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+       X every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+       X README band table headings must state the correct count of tags in their band
+V3:F_MD          md=Y js=Y  tests=78 pass=77 fail=1  RED
+       X extractBandTablesFromReadme tolerates a prose sentence between a band heading and its table (T-025), without mis-attaching a table when the real one is missing
+VTHEFT:F_MD      md=Y js=Y  tests=78 pass=75 fail=3  RED
+       X extractBandTablesFromReadme tolerates a prose sentence between a band heading and its table (T-025), without mis-attaching a table when the real one is missing
+       X every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+       X every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+VORPHAN:F_MD     md=Y js=Y  tests=78 pass=75 fail=3  RED
+       X extractBandTablesFromReadme tolerates a prose sentence between a band heading and its table (T-025), without mis-attaching a table when the real one is missing
+       X every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+       X every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+V0:F_COLON       md=Y js=Y  tests=78 pass=78 fail=0  GREEN
+V1:F_COLON       md=Y js=Y  tests=78 pass=76 fail=2  RED
+       X every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+       X README band table headings must state the correct count of tags in their band
+V1b:F_COLON      md=Y js=Y  tests=78 pass=76 fail=2  RED
+       X every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+       X README band table headings must state the correct count of tags in their band
+V2:F_COLON       md=Y js=Y  tests=78 pass=75 fail=3  RED
+       X every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+       X every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+       X README band table headings must state the correct count of tags in their band
+V3:F_COLON       md=Y js=Y  tests=78 pass=78 fail=0  GREEN
+VTHEFT:F_COLON   md=Y js=Y  tests=78 pass=77 fail=1  RED
+       X every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+VORPHAN:F_COLON  md=Y js=Y  tests=78 pass=76 fail=2  RED
+       X every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+       X every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+V8:F_COLON       md=Y js=Y  tests=78 pass=77 fail=1  RED
+       X README band table headings must state the correct count of tags in their band
+V0:F_SPELL       md=Y js=Y  tests=78 pass=78 fail=0  GREEN
+V4:F_SPELL       md=Y js=Y  tests=78 pass=78 fail=0  GREEN
+V5:F_SPELL       md=Y js=Y  tests=78 pass=77 fail=1  RED
+       X README `--list` format literal matches the shipped binary's actual --list output (T-017)
+V6:F_SPELL       md=Y js=Y  tests=78 pass=77 fail=1  RED
+       X README `--list` format literal matches the shipped binary's actual --list output (T-017)
+V0:F_BOTH        md=Y js=Y  tests=78 pass=78 fail=0  GREEN
+V1:F_BOTH        md=Y js=Y  tests=78 pass=76 fail=2  RED
+       X every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+       X README band table headings must state the correct count of tags in their band
+V0:F_CONTENT     md=Y js=Y  tests=78 pass=78 fail=0  GREEN
+V5:F_CONTENT     md=Y js=Y  tests=78 pass=78 fail=0  GREEN
+V7:F_CONTENT     md=Y js=Y  tests=78 pass=78 fail=0  GREEN

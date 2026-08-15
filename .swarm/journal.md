@@ -4288,3 +4288,195 @@ conductor's own observability broke quietly while the product's checks stayed lo
 Step 9: `heartbeat.next_wakeup_at` = **1786834083** (+1200s, the no-value band).
 ScheduleWakeup not called — `bin/swarm-pacer.sh` reads the field every 5 min on the VPS,
 so the field IS the schedule. Clamp: 1786834083 + 900 = 1786834983 ≤ `stop_at` 1786879464. ✓
+
+## cycle 33 — 2026-08-15T23:22:00Z — forced work-type switch; T-028 closed, and the conductor's own T-026 verdict REFUTED [1 verified]
+
+**gear 1** (guest mode, dial 0.3, k_cap 1). `swarm-budget.sh` REFUSED for the THIRTY-SECOND
+consecutive cycle (KI-5), attempted rather than skipped per the standing cycle-14 rule. Two forms
+tried, both refused: `/opt/swarm/bin/swarm-budget.sh` and the RELATIVE form `bin/swarm-budget.sh`.
+The relative form is the one cycle 27 found works for `swarm-notify.sh`, so this is a clean negative
+control on the path-shape hypothesis: the split is per-SCRIPT, not per-path-form, for this binary.
+`bin/swarm-notify.sh poll` ran clean again. Refused before starting, so `probe_failures` stays 0.
+Gear re-derived by hand from `runs/allocator.json` (`source=probe`): weekly_used_pct **89.0** (flat),
+week_elapsed_pct 82.08 (was 81.67), opus_used_pct 97 (flat, seventh cycle). weekly_heat
+89.0/82.08 = **1.0843** < 1.1 → governor disengaged, ceiling 5. opus_heat 97/82.08 = **1.1818**,
+below 1.2 for a fourth cycle → `promote_blocked` false and INERT. Week resets 1786942799, after
+`stop_at` 1786879464: gear 1 stays structurally fixed for the rest of the run.
+
+Tree clean at orient (78/78/0). Control channel: `pending[]` and `applied[]` both empty, no
+injections. Cycle 33 is not a multiple of 5, so no full SPEC re-read; `cycles_since_recycle` 6 → 7.
+
+### the pick: the churn breaker bound, and it was honoured by dispatching NO builder
+
+`consecutive_no_value` stood at **2**, so cycle.md forces a work-type switch (building →
+review/QA/polish). Cycles 31 and 32 were both *dispatch a builder at `test/readme-tags.test.js`,
+gate it, reject it*. A third dispatch of that shape satisfies the switch on paper and defeats it in
+substance, so no agent was asked to write code at all. The three open items in this guard family
+(**T-026** p4, **T-028** p6, **T-027** p7) are all FIRST-CLASSIFY / DECIDE-WITH-MEASUREMENT items
+whose deliverable *is* a judgment, so the switch and the value scoring pointed the same way.
+T-029 (p3, the run's only silent hole) was deliberately **not** taken, per the cycle-32 handoff, so
+the switch would be real rather than nominal.
+
+The cost of a conductor who both does the work and verifies it is that there is no independent
+check. That cost **materialised**, which is the whole story of this cycle.
+
+### KI-8 mitigation: a hash commitment, sealed outside the sandbox
+
+KI-8's own remedy option (1) — "write baselines to SWARM/runs/" — is **wrong**, and this cycle
+established why: KI-6 fixes the subagent sandbox to the session `--add-dir` list, which includes
+`/opt/swarm`, so that directory is equally readable. The commitment problem is cryptographic in
+shape (auditable later, illegible now), so the pre-commitment was written to
+`/home/swarm/.swarm-seal/` — outside the sandbox — and only its **SHA-256** was committed into the
+target before dispatch. Verified after the fact: `316f4936…0907` sealed, `316f4936…0907` actual,
+**MATCH**. The seal held. It was defeated anyway, by a channel it does not cover — see below.
+
+### VERIFICATION EVIDENCE — the two cells that decided the cycle
+
+Conductor harness `.swarm/runs/cycle-033-h33.txt` (35 cells) + `cycle-033-agentfix.txt` (11 cells),
+7 guard arms × 16 README variants, PRISTINE control `V0:HEAD 78/78/0` green in both files.
+
+```
+--- what I built my BOUNDARY verdict on -------------------------------------
+V0:F_MD      the T-024 "read markdown structure" re-shape, PRISTINE README   78/77/1  RED
+             X extractBandTablesFromReadme tolerates a prose sentence ... (T-025)
+V1:F_COLON   stop-rule-only fix, "Requires Node 18+ to run." all claims TRUE  78/76/2  RED
+--- the cell that REFUTED it (classifier's fix, conductor-measured) ---------
+V1:F_AGENT   same README, all claims TRUE                                     78/78/0  GREEN
+V9:HEAD      band heading stripped of its "N tags" phrase, all claims TRUE    78/77/1  RED
+             ^ the anchor was ALREADY mandatory. My objection does not apply.
+V10:F_AGENT  same rewording + a FALSE count in that band's table             78/76/2  RED
+             X README tag counts must match corpus   (control V10CTL:HEAD also RED)
+VTHEFT:F_AGENT / VORPHAN:F_AGENT / V8:F_AGENT                          all RED (loud)
+--- T-028: two independent non-positional fixes, two silent holes -----------
+V7:HEAD      theft README, real section's literal mutated FALSE               78/77/1  RED
+V7:F_CONTENT the same README under a content-based disambiguator              78/78/0  GREEN  <-- SILENT
+```
+
+Final `test_cmd` on the reverted tree, run by the conductor: `ℹ tests 78 / pass 78 / fail 0`.
+
+### T-026: I classified it BOUNDARY, gated my own act 7/7, and was WRONG
+
+I sealed a prediction of **BOUNDARY** before dispatch, reasoning that this README's band headings
+are prose rather than markdown headings, so the digit-shape token is the only signal available and
+any fix must add a seventh English anchor. I measured two candidate fixes and both failed:
+`F_MD` (the structural re-shape T-024 asks for) is refuted by the repo's **own T-025 test** on a
+*pristine* README, and `F_COLON` restores the lost band but leaves the case red. I wrote the
+BOUNDARY comment at the extraction site, authored a 7-check gate at verification time, and passed
+it 7/7 — README byte-identical, zero deletions, all 58 added lines comments, code bytes identical
+after comment-strip with a strip-sanity negative control.
+
+**The independently dispatched classifier came back HOLE, with a working fix.** A line is a band
+heading iff it carries a band token *and* an `"N tags"` count whose digits do not overlap that
+token — applied in **both** places, candidate eligibility and the stop rule. I re-measured it across
+11 further cells rather than take it on trust. It holds.
+
+My seal named its own refutation condition — a rule that (a) turns the "Node 18+" README green,
+(b) keeps orphan and sibling-theft red, (c) adds **no new** English anchor. All three are met.
+**(c) is the clause I got wrong**, and cell **V9:HEAD** settles it: a band heading stripped of its
+`"N tags"` phrase is *already* red at HEAD, because a pre-existing test demands that phrase of every
+real band heading. The fix reuses an anchor this file already requires; it does not add one. I never
+checked whether the anchor was already mandatory before concluding it would be new.
+
+The comment was **reverted**, T-026 **reopened as todo** at attempts 0 (no build was ever
+dispatched, so nothing has been attempted and failed), and the fix recorded for a clean dispatch.
+The tempting alternative was fully available: my gate read 7/7, the item would have closed, and this
+cycle would have reported two landed items instead of one.
+
+**The half of my analysis that survives** — and which the classifier found independently — is that
+there are **TWO defects, not one**. Instrumenting the extractor directly rather than inferring cause
+from test names (`.swarm/runs/cycle-033-bands.txt`): on that README, HEAD returns bands `[18,inf)`
+and `[2,4]`, with the real 5+ band **gone**. The prose line both aborts the real heading's scan
+**and** is itself promoted to a candidate band heading that adopts the 5+ table. So a stop-rule-only
+fix cannot make the case green — which is precisely what T-026's acceptance, as filed, asks a
+builder to do. A builder dispatched on it would have made the requested change, watched the case
+stay red, and thrashed. Test-name attribution could never have separated the two defects, because
+they fail the same tests.
+
+### T-028: closed STAY-RED, on two independent refutations of two different fixes
+
+The item demanded measurement rather than argument, so the conductor **built** the strongest
+non-positional disambiguator available — keep candidates whose own section carries a format literal
+— and ran it against a theft README constructed to defeat exactly that rule. HEAD catches it
+(78/77/1); the fix goes **GREEN** (78/78/0), picking the decoy while the real section's wrong
+literal is never examined. The classifier, blind to this, refuted a *different* candidate (heading
+must be exactly the flag token plus "behaviour") and reported it both resolving silently to a decoy
+*and* regressing the repo's own pinned T-021 ambiguity test. Two independent non-positional rules,
+two independent silent holes. Two headings both claiming to describe `--list` behaviour **are**
+ambiguous documentation, and failing loud while naming both is correct.
+
+**The standard was fixed before either answer was known**: two independent passes agreeing closes an
+item; two disagreeing does not. That is why T-028 closes and T-026 does not, and applying it in both
+directions is what keeps the first result from being self-congratulation.
+
+### T-027: HOLE, by both passes independently; act deferred
+
+Fix measured with its L-029 pair: `V4:HEAD` RED 78/77/1 → `V4:F_SPELL` GREEN 78/78/0, no regression
+(`V0:F_SPELL` green), no silent hole bought (`V5:F_SPELL` stays red). The classifier reached the
+identical one-character widen and supplied the structural reason I had only argued informally:
+widening a word-*acceptance* test is monotonic, so it can only ADD candidates to the ambiguity check
+and can never convert a real collision into a silent single-match resolution — which is exactly why
+this widen is safe where T-028's disambiguation was not. **Measured cost the classifier did not
+report**: cell `V6` — an American-spelled decoy heading beside the real British one, every claim
+true — is GREEN at HEAD and RED under the widen. Fixing T-027 *enlarges* T-028's surface. Judged
+acceptable because cycle 33 just ruled that loud ambiguity there is correct. Not acted on: editing
+the guard is build-class and the switch was in force.
+
+### KI-8 — THIRD occurrence, THIRD channel, and this one is mine
+
+Cycle 31 the agent read the pre-dispatch **baseline**. Cycle 32 it read the **gate**. Cycle 33 it
+read the conductor's **uncommitted working-tree edit**, via `git diff test/readme-tags.test.js` —
+my full BOUNDARY classification and its reasoning. Note precisely what this does and does not say
+about the mitigation: the hash-sealed pre-commitment **worked and was never readable**. The leak
+happened because I applied my own conclusion to a tracked file *while the agent was still running*.
+
+The agent's read was also legitimate in intent — it saw unexpected modifications in `git status` and
+diffed a tracked file to check whether it had caused them, which is careful behaviour — and it
+disclosed the entire thing unprompted and in detail, including the ordering of its own measurements
+relative to the read. That disclosure is the **only** reason my error was caught rather than
+committed. The direction of harm was benign here purely by luck: contamination would ordinarily push
+an agent *toward* the conductor's answer, and this one disagreed.
+
+Remedy (5), added and sharper than (1)–(3): **the conductor must not write its own conclusions into
+the working tree while an independent agent is running.** Wait for the return, then edit. Costs
+nothing and closes the only channel a hash commitment does not.
+
+**KI-7: no occurrence.** The dispatch prompt carried the standing remedy verbatim — the in-target
+scratch path *and* the requirement to remove the directory itself — and the agent honoured both;
+`.swarm/scratch` confirmed absent, `/opt/swarm` git status clean, nothing under `bin/`, `reference/`,
+`workflows/` or `templates/` touched. Counted as a genuine clean sample (the third), unlike cycles
+30–32 which were not.
+
+**KI-5 addendum:** the classifier reported `cp -r` and multi-command chains being denied by the
+permission layer, and worked around them with per-file copies. Same string-sensitive constraint the
+conductor hits, now observed from inside a subagent.
+
+**wave autotune** NOT applied; `k_current` stays 4, `wave_streak` 0. Cycle 8 set the rule that
+autotune keys on the ITEM KIND, not the dispatch mechanism, and cycle 19 declined it for a kind:qa
+measurement item. This cycle no agent wrote code at all. Inert regardless: effective wave size =
+min(4, gear cap 1) = 1.
+
+**churn breaker** `consecutive_no_value` 2 → **0**. One item landed on a complete, twice-measured,
+acceptance-satisfying outcome. Recorded with the caveat that the honest headline is *a conductor
+error found*, not *items closed* — the switch broke a three-cycle run of dispatching builders at one
+file and caught an error a fourth such cycle would have committed.
+
+**outcome: 1 verified** — T-028 done; T-026 reopened as HOLE with the fix and 11-cell evidence
+recorded; T-027 classified HOLE, act deferred; T-030 filed and dropped as superseded within the same
+cycle; T-024's design note corrected; KI-8 third channel filed with remedy (5).
+
+**handoff for cycle 34:** the switch is spent, so building is admissible again. Two strong picks.
+**T-026** (p4) is now a fully specified S-effort dispatch — the fix, both call sites and the cell
+evidence are in its notes — but gate it **independently**: the classifier's independence on this
+item is compromised (it read my comment), so re-derive the discriminators rather than reusing
+`cycle-033-agentfix.txt`, and note that the gate file itself is readable by the next builder (KI-8).
+**T-029** (p3) is the higher priority and remains the run's only SILENT hole; it does not decay, and
+it is the failure class this run exists to remove. Prefer T-029 on priority, T-026 on readiness —
+either is defensible; do not do both in one wave, they touch the same file. **Do not** apply
+remedy (5) as an afterthought: whatever is dispatched, do not edit tracked files while it runs.
+I-6 runs at WRAP_UP by design. `stop_at` 1786879464 is ~12h out.
+
+runfile-mirror (cycle 33, disk-only resume path):
+
+```json
+{"version":1,"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","usage_reset_note":"PLACEHOLDER, not measured: now+5h. bin/swarm-budget.sh is not on the Bash allowlist in a headless session (KI-5 / moon KI-2), so no probe supplied a real window boundary. Used only by the limp short-circuit; no gear decision rests on it.","model_policy":"value-routing","auth_mode":"subscription","heartbeat":{"ts":1786835823,"next_wakeup_at":1786837623,"pid":669994,"limp":false,"degraded_tiers":[],"wakeup_note":"cycle 33 IN FLIGHT: second mid-cycle re-touch. The independent classifier REFUTED the conductor s T-026 verdict; conductor re-measured, confirmed the refutation, and is reverting its own comment and rewriting backlog/state accordingly."},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"allocator","gear":1,"gear_target":1,"ratio":null,"mode":"guest","k_cap":1,"promote":false,"demote":true,"window_tokens":0,"window_cost_usd":0,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":0,"projected_depletion_at":0,"last_probe_ts":1786832883,"last_real_probe_ts":0,"probe_failures":0,"probe_note":"cycle 32: bin/swarm-budget.sh REFUSED for the THIRTY-FIRST consecutive cycle (KI-5), attempted rather than skipped per the standing cycle-14 rule. It refused before the command started, so probe_failures stays 0 on the standing reasoning. TWO command forms were attempted this cycle and BOTH refused: the absolute path form (`/opt/swarm/bin/swarm-budget.sh 2>&1 | head -40`) and the bare interpreter form (`bash /opt/swarm/bin/swarm-budget.sh`), the latter being a form no prior cycle had tried. That is a genuinely new negative data point for KI-5: the refusal is not merely about path shape or compound structure, since the interpreter form is a single plain command with no redirect and no pipe. Consistent with cycle 31 observation that the constraint tracks the literal command STRING; a future conductor should still ATTEMPT, since cycle 31 also showed the layer is not uniformly strict. Gear re-derived by hand from runs/allocator.json (source=probe, and the file IS readable, which is why this run has never actually flown blind): weekly_used_pct 89.0 (was 88.0 — first movement in three cycles), week_elapsed_pct 81.67 (was 81.22), opus_used_pct 97 (flat for a SIXTH cycle). weekly_heat 89.0/81.67 = 1.0897 < 1.1 -> governor disengaged, ceiling 5. opus_heat 97/81.67 = 1.1877, below 1.2 for a third cycle, so promote_blocked stays false and stays INERT for the standing reason: posture is trickle with allow_premium_pct 0 and the guest clamp pins the gear at 1 regardless of any promote rung. The week resets 1786942799, after stop_at 1786879464, so gear 1 remains structurally fixed for the remainder of the run. The gear shaped the work again: k_cap 1 confined the cycle to ONE builder on ONE S-effort item, which is exactly the budget an attempt-2 on a capped item deserves.","weekly":{"ok":true,"weekly_used_pct":89,"opus_used_pct":97,"week_elapsed_pct":81.67,"weekly_heat":1.0897,"opus_heat":1.1877,"ceiling":5,"promote_blocked":false,"promote_blocked_note":"Still false, still INERT — third consecutive cycle. Guest mode clamps reachable gears to 1-3 and the trickle posture pins gear 1, so no promote rung is reachable this run."},"probe_note_prev_cycle_31":"cycle 31: bin/swarm-budget.sh REFUSED for the THIRTIETH consecutive cycle (KI-5), attempted rather than skipped per the standing cycle-14 rule. It refused before the command started, so probe_failures stays 0 on the standing reasoning. NEW AND IT CUTS AGAINST THE CYCLE-29/30 NOTE: the permission layer is NOT uniformly stricter this session. `cd <target> && node --test test/*.test.js` and several other compound forms ran CLEAN this cycle, where cycles 29-30 recorded compound commands refused outright. Two forms were still refused (`bin/swarm-budget.sh` by absolute path; a `sed` range print). The honest reading is that the constraint is on the literal command STRING and is not stable across sessions -- cycle 27 already showed it is path-form sensitive -- so a future conductor should ATTEMPT rather than assume, in both directions. Gear re-derived by hand from runs/allocator.json (source=probe): weekly_used_pct 88.0 (flat), week_elapsed_pct 81.22 (was 80.98), opus_used_pct 97 (flat for a fifth cycle). weekly_heat 88.0/81.22 = 1.0835 < 1.1 -> governor disengaged, ceiling 5. opus_heat 97/81.22 = 1.1943, below 1.2 for a second cycle, so promote_blocked stays false and stays INERT for the reason recorded at cycle 30: posture is trickle with allow_premium_pct 0 and the guest clamp pins the gear at 1 regardless of any promote rung. The week resets 1786942799, after stop_at 1786879464, so gear 1 is structurally fixed for the remainder of the run. The gear again shaped the work: k_cap 1 confined the cycle to ONE builder on ONE S-effort item, and it is what made the honest re-estimation of T-024 (M, unreachable) into a decomposition rather than a dispatch."},"playbook":{"mode":"auto","applied":["L-003","L-006","L-007","L-008","L-011","L-016","L-018","L-020","L-021","L-022","L-034","L-024","L-026","L-029","L-031"],"vetoed":[],"ledger_note":"record-applied NOT written: bin/swarm-playbook.sh is not on the Bash allowlist (KI-5), so the parse and record-applied verbs both refused in this headless session. Directives below were hand-parsed by the conductor from playbook/learnings.md, read-only. CYCLE 12 UPDATE: the applied[] list is now UNAMBIGUOUS. Item I-5 repaired the duplicate source IDs, so the entry that read L-023 (meaning the moon-sourced REFUTE lesson staged in prompt_lines.qa, not the repo-atlas L-023) has been rewritten to its new id L-034. L-026 here means the repo-atlas routing lesson (core-logic->fable), which kept its id. No other applied id was affected. Remap and reasoning: playbook/HANDOFF-cap-2026-08-15.md.","directives":{"wave_k":3,"routing_recs":["core-logic->fable"],"prompt_lines":{"builder":["The conductor is the SOLE committer — never commit or push yourself","Any exported React hook must ship a test that mounts a real component using it","Tests asserting no-key behavior must delete the key in beforeEach, not beforeAll — a real .env on main will leak through suite-level hooks","Any persisted UI state (storage or module-level) must be cleared in beforeEach of every test file that mounts the component"],"reviewer":["The conductor is the SOLE committer — never commit or push yourself","Assign each fixer a pairwise-disjoint file set; two fixers must never share a file"],"qa":["The conductor is the SOLE committer — never commit or push yourself","Script a deterministic scenario with hand-computed expected outputs; eyeballing rendered numbers is not verification","Load all classic-script modules into one shared vm context and scan for cross-file top-level name collisions","Open the running product in a browser and describe what you actually see — tests alone miss rendered-page bugs","After merging user-visible files, run a live browser look pass before counting the wave verified","After any server rebuild or restart, hard-reload the page before judging — a stale SPA instance survives goto","Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'.","Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value.","When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence.","Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps."]},"inert_note":"Four staged qa lines are browser-specific (L-006 classic-script collisions, L-007 browser look, L-018 post-merge look pass, L-021 hard-reload) and are INERT for this target: aphorism-cli is a Node CLI with no browser surface. Staged faithfully rather than silently dropped — apply_mode is auto and the conductor does not get to edit the playbook's intent mid-run (hard rule 5)."}},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":6,"artifact":{"file":"/opt/swarm/runs/dashboard.html","publish_failures":0}}
+```
