@@ -333,6 +333,6 @@
     "n": 27,
     "work": "T-018 -- let the README band-table parser tolerate blank lines between a band heading and its `| Tag | Count |` table. ONE sonnet builder (k_cap 1), direct Agent call into the target tree, file scope test/readme-tags.test.js alone. Fix: skip blank lines forward from i+1 and require the FIRST non-blank line to be the header row, so a heading with no table never has a later table grafted onto it.",
     "outcome": "VERIFIED. 24/25 conductor gate checks (.swarm/runs/cycle-027-verify-T-018.txt); the one red is A9, proven by probe (.swarm/runs/cycle-027-probe-A9.txt) to be a defect in the conductor's predicate and not to belong to the item -- recorded as failed-as-authored rather than rewritten. test_cmd on the real tree, run by the conductor: 73/73/0. Scope clean: one tracked file changed, README and every product file byte-identical to HEAD, no assertion removed, no scratch residue. Two new items filed from the gate's own measurements: T-024 (M, the prose-anchor re-shape, unreachable this run) and T-025 (S, the heading-separated-by-prose BOUNDARY question).",
-    "commit": "PENDING"
+    "commit": "f64fa1f"
   }
 }
