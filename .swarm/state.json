@@ -245,6 +245,6 @@
     "n": 20,
     "work": "test triage (one item, k_cap 1 at gear 1) -- T-014, making the README tag-table guard bidirectional and band-aware, closing cycle 19's two Class A survivors A7 and A8.",
     "outcome": "VERIFIED done. 17/17 conductor gate checks (.swarm/runs/cycle-020-verify-T-014.txt), 66 tests green (65 -> 66, pure insertion: 142 lines added, 0 removed, every existing test and helper byte-identical per git diff). The gate deliberately used mutations the builder never ran -- it proved A7 by deleting the `testing` row from the 2-4 table, I deleted the `debugging` row from the 5+ table -- and both were proven FAILABLE and ATTRIBUTABLE (stripping the new block lets the same mutation survive at 65/0). Added a third kill the item never asked for: a spurious count-13 row in the 2-4 table, invisible to the old guard because it makes no stated fact false. Negative control passed: rewording both band headings with digits intact stays green, so the T-012 hazard named in the item's own notes was avoided. One residual found by conductor probe N3 and filed as T-018 -- fails loud, not quiet.",
-    "commit": "PENDING"
+    "commit": "cbcb651"
   }
 }
