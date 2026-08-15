@@ -207,6 +207,6 @@
     "n": 18,
     "work": "build-wave (one item, k_cap 1 at gear 1) -- T-012, making the readme-tags guard structural so it stops being keyed to one exact English sentence.",
     "outcome": "VERIFIED done. 24/24 conductor gate checks (.swarm/runs/cycle-018-verify-T-012.txt), 65 tests green, tree clean apart from the one intended file. The kill is ATTRIBUTED rather than merely observed: control D1 replays the exact mutation against HEAD's test file and it survives, D2 shows HEAD did catch the un-reworded form, so the reworded-sentence blind spot is real and this change is what closes it. Every mutation was built to preserve the substring \"21 tags appear exactly once\" so a different pre-existing test could not fire and muddy attribution -- the builder's own failability run tripped exactly that confound and said so.",
-    "commit": ""
+    "commit": "878479d"
   }
 }
