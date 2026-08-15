@@ -109,6 +109,6 @@
     "n": 5,
     "work": "I-2b — four CLI-level HOLE tests (direct Agent, sonnet, k=1, scoped to test/cli.test.js) + independent conductor mutation harness at the gate",
     "outcome": "1 verified; suite 52 -> 56 green; M07/M12/M13/M14 each failable and strictly attributable; product files byte-identical",
-    "commit": "PENDING"
+    "commit": "18d1d1e"
   }
 }
