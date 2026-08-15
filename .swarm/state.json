@@ -3,7 +3,7 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
   "phase": "POLISH",
-  "cycle": 22,
+  "cycle": 23,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -207,6 +207,16 @@
       "cycle": 22,
       "what": "Conductor probe N1 found a false-rejection case and it was FILED as T-020 rather than fixed in-cycle; the probe existed only because the builder volunteered the weakness in its own report.",
       "why": "Two things worth recording. (1) The classification: rewording the Attribution aside to \"8 of the 50 entries carry a rating of HIGH\" -- every number still true -- fails the suite at 71/70/1 because the extraction takes the digit nearest BEFORE the marker and, with the em dashes gone, 50 sits nearer to HIGH than 8 does. That is a false REJECTION of an honest edit, not a silent hole: it fails loud and names the C2 test, so a maintainer who trips it is told what happened. Same direction, and therefore the same LOW classification, as T-018 at cycle 20. (2) The provenance: the builder's report named this exact edge case under \"things I was unsure about\" instead of omitting it, and that is the only reason I probed the dash-free word order at all. An honest uncertainty note converted directly into a measured backlog item, which is the behaviour the dispatch prompt asked for and got."
+    },
+    {
+      "cycle": 23,
+      "what": "The conductor gate was REPAIRED mid-verification rather than reported as a 12-fail result: harness v1 sniffed failing-test identity by looking for TAP \"not ok\" while running node's DEFAULT reporter, so every by-name attribution read false and eight substantively-passing checks were rendered as failures. v2 runs every mutation under --test-reporter=tap and attributes each failure to a test by name.",
+      "why": "Hard rule 2 cuts both ways: a gate that cannot distinguish \"the suite failed\" from \"the NEW test failed\" is not evidence, and shipping its output as a verdict would have been the mirror image of trusting an agent. Repairing the instrument is not weakening the gate -- v2 asks strictly MORE than v1 did (it now requires the failure to carry the T-017 name, where v1 only counted failures) and the item passes the stronger form. Recorded because the tempting alternative -- reading fail=1 as \"close enough, the item works\" -- is exactly the reasoning the evidence-or-silence rule exists to forbid."
+    },
+    {
+      "cycle": 23,
+      "what": "T-017 is accepted on the README-LITERAL side of its comparison only. The binary-side mutations (separator, reversed order, dropped line) fail the new test but are NOT attributable to it: the pre-existing test \"--list preserves corpus order (first and last line match)\" already kills all three.",
+      "why": "The honest accounting of what a new test buys is what it catches that nothing else does, not what it happens to notice. Reporting the binary-side kills as T-017 value would have inflated the item threefold. What is genuinely new -- and what survivor C5 actually named -- is that the README's format LITERAL is now pinned to real runtime behaviour: mutate it to a pipe, or merely delete the spaces around the em dash, and the whole rest of the suite sits green at 71/71/0 while this one test fails by name."
     }
   ],
   "known_issues": [
@@ -270,13 +280,13 @@
     "consecutive_no_value": 0,
     "consecutive_failures": 0,
     "k_current": 5,
-    "wave_streak": 0,
+    "wave_streak": 1,
     "window_tokens_attributed": 0
   },
   "last_cycle": {
-    "n": 22,
-    "work": "test triage (one item, k_cap 1 at gear 1) -- T-016, guarding the three README claims that live outside the Tag vocabulary section and were checked by nothing: the corpus-size figure in Attribution (C1), the HIGH-risk count in Attribution (C2), and every path named in the Layout block (C6).",
-    "outcome": "VERIFIED done. 23/23 conductor gate checks, zero failures (.swarm/runs/cycle-022-verify-T-016.txt). Suite 68 -> 71, pure insertion (186 added, 0 removed, every pre-existing byte an unmodified prefix); test_cmd on the real tree 71/71/0, run by me. Blindness MEASURED before dispatch (.swarm/runs/cycle-022-baseline.txt): all three claims survived at 68/68/0 while the paired control C0 killed, so the suite was provably live and provably blind to exactly these three. All three proven twice per L-029 with conductor mutations the builder never saw, in the opposite direction or on a different target (50->51 UP, 8->7 DOWN, bin/aphorism.js and the test/ entry). The decisive checks were the three R2 TRACKS/STALE pairs no acceptance clause asked for: the guard provably tracks corpus.length, the triage document, and the filesystem, rather than hardcoding 50 / 8 / a path list. R1 clean both directions, R5 confirms parse misses fail loud. C2 was kept in scope rather than taken up on the item's own permission to drop it. Residual filed as T-020 (false rejection, loud, T-018 class).",
-    "commit": "0d56693"
+    "n": 23,
+    "work": "test triage (one item, k_cap 1 at gear 1) -- T-017, checking the README's `--list` format literal `<text> — <author>` against what the shipped binary actually prints. Last open HOLE from the cycle-19 mutation sweep (survivor C5).",
+    "outcome": "VERIFIED done. 18/18 conductor gate checks after two harness repairs (v1 had 12 false FAILs from a reporter mismatch, all in the harness, none in the item), plus 4/4 on the TRACKS addendum with a non-vacuity control. Suite 71 -> 72, pure insertion (+95 -0); test_cmd on the real tree 72/72/0, run by me. Attribution proven twice in the STRICT form with mutations the builder never saw: README literal -> \"<text> | <author>\" and README literal with the spaces removed each fail exactly one test BY NAME and each survives at the pre-cycle baseline 71/71/0 when that test is filtered out. Scope clean: +95/-0 on one file, no scratch residue. Residual filed as T-021 (LOW): the section locator requires the heading's backticks, so an honest reformat is rejected -- loudly, by name, the safe direction.",
+    "commit": null
   }
 }

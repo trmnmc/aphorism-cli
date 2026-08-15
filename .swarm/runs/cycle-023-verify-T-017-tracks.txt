@@ -1,0 +1,6 @@
+  PASS  ONLY.PRISTINE    name-filtered pristine run: 4/4/0
+  PASS  ONLY.SELECTS-LIVE same filter, README literal mutated: 4/3/1 failing=["README `--list` format literal matches the shipped binary's actual --list output (T-017)"]
+  PASS  TRACKS.CORPUS    corpus text changed, binary + expectation both follow: 4/4/0
+  PASS  TRACKS.STALE     same corpus change + binary upper-cases the text: 4/3/1 failing=["README `--list` format literal matches the shipped binary's actual --list output (T-017)"]
+
+  === 4 pass / 0 fail ===

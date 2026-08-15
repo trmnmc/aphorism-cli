@@ -555,7 +555,7 @@
       "priority": 6,
       "value": "M",
       "effort": "S",
-      "status": "todo",
+      "status": "done",
       "deps": [
         "T-013"
       ],
@@ -566,7 +566,8 @@
       "model": "sonnet",
       "attempts": 0,
       "acceptance": "Changing the separator in the README's --list format literal (`<text> — <author>`, U+2014) so it no longer matches what the shipped binary actually prints fails the suite. Proven twice per L-029.",
-      "notes": "Source: T-013 survivor C5, cycle 19. The interesting property that makes this a HOLE rather than a BOUNDARY: the README states the format BOTH as English prose ('text, space, EM DASH, space, author') AND as a literal inside backticks. Asserting against the literal is a literal-vs-behaviour check, so it freezes no wording -- the prose sentence stays free to be reworded. Do NOT write the check against the English sentence; that would be the C3/C4/C7 boundary mistake."
+      "notes": "Source: T-013 survivor C5, cycle 19. The interesting property that makes this a HOLE rather than a BOUNDARY: the README states the format BOTH as English prose ('text, space, EM DASH, space, author') AND as a literal inside backticks. Asserting against the literal is a literal-vs-behaviour check, so it freezes no wording -- the prose sentence stays free to be reworded. Do NOT write the check against the English sentence; that would be the C3/C4/C7 boundary mistake. VERIFIED cycle 23: 17/18 conductor gate checks green on the first harness run and 18/18 after two HARNESS defects were repaired (TAP reporter for by-name failure attribution; name-filter denominator), plus 4/4 on the TRACKS addendum. The item claim is carried by C5/C5b: two README-literal mutations the builder never used (pipe separator, spaces removed) each fail exactly one test BY NAME, and each SURVIVES at the pre-cycle baseline 71/71/0 with that test filtered out. Binary-side mutations (separator, order, length) also name T-017 but are NOT attributable to it -- the pre-existing test \"--list preserves corpus order (first and last line match)\" already covers the binary alone. T-017 unique contribution is therefore the README-literal side of the comparison, which is exactly what survivor C5 named.",
+      "verified_cycle": 23
     },
     {
       "id": "T-018",
@@ -606,7 +607,7 @@
       "model": "sonnet",
       "attempts": 0,
       "acceptance": "Deleting an entire band table (its heading AND all its rows) from the Tag vocabulary section fails the suite. Proven twice per L-029: failable against that specific deletion, and attributable -- removing the new assertion lets the same deletion survive the rest of the suite.",
-      "notes": "Source: conductor probe N2, cycle 21 -- .swarm/runs/cycle-021-verify-T-015.txt. MEASURED, not suspected: removing the whole '12 tags appear 2-4 times:' heading and its 12-row table leaves the suite GREEN at 68/68. This is the T-014/A7 blindness one level up. T-014 made each band table's row set bidirectional, and T-015 made each band heading's stated cardinality checkable, but BOTH iterate only over the bands that are PRESENT -- a band that stops being claimed at all is not iterated, so nothing notices. Every stated fact remains true; the README has simply gone quiet about 12 tags. Fix shape: derive the expected PARTITION of bands from the corpus (or assert the union of all band tables' rows equals the set of tags with count >= 2) instead of only validating the bands that happen to appear. Note the interaction with T-018: whatever mechanism is chosen must still fail LOUD rather than quiet when the section is reformatted, and must not be keyed to lead-in prose (T-012 hazard). Lower priority than T-016/T-017 because a whole table vanishing is a far less likely edit than the single-row and cross-file cases those cover, and unlike A7 it is not on the path of T-007 (retagging edits rows, it does not delete tables)."
+      "notes": "Source: conductor probe N2, cycle 21 -- .swarm/runs/cycle-021-verify-T-015.txt. MEASURED, not suspected: removing the whole '12 tags appear 2-4 times:' heading and its 12-row table leaves the suite GREEN at 68/68. This is the T-014/A7 blindness one level up. T-014 made each band table's row set bidirectional, and T-015 made each band heading's stated cardinality checkable, but BOTH iterate only over the bands that are PRESENT -- a band that stops being claimed at all is not iterated, so nothing notices. Every stated fact remains true; the README has simply gone quiet about 12 tags. Fix shape: derive the expected PARTITION of bands from the corpus (or assert the union of all band tables' rows equals the set of tags with count >= 2) instead of only validating the bands that happen to appear. Note the interaction with T-018: whatever mechanism is chosen must still fail LOUD rather than quiet when the section is reformatted, and must not be keyed to lead-in prose (T-012 hazard). Lower priority than T-016/T-017 because a whole table vanishing is a far less likely edit than the single-row and cross-file cases those cover, and unlike A7 it is not on the path of T-007 (retagging edits rows, it does not delete tables). CYCLE 23 NOTE: this item text says \"lower priority than T-016/T-017\" while carrying priority 5 against their 6. Both of those are now done, so the contradiction is moot and the number is left as written rather than edited -- T-019 is genuinely next on value, being the only remaining SILENT hole on the board (the README goes quiet and nothing notices). The three remaining guard items (T-018, T-020, T-021) are all LOUD false rejections, i.e. the safe direction."
     },
     {
       "id": "T-020",
@@ -627,6 +628,26 @@
       "attempts": 0,
       "acceptance": "Rewording the Attribution sentence so that a different CORRECT digit sits nearer the HIGH marker than the HIGH count itself -- e.g. `8 of the 50 entries carry a rating of HIGH` -- leaves the suite GREEN, while the same reworded prose carrying a WRONG HIGH count still fails. Proven twice per L-029.",
       "notes": "Source: conductor probe N1, cycle 22 -- .swarm/runs/cycle-022-verify-T-016.txt. MEASURED, not suspected: rewriting the Attribution aside as `covers every entry. 8 of the 50 entries carry a rating of HIGH, and it says what would settle each one.` -- with every number still TRUE -- fails the suite at 71/70/1, naming the C2 test. Cause: extractNearestPrecedingCount splits the section on em/en dashes and then takes the digit run NEAREST BEFORE the marker within that clause; with the dashes gone the whole paragraph collapses into one clause, and in that word order 50 sits nearer to HIGH than 8 does. The builder flagged exactly this edge case in its own report rather than hiding it, which is the only reason it was probed -- an honest uncertainty report converted directly into a measured backlog item. IMPORTANT, and the reason this is LOW value rather than a repeat of T-012: the guard does NOT go quiet. It fails LOUD and names the claim, so a maintainer who trips it is told exactly what happened. This is a false REJECTION of an honest edit -- the safe direction -- and it gets the same classification T-018 got at cycle 20 for the same reason. Fix shape: bind the digit to its marker by proximity in BOTH directions within the clause, or match the two claims as a pair (`N ... entries` and `M ... HIGH`), rather than assuming the README will keep using dash-delimited asides. Whatever is chosen must still fail LOUD on a genuine parse miss (R5, verified this cycle) and must not be keyed to lead-in prose (the standing T-012 hazard)."
+    },
+    {
+      "id": "T-021",
+      "title": "Let the --list-behaviour section locator tolerate a reformatted heading",
+      "kind": "test",
+      "priority": 7,
+      "value": "L",
+      "effort": "S",
+      "status": "todo",
+      "deps": [
+        "T-017"
+      ],
+      "files_hint": [
+        "test/readme-tags.test.js"
+      ],
+      "packages": [],
+      "model": "sonnet",
+      "attempts": 0,
+      "acceptance": "Dropping the backticks from the \"### `--list` behaviour\" heading (an honest markdown reformat that makes no README claim false, and that leaves the format literal and the binary untouched) leaves the suite GREEN, while a mutated format literal under that same reformatted heading still FAILS. Proven twice per L-029.",
+      "notes": "Source: conductor probe N1, cycle 23 -- .swarm/runs/cycle-023-verify-T-017.txt. MEASURED, not suspected: rewriting the heading as \"### --list behaviour\" fails the suite at fail=1, naming the T-017 test. Cause: getListBehaviourSection anchors on /^### `--list` behaviour\\s*$/m, so the backticks are load-bearing in the locator. The BUILDER FLAGGED THIS EXACT CASE in its own \"things I was unsure about\" section before it was probed -- the second cycle running (cf. T-020 at cycle 22) where an honest uncertainty note converted straight into a measured item. IMPORTANT, and why this is LOW value rather than a T-012 repeat: the guard does NOT go quiet. Its assert fires with the message \"README must have a \\\"### `--list` behaviour\\\" section\", so a maintainer who trips it is told exactly what happened. Same safe-direction classification as T-018 (cycle 20) and T-020 (cycle 22). Fix shape: match the heading on the token --list plus the word behaviour, tolerating optional backticks, rather than requiring the exact backticked form. Whatever is chosen must still fail LOUD on a genuine parse miss (R5, re-verified this cycle) and must not be keyed to lead-in prose (standing T-012 hazard)."
     }
   ]
 }

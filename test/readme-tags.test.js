@@ -4,6 +4,7 @@ const test = require('node:test');
 const assert = require('node:assert');
 const fs = require('fs');
 const path = require('path');
+const { execFileSync } = require('child_process');
 
 // Import corpus
 const { corpus } = require('../src/corpus.js');
@@ -608,6 +609,100 @@ test('README Layout section paths must exist on disk (C6)', () => {
     assert(
       fs.existsSync(absolutePath),
       'README Layout section names `' + layoutPath + '` but it does not exist on disk at ' + absolutePath
+    );
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Guard the `--list` output format literal against the shipped binary
+// (T-017 / survivor C5 of the cycle-19 mutation sweep).
+//
+// The "### `--list` behaviour" section states the per-line output format
+// TWICE: once as a backtick-quoted LITERAL (`<text> — <author>`) and once
+// as an English prose gloss ("(text, space, EM DASH, space, author)"). The
+// literal is the machine-readable contract; the prose is free-form and is
+// deliberately NEVER asserted against here (that would wrongly freeze
+// wording no Domain rule promises -- see the C3/C4/C7 boundary class from
+// the same sweep).
+//
+// The section itself is located structurally, by its markdown heading, and
+// the separator is derived from whatever sits between the `<text>` and
+// `<author>` placeholders in the literal at test time -- not from a
+// hardcoded em-dash constant baked into this file (standing hazard from
+// item T-012: never key extraction to a lead-in prose sentence that a
+// maintainer could reword). If the README literal's separator changes, the
+// expected-output computation below changes with it, so a rewritten
+// literal that no longer matches the unchanged binary must fail this test.
+// ---------------------------------------------------------------------------
+
+// Helper: return the "### `--list` behaviour" section's raw text (heading
+// through the line before the next "### " or "## " heading, whichever
+// comes first). Located by the heading token itself, not by any prose
+// sentence underneath it.
+function getListBehaviourSection(readmeContent) {
+  const headingPattern = /^### `--list` behaviour\s*$/m;
+  const headingMatch = headingPattern.exec(readmeContent);
+  assert(headingMatch, 'README must have a "### `--list` behaviour" section');
+  const start = headingMatch.index;
+
+  const nextH3 = readmeContent.indexOf('\n### ', start + 1);
+  const nextH2 = readmeContent.indexOf('\n## ', start + 1);
+  const boundaries = [nextH3, nextH2].filter((i) => i > -1);
+  const end = boundaries.length > 0 ? Math.min(...boundaries) : readmeContent.length;
+
+  return readmeContent.substring(start, end);
+}
+
+// Helper: pull the separator out of the backtick-quoted format LITERAL
+// `<text>...<author>` in the given section text. Returns whatever
+// characters sit between the two placeholders -- e.g. " — " (space, EM
+// DASH, space) today, but this makes no assumption about which characters
+// those are, so a mutated literal (e.g. an ASCII hyphen swap) yields a
+// mutated separator here too. Deliberately does NOT look at the prose
+// gloss sentence anywhere in the section.
+function extractListFormatSeparator(listBehaviourSection) {
+  const literalMatch = listBehaviourSection.match(/`<text>(.*?)<author>`/);
+  assert(
+    literalMatch,
+    'could not find a `<text>...<author>` format literal in the "--list behaviour" section -- ' +
+      'this claim must fail loud, not pass silently, when it cannot be parsed'
+  );
+  return literalMatch[1];
+}
+
+test('README `--list` format literal matches the shipped binary\'s actual --list output (T-017)', () => {
+  const readmePath = path.join(__dirname, '..', 'README.md');
+  const readmeContent = fs.readFileSync(readmePath, 'utf8');
+
+  const listBehaviourSection = getListBehaviourSection(readmeContent);
+  const separator = extractListFormatSeparator(listBehaviourSection);
+
+  const binPath = path.join(__dirname, '..', 'bin', 'aphorism.js');
+  const stdout = execFileSync(process.execPath, [binPath, '--list'], { encoding: 'utf8' });
+
+  // The binary prints one trailing newline (from console.log); strip
+  // exactly that before splitting into per-aphorism lines.
+  const actualLines = stdout.replace(/\n$/, '').split('\n');
+
+  // Expected output derived from the real corpus, at test time, joined
+  // with the separator parsed out of the README literal above -- never a
+  // separator constant hardcoded in this file.
+  const expectedLines = corpus.map((entry) => `${entry.text}${separator}${entry.author}`);
+
+  assert.equal(
+    actualLines.length,
+    expectedLines.length,
+    'README `--list` literal implies ' + expectedLines.length + ' output lines (one per corpus entry, unfiltered) ' +
+      'but the binary printed ' + actualLines.length + ' lines for `node bin/aphorism.js --list`'
+  );
+
+  for (let i = 0; i < expectedLines.length; i++) {
+    assert.equal(
+      actualLines[i],
+      expectedLines[i],
+      'line ' + (i + 1) + ' of `node bin/aphorism.js --list` does not match the README\'s `--list` format ' +
+        'literal `<text>' + separator + '<author>`: binary printed ' + JSON.stringify(actualLines[i]) +
+        ' but the README-derived expectation (corpus entry #' + i + ') is ' + JSON.stringify(expectedLines[i])
     );
   }
 });
