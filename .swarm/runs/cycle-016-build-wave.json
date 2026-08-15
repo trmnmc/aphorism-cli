@@ -1,0 +1,16 @@
+{
+  "wave": [
+    {
+      "itemId": "T-011",
+      "status": "done",
+      "branch": "wave-808900-T-011",
+      "worktree": "/opt/targets/aphorism-cli/.worktree-T-011",
+      "files_changed": ["README.md"],
+      "summary": "Fixed the README.md line 38 comment to match measured behavior. Changed \"changes at local midnight\" to \"seed refreshes at local midnight\" to accurately convey that the seed value (date +%Y%m%d) always refreshes at local midnight, not that the aphorism always differs. This reworded comment is truthful on all 365 days including the ~3% when consecutive seeds produce the same aphorism, while remaining a scannable single-line trailing comment. The command itself and all other README content are byte-identical to HEAD.",
+      "self_test_output": "i tests 59 / i suites 0 / i pass 59 / i fail 0 / i cancelled 0 / i skipped 0 / i todo 0 / i duration_ms 1374.695199"
+    }
+  ],
+  "dead_items": [],
+  "timestamp": "1786808900",
+  "_conductor_note": "RAW WORKFLOW RETURN, saved per cycle.md step 5. Every field here is a CLAIM, not a fact. Two claims were checked and one was WRONG: the `worktree` field above matched git's record at merge time, but git worktree list had shown /tmp/wave-T-011-worktree earlier in the same cycle -- the builder relocated its worktree INTO the target's working tree mid-run. See the cycle 16 journal block. The `self_test_output` claim was independently re-run by the conductor (59/59) rather than trusted."
+}
