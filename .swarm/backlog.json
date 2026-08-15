@@ -257,27 +257,66 @@
     },
     {
       "id": "I-4",
-      "title": "Corpus attribution triage — risk-ranked list for a human",
+      "title": "Corpus attribution triage (umbrella — decomposed cycle 10 into I-4a + I-4b)",
       "kind": "qa",
-      "priority": 6,
+      "priority": 1,
       "value": "M",
       "effort": "M",
       "status": "todo",
+      "deps": [
+        "I-4a",
+        "I-4b"
+      ],
+      "files_hint": [],
+      "acceptance": "a written risk-ranked list names the corpus entries most likely to carry a wrong or unverifiable attribution with a stated reason each, and no file in the repo describes the corpus as audited, verified, or fact-checked",
+      "packages": [],
+      "model": "conductor",
+      "attempts": 0,
+      "notes": "TRIAGE, never an audit — nothing here can be confirmed without sources this run cannot reach, and the deliverable is explicitly a list for a human to settle (KI-2, T-006). Rank by internally-observable risk signals only: folklore maxims historically credited to several different people, wording that looks paraphrased or compressed rather than verbatim, entries already hedged as Anonymous (lowest risk, already honest), and entries traceable to a specific well-documented publication (lower risk). The stress-test's demo-embarrassment lens put this ABOVE the test items in value: a programming-aphorism CLI with misattributed quotes fails in exactly the way a green suite cannot see. || DECOMPOSED cycle 10 into I-4a and I-4b, per the cycle-9 handoff's stated preference for S-effort slices over accepting one M-effort exception under gear 1. The split is NOT by risk band, which would have been circular — you cannot slice by a ranking the work exists to produce. It is by KIND of claim: I-4b is the ranked judgment artifact (what is likely wrong), I-4a is a mechanical repo sweep (does any file overclaim). Those need different evidence and different verification, which is what makes the seam real. This umbrella closes when I-4a lands; id retired from direct execution, not dropped."
+    },
+    {
+      "id": "I-4a",
+      "title": "Sweep the repo for language that overclaims the corpus as audited or verified",
+      "kind": "fix",
+      "priority": 2,
+      "value": "M",
+      "effort": "S",
+      "status": "todo",
+      "deps": [
+        "I-4b"
+      ],
+      "files_hint": [
+        "src/corpus.js"
+      ],
+      "acceptance": "no file in the repo describes the corpus as audited, verified, fact-checked, or its attributions as honest/correct, and any such wording is replaced with an accurate description that points at docs/corpus-attribution-triage.md",
+      "packages": [],
+      "model": "conductor",
+      "attempts": 0,
+      "notes": "The other half of I-4's acceptance clause. CONDUCTOR-SCOUTED cycle 10, not yet executed: a grep across README.md, REPORT.md and src/ found REPORT.md already honest (it states the attributions are unaudited and KI-2 open), but src/corpus.js carries a header comment claiming 'honest attribution' and that uncertain entries 'are attributed to Anonymous rather than guessing a famous name'. I-4b measured that claim as false in at least 8 places: exactly one of 50 entries is hedged to Anonymous, while eight carry HIGH-risk attributions to named people. So this is a real overclaim in a PRODUCT file, not a paperwork tidy. Ordered AFTER I-4b deliberately — the triage supplies the evidence for what the replacement wording may honestly say, and doing it first would have meant writing the comment twice. Conductor-executed and S-effort: it is a prose edit to a product file, which by the cycle-8 precedent must be gated by byte-comparing everything outside the edited comment against HEAD."
+    },
+    {
+      "id": "I-4b",
+      "title": "Risk-ranked attribution triage document for the 50-entry corpus",
+      "kind": "qa",
+      "priority": 1,
+      "value": "H",
+      "effort": "S",
+      "status": "done",
       "deps": [],
       "files_hint": [
         "docs/corpus-attribution-triage.md"
       ],
-      "acceptance": "a written risk-ranked list names the corpus entries most likely to carry a wrong or unverifiable attribution with a stated reason each, and no file in the repo describes the corpus as audited, verified, or fact-checked",
+      "acceptance": "a written risk-ranked list names the corpus entries most likely to carry a wrong or unverifiable attribution, with an entry-specific stated reason for each of all 50 entries, and never presents itself as an audit",
       "packages": [],
       "model": "sonnet",
       "attempts": 0,
-      "notes": "TRIAGE, never an audit — nothing here can be confirmed without sources this run cannot reach, and the deliverable is explicitly a list for a human to settle (KI-2, T-006). Rank by internally-observable risk signals only: folklore maxims historically credited to several different people, wording that looks paraphrased or compressed rather than verbatim, entries already hedged as Anonymous (lowest risk, already honest), and entries traceable to a specific well-documented publication (lower risk). The stress-test's demo-embarrassment lens put this ABOVE the test items in value: a programming-aphorism CLI with misattributed quotes fails in exactly the way a green suite cannot see."
+      "notes": "TRIAGE, never an audit (KI-2, T-006). Dispatched as ONE sonnet Agent, file scope exactly docs/corpus-attribution-triage.md, network use explicitly forbidden — the deliverable's whole value depends on it being honest about resting on recall alone. || VERIFIED cycle 10. The hard problem: a triage is a JUDGMENT artifact, so no command's exit code can prove it right, and the usual gate has nothing to bite on. Two-part answer. (1) Everything mechanically provable was proven by harness .swarm/runs/cycle-010-verify-I-4b.js (16/16, evidence .swarm/runs/cycle-010-verify-I-4b.txt): all 50 entries covered exactly once and keyed to the corpus by TWO independent columns (author verbatim + text prefix, so a shifted or invented row cannot pass), fixed risk/signal vocabularies, non-degeneracy (>=3 bands, no band over 60%, 7 distinct signals), 50 distinct non-boilerplate reasons, the self-hedged Anonymous entry anchored to LOW, product tree byte-identical to HEAD and suite 59/59 green. Two NEGATIVE CONTROLS prove the checks can fail: a corrupted table (row dropped + author swapped) is rejected, and a hypothetical all-MEDIUM table fails non-degeneracy. (2) The substantive claim was measured against a ranking SEALED BEFORE DISPATCH (.swarm/runs/cycle-010-precommit.md): the agent's HIGH band {0,3,10,27,38,39,45,48} contains 4 of the 5 sealed Tier A entries, and independently found 4 the conductor had not ranked HIGH. || CONDUCTOR ADDENDUM appended to the document, marked as separately authored: the four places the two independent derivations DISAGREED, recorded as disagreements between two unverified opinions rather than as corrections. Chief among them, row #45 asserts that Stroustrup's FAQ disclaims the foot-gun quote while the conductor recalls the opposite — that row is the only one in the table making a checkable claim about what a primary source says, so it was moved to the top of the human's queue precisely because the two passes conflict. Also added: the #25 Postel paraphrase the table rated LOW and missed."
     },
     {
       "id": "I-5",
       "title": "Repair or losslessly hand off the shared SWARM playbook file",
       "kind": "fix",
-      "priority": 7,
+      "priority": 3,
       "value": "M",
       "effort": "S",
       "status": "todo",

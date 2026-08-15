@@ -3,7 +3,7 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
   "phase": "BUILD",
-  "cycle": 9,
+  "cycle": 10,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -97,6 +97,21 @@
       "cycle": 9,
       "what": "HARD RULE 5 DEVIATION BY A SUBAGENT, caught and cleaned: the builder created its mutation scratch copies under /opt/swarm/.scratch/ -- a SWARM path outside the runs/ and playbook/ write fence -- rather than under the system temp dir. It removed the copies itself; the conductor removed the leftover empty directory.",
       "why": "Worth recording because the prompt did NOT hand the agent a SWARM path: it was given target paths only, exactly as hard rule 5 requires. The agent reached a SWARM path anyway, almost certainly because the session cwd IS /opt/swarm, so a relative scratch path lands inside the fence by default. That makes it a STRUCTURAL hole rather than a prompt defect -- the fence is enforced by what agents are told, and cwd silently supplies what they were not told. No harm here (the writes were scratch copies of the target, nothing under bin/, reference/, workflows/ or templates/ was touched, and the tree is clean), but the same reflex on a different task could write into SWARM tooling mid-run. Candidate lesson for the wrap-up distillation: builder prompts should name an explicit scratch location outside the repo, since 'do not write to SWARM' is not something the agent can honor if it does not know where it is standing. The conductor's own harness used os.tmpdir() and left nothing behind."
+    },
+    {
+      "cycle": 10,
+      "what": "I-4 decomposed into I-4a (mechanical overclaim sweep) and I-4b (the ranked judgment artifact) — split by KIND OF CLAIM, not by risk band.",
+      "why": "Cycle 9's handoff named two exits for I-4 not fitting gear 1's S-effort rule and preferred decomposition. The obvious decomposition — slice the corpus by risk band — is circular: the band assignment IS the deliverable, so you cannot use it to define the slices. Splitting by kind of claim gives two pieces that genuinely need DIFFERENT evidence: I-4b is a judgment that can only be cross-checked against an independent derivation, while I-4a is a mechanical grep-and-fix gated by byte-comparison. A seam that changes the verification method is a real seam; one that just halves the word count is not."
+    },
+    {
+      "cycle": 10,
+      "what": "A judgment artifact was gated against a ranking SEALED TO DISK BEFORE the agent was dispatched, rather than by reading the output and agreeing with it.",
+      "why": "Every prior gate this run had a command whose exit code carried the claim. A triage has none — it is 50 opinions about provenance, and reading it can only confirm that it reads well, which is precisely what a confabulated document also does. Writing the conductor's own high-risk list first (.swarm/runs/cycle-010-precommit.md) converts the check into a measurement: the agent could not have seen it, so overlap is evidence about the ranking rather than about the prose. It also cuts both ways by design — the agent's HIGH band found 4 entries the sealed list had NOT ranked high (#38 Wheeler, #39 Hopper, #45 Stroustrup, #48 Kay), and on inspection at least three are good catches, so the pre-commitment measured the conductor as much as the agent. Recorded honestly: the sealed list also contained an off-by-one (it named idx 39 as Wheeler; Wheeler is 38, 39 is Hopper), which affected only the informational Tier B tally, never the gate."
+    },
+    {
+      "cycle": 10,
+      "what": "The document was ACCEPTED and then extended with a separately-attributed conductor addendum recording the four disagreements, rather than being sent back for a fix.",
+      "why": "The disagreements are not defects the author could resolve — neither party has a source, so a revision round would only have produced a more confident document with the same epistemic basis, which is the opposite of what this deliverable is for. Row #45 is the sharp case: it asserts a specific checkable fact about what Stroustrup's FAQ SAYS (that he disclaims the foot-gun line) and row #46 leans on the same asserted FAQ. The conductor recalls the reverse. Recording that conflict at the top of the human's queue is strictly more useful than silently picking a winner, because the fact that two independent passes disagree about a primary source is itself the finding. Suppressing it to make the artifact look cleaner would have been the dishonest option."
     }
   ],
   "known_issues": [
@@ -104,7 +119,8 @@
       "id": "KI-2",
       "desc": "corpus attributions are unaudited — entry shape is machine-verified but no check available to this run can confirm each of the 50 quotes is correctly attributed; programming aphorisms are widely misattributed. Item I-4 produces a risk-ranked triage for a human, NOT an audit.",
       "severity": "high",
-      "cycle_found": 1
+      "cycle_found": 1,
+      "note_cycle_10": "STILL OPEN and still high. Item I-4b delivered docs/corpus-attribution-triage.md this cycle: a risk-ranked list of all 50 entries (8 HIGH / 16 MEDIUM / 26 LOW) with an entry-specific reason each. That is the human-actionable triage KI-2 asked for; it is explicitly NOT an audit and does not resolve this issue. Nothing in the corpus was changed. The eight HIGH entries are the queue a human should work first."
     },
     {
       "id": "KI-3",
@@ -144,9 +160,9 @@
     "window_tokens_attributed": 0
   },
   "last_cycle": {
-    "n": 9,
-    "work": "I-8 -- hardened --list --json against mutant M16 (direct Agent, sonnet, k=1, file scope test/cli.test.js only) + conductor mutation/attribution harness",
-    "outcome": "1 verified; 24/24 harness checks green including 3 discriminators and a MUTATION-APPLIED control on every scratch copy; suite 58 -> 59 green; product tree byte-identical to HEAD; I-2 hardening thread complete",
-    "commit": "1080e49"
+    "n": 10,
+    "work": "I-4b — risk-ranked corpus attribution triage (direct Agent, sonnet, k=1, file scope docs/corpus-attribution-triage.md only) gated against a pre-dispatch sealed ranking",
+    "outcome": "1 verified; 16/16 harness checks green including 2 negative controls; 50/50 entries covered and double-keyed to the corpus; conductor addendum records 4 disagreements; suite 59/59 green, product tree byte-identical to HEAD",
+    "commit": "PENDING"
   }
 }

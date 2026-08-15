@@ -1,0 +1,24 @@
+PASS  SCOPE: no product/test file touched: only docs/corpus-attribution-triage.md (+ .swarm bookkeeping)
+PASS  SCOPE: all 8 product/test/doc files byte-identical to HEAD: corpus data provably untouched
+PASS  SUITE: unchanged and green: tests 59 / pass 59 / fail 0
+PASS  DELIVERABLE: docs/corpus-attribution-triage.md exists
+PASS  PARSER: table rows were actually parsed: 50 rows
+PASS  STRUCTURE: 50 entries, each once, keyed to corpus by BOTH author and text: indices 0-49 complete, authors verbatim, excerpts prefix-match
+PASS  NON-DEGENERACY: at least 3 risk bands used: {"HIGH":8,"LOW":26,"MEDIUM":16}
+PASS  NON-DEGENERACY: no band holds more than 60% of the corpus: largest band 26/50
+PASS  NON-DEGENERACY: signal vocabulary actually exercised: 7 distinct signals
+PASS  REASONS: every entry carries a substantive reason: all 50 non-trivial
+PASS  REASONS: no reason is copy-pasted verbatim across entries: 50 distinct reasons
+PASS  HONESTY: document states plainly that it is not an audit
+      CONDUCTOR REVIEW -- 0 line(s) use audit-shaped words; a regex cannot tell
+      "the corpus is verified" from "the corpus is NOT verified", so these are read by hand:
+PASS  ANCHOR: the "Anonymous" entry (49) sits in the LOWEST band: risk=LOW signal=self-hedged
+PASS  DISCRIMINATOR: HIGH band contains >= 2 of the sealed Tier A set: sealed A {0,3,6,10,27} -> found {0,3,10,27} ; agent HIGH = {0,3,10,27,38,39,45,48}
+      INFORMATIONAL (not a gate): sealed Tier B {11,12,25,39,41,42,43,44}
+         -> rated above LOW by the agent: {11,12,39,42} (4/8)
+      INFORMATIONAL: HIGH entries the conductor did NOT pre-commit: {38,39,45,48} -- read by hand,
+         an independent derivation is allowed to find things the sealed list missed.
+PASS  NEGATIVE CONTROL: corrupted table (row dropped + author swapped) is REJECTED: row count 49 != 50 || missing indices 49 || author mismatch -> 5: "Someone Else" != "Edsger W. Dijkstra"
+PASS  NEGATIVE CONTROL: an all-MEDIUM table would fail non-degeneracy: {"MEDIUM":50}
+
+=== 16 pass / 0 fail ===
