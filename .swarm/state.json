@@ -195,6 +195,6 @@
     "n": 17,
     "work": "build-wave (one item, k_cap 1 at gear 1) -- T-009, publishing the tag vocabulary in README and --help, plus a corpus-derived test that keeps the section honest.",
     "outcome": "VERIFIED done. 30/30 conductor gate checks including 10 negative controls (.swarm/runs/cycle-017-verify-T-009.txt). Suite 59 -> 65. The gate did real work twice: control F5 caught a VACUOUS test the builder shipped -- it filtered README tag names to those present in the corpus and then asserted they were present, so an invented tag passed 65/65 -- and the builder was sent back in-cycle to scope the extraction instead of filtering; control F9 then confirmed all 8 documented tag positions are watched. Two harness bugs of my own were repaired mid-gate (a .trim() that shifted the first git-status path by one char; an F10 probe that could not tell which assertion fired), and the F10 repair flipped its verdict from a false NO to a true YES -> residual T-012 filed. parseArgs proven byte-identical in behaviour across 44 argv vectors; everything in src/args.js outside the HELP literal byte-identical to HEAD.",
-    "commit": null
+    "commit": "ef606d4"
   }
 }
