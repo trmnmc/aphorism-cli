@@ -7,11 +7,11 @@
 const HELP = `Usage: aphorism [options]
 
 Options:
-  --author <name>  filter by author (case-insensitive)
-  --tag <tag>      filter by tag (case-insensitive)
+  --author <name>  filter by author (substring match, case-insensitive)
+  --tag <tag>      filter by tag (whole-tag, case-insensitive)
   --seed <n>       deterministic pick using seed n
   --list           list all matching aphorisms, one per line
-  --json           print the selected aphorism as a JSON object
+  --json           output as JSON (single line, or NDJSON with --list)
   -h, --help       show this help and exit
 `;
 

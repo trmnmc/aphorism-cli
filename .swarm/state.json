@@ -3,7 +3,7 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
   "phase": "BUILD",
-  "cycle": 7,
+  "cycle": 8,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -78,6 +78,16 @@
       "what": "A docs item was gated by EXECUTING the shipped binary — 36 behavioral checks with four discriminators — not by reading the prose it produced.",
       "why": "Every claim I-3 wrote is a claim about runtime behavior, so the docs are falsifiable exactly like code and the same evidence standard applies (hard rule 2). Reading the diff would only have confirmed the agent wrote what it was told; it could not have caught the agent transcribing a ruling the code does not actually honor. The discriminators exist because the naive checks are all passable by degenerate implementations: determinism alone is satisfied by an always-same-entry stub, so 7 seeds must reach 7 distinct aphorisms; a substring rule is only distinguishable from equality if the partial-author result set is required to EQUAL the full-name set. One imprecision was caught this way and fixed (the --list/--seed carve-out), which reading could not have surfaced."
     }
+    {
+      "cycle": 8,
+      "what": "I-7 closed as a superset of the two divergences it named: the --json HELP line was widened to cover the --list/NDJSON case even though the item's acceptance named only --author and --tag.",
+      "why": "The --json line carried the IDENTICAL pre-I-3 defect the item exists to fix — a documentation surface describing only the non-list case — and it sits in the same file, in the same edit, at zero additional risk. Drawing the scope line so as to leave one of three known incompletenesses standing in the very file being opened to close that defect class would have been artificial rather than disciplined. Recorded here, and in the item's notes, rather than taken silently: widening an acceptance mid-cycle is a conductor call and must be visible as one. The opposite call was made for the --seed and --list lines and is the boundary that makes this one principled — both are incomplete (they omit the exotic-seed set and the --list-ignores-seed carve-out) but neither is MISLEADING, and README already carries the detail. The test is whether a reader would come away with a false belief, not whether the line is exhaustive."
+    },
+    {
+      "cycle": 8,
+      "what": "A prose-only edit to a PRODUCT file was gated by byte-comparing everything outside the edited literal against HEAD, not by reading the diff or trusting the green suite.",
+      "why": "HELP lives in src/args.js alongside parseArgs. A prose edit that also nudged parser logic would be invisible in a green suite if the nudge landed in a corner the 58 tests do not reach — and cycle 4's mutation sweep proved such corners existed in this exact file (M21, M22 both survived the whole suite). Reading the diff would only confirm the agent changed what it was told to; it cannot prove nothing ELSE moved. Splitting the file at the template-literal boundary and byte-comparing the 216-byte prologue and 2631-byte epilogue turns 'zero behaviour change' from a claim into a measurement, and the literal's own 362 -> 397 byte change simultaneously proves the item was not a no-op. This is the cycle-7 docs-are-falsifiable rule extended: when docs live INSIDE a product file, the scope claim needs proving as much as the content claim."
+    }
   ],
   "known_issues": [
     {
@@ -124,9 +134,9 @@
     "window_tokens_attributed": 0
   },
   "last_cycle": {
-    "n": 7,
-    "work": "I-3 — six doc/behaviour divergences settled identically in SPEC.md + README.md (direct Agent, haiku, k=1, scoped to the two doc files) + conductor execution harness",
-    "outcome": "1 verified; 36/36 behavioral checks green with four discriminators; suite 58/58; zero product code touched; KI-3 resolved; OPEN AMBIGUITIES block deleted; follow-ups I-7 and I-8 opened",
-    "commit": "185eb84"
+    "n": 8,
+    "work": "I-7 — HELP text in src/args.js aligned with the I-3 Domain rules (direct Agent, haiku, k=1, file scope src/args.js only) + conductor scope-and-execution harness",
+    "outcome": "1 verified; 35/35 harness checks green with three discriminators; suite 58/58; parser bytes proven identical to HEAD; --json line widened to cover NDJSON, recorded as a decision",
+    "commit": "pending"
   }
 }

@@ -1,0 +1,45 @@
+--- (1) SCOPE: nothing outside the HELP literal moved ---
+  PASS  prologue above HELP is byte-identical to HEAD :: 216 bytes
+  PASS  ALL code below HELP is byte-identical to HEAD :: 2631 bytes
+  PASS  the HELP literal DID change (the item is not a no-op) :: 362 -> 397 bytes
+  PASS  git diff touches exactly src/args.js :: ["src/args.js"]
+--- (2) HELP structural constraints the suite enforces ---
+  PASS  HELP is a non-empty string
+  PASS  HELP is <= 24 lines :: 10 lines
+  PASS  HELP still mentions --author
+  PASS  HELP still mentions --tag
+  PASS  HELP still mentions --seed
+  PASS  HELP still mentions --list
+  PASS  HELP still mentions --json
+  PASS  HELP still mentions --help
+  PASS  HELP still mentions -h
+--- (3) END-TO-END: the binary actually prints the edited constant ---
+  PASS  --help exits 0 :: code=0
+  PASS  --help writes nothing to stderr :: ""
+  PASS  --help stdout contains the EDITED --author line verbatim :: "--author <name>  filter by author (substring match, case-insensitive)"
+--- (4) CLAIM (a): HELP says --author is a SUBSTRING match ---
+  PASS  HELP --author line states substring matching :: "--author <name>  filter by author (substring match, case-insensitive)"
+  PASS  --author dijk exits 0 and matches entries :: code=0, 7 line(s)
+  PASS  DISCRIMINATOR: partial-author result set EQUALS full-name result set :: substring, not equality
+--- (5) CLAIM (b): HELP says --tag is a WHOLE-TAG match ---
+  PASS  HELP --tag line states whole-tag matching :: "--tag <tag>      filter by tag (whole-tag, case-insensitive)"
+  PASS  DISCRIMINATOR: --tag test exits 1 (no WHOLE tag "test" exists) :: code=1
+  PASS  --tag test writes zero bytes to stdout :: ""
+  PASS  --tag testing exits 0 (the whole tag does exist) :: code=0
+  PASS  --author and --tag lines are adjacent (asymmetry readable at a glance) :: --author at 3, --tag at 4
+--- (6) CLAIM (c): HELP says --json is NDJSON when combined with --list ---
+  PASS  HELP --json line names the --list/NDJSON combination :: "--json           output as JSON (single line, or NDJSON with --list)"
+  PASS  --list --json exits 0 :: code=0
+  PASS  --list --json does NOT start with "[" (not a JSON array) :: "{\"text\":\"Prema"
+  PASS  every --list --json line parses independently as a JSON object :: 50 lines
+  PASS  NDJSON line count equals corpus size :: 50 vs 50
+  PASS  NDJSON is in corpus order (first and last) :: first="Premature optimization is th..."
+  PASS  DISCRIMINATOR: bare --json is exactly ONE line while --list --json is many :: bare=1 line, list=50 lines
+--- (7) REGRESSION: behaviors HELP still claims unchanged ---
+  PASS  --seed 42 still deterministic over 8 runs :: distinct=1
+  PASS  --seed abc still exits 2 with stdout empty :: code=2
+  PASS  unknown flag still exits 2 :: code=2
+  PASS  default invocation still exits 0 with output :: code=0
+
+TOTALS: pass=35 fail=0
+GATE: PASS
