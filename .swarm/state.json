@@ -277,6 +277,6 @@
     "n": 22,
     "work": "test triage (one item, k_cap 1 at gear 1) -- T-016, guarding the three README claims that live outside the Tag vocabulary section and were checked by nothing: the corpus-size figure in Attribution (C1), the HIGH-risk count in Attribution (C2), and every path named in the Layout block (C6).",
     "outcome": "VERIFIED done. 23/23 conductor gate checks, zero failures (.swarm/runs/cycle-022-verify-T-016.txt). Suite 68 -> 71, pure insertion (186 added, 0 removed, every pre-existing byte an unmodified prefix); test_cmd on the real tree 71/71/0, run by me. Blindness MEASURED before dispatch (.swarm/runs/cycle-022-baseline.txt): all three claims survived at 68/68/0 while the paired control C0 killed, so the suite was provably live and provably blind to exactly these three. All three proven twice per L-029 with conductor mutations the builder never saw, in the opposite direction or on a different target (50->51 UP, 8->7 DOWN, bin/aphorism.js and the test/ entry). The decisive checks were the three R2 TRACKS/STALE pairs no acceptance clause asked for: the guard provably tracks corpus.length, the triage document, and the filesystem, rather than hardcoding 50 / 8 / a path list. R1 clean both directions, R5 confirms parse misses fail loud. C2 was kept in scope rather than taken up on the item's own permission to drop it. Residual filed as T-020 (false rejection, loud, T-018 class).",
-    "commit": "PENDING"
+    "commit": "0d56693"
   }
 }
