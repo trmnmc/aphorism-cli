@@ -6,19 +6,29 @@
 
 Run: **2026-08-15 improvement run** (allocator auto-kickoff, `source=allocator`,
 brief *"harden tests, fix playbook items, polish docs — no new features"*) |
-cycles run: **42 and counting** — this retro was PRE-DRAFTED at cycle 42, ~7.5h before
-`stop_at` 2026-08-16T11:24:24Z | stop reason: **not yet stopped**; drafted early because a
-session death before WRAP_UP would otherwise hand the human the *previous* run's retro.
+cycles run: **47 complete and counting** — PRE-DRAFTED at cycle 42, **refreshed at cycle 48**
+(~3h34m before `stop_at` 2026-08-16T11:24:24Z) | stop reason: **not yet stopped**; drafted
+early because a session death before WRAP_UP would otherwise hand the human the *previous*
+run's retro.
 
 > **Provenance note.** Until cycle 42 this file was the **2026-08-14 SMOKE run's** retro
 > (1 cycle, 4424 bytes, untouched since 05:44 that morning). That is the identical defect
 > cycle 41 found and fixed in `REPORT.md`, in the identical place, and the reason both
 > documents were pulled forward out of WRAP_UP. The cycle count, item counts, and
 > telemetry below are conductor-measured at cycle 42 and are re-measured at WRAP_UP.
+>
+> **Cycle-48 refresh note.** Drafting early buys durability and costs currency: five cycles
+> later this document was describing a product that had changed under it. Cycle 46 shipped a
+> **product change** (T-007, the tag consolidation) and cycle 43 **root-caused KI-5** after
+> this document had already characterised it as a black box. Cycle 47 found and fixed exactly
+> that decay in `REPORT.md`; this refresh is the same repair, one document over, and the
+> generalisation is recorded below under *What thrashed*. Every count in this header was
+> re-measured against the live repo at cycle 48 — none is inherited from the cycle-42 draft.
 
-**Board at drafting:** 53 items — **41 done**, 6 todo, 2 blocked, 4 dropped.
-Done by kind: test 21, docs 7, fix 6, qa 4, feature 3.
-Suite: **48 green at kickoff → 80 green at cycle 42**, `fail 0`.
+**Board at cycle 48:** 54 items — **42 done**, 6 todo, 2 blocked, 4 dropped.
+Done by kind: test 21, docs 7, fix 6, qa 4, feature 3, polish 1.
+Suite: **48 green at kickoff → 80 green at cycle 48**, `fail 0` (re-run by the conductor this
+cycle: `tests 80 · pass 80 · fail 0`).
 All **12 chartered improvement must-haves are closed** — I-1, I-2a, I-2b, I-2c, I-3, I-4,
 I-4a, I-4b, I-5, I-6, I-7, I-8 (`status: done`, every one gated; I-4 is the umbrella whose
 outcome is its two children).
@@ -60,13 +70,32 @@ outcome is its two children).
   sealed baseline was readable by the builder it was sealed *from*, the run switched to
   commit-reveal: publish the hash before dispatch, the plaintext after the builder returns.
 
-- **Conductor-authored gates catching conductor-authored documents (cycles 41, 42).** When
-  the conductor writes both the artifact and its check, builder-blindness is gone. The
-  substitute that worked is a **negative-control arm**: the previous version of the document
-  must score 0. Cycle 41 landed 13/13 against a 0/13 control and found two genuine defects
-  in its own report (a missing I-4 row; a KI-1 severity graded from a file the report does
-  not cite — **KI-1 is not in this run's `state.json`**: it was resolved in the *2026-08-14*
-  run and never carried forward, so its only provenance is that run's report).
+- **Conductor-authored gates catching conductor-authored documents (cycles 41, 42, 43, 44,
+  47, 48).** When the conductor writes both the artifact and its check, builder-blindness is
+  gone. The substitute that worked is a **negative-control arm**: the previous version of the
+  document must score 0. Cycle 41 landed 13/13 against a 0/13 control and found two genuine
+  defects in its own report (a missing I-4 row; a KI-1 severity graded from a file the report
+  does not cite — **KI-1 is not in this run's `state.json`**: it was resolved in the
+  *2026-08-14* run and never carried forward, so its only provenance is that run's report).
+  The method kept earning its keep after drafting: cycle 44's gate **refuted the conductor's
+  own first draft of its central claim** and the claim was restated to the measurement rather
+  than the regex widened to fit it; cycle 47 ran 51 cells against a 14-mutation control and
+  went **red on two of its own cells**, both real defects in the conductor's work, fixed
+  rather than argued away. The arm that generalises is not the control alone but the
+  requirement that **each planted mutation redden its OWN cell** — a mutation caught by some
+  other cell proves coverage, not attribution.
+
+- **Zero agents is not zero product work (cycles 41–48).** The strongest single correction
+  this run made to its own thinking. From cycle 39 the allocator authorised **0%** agent
+  burn, and cycles 41–43 recorded — in this document, in `REPORT.md`, and in the journal —
+  that no further product work could land because "all six remaining todos need a builder".
+  **Cycle 46 refuted it by doing it**: T-007 consolidated the tag taxonomy 37 → 12 in a
+  gear-1, zero-agent, conductor-inline cycle, and it is a user-visible behaviour change on a
+  shipped CLI. Cycle 44 had already found the arithmetic half of the same error (three of the
+  six todos are S-effort, which gear 1 explicitly *admits*, so the gear was never what held
+  them — a standing measured decision was). The generalised lesson, now written into
+  `REPORT.md`'s unfinished-work table: **ask whether an item needs an agent or only a
+  worker.** A dispatch cap was being read as a cap on work.
 
 ## What thrashed
 
@@ -116,41 +145,115 @@ outcome is its two children).
   blocker instead of fabricating a diff, which is the good outcome; the cost was one wasted
   dispatch, and SKILL.md's headless rule had prescribed the direct-tree form all along.
 
-- **`bin/swarm-budget.sh` refused on all 42 cycles (KI-5).** Why: not on the Bash allowlist
-  in a headless session. Attempted rather than skipped every cycle per the cycle-14 rule, in
-  both path forms per cycle 27. `bin/swarm-playbook.sh` is refused the same way, so the
-  kickoff `parse` and `record-applied` were hand-performed and WRAP_UP's `append` will need
-  the documented manual fallback. **Never fatal, never once informative** — the gear came
-  from `runs/allocator.json` all run.
+- **`bin/swarm-budget.sh` refused on all 47 cycles — and the run spent 42 of them
+  re-observing the refusal instead of reading the permission file (KI-5, root-caused cycle
+  43, extended cycle 47).** Attempted rather than skipped every cycle per the cycle-14 rule,
+  in both path forms per cycle 27. **Never fatal, never once informative** — the gear came
+  from `runs/allocator.json` all run. What thrashed is not the refusal but the *diagnosis
+  latency*: for 42 cycles KI-5 was a black-box observation restated 42 times, and the fix was
+  one `Read` of `/opt/swarm/.claude/settings.json`.
+
+  **Root cause (cycle 43, 16/16 gate, 7/7 predicted cells, 2 negative controls).**
+  `permissions.allow` contains exactly **two** SWARM-script entries —
+  `Bash(/Users/truman/Projects/SWARM/bin/swarm-notify.sh:*)` (a **macOS path, absent on this
+  host**) and `Bash(bin/swarm-notify.sh:*)` (relative, the one that works). There is **no
+  entry for `swarm-budget.sh` or `swarm-playbook.sh` in any path form**, and none for the VPS
+  prefix `/opt/swarm/bin`. **The settings file was never migrated from macOS to the VPS.**
+  The claim gated was the strong one — that the allowlist *predicts* which invocations are
+  permitted, including cells never previously measured — and the discriminator is cell 3
+  against cell 4: same script, same arguments (`swarm-notify.sh poll`), **varying only the
+  path form, and they come out opposite.** A "the script isn't allowlisted" theory predicts
+  those two alike; the allowlist predicts them opposite. That is the observation a wrong
+  theory could not have produced.
+
+  **Second, independent failure mode (cycle 47).** The working entry is *cwd-relative*, and
+  the pacer does not guarantee cwd. Proven both ways in one cycle: `bin/swarm-notify.sh poll`
+  from `/opt/swarm` **succeeded** (the run's first successful poll), while cycle 46 — running
+  from the target dir — saw the same entry fail with exit 127. **A settings repair that adds
+  only relative entries closes neither failure mode reliably; absolute entries close both.**
+  That is the concrete instruction for the human, and it is two lines of `settings.json`.
+  **NOT FIXED, deliberately** — hard rule 5 makes `settings.json` read-only until WRAP_UP.
+
+  **Operational consequences, derived from the allowlist rather than executed** (S9 was
+  deliberately not tested, because testing it means pushing to the user's phone at 05:00):
+  WRAP_UP's `bin/swarm-playbook.sh append` **will** refuse, so the manual DISTILL fallback is
+  confirmed necessary rather than assumed — which is what licensed pre-drafting the candidate
+  set at cycle 43 (13/13, 2 negative controls, at `runs/wrapup-candidates.md`, mirrored into
+  the target repo at cycle 43 because SWARM `runs/` is gitignored). And
+  `bin/swarm-notify.sh send wrap-up …` (relative, cwd `/opt/swarm`) **will** be permitted, so
+  the wrap-up push can go out — previously assumed dead.
+
+- **Hand-off documents decay silently, and this one decayed too (cycles 41, 42, 47, 48).**
+  Why: `REPORT.md` and `RETRO.md` are WRAP_UP obligations pulled forward for durability, and
+  a document written early is a *snapshot* while the run keeps moving. Three occurrences, the
+  same defect each time. (1) Cycle 41 found `REPORT.md` was the previous run's, 40 cycles
+  stale. (2) Cycle 42 found this file was the **2026-08-14 SMOKE run's** retro. (3) Cycle 47
+  found the freshly-rewritten `REPORT.md` had become **factually wrong about the shipped
+  product** within five cycles — it described a 37-tag corpus six cycles after the corpus
+  stopped having one, and listed T-007 as needing "a run on a healthy weekly window" six
+  cycles after a zero-agent cycle had landed it. This cycle-48 refresh is occurrence (4),
+  against this document. **The cost is asymmetric and that is why it keeps earning a cycle:**
+  these two files are the run's entire hand-off to a human who reads them once, at `stop_at`,
+  with no other window into the night — a stale deliverable does not merely omit, it
+  *misinforms*, and it does so with the full authority of a gated document. The countermeasure
+  the run converged on is cheap: **re-measure every number in a hand-off document against the
+  live repo before trusting it, and retract superseded claims in place rather than deleting
+  them**, so the reader sees what changed and can judge the drift for themselves.
 
 ## Pacing honesty
 
-- **Gear 1 for all 42 cycles; effective wave size 1 for all 42 cycles.** Not a thermostat
+- **Gear 1 for all 47 cycles; effective wave size 1 for all 47 cycles.** Not a thermostat
   response — structural. `pacing.mode` is `guest` (clamps reachable gears to 1–3, dial
   forced to 0.30), and the binding constraint was the **allocator allowance**, not the gear
   logic: `allow_overall_pct` has been **0** since kickoff.
-- **Governor clamps: engaged from cycle 37 at ceiling 3**, disengaged at cycle 41
-  (`weekly_heat` 94/85.04 crossings: 1.1115 c39 → 1.1060 c40 → 1.0993 c41 → **1.1054 c42**,
-  re-engaged). **Inert in every one of those cycles** — the ceiling has never been the
-  binding constraint, because the gear is pinned at 1 by the allowance.
+- **Governor clamps: engaged from cycle 37 at ceiling 3**, briefly disengaged at cycle 41.
+  Nine `weekly_heat` readings, quoted as readings and not as a trend (L-032): 1.1115 (c39) →
+  1.1060 (c40) → 1.0993 (c41, dips below 1.1) → 1.1054 (c42, re-engaged) → 1.0962 (c46) →
+  **1.0870 (c48**, 95.0/87.4). `opus_heat` **1.1099** at cycle 48, under the 1.2
+  `promote_blocked` threshold, as it has been all run. **Inert in every one of those cycles**
+  — the ceiling has never been the binding constraint, because the gear is pinned at 1 by the
+  allowance. Cycle 47 took **no reading at all** (the allocator was blind, KI-16); its zeroes
+  are excluded here rather than plotted as a ninth point, because a default is not a
+  measurement.
 - **Full-mode overrides: 0** (guest all run). **Promote-rung promotions: 0** (gear never
   reached 5; `promote_blocked` stayed false, and it never mattered). **Demotions: standing**
   (`demote: true` in every cycle).
 - **Underused windows: none observable.** The weekly window resets at 1786942799, which is
   *after* `stop_at` 1786879464 — no window reset falls inside this run, so no
   reset-utilization figure can be attributed to it. Reported as not-observable, not as zero.
-- **Zero agents dispatched from cycle 39 to cycle 42.** Cycles 39/40 held on a conservative
-  reading of an ambiguous posture; cycle 41 **measured** it, transcribing
-  `bin/swarm-allocator.sh`'s `calc()` from its own constants and replaying it — human
-  reserve 24.01% against a weekly remainder of 7%, so `allow = 0` at now *and* at `stop_at`.
-  Re-measured at cycle 42 on fresh inputs (allocator reports reserve **23.67**, remainder
-  6%): **still 0**, and the transcription still reproduces the shipped script's own number
-  to within a rounding step. The computed reserve is a function of the clock and falls
-  continuously as the week elapses — 24.01 at cycle 41, 23.6x during cycle 42 — so only the
-  *reported* figure and the `stop_at` projection are quoted as literals here; the live
-  arithmetic is re-run by the gate rather than frozen into this sentence. At `stop_at`:
-  reserve **20.17**, allow **0**. The four zero-agent cycles produced I-6, T-026, the
-  allocator derivation, and this document.
+- **Zero agents dispatched from cycle 39 through cycle 47 — nine consecutive cycles**, and
+  cycle 48 is the tenth. Cycles 39/40 held on a conservative reading of an ambiguous posture;
+  cycle 41 **measured** it, transcribing `bin/swarm-allocator.sh`'s `calc()` from its own
+  constants and replaying it — human reserve 24.01% against a weekly remainder of 7%, so
+  `allow = 0` at now *and* at `stop_at`. Re-measured at cycle 42 on fresh inputs (reserve
+  **23.67**, remainder 6%): **still 0**, and the transcription still reproduces the shipped
+  script's own number to within a rounding step. The computed reserve is a function of the
+  clock and falls continuously as the week elapses — 24.01 (c41) → 23.67 (c42) → 23.3 (c43) →
+  22.99 (c44) → 22.73 (c45) → 22.41 (c46) → **21.83 (c48)** — so only the *reported* figure
+  and the `stop_at` projection are quoted as literals here; the live arithmetic is re-run by
+  the gate rather than frozen into this sentence. At `stop_at`: reserve **20.17**, allow **0**.
+  **What those ten cycles produced:** I-6, T-026, the KI-5 root cause, the reachability
+  correction, a backlog re-ranking, the DISTILL candidate set, **T-007 (a shipped product
+  change)**, the `REPORT.md` refresh, KI-16, and this document. See *Zero agents is not zero
+  product work* above — the framing that these cycles could not ship product was this run's
+  own, and this run refuted it.
+
+- **KI-16 (high, open) — the allocator fails open, and cycle 48 caught it out.** At cycle 47
+  `runs/allocator.json` was rewritten with **every usage field zeroed**, `"ok": false`,
+  `"source": "none"` — and `allow_overall_pct: 10`. A non-zero spend authorisation derived
+  from **no data**. The allowance was **declined** and the cycle held at zero agents; the
+  discriminator against the innocent explanation (the week rolled over, so the counters are
+  legitimately fresh) is that `week_resets_at` was **0**, whereas a genuine reset carries a
+  future epoch — the true reset, 1786942799, is ~19h out and *past* `stop_at`. Sharper still:
+  **the same script's jq-missing fallback emits `allow 0`, so the conservative default exists
+  in the file and the no-data path does not use it.**
+  **Cycle 48 supplies the confirming measurement.** The next real probe (`"ok": true`,
+  `"source": "probe"`) reads `allow_overall_pct` **0** — weekly 95.0%, opus 97%, elapsed
+  87.4%, reserve 21.83. So the blind file's 10% was not a stale-but-roughly-right figure: the
+  window it was authorising spend against permits **zero**. Accepting it would have burned
+  agent budget on the strength of a file that declares its own data source absent. Distinct
+  from **KI-14**, which wipes only the swarm's own spend counter on a false rollover; this is
+  the whole file defaulting *permissive* when blind. Filed, not fixed (hard rule 5).
 
 ## Config recommendations
 
@@ -185,6 +288,31 @@ outcome is its two children).
   control [apply: prompt all "Parse test output only under an explicitly forced reporter, and make an unparseable run report UNPARSEABLE — never let a failed parse fall through into a pass/fail verdict."] [confidence: high] [source: 2026-08-15 aphorism-cli]
   (evidence: cycles 19, 23, 24, 41 — four instrument failures, one of them silent)
 
+### Below the line — two candidates the cap cannot carry
+
+The five above are **already drafted, gated (13/13, 2 negative controls) and staged** for
+WRAP_UP at `/opt/swarm/runs/wrapup-candidates.md` as L-037…L-041, mirrored into this repo at
+cycle 43. DISTILL is capped at **≤ 5 per run** and the script enforces it. Cycles 43–48 then
+produced two more findings of lesson quality. They are recorded here **below the line, not
+smuggled in as a sixth** — the honest options are to displace one of the five or to leave
+these for a future run's second observation, and that is the human's call, not the
+conductor's. Neither is in the gated set:
+
+- **[process] A conductor must re-measure a pulled-forward hand-off document against the live
+  repo before `stop_at`, and retract superseded claims in place rather than deleting them.**
+  Four occurrences this run (cycles 41, 42, 47, 48), one of which left the report *factually
+  wrong about the shipped product* for six cycles. Ranked below L-038 because L-038's
+  negative-control arm is the mechanism that *catches* this, and a lesson naming the
+  mechanism beats one naming the symptom.
+- **[process] An authorisation file that reports its own data source as absent must be read
+  as authorising zero, never as authorising its default.** KI-16, cycles 47–48 — the blind
+  file emitted `allow 10` while `ok:false`/`source:none`, and the next real probe measured
+  the true allowance at **0**. This is arguably the highest-value finding of the late run,
+  and it is held below the line for a reason worth stating: it is a **SWARM tool defect**,
+  and lessons are crew-tuning only by the playbook's own bans — the repair belongs in
+  `bin/swarm-allocator.sh` (whose jq-missing path *already* emits the correct conservative
+  0), not in a prompt line.
+
 **Not a new candidate lesson — a confidence bump on an existing one.** Playbook L-033
 (classify each mutation survivor HOLE or BOUNDARY before hardening anything) carries
 `confidence: med`. This run is a strong second independent observation of it (cycles 4, 19,
@@ -214,14 +342,27 @@ refused in this session (KI-5), so they were hand-parsed from `playbook/learning
   checks, 0 divergences); cycle 14 re-derived the taste agent's singleton-tag figure and
   found it wrong (21, not 23).
 - **L-024** (verify with a discriminator): **re-observed, load-bearing** — the run's central
-  method. Cycle 7's seven-distinct-seeds and set-equality discriminators; the cycle-21/22/24
-  consistent-change pairs, which are discriminators in exactly this sense.
+  method, and the lesson with the widest reach: it decided outcomes about the product, about
+  the tooling, and about the budget. Cycle 7's seven-distinct-seeds and set-equality
+  discriminators; the cycle-21/22/24 consistent-change pairs. Two late applications outside
+  the test surface entirely: cycle 43's **cell 3 vs cell 4** (same script, same arguments,
+  varying only the path form, coming out *opposite* — the observation a wrong theory of KI-5
+  could not produce), and cycle 47's **`week_resets_at == 0`**, which separated "the allocator
+  is blind" from "the week legitimately rolled over" and is the whole basis for declining the
+  10% allowance (KI-16).
 - **L-029** (failable AND attributable): **re-observed, load-bearing** — the standing form of
   every test gate this run (cycles 5, 6, 20, 22, 23, 34, 36, 37, 38). Cycle 23 is the proof
-  it earns its keep: a test that passed but was not attributable.
+  it earns its keep: a test that passed but was not attributable. Late cycles extended it
+  from tests to **documents**: cycle 47 required each of 14 planted mutations to redden its
+  **own** cell, and reported a mutation that failed to *apply* (its anchor had moved) as a
+  FAIL rather than skipping it — which is why two such cases were caught rather than counted
+  as passes.
 - **L-031** (mutation-measure, don't read for gaps): **re-observed** — cycles 4 and 19; both
   sweeps produced exactly the items that closed real holes, and cycle 19's found a surface
-  this run had itself created.
+  this run had itself created. Cycle 46 added the complementary case: rebuilding two fixtures
+  the T-007 retag invalidated, it mutation-proved one in 3 cells and found the other **had
+  gone vacuous** — an assertion still passing while testing nothing. Reading the suite would
+  have shown a green fixture; measuring it showed an empty one.
 - **L-034** (brief reviewers to REFUTE): **re-observed** — cycle 33's independently-briefed
   classifier **refuted the conductor's own** T-026 BOUNDARY verdict, which was reverted and
   reopened as a HOLE; cycle 38's D2 refuted a conductor prediction. Both times the refutation
@@ -261,16 +402,19 @@ needing a review-fix pass that never ran (L-016), and one unreachable at gear 1 
 ## Telemetry (squeeze slice, 2026-08-14)
 
 - **Weekly utilization achieved at reset: NOT OBSERVABLE from this run.** The window resets
-  at 1786942799, after `stop_at` 1786879464. Last reading before drafting (cycle 42,
-  `runs/allocator.json`, `source=probe`): **overall 94%, premium/opus 97%**, week elapsed
-  85.04%.
+  at 1786942799, after `stop_at` 1786879464. Last **real** reading (cycle 48,
+  `runs/allocator.json`, `ok:true`/`source=probe`): **overall 95.0%, premium/opus 97%**, week
+  elapsed **87.4%**, `reserve_overall_pct` **21.83**. The cycle-47 read is excluded: it
+  reported `ok:false`/`source:none` with every usage field zeroed, and a default is not a
+  reading (KI-16).
 - **Allocator — allowance granted vs actually burned.** Granted: `allow_overall_pct` **0**,
-  `allow_premium_pct` **0**, for the entire run. Burned: `swarm_used_pct` rose to **4** (the
+  `allow_premium_pct` **0**, for the entire run — **confirmed against a real probe at cycle
+  48**, the last measurement of the run to date. Burned: `swarm_used_pct` rose to **4** (the
   `trickle_pct` cap) by cycle 39, at which point the posture flipped `trickle → halted`;
-  agent burn has been **0 since cycle 39**. At cycle 42 `swarm_used_pct` reads **0** again
-  with the posture back at `trickle` — that is **KI-14's rollover-jitter wipe**, not a real
-  refund, and it granted no spend because `allow` is already 0 on the reserve curve, which
-  the wipe does not touch.
+  agent burn has been **0 since cycle 39** — ten consecutive cycles. At cycles 42 and 48
+  `swarm_used_pct` reads **0** again with the posture back at `trickle` — that is **KI-14's
+  rollover-jitter wipe**, not a real refund, and it granted no spend because `allow` is
+  already 0 on the reserve curve, which the wipe does not touch.
 - **Auto-kickoffs this run/week: 1** (this run; `source=allocator`, posture at start
   `trickle`). 3-strike queue drops observed: **0**.
 - **Final-hours floor release: did NOT fire, and structurally cannot fire before `stop_at`.**
@@ -280,9 +424,26 @@ needing a review-fix pass that never ran (L-016), and one unreachable at gear 1 
 
 ## The honest hand-off
 
-Machine-checked and true as of cycle 42: 80 tests green; all 11 chartered improvement
-must-haves closed; every one of the 41 done items passed a conductor-authored gate whose
-output is pasted in the journal.
+Machine-checked and true as of cycle 48: **80 tests green** (re-run this cycle); all **12**
+chartered improvement must-haves closed; every one of the **42** done items passed a
+conductor-authored gate whose output is pasted in the journal.
+
+> **Retracted in place, not deleted.** The cycle-42 draft of this paragraph said "**11**
+> chartered must-haves" while its own header said 12. The measured figure is **12** (I-1,
+> I-2a, I-2b, I-2c, I-3, I-4, I-4a, I-4b, I-5, I-6, I-7, I-8 — all `status: done`). The
+> document contradicted itself for six cycles and no gate caught it, because until this cycle
+> no gate had been pointed at *this* document. Recorded rather than quietly corrected: an
+> internal contradiction that survives is evidence about the checking, not just the claim.
+
+**Needs a human, and is new since the cycle-42 draft: T-040 — ratify the T-007 retag.** Cycle
+46 consolidated the tag vocabulary **37 → 12** by a mechanical fold map (21 of the 37 tags
+had been returning a fixed single line; the corpus now has **0 singleton tags** and a
+thinnest pool of **3**). No aphorism text or author was touched. But it is a **breaking
+change to `--tag`**: 26 retired tag names now take the no-match path, and the fold contains
+judgment calls only a human can ratify — notably `testing → debugging`, which dissolves the
+corpus's only tag for testing as a discipline. The gate proved the *mechanical* properties;
+it cannot prove the *editorial* ones. This is the one item where the run owes a human a
+question rather than the reverse.
 
 Not machine-checked, and no signal in this run could have checked it: **KI-2** — whether the
 50 corpus attributions are correctly attributed. Confirming a quote's author needs sources
@@ -292,5 +453,21 @@ and T-006 is blocked on a human by design, not by neglect. **Two independent pas
 about what Stroustrup's FAQ actually says** (rows #45/#46, cycle 10) — that disagreement is
 itself the finding and sits at the top of the human queue.
 
-Also standing: **KI-14** (high) and **KI-13** (low) are SWARM tool gaps, journaled and never
-live-edited per hard rule 5 — they need a human with the fence lifted, not another cycle.
+Also standing — **SWARM tool gaps**, journaled and never live-edited per hard rule 5; they
+need a human with the fence lifted, not another cycle. **15 known issues** are on file at
+cycle 48 (8 open, 2 mitigated, 2 resolved, 3 carrying no status label). The three that cost
+this run something concrete, in the order a human should take them:
+
+1. **KI-5** (medium) — `settings.json` was never migrated from macOS. Two lines, and it
+   restores the budget probe and the playbook script for every future run on this host. Add
+   **absolute** entries (`/opt/swarm/bin/…`), not relative ones: cycle 47 proved relative
+   entries close neither failure mode reliably.
+2. **KI-16** (high) — the allocator **fails open**, emitting a 10% spend allowance while
+   reporting `ok:false`/`source:none`. Cycle 48's real probe measured the true allowance at
+   **0**, so the failure is not conservative. The conservative default already exists in the
+   same script's jq-missing path; the no-data path simply does not use it.
+3. **KI-14** (high) — rollover jitter wipes the swarm's own spend counter. Harmless *this*
+   week only because `allow` was already 0 on the reserve curve, which the wipe does not
+   touch; on a cooler week, or inside the 6h floor release, it grants real spend.
+
+**KI-13** (low) remains as filed.

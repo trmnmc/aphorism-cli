@@ -6764,3 +6764,160 @@ cycle-42 label: verified-value-with-no-item-landed. Nothing a CLI user can obser
 ```runfile-mirror
 {"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":21,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","posture":"trickle (allocator BLIND at cycle 47 — ok:false/source:none; its 10% allowance declined, see KI-16)","promote":false,"demote":true,"probe_failures":0,"allow_overall_pct":10,"reserve_overall_pct":90,"weekly":{"ok":false,"weekly_used_pct":0,"opus_used_pct":0,"week_elapsed_pct":0,"governor_note":"cycle 47: the allocator's usage probe returned nothing (source:none, ok:false), so every weekly figure here is a DEFAULT, not a reading. The last real reading was cycle 46: 95% weekly / 97% opus. No gear decision was taken on these zeroes; gear stays 1."}},"heartbeat":{"ts":1786864373,"pid":797207,"limp":false},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"caffeinate_pid":0,"wrap_up_complete":false}
 ```
+
+## cycle 48 — 2026-08-16T07:49Z — the retro stops calling a solved problem a black box
+
+**work:** RETRO.md refresh (cycles 43–47 folded in), conductor-inline, ZERO AGENTS (tenth consecutive).
+**outcome:** 1 verified. No backlog item landed — standing hand-off obligation, the same call
+cycles 42 and 47 made.
+
+**clock:** now 1786866594, stop_at 1786879464, ~3h34m remaining. WRAP_UP threshold
+(stop_at − 900 = 1786878564) not reached. **heartbeat/PID:** 835214, fresh session per cycle.
+
+**budget probe:** `bin/swarm-budget.sh` REFUSED for the **47th** consecutive cycle (KI-5),
+attempted rather than skipped per the standing cycle-14 rule. Refused before the command
+started, so `probe_failures` stays 0.
+
+**control channel:** `bin/swarm-notify.sh poll` ran clean from cwd `/opt/swarm` — the run's
+**second** successful poll, re-confirming the cycle-47 finding that the working allowlist entry
+is cwd-relative. `pending: []`, `inject: []`. No commands this run.
+
+**gear:** 1, unchanged. **The allocator is no longer blind.** `runs/allocator.json` (07:49Z
+tick) reads `ok:true`, `source:probe` — weekly **95.0%**, opus **97%**, elapsed **87.4%**,
+reserve **21.83**, `allow_overall_pct` **0**. Ninth real reading; `weekly_heat` 95.0/87.4 =
+**1.0870**, `opus_heat` **1.1099**. Per L-032 no trend is claimed across readings.
+
+### KI-16 confirmed by measurement, not by argument
+
+Cycle 47 declined a **10%** spend allowance emitted by an allocator file that simultaneously
+reported `ok:false` / `source:none`, and filed the fail-open as KI-16. This cycle supplies the
+observation that settles it: **the next real probe measures the true allowance at 0.** The blind
+file was not stale-but-roughly-right — accepting its 10% would have authorised agent burn
+against a window that permits **zero**, at 95% weekly consumption. The conservative call was
+correct on the merits and not merely on caution. Still filed, not fixed (hard rule 5).
+
+### why this, over the board
+
+Unchanged from cycle 47 and re-checked: T-024b/T-032/T-039 are fenced by the cycle-39 family
+decision, T-024 is not dispatchable, T-008 and T-040 are gated on a human. Against that,
+`RETRO.md` was **six cycles stale in three separate ways** — it called KI-5 a black box
+(cycle 43 root-caused it), it carried the cycle-42 board (54/42 now, not 53/41), and it
+**contradicted itself**: the hand-off claimed 11 chartered must-haves while its own header
+claimed 12. The measured figure is 12. That contradiction survived six cycles because no gate
+had ever been pointed at this document.
+
+### what changed in the document
+
+- **KI-5 rewritten from symptom to root cause** — `settings.json` was never migrated from
+  macOS; `permissions.allow` holds exactly two SWARM-script entries, one of them a macOS path
+  absent on this host. The **cell-3-vs-cell-4 discriminator** is preserved (same script, same
+  arguments, only the path form varying, coming out *opposite* — an observation the
+  "not allowlisted" theory cannot produce), plus cycle 47's second, independent failure mode:
+  the working entry is cwd-relative and the pacer does not guarantee cwd. **The repair
+  instruction is now concrete: absolute entries, not relative ones — relative closes neither
+  failure mode reliably.**
+- **T-007 recorded, including as a correction to this document's own reasoning.** New
+  *What worked* entry, **"Zero agents is not zero product work"**: cycles 41–43 asserted in
+  three places that no product work could land without a builder, and **cycle 46 refuted it by
+  doing it** — a 37 → 12 tag consolidation, user-visible, on a gear-1 zero-agent cycle. The
+  generalisation: ask whether an item needs an agent or only a **worker**.
+- **The 11-vs-12 contradiction retracted in place, not silently corrected** — an internal
+  contradiction that survives is evidence about the *checking*, not just the claim.
+- **New *What thrashed* entry: hand-off documents decay silently** — four occurrences now
+  (cycles 41, 42, 47, 48). Named rather than repaired a fourth time in silence.
+- **T-040 promoted into the hand-off** as the one item where the run owes a human a question:
+  the retag is a **breaking change to `--tag`** (26 retired names now take the no-match path)
+  and contains editorial judgment a gate cannot ratify — notably `testing → debugging`.
+- **Known-issue triage added**, ordered by what a human should do first: KI-5 (two lines,
+  restores tooling for every future run on this host), KI-16, KI-14.
+- **Two lesson-quality findings recorded BELOW THE LINE**, explicitly *not* smuggled into the
+  gated DISTILL set — the cap is 5 and L-037…L-041 were gated at cycle 43. Displace-or-defer
+  is the human's call. The KI-16 lesson is additionally below the line because it is a SWARM
+  tool defect, and lessons are crew-tuning only by the playbook's own bans.
+
+### VERIFICATION EVIDENCE
+
+Gate authored AFTER the document, parsing its prose against measurements re-derived from the
+live repo, live allocator, and a real suite run — `.swarm/runs/cycle-048-gate.mjs`, full output
+in `cycle-048-gate-out.txt`:
+
+```
+PASS  C3   board done count                        claimed=42   measured=42
+PASS  C6   suite claim cites cycle 48 + real count measured tests=80 pass=80 fail=0
+PASS  C13  KI-5 carries the cell-3-vs-cell-4 discriminator
+PASS  C17  retag figures match the live corpus     tags=12 singletons=0 thinnest=3
+PASS  C23  cycle-48 probe corroboration: allowance measured 0
+PASS  C26  weekly_heat arithmetic recomputed, not asserted   claimed=1.087 recomputed=1.087
+PASS  C29  known-issue counts match state.json     claimed 15/8 open
+33/33 cells green  (refresh-specific: 30/30)
+```
+
+**Negative control** — the sealed cycle-42 document (`cycle-048-retro-baseline.md`, md5
+`5eaefdb5…`) scored against the same gate, output in `cycle-048-control-out.txt`:
+
+```
+3/33 cells green  (refresh-specific: 0/30)
+```
+
+The 3 passing cells are tagged `invariant` and excluded from that arithmetic by design.
+
+**Mutation arm** — 20 planted false claims, each required to redden its OWN cell
+(`cycle-048-negative-control.mjs`, output in `cycle-048-negative-control-out.txt`):
+
+```
+P0   unmutated copy                          expect 0 red   got 0 red   PASS
+M2   C3   42 done -> 41 done                                red=[C3]    PASS
+M7   C15  the exact staleness this refresh exists to fix    red=[C15]   PASS
+M13  C26  heat asserted instead of computed                 red=[C26]   PASS
+M18  C19  the T-007 self-correction deleted                 red=[C19]   PASS
+negative control: ALL 20 MUTATIONS CAUGHT BY THEIR OWN CELL (+ clean P0)
+```
+
+Full suite, run by the conductor: `ℹ tests 80 · pass 80 · fail 0` (1397 ms).
+
+### the gate's own defects, fixed rather than argued away
+
+**Five cells went RED on the first run and none was a document defect.** Four were one
+instrument class — regexes over-fitted to where markdown happened to *wrap a line* or to a
+`> ` blockquote marker. Cycle 47's gate failed the identical way (its C16 expected bold where
+the prose was plain), so the repair was made to the class rather than the four instances: every
+prose match now runs against a whitespace-flattened copy. Line-wrap position is not part of any
+claim, so this loosens no gate — and the 20-mutation arm re-proves each cell still reddens.
+
+The fifth, C29, reddened a **true** claim: strict `status === 'open'` scored 7 open where the
+document said 8, because KI-10's status is the free-text `"open by decision, not by neglect"`.
+That cell was measuring the label's *formatting*, not the issue's state. Corrected to a prefix
+match — 8 is right.
+
+**M18 then caught a genuinely weak cell**, which is the whole point of the arm: deleting the
+"zero agents is not zero product work" finding left C19 **green**, because the cell keyed on the
+entry's *title* and that title recurs in a cross-reference elsewhere in the document. A pointer
+to the deleted finding was satisfying the check for the finding. C19 was rebound to the claim's
+substance and M18 retargeted. Two further cells (C4, C31) were **reclassified** refresh →
+invariant after the control run: their claims are unchanged since cycle 42 or measured from a
+file outside the document, so they cannot discriminate, and scoring them as refresh evidence
+would have inflated the control by two.
+
+### not run, reported as not-run
+
+design-panel, build-wave, review-fix, qa-verify (all modes), collision-scan (N/A — CLI, no
+browser surface). `bin/swarm-budget.sh` refused (KI-5). The retro's *editorial* judgments —
+whether the lessons are good advice — remain unfalsifiable here; what is gated is that its
+numbers match the repo and its claims parse. T-040's editorial question is still open to a human.
+
+### wave autotune / churn
+
+**autotune:** NOT applied — zero agents dispatched, nothing measured about code capacity.
+`k_current` 5, `wave_streak` 0.
+**churn:** `consecutive_no_value` stays 0. Sixteenth consecutive verified-value cycle, on the
+cycle-42 label: verified-value-with-no-item-landed. Nothing a CLI user can observe changed.
+
+### filed this cycle
+
+- KI-16 extended with the cycle-48 corroborating measurement (fail-open confirmed, not merely
+  argued).
+- No backlog change. Six todos, two blocked, unchanged.
+
+```runfile-mirror
+{"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":22,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","posture":"trickle (allowance measured 0 by a REAL probe at cycle 48 — ok:true/source:probe)","promote":false,"demote":true,"probe_failures":0,"allow_overall_pct":0,"reserve_overall_pct":21.83,"weekly":{"ok":true,"weekly_used_pct":95.0,"opus_used_pct":97,"week_elapsed_pct":87.4,"weekly_heat":1.087,"opus_heat":1.1099,"ceiling":3,"promote_blocked":false,"governor_note":"cycle 48: NINTH real reading, and the allocator is no longer blind (cycle 47 read ok:false/source:none and is excluded, not plotted). weekly_heat 95.0/87.4 = 1.0870. The ceiling has never been binding: guest clamps reachable gears to 1-3 and the gear is pinned at 1 by the ALLOWANCE, measured 0 this cycle."}},"heartbeat":{"ts":1786866594,"pid":835214,"limp":false},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"caffeinate_pid":0,"wrap_up_complete":false}
+```
