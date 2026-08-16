@@ -196,6 +196,46 @@ Recorded here rather than fixed, because hard rule 5 fences SWARM's own code dur
 | **T-006** human audit of corpus attributions | Confirming an attribution needs sources this run cannot reach — network is a product non-goal and web tools are outside the conductor's allowed surface | Read `docs/corpus-attribution-triage.md`, settle the 8 HIGH rows against primary sources | human |
 | **T-024a** re-shape the Attribution count extraction | Hit the attempts cap at 2. Both attempts measured: attempt 1 scored a perfect 2/4 ↔ 2/4 mirror; attempt 2 scored 5/9 against HEAD's 7/9, buying one repair with three new false rejections | Not a third attempt of the same shape — KI-9 remedy option 2 (structure the README's counts) | human decision, then any run |
 
+## Unfinished work — the six open items, and what each is actually waiting on
+
+The stats row below says "6 todo". That number invites a wrong inference — that a bigger
+usage window would restart all six — so here is the per-item measurement instead
+(cycle-44 gate, 15/15 with three negative controls,
+`.swarm/runs/cycle-044-verify-reachability.txt`).
+
+**Correcting this report's own earlier framing.** Cycles 41–43 recorded that "all six
+remaining todos need a builder [because the allowance is 0]". True as far as it goes, but
+it conflates two different constraints. **Three of the six are S-effort, and gear 1
+explicitly admits S-effort builds** — the gear is not what holds them. A standing,
+measured decision is. More window alone will not restart those three.
+
+| Item | Binding constraint | What would unblock it | Who |
+|---|---|---|---|
+| **T-007** consolidate the tag taxonomy | **Gear.** M-effort; gear 1 admits S-effort builds only | A run on a healthy weekly window | Any run — but re-read the Domain rules first: retagging silently changes what shipped `--tag` queries return, which is a behaviour change to a live contract even though it adds no feature |
+| **T-008** deepen the corpus past 50 entries | **Gear _and_ a dependency.** L-effort, and `deps: [T-006]`, which is blocked on a human | The attribution audit lands first, then a healthy window | Human, then any run |
+| **T-024** structural re-shape of the prose-anchored README guards (umbrella) | **Gear.** M-effort, and not itself dispatchable — it closes when its children do | A healthy window | Any run |
+| **T-024b** band-heading "N tags" count | **Not the gear — a standing decision.** S-effort, so gear 1 would admit it. Held by the cycle-39 family decision: no further *narrowing* of these guards this run | T-024 landing, or an argued BOUNDARY per SPEC I-2 | Any run |
+| **T-032** two count-markers in one true sentence manufacture a spurious claim | **Not the gear — a standing decision.** Same as T-024b | Same as T-024b | Any run |
+| **T-039** heading-to-table stop rule relocates mis-attachment | **Not the gear — its own filing terms.** S-effort; filed explicitly as a member of the T-024 umbrella so it does not become a seventh narrowing | T-024 landing, or an argued BOUNDARY | Any run |
+
+**Why the three S-effort items are fenced rather than simply unfinished.** Every README
+guard this run built extracts a number by anchoring to a position or a literal inside an
+English sentence, and six successive fixes each narrowed the anchor rather than removing
+it. Cycle 39 measured that instrument's cost curve on one guard: three narrowings bought
+three kills, introduced two new false rejections, and left the silent direction open.
+These guards fail *loud* — they reject a correct README, they do not pass a wrong one —
+but a maintainer's cheapest escape from a false rejection is deleting the guard, so the
+accumulated risk is the whole family going at once. A seventh narrowing does not reduce
+that risk; changing what the extractions *read* does, and that is T-024.
+
+**What this means for the run's status.** All six improvement must-haves (I-1…I-6) are
+closed and conductor-verified, so the definition-of-done is met. The target is still not
+`DONE`, and the report should not imply otherwise: `DONE` also requires that no remaining
+candidate pass the value ratchet, and **T-008 passes it** — the picker is uniform, so the
+repeat rate is corpus size, and a user meets a repeat by use ~9.6 (60.1% by use 10). It is
+real, user-visible, and out of reach tonight. Nor is the target `stalled`: that needs six
+consecutive no-value cycles or a wholly blocked board, and neither holds.
+
 ## Night control log
 
 _No commands received._ `SWARM/runs/control.json` has an empty `pending[]` and `applied[]`.

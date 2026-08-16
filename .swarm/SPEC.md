@@ -88,8 +88,23 @@ MOTD, or `.bashrc` — and who will be annoyed by anything that prints more than
            boxes were simply never updated. Recorded so the tick is not read as new
            evidence. -->
 
-- [ ] **I-6 REPORT.md refreshed** to the verified state at wrap-up, with every unverified
+- [x] **I-6 REPORT.md refreshed** to the verified state at wrap-up, with every unverified
       item named as unverified.
+      <!-- Ticked at cycle 44 hygiene, not at closure — a bookkeeping lag of the same
+           shape the I-5 box carried, and recorded the same way so the tick is not read
+           as new evidence. The item was conductor-verified at cycle 41 (13/13 against a
+           0/13 negative control) and has read done in backlog.json since. Cycle 44
+           measured the divergence rather than noticing it in passing: gate check S4/S5,
+           .swarm/runs/cycle-044-verify-reachability.txt. REPORT.md is refreshed again
+           at WRAP_UP, so this box describes a standing obligation that is currently
+           met, not a one-time event. -->
+
+<!-- ALL SIX improvement must-haves are now closed and conductor-verified, which means
+     this run's definition-of-done is MET (cycle-44 gate S3). That does NOT make the
+     target DONE: cycle.md's churn breaker also requires that no remaining candidate
+     pass the value ratchet, and T-008 does pass it on a measured user-visible defect
+     (a user meets a corpus repeat by use ~9.6). The remaining board is discovered work,
+     not unmet must-haves. See REPORT.md § Unfinished work. -->
 
 ## Nice-to-haves
 

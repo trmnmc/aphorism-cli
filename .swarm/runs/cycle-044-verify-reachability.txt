@@ -1,0 +1,23 @@
+PASS S1    todo count is 6 -> 6 [T-007,T-008,T-024,T-024b,T-032,T-039]
+PASS S2    blocked count is 2 -> 2 [T-006,T-024a]
+PASS S3    every improvement must-have is done -> I-1=done I-2a=done I-2b=done I-2c=done I-3=done I-4=done I-5=done I-6=done
+PASS S4    POST: zero unticked I- boxes remain -> unticked=[] ticked=[I-1,I-2,I-3,I-4,I-5,I-6]
+PASS S5    I-6 backlog status is done (so an open box is a bookkeeping lag, not unmet work) -> done
+PASS S6    exactly 3 of the 6 todos are S-effort (gear 1 ADMITS these) -> [T-024b,T-032,T-039] ; others [T-007:M,T-008:L,T-024:M]
+PASS S7    the other 3 are M/L-effort, i.e. genuinely gear-blocked -> [T-007:M,T-008:L,T-024:M]
+PASS S8a   T-024b + T-032 are held by the cycle-39 family decision (T-039 is NOT) -> [T-024b,T-032]
+PASS S8b   T-039 is held instead by its own filing terms as a T-024 member -> true
+PASS S8c   ALL 3 S-effort todos name the M-effort T-024 as their instrument -> [T-024b,T-032,T-039]
+PASS N1a   NEG CONTROL — T-007/T-008 carry no family marker (S8a not vacuous) -> clean=[T-007,T-008]
+PASS N1b   NEG CONTROL — T-007/T-008 do not name T-024 (S8c not vacuous) -> clean=[T-007,T-008]
+PASS S9    DONE determination FAILS: T-008 is live and carries a measured user-visible defect -> true
+PASS S10   STALLED determination FAILS: consecutive_no_value=0 (<6) and 6 items are todo, not blocked
+PASS N2    NEG CONTROL — the false claim "T-006 is todo" is rejected (it is blocked)
+PASS R1    POST: the table has one row per todo -> 6 rows
+PASS R2    POST: every todo id appears -> [T-007,T-008,T-024,T-024b,T-032,T-039]
+PASS N3    POST NEG CONTROL — no blocked id leaked into the todo table -> leaked=[]
+PASS R3    POST: the section states the S-effort/gear distinction explicitly
+PASS R4    POST: REPORT.md outside the new section is byte-identical to HEAD -> 22283 vs 22283 bytes
+PASS R5    POST: git says the REPORT.md change is a pure insertion -> +40 -0
+--- 21/21 checks passed ---
+GATE GREEN

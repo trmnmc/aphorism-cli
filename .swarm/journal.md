@@ -6137,3 +6137,141 @@ push (derived, deliberately not executed).
 ```runfile-mirror
 {"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":17,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","posture":"trickle (allowance structurally 0 -- re-read cycle 43)","promote":false,"demote":true,"probe_failures":0,"allow_overall_pct":0,"reserve_overall_pct":23.3,"weekly":{"ok":true,"weekly_used_pct":94.0,"opus_used_pct":97,"week_elapsed_pct":85.51,"ceiling":3,"promote_blocked":false}},"heartbeat":{"ts":1786855606,"pid":792491,"limp":false},"watchdog":{"mode":"normal","plist_loaded":true},"caffeinate_pid":0,"wrap_up_complete":false}
 ```
+
+## cycle 44 — 2026-08-16T05:19:55+00:00 — aphorism-cli — POLISH
+
+**work:** per-item reachability audit of the remaining board + two repairs it licensed — conductor-inline, ZERO AGENTS
+**outcome:** 1 verified (two deliverables, no backlog item — see churn note)
+
+**clock:** now 1786857595, stop_at 1786879464 (2026-08-16T11:24:24Z), ~6h04m remaining. Not
+within the WRAP_UP threshold (stop_at − 900 = 1786878564).
+
+**heartbeat/PID:** pid **794869**, captured via `pgrep -a -f claude`:
+`claude -p /swarm cycle --output-format json --permission-mode acceptEdits --add-dir /opt/targets/aphorism-cli`.
+New PID this cycle (cycle 43 ran as 792491) — the pacer spawns a fresh session per cycle, as designed.
+
+**budget probe:** `bin/swarm-budget.sh` REFUSED for the FORTY-THIRD consecutive cycle, attempted
+rather than skipped per the standing cycle-14 rule. Refused before the command started, so
+`probe_failures` stays 0. No longer a mystery — cycle 43 root-caused it (settings.json never
+migrated from macOS; no allowlist entry for this script in any path form) and predicted this
+exact cell as DENY. This cycle is a confirming instance of that prediction, not a new finding.
+
+**control channel:** `bin/swarm-notify.sh poll` ran clean. `runs/control.json` has
+`pending: []`, `applied: []`, no `inject` array. No commands received this run.
+
+**gear:** 1, unchanged and structurally fixed. Fresh allocator read: `weekly_used_pct` 94.0
+(unmoved), `week_elapsed_pct` 85.51 → **85.91**, `reserve_overall_pct` 23.3 → **22.99**,
+`allow_overall_pct` **0**. guest clamps 1–3; the gear is pinned by the ALLOWANCE, not the
+ceiling. Per L-032 no trend is claimed from the reserve drifting down.
+
+---
+
+### VERIFICATION EVIDENCE — reachability audit + two repairs (21/21, four negative controls)
+
+Twelve cycles have now closed with no backlog item landed, each explaining why in one line:
+*all six remaining todos need a builder and the allowance is 0.* This cycle stopped repeating
+that sentence and **measured it per item** — and it does not survive contact with the board.
+
+Harness `.swarm/runs/cycle-044-gate-reachability.js`, output
+`.swarm/runs/cycle-044-verify-reachability.txt`.
+
+```
+PASS S1    todo count is 6 -> 6 [T-007,T-008,T-024,T-024b,T-032,T-039]
+PASS S2    blocked count is 2 -> 2 [T-006,T-024a]
+PASS S3    every improvement must-have is done -> I-1..I-6 all done
+PASS S4    POST: zero unticked I- boxes remain -> unticked=[] ticked=[I-1..I-6]
+PASS S5    I-6 backlog status is done (open box was a bookkeeping lag, not unmet work)
+PASS S6    exactly 3 of the 6 todos are S-effort (gear 1 ADMITS these) -> [T-024b,T-032,T-039]
+PASS S7    the other 3 are M/L-effort, i.e. genuinely gear-blocked -> [T-007:M,T-008:L,T-024:M]
+PASS S8a   T-024b + T-032 held by the cycle-39 family decision (T-039 is NOT)
+PASS S8b   T-039 held instead by its own filing terms as a T-024 member
+PASS S8c   ALL 3 S-effort todos name the M-effort T-024 as their instrument
+PASS N1a   NEG CONTROL — T-007/T-008 carry no family marker (S8a not vacuous)
+PASS N1b   NEG CONTROL — T-007/T-008 do not name T-024 (S8c not vacuous)
+PASS S9    DONE determination FAILS: T-008 live, measured user-visible defect
+PASS S10   STALLED determination FAILS: consecutive_no_value=0 (<6), 6 items todo not blocked
+PASS N2    NEG CONTROL — the false claim "T-006 is todo" is rejected (it is blocked)
+PASS R1/R2 the new REPORT table has 6 rows, one per todo id
+PASS N3    NEG CONTROL — no blocked id leaked into the todo table
+PASS R3    the section states the S-effort/gear distinction explicitly
+PASS R4    REPORT.md outside the new section is byte-identical to HEAD (22283 vs 22283)
+PASS R5    git says the REPORT.md change is a pure insertion -> +40 -0
+--- 21/21 checks passed ---   GATE GREEN
+```
+
+**THE CORRECTION.** Three of the six todos are **S-effort**, and gear 1 explicitly admits
+S-effort builds. The zero allowance is therefore **not** what held T-024b, T-032 and T-039 —
+a standing measured decision is (the cycle-39 ruling for two of them, T-039's own filing
+terms for the third). The repeated sentence was *true of the run and false of the items*,
+and the difference is not academic: it changes what the human does next. "The allowance is 0"
+invites the inference that a healthier window restarts the whole board. For half of it, that
+is wrong — those three unfence only when the M-effort T-024 umbrella lands, or when a
+BOUNDARY is argued against a measurement.
+
+**THE RUN IS NEITHER DONE NOR STALLED, and both errors were live.** S3 shows the
+definition-of-done is met — all six improvement must-haves closed and conductor-verified.
+It would have been easy to read that as the whole test and route to an early WRAP_UP six
+hours ahead of the clock. cycle.md's churn breaker makes DONE a **two-part** test, and the
+second part fails: **T-008 passes the value ratchet** on a measured user-visible defect (the
+picker is uniform, so the repeat rate is corpus size — a user meets a repeat by use ~9.6,
+60.1% by use 10). Declaring DONE would have told the human the product was finished when it
+demonstrably is not. The opposite error was equally available — twelve item-less cycles read
+as a stall — and also fails (S10). The run continues to the clock.
+
+**TWO INSTRUMENT DEFECTS, both caught by controls rather than by reading.** Recorded because
+this cycle's own gate was wrong twice before it was right.
+
+1. Draft **S8** asserted all three S-effort todos carry the cycle-39 marker. RED — T-039 does
+   not. The cheap repair was widening the pattern until three matched, which would have
+   manufactured a uniformity the board does not have. The claim was split to what is actually
+   there (S8a/S8b) with the shared consequence stated separately (S8c), and armed with a
+   **two-way** discriminator: N1a/N1b confirm neither M/L todo carries either marker, so
+   neither check can pass vacuously.
+2. **R4** first read RED at exactly **one byte** — the strip regex left the inserted section's
+   trailing newline behind. Content had not moved; the instrument was wrong. Rather than
+   accept a self-repaired regex on faith, **R5** re-reaches the same conclusion through
+   `git diff --numstat`, a route that does not involve the regex at all. R4 and R5 now agree
+   by independent means.
+
+**Repairs shipped.** (a) The **I-6 SPEC checkbox** read `[ ]` while the item has read `done`
+since cycle 41 — ticked, with the same "bookkeeping lag, not new evidence" annotation the I-5
+box carries. (b) **REPORT.md § Unfinished work** — a six-row table giving each open item its
+binding constraint, its unblocker and its owner, parallel to the existing Blocked-items table.
+The stats row said "6 todo" and nothing else; a morning reader had no way to learn that half
+the board will not restart on more window.
+
+### VERIFICATION EVIDENCE — full suite, run by the conductor
+
+```
+ℹ tests 80
+ℹ suites 0
+ℹ pass 80
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+```
+
+80/80. No product code changed this cycle; run because step 6 requires the conductor to run
+`test_cmd` itself, not because a change invited it. Change scope: `.swarm/SPEC.md` +16/−1 (the
+single deletion is exactly the checkbox line), `REPORT.md` +40/−0.
+
+**wave autotune:** NOT applied; `k_current` 5, `wave_streak` 0. Sixth consecutive zero-agent
+cycle; a cycle that dispatched nothing measures nothing about code capacity.
+
+**churn:** `consecutive_no_value` stays 0 — twelfth consecutive verified-value cycle, on the
+honest label cycles 42 and 43 used: **verified-value-with-no-item-landed**.
+
+**not run, reported as not-run:** design-panel, review-fix (judged and declined cycle 14),
+qa-verify look (N/A — CLI), collision-scan (N/A — no browser surface), budget probe (refused,
+KI-5, root-caused cycle 43), playbook `parse`/`record-applied`/`append` (refused, KI-5).
+
+### filed this cycle
+
+- No new KI. No new backlog item. T-024b, T-032 and T-039 each carry a cycle-44 note warning
+  the next conductor that more window will not revive them, so the correction survives in the
+  place the next run will actually look.
+
+```runfile-mirror
+{"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":18,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","posture":"trickle (allowance structurally 0 -- re-read cycle 44)","promote":false,"demote":true,"probe_failures":0,"allow_overall_pct":0,"reserve_overall_pct":22.99,"weekly":{"ok":true,"weekly_used_pct":94.0,"opus_used_pct":97,"week_elapsed_pct":85.91,"ceiling":3,"promote_blocked":false}},"heartbeat":{"ts":1786857595,"pid":794869,"limp":false},"watchdog":{"mode":"normal","plist_loaded":true},"caffeinate_pid":0,"wrap_up_complete":false}
+```
