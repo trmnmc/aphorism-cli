@@ -7067,3 +7067,52 @@ smoothed over, that T-041 was filed this same cycle rather than drawn from the s
 ```runfile-mirror
 {"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":23,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","posture":"trickle (allowance measured 0 by a REAL probe at cycle 49 — ok:true/source:probe, second consecutive real reading)","promote":false,"demote":true,"probe_failures":0,"allow_overall_pct":0,"reserve_overall_pct":21.66,"weekly":{"ok":true,"weekly_used_pct":96.0,"opus_used_pct":97,"week_elapsed_pct":87.62,"weekly_heat":1.0956,"opus_heat":1.1071,"ceiling":3,"promote_blocked":false,"governor_note":"cycle 49: TENTH real reading, second consecutive non-blind one. weekly_heat 96.0/87.62 = 1.0956, up from cycle 48's 1.0870. The ceiling has never been binding: guest clamps reachable gears to 1-3 and the gear is pinned at 1 by the ALLOWANCE, measured 0 again this cycle."}},"heartbeat":{"ts":1786868700,"pid":855991,"limp":false},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"caffeinate_pid":0,"wrap_up_complete":false}
 ```
+
+### cycle 49 addendum — KI-17, found at step 8 (dashboard), after the cycle commit
+
+Filed as a second commit rather than folded into the first by a force-push: the finding came
+after the cycle-49 work was already pushed, and rewriting pushed history to make the cycle look
+like one clean unit would be dressing up the sequence.
+
+**The live per-target node on the dashboard has been stale since cycle 46.** While rendering
+step 8 I found `SWARM/runs/dashboard.html`'s live `<!-- TARGETS -->` node reading
+`cycle 46 · 12 known issues open` at cycle 48.
+
+**Cause.** The file's first 112 lines are ONE HTML comment holding a legend with PLACEHOLDER
+copies of several live anchors. `runs/cycle47-dashboard.mjs` matched the target node with
+`/<div class="target"><b>\/opt\/targets\/aphorism-cli<\/b><span>[^<]*<\/span><\/div>/` — **no
+`g` flag and no match-count assertion**. `String.replace` with a non-global regex replaces only
+the FIRST match, which is the legend copy at line 38. Cycle 48 reused the script and repeated it.
+
+**Discriminator against "the render just didn't run":** the legend copy *was* advanced to cycle
+47 and then to cycle 48. The writes landed — they landed in the wrong region. A render that
+never ran would have left both copies at 46.
+
+This is exactly the failure mode `runs/c46-dash.mjs`'s own header warns about, in prose, three
+cycles before it happened. **The warning existed; the assertion did not.** That is the part
+worth carrying forward: the dashboard is re-rendered by a hand-written per-cycle script, so the
+discipline is re-implemented from memory every cycle, and a comment in one cycle's script does
+not reach the next one's.
+
+**Repaired in the artifact** (`runs/c49-dash.mjs`): the substitution is anchored on the
+`<!-- TARGETS -->` marker so it cannot address the legend at all, and asserts an exact match
+count of 1 before replacing. Verified:
+
+```
+  ok  banner
+  ok  LIVE target line (stale at cycle 46 until now)
+  ok  timeline tick (appended after cycle 48)
+rendered: cycle 49 · 176m to stop · 233930 bytes
+
+<!-- TARGETS --><div class="target">…<span>POLISH · cycle 49 · 16 known issues (9 open) · 6 backlog todo</span>
+```
+
+**Cost, stated plainly:** two cycles of a stale status line on the one page a human actually
+looks at. Nothing about the PRODUCT was misreported — the banner, timeline and evidence strip
+all updated correctly — but the run metadata was. Filed as **KI-17** (medium) rather than
+treated as a one-off render slip, because the same trap has now fired twice after being
+documented once. The general defect is NOT fixed and is not fixable from inside a run: the
+durable repairs (strip the legend from the published artifact, or give the live anchors
+machine-distinguishable ids) are edits a human makes to the template.
+
+Known issues: 16 total, 9 open.
