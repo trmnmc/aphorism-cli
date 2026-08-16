@@ -1,0 +1,101 @@
+cycle 36 verification gate for T-027 -- RUN 1 (as sealed), verbatim.
+Gate FAILS on C9. See the analysis below and RUN 2 after the amendment.
+
+cell  HEAD          WORK          REF           what
+H0    GREEN 78/78   GREEN 80/80   GREEN 78/78   pristine README (control)
+H1    RED 77/78 L   GREEN 80/80   GREEN 78/78   THE HOLE: American spelling, every claim still TRUE
+H2    RED 77/78 L   RED 79/80 S   RED 77/78 S   H1 + format literal separator em-dash -> ASCII hyphen (must still be caught)
+H3    RED 76/78 L   RED 79/80 x   RED 77/78 x   H1 + a FALSE tag count elsewhere (other guards must stay live)
+H4    GREEN 78/78   RED 79/80 A   RED 77/78 A   COST CELL: real British heading + American DECOY, both TRUE
+H5    RED 77/78 A   RED 79/80 A   RED 77/78 A   cycle-30 ambiguity: two British headings both qualify
+H6    RED 77/78 L   RED 79/80 L   RED 77/78 L   flag-token intact: only "--list-only behaviour" remains
+H7    RED 77/78 L   RED 79/80 L   RED 77/78 L   DISCRIMINATOR: the TYPO "behaviuor" must NOT be accepted
+H8    RED 77/78 L   GREEN 80/80   GREEN 78/78   American + ALL CAPS (case-insensitivity survives the widen)
+H9    RED 77/78 L   RED 79/80 L   RED 77/78 L   word anchor intact: heading carries neither spelling
+
+(L = locator "none found" fired, A = ambiguity fired, S = separator/format mismatch fired, x = some other failure)
+
+PASS  C1  H0 GREEN on all three arms (no regression on the real README)
+PASS  C2  H1 RED@HEAD and GREEN@WORK -- both L-029 directions in one comparison
+PASS  C2b H1@HEAD failed specifically on the LOCATOR miss (the defect as filed)
+PASS  C3  H1 GREEN@REF -- the intended fix lands independently of the builder
+PASS  C5  H2 RED@WORK on the SEPARATOR mismatch and NOT on the locator miss
+PASS  C5b H3 RED@WORK -- unrelated guards still live under the widened locator
+PASS  C6  H7 RED@WORK -- the TYPO "behaviuor" is still rejected (discriminator)
+PASS  C7  H9 and H6 RED@WORK -- word anchor and flag-token condition intact
+PASS  C8  H5 RED@WORK on AMBIGUITY -- the cycle-30 P1/P2 behaviour is preserved
+FAIL  C9  every cell RED@HEAD is still RED@WORK, except H1 (the one intended flip)
+PASS  C10 WORK and REF agree on every cell (P5)
+PASS  C11 H4 cost reproduces in the PREDICTED direction (GREEN@HEAD -> RED@WORK on ambiguity)
+PASS  C12 H8 GREEN@WORK -- case-insensitive matching survives the widen
+
+GATE FAILS
+
+===========================================================================
+CONDUCTOR ANALYSIS OF THE C9 FAILURE -- a defect in the GATE, not in the code
+===========================================================================
+
+The only cell that trips C9 is H8: RED@HEAD, GREEN@WORK, and not on C9's
+exception list. C9 and C12 as written are in direct contradiction -- C12
+REQUIRES the very flip C9 forbids.
+
+This is resolved by the SEAL, not by the observed result, and that distinction
+is the whole reason the seal exists. cycle-036-precommit.md (sha256 committed
+before dispatch, verified OK at reveal) contains in its cell table:
+
+    H8  heading -> "### `--list` BEHAVIOR" (Am. + caps)   GREEN@WORK
+        (case-insensitive match survives the widen)
+
+So H8 flipping GREEN@WORK was PREDICTED IN WRITING BEFORE THE BUILDER RAN. The
+sealed C9 line ("except H1 (the one intended flip)") was written carelessly and
+contradicts the sealed cell table sitting three paragraphs above it. The bug is
+that C9's exception set should have read {H1, H8} to match what the same
+document already predicted.
+
+WHY AMENDING C9 IS NOT WEAKENING THE GATE (cycle.md step 6.5). The amendment
+changes nothing the gate demands of the CODE, and it is derived from the seal
+rather than from the measurement. Had the seal predicted H8 RED@WORK and the
+run produced GREEN, the honest outcome would be a FAILED gate and an item back
+to todo -- the fix would have flipped a cell I had committed in advance to
+expecting held. It predicted GREEN. The two sealed statements were mutually
+inconsistent on their face, and the cell table is the more specific one.
+
+WHY H8 IS THE SAME DEFECT AS H1, checked rather than assumed. HEAD's regex is
+/\bbehaviour\b/i -- already case-insensitive. So the ONLY reason "### `--list`
+BEHAVIOR" is RED at HEAD is the American spelling, exactly as in H1. H8 is H1
+with the case varied, it is not a second independent behaviour change, and its
+flip is the fix doing precisely the one thing the item asked for. Confirmed by
+the grid: H8 tracks H1 arm-for-arm across all three arms.
+
+RUN 2 below re-runs the identical harness with C9's exception set corrected to
+{H1, H8} and NOTHING else changed.
+cell  HEAD          WORK          REF           what
+H0    GREEN 78/78   GREEN 80/80   GREEN 78/78   pristine README (control)
+H1    RED 77/78 L   GREEN 80/80   GREEN 78/78   THE HOLE: American spelling, every claim still TRUE
+H2    RED 77/78 L   RED 79/80 S   RED 77/78 S   H1 + format literal separator em-dash -> ASCII hyphen (must still be caught)
+H3    RED 76/78 L   RED 79/80 x   RED 77/78 x   H1 + a FALSE tag count elsewhere (other guards must stay live)
+H4    GREEN 78/78   RED 79/80 A   RED 77/78 A   COST CELL: real British heading + American DECOY, both TRUE
+H5    RED 77/78 A   RED 79/80 A   RED 77/78 A   cycle-30 ambiguity: two British headings both qualify
+H6    RED 77/78 L   RED 79/80 L   RED 77/78 L   flag-token intact: only "--list-only behaviour" remains
+H7    RED 77/78 L   RED 79/80 L   RED 77/78 L   DISCRIMINATOR: the TYPO "behaviuor" must NOT be accepted
+H8    RED 77/78 L   GREEN 80/80   GREEN 78/78   American + ALL CAPS (case-insensitivity survives the widen)
+H9    RED 77/78 L   RED 79/80 L   RED 77/78 L   word anchor intact: heading carries neither spelling
+
+(L = locator "none found" fired, A = ambiguity fired, S = separator/format mismatch fired, x = some other failure)
+
+PASS  C1  H0 GREEN on all three arms (no regression on the real README)
+PASS  C2  H1 RED@HEAD and GREEN@WORK -- both L-029 directions in one comparison
+PASS  C2b H1@HEAD failed specifically on the LOCATOR miss (the defect as filed)
+PASS  C3  H1 GREEN@REF -- the intended fix lands independently of the builder
+PASS  C5  H2 RED@WORK on the SEPARATOR mismatch and NOT on the locator miss
+PASS  C5b H3 RED@WORK -- unrelated guards still live under the widened locator
+PASS  C6  H7 RED@WORK -- the TYPO "behaviuor" is still rejected (discriminator)
+PASS  C7  H9 and H6 RED@WORK -- word anchor and flag-token condition intact
+PASS  C8  H5 RED@WORK on AMBIGUITY -- the cycle-30 P1/P2 behaviour is preserved
+PASS  C9  every cell RED@HEAD is still RED@WORK, except the sealed intended flips H1/H8
+PASS  C9b H8 tracks H1 arm-for-arm -- it is the SAME flip, not an independent one
+PASS  C10 WORK and REF agree on every cell (P5)
+PASS  C11 H4 cost reproduces in the PREDICTED direction (GREEN@HEAD -> RED@WORK on ambiguity)
+PASS  C12 H8 GREEN@WORK -- case-insensitive matching survives the widen
+
+GATE PASSES

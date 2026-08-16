@@ -4834,3 +4834,126 @@ remains the conductor-owned WRAP_UP item.
 ```runfile-mirror
 {"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":9,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","promote":false,"demote":true,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":90,"opus_used_pct":97,"week_elapsed_pct":82.67,"weekly_heat":1.0887,"opus_heat":1.1733,"ceiling":5,"promote_blocked":false}},"watchdog":{"mode":"normal","plist_loaded":true},"caffeinate_pid":0,"wrap_up_complete":false}
 ```
+
+---
+
+## cycle 36 — 2026-08-16T00:20:53Z → 00:35Z — T-027 → done (HOLE, FIXED) [1 verified]
+
+gear 1 (guest/trickle, k_cap 1) · weekly_heat 91/82.94 = 1.0972, governor disengaged · probe REFUSED
+(35th consecutive, KI-5) · wave: 1 sonnet builder, direct Agent call (Workflow review-gated headless)
+
+### the item
+
+**T-027 closed as HOLE, and the defect is GONE — not documented, not deferred.** This is the first
+close in five cycles where the honest headline is a repair rather than a decision. `headingNames
+ListBehaviourSection` tested `/\bbehaviour\b/i`, so rewriting the README heading to the American
+`### `--list` behavior` — a spelling change making no claim false and leaving the format literal and
+the binary untouched — failed the suite LOUD on the locator's "none found". Shipped fix:
+`/\bbehaviou?r\b/i`, plus a comment naming T-027 and two new regression tests on in-test fixture
+documents. Suite 78 → 80 tests, **80/80 green** on the real tree, run by the conductor.
+
+### VERIFICATION EVIDENCE — 30 cells, 3 arms (`.swarm/runs/cycle-036-verify-T-027.txt`)
+
+```
+cell  HEAD          WORK          REF           what
+H0    GREEN 78/78   GREEN 80/80   GREEN 78/78   pristine README (control)
+H1    RED 77/78 L   GREEN 80/80   GREEN 78/78   THE HOLE: American spelling, every claim still TRUE
+H2    RED 77/78 L   RED 79/80 S   RED 77/78 S   H1 + separator em-dash -> ASCII hyphen (must still be caught)
+H4    GREEN 78/78   RED 79/80 A   RED 77/78 A   COST CELL: British heading + American DECOY, both TRUE
+H7    RED 77/78 L   RED 79/80 L   RED 77/78 L   DISCRIMINATOR: the TYPO "behaviuor" must NOT be accepted
+H8    RED 77/78 L   GREEN 80/80   GREEN 78/78   American + ALL CAPS
+(L = locator "none found" fired, A = ambiguity fired, S = separator mismatch fired)
+GATE PASSES  — 14/14 checks
+```
+
+**L-029, both directions in one comparison:** HEAD *is* the tree with the fix removed, so H1 at
+RED@HEAD → GREEN@WORK proves the false rejection disappears with the fix and returns without it.
+
+**Did not buy silence** — the check that mattered most. H2 keeps the American heading *and* mutates
+the format literal's separator. RED@WORK, and the gate asserts on the MESSAGE, not the colour: the
+separator test fired, the locator "none found" did **not**. The widened locator finds the section and
+then catches a real mutation, rather than going quiet.
+
+**Discriminator the builder could not have coded to** (sealed as P3): H7 uses the TYPO "behaviuor".
+A sloppy fix — dropping the word requirement, or `/behavi.*r/` — turns H7 GREEN. It is RED.
+
+**The cost reproduces, exactly as cycle 33 predicted.** H4 (American-spelled decoy beside the real
+British heading, every claim in both TRUE) flips GREEN@HEAD → RED@WORK on ambiguity. The widen really
+does enlarge the ambiguity surface. Accepted on cycle 33's standing ruling that loud ambiguity on two
+`--list`-behaviour headings IS correct — the new rejection lands inside a class already decided to be
+right. Recorded as a measured cost, not waved through.
+
+### KI-8: sealed by COMMIT-REVEAL, and it held
+
+Cycle 33's seal was read by the very builder it was sealed from. `/tmp` is outside the subagent
+sandbox (KI-6) but denied to the conductor's Write tool, so hiding the file was unavailable. Instead:
+seal written → `sha256` committed **before** dispatch → **plaintext deleted for the whole dispatch
+window** → rewritten afterwards and checked with `sha256sum -c` → **OK**. A file that does not exist
+cannot be read. Root cause untouched and stated as such in KI-8: every *other* artefact in
+`.swarm/runs/` is still readable, and this is conductor discipline, not a structural boundary.
+
+### the gate failed its own check first, and that is in the record
+
+Run 1 **FAILED** on C9. The cause was my check, not the code: C9 excepted only H1 while the *same
+sealed document* predicted "H8 … GREEN@WORK" three paragraphs above. H8 is H1 with the case varied
+(HEAD's regex is already `/i`, so only the spelling makes it red), so C9 and C12 demanded opposite
+things. Amended to except {H1, H8} **on the authority of the seal, not of the result** — had the seal
+predicted H8 RED@WORK, the honest outcome would have been a failed gate and T-027 back to todo. Both
+runs are preserved verbatim, failing run first, so the amendment can be audited rather than trusted.
+New check C9b proves H8 tracks H1 arm-for-arm.
+
+**Sealed prediction P1 was REFUTED** and is recorded as such: I predicted the widen "and nothing
+else", naming any edit outside the helper as the refutation condition. The builder also added two
+regression tests — welcome hardening in the file's own style, on fixtures that cannot drift with
+README.md. The prediction was still wrong, and the seal exists so that cannot be re-read as right.
+
+### T-033 filed — a NEW SHAPE in the prose-anchor family
+
+From the builder's fourth volunteered uncertainty (**seventh cycle running** that an honest "things I
+was unsure about" note became a measured item). It raised the question about *other files* and was
+told that was out of scope; checking inside the file it was already allowed to touch is what found it.
+
+`test/readme-tags.test.js:160` asserts the README contains the literal `exactly one` / `single-entry`
+anywhere in the document. Measured (`.swarm/runs/cycle-036-probe-P1.txt`), against 80/80 green:
+
+```
+P0 pristine control                                -> GREEN 80/80
+P1 HONEST REWORD, limitation still plainly stated  -> RED 78/80, ack test FIRED
+P2 limitation NOT acknowledged at all              -> RED 78/80, ack test FIRED (real catch works)
+P3 literal only in an UNRELATED sentence           -> ack test did NOT fire, i.e. it PASSED
+```
+
+**Two defects pulling opposite ways.** (a) LOUD false rejection: rewording "on exactly one entry" to
+"just once" is rejected by a README that still states the limitation perfectly. (b) SILENT
+satisfaction: "Install with exactly one command." satisfies the guard. Honest reading of P3 — the
+suite went red at 79/80 but **not on this test**; a neighbouring guard incidentally caught it. So the
+silent pass of *this assertion* is proven while the suite-level consequence is currently MASKED. The
+demonstration that the suite goes red is not a demonstration that this guard works, and those two must
+not be collapsed. Every prior family member anchors an EXTRACTION; this one anchors CONTENT, which is
+why it can fail in both directions where the others only ever failed loud.
+
+### housekeeping
+
+Scope held: only `test/readme-tags.test.js` modified; README, `src/`, `bin/`, `docs/` untouched.
+KI-7 scratch control PASSES a third consecutive cycle — `/opt/swarm` clean; the builder did *not*
+self-clean this time (cycle 35's did), so the conductor removed the tree. The naming control works;
+self-cleanup is not reliable and should not be assumed. collision-scan (step 6.6) NOT APPLICABLE —
+Node CLI, no browser surface; reported as not-run, never as passed. Craft pack loaded clean,
+`degraded: []`. Control channel: 0 pending, 0 injections. Wave autotune APPLIED (real executable
+logic shipped, unlike cycles 33/35): `wave_streak` 1 → 2 → `k_current` 4 → 5, streak reset; inert at
+gear cap 1.
+
+### handoff
+
+Backlog: **8 todo, 33 done, 2 blocked, 4 dropped**. Reachable S-effort items at gear 1, in priority
+order: **T-033 (p6, filed this cycle, measured and ready)**, T-024b (p6), T-032 (p5), T-026 (p4,
+carries a full 11-cell fix already measured and marked READY TO DISPATCH — but its classifier's
+independence is compromised per KI-8, so gate it from scratch). T-007/T-008/T-024 stay unreachable
+(M/L-effort at gear 1). `I-6` (REPORT.md refresh) remains conductor-owned at WRAP_UP.
+
+~10.7h to `stop_at`. Gear 1 is structurally fixed for the rest of the run — the weekly window resets
+at 1786942799, after stop_at 1786879464.
+
+```runfile-mirror
+{"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":10,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","promote":false,"demote":true,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":91.0,"opus_used_pct":97,"week_elapsed_pct":82.94,"weekly_heat":1.0972,"opus_heat":1.1695,"ceiling":5,"promote_blocked":false}},"watchdog":{"mode":"normal","plist_loaded":true},"caffeinate_pid":0,"wrap_up_complete":false}
+```

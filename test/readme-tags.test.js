@@ -1030,7 +1030,10 @@ test('README Layout section paths must exist on disk (C6)', () => {
 //      what keeps a heading for a DIFFERENT flag, e.g. "### `--list-only`
 //      behaviour", from qualifying: "--list" is a substring of
 //      "--list-only" but not a standalone token there.
-//   2. It carries the word "behaviour" (case-insensitive, own word).
+//   2. It carries the word "behaviour" OR its American spelling "behavior"
+//      (case-insensitive, own word; T-027 -- a maintainer rewording the
+//      heading to the American spelling makes no README claim false and
+//      must not trip the locator's "none found" failure).
 //
 // Deliberately NOT anchored to any specific lead-in phrase or position in
 // the document (T-012 hazard) -- this reads heading STRUCTURE (the flag
@@ -1040,7 +1043,7 @@ test('README Layout section paths must exist on disk (C6)', () => {
 function headingNamesListBehaviourSection(headingText) {
   const normalized = headingText.replace(/`/g, '');
   const hasListToken = /(^|[^A-Za-z0-9-])--list(?![A-Za-z0-9-])/.test(normalized);
-  const hasBehaviourWord = /\bbehaviour\b/i.test(normalized);
+  const hasBehaviourWord = /\bbehaviou?r\b/i.test(normalized);
   return hasListToken && hasBehaviourWord;
 }
 
@@ -1198,6 +1201,47 @@ test('getListBehaviourSection does not let "--list-only" satisfy the standalone 
     /none found/,
     'a heading for a different flag (--list-only) must not be mistaken for the --list behaviour section'
   );
+});
+
+test('getListBehaviourSection tolerates the American spelling "behavior" in the heading (T-027)', () => {
+  const doc = [
+    '## Flags',
+    '',
+    '### `--list` behavior',
+    '',
+    'Format: `<text> — <author>`',
+    '',
+    '## Tag vocabulary',
+  ].join('\n');
+
+  // A maintainer rewording "behaviour" to "behavior" makes no README claim
+  // false and leaves the format literal untouched -- the locator must not
+  // fail loud with "none found" over a spelling variant alone.
+  const section = getListBehaviourSection(doc);
+  assert(
+    section.includes('<text> — <author>'),
+    'the American-spelled heading must still locate its own section body'
+  );
+});
+
+test('getListBehaviourSection still fails on a SEPARATOR MISMATCH (not a heading-parse error) under an American-spelled heading (T-027)', () => {
+  const doc = [
+    '## Flags',
+    '',
+    '### `--list` behavior',
+    '',
+    'Format: `<text> - <author>`', // mutated: ASCII hyphen, not em dash
+    '',
+    '## Tag vocabulary',
+  ].join('\n');
+
+  // Tolerating the spelling variant must not buy silence on a genuinely
+  // wrong literal under that same heading -- the heading resolves cleanly
+  // and the mutation surfaces as a wrong separator, not a masked locator
+  // failure (same B1/B2 trap as T-021, one spelling axis over).
+  const section = getListBehaviourSection(doc);
+  const separator = extractListFormatSeparator(section);
+  assert.notEqual(separator, ' — ', 'a mutated separator under an American-spelled heading must still be detectably wrong');
 });
 
 test('README `--list` format literal matches the shipped binary\'s actual --list output (T-017)', () => {

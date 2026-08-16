@@ -1,0 +1,8 @@
+P0  GREEN 80/80                 pristine README (control)
+P1  RED 78/80   ACK-TEST FIRED  HONEST REWORD: both anchor phrases replaced, limitation still plainly stated
+P2  RED 78/80   ACK-TEST FIRED  THE REAL FAILURE this test exists to catch: limitation not acknowledged AT ALL
+P3  RED 79/80                   DEGENERATE: anchor phrase present but in a totally unrelated sentence
+
+FINDING 1 (false rejection):   honest reword P1 is RED -- the guard rejects a README that still states the limitation
+FINDING 2 (real catch works):  P2 is RED, ack-test fired: true
+FINDING 3 (silent pass):       degenerate P3 is RED
