@@ -157,38 +157,78 @@ test('README must list all single-entry tags', () => {
   }
 });
 
-// (T-033) This is a CONTENT guard ("does the doc say a thing"), not an
-// EXTRACTION guard ("find this number") like every other test in this file --
-// that is what lets it fail in two directions at once, and why it needed its
-// own measurement rather than another narrowing of the anchor wording.
+// (T-033 / T-035) This is a CONTENT guard ("does the doc say a thing"), not
+// an EXTRACTION guard ("find this number") like every other test in this
+// file -- that is what lets it fail in two directions at once, and why it
+// needed its own measurement rather than another narrowing of the anchor
+// wording.
 //
-// Three cells were measured (scratch harness, not committed):
+// T-033 measured three cells (scratch harness, not committed):
 //   P1 -- honest reword of the two acknowledgement sentences (numbers
 //         untouched, limitation still plainly stated, just reworded away
-//         from the three old hardcoded substrings) -- old code: FALSE
+//         from the three old hardcoded substrings) -- pre-T-033 code: FALSE
 //         REJECTION. Fires when it must not.
-//   P2 -- limitation genuinely not acknowledged anywhere -- old code:
+//   P2 -- limitation genuinely not acknowledged anywhere -- pre-T-033 code:
 //         correctly fires. Must keep firing.
 //   P3 -- decoy sentence ("Install with exactly one command.") inserted in
 //         an unrelated section (Usage), genuine acknowledgement removed from
-//         Tag vocabulary -- old code: SILENT SATISFACTION. Passes when it
-//         must not, because a whole-document substring search cannot tell
-//         "the concept, stated somewhere on-topic" from "the words, stated
-//         anywhere at all".
+//         Tag vocabulary -- pre-T-033 code: SILENT SATISFACTION. Passes when
+//         it must not, because a whole-document substring search cannot
+//         tell "the concept, stated somewhere on-topic" from "the words,
+//         stated anywhere at all".
 //
-// The fix applies the same structural discipline already used by every
-// other test below (scope to the Tag vocabulary section, the one place this
-// claim is meaningfully made) plus a widened set of phrase-level markers for
-// the single-occurrence CONCEPT rather than 3 literal strings. Scoping is
-// what kills P3 (the decoy lives outside the section, so it is never seen);
-// widening the marker set is what saves P1 (an honest paraphrase still uses
-// one of "exactly once" / "exactly one" / "only once" / "just once" /
-// "only one" / "single-entry" / "one entry" / "appears once" / "occurs
-// once" somewhere in the section -- and even where P1 reworded a sentence
-// away from all of them, the section's OTHER already-true "appear exactly
-// once" sentence, guarded independently for correctness elsewhere in this
-// file, still carries the concept). P2 still fails because none of these
-// markers appear anywhere in the section once the concept is genuinely gone.
+// T-033's fix scoped the search to the Tag vocabulary section and widened
+// three hardcoded substrings to nine phrase-level markers for the single-
+// occurrence CONCEPT. That killed P3 as measured -- but only because P3's
+// decoy lived OUTSIDE the section. T-035 measured a fourth cell:
+//   M1 -- genuine acknowledgement sentences stripped from INSIDE the Tag
+//         vocabulary section, replaced with the unrelated-but-true sentence
+//         "Each tag name is exactly one word." (also inside the section) --
+//         T-033 code: SILENT SATISFACTION AGAIN. "exactly one" matches
+//         regardless of what it is one OF -- scoping to the section cannot
+//         help when the decoy is IN the section.
+//
+// The T-035 fix adds two more structural requirements, checked per SENTENCE
+// (split on '.'/newline, not ';' -- the real README's own acknowledgement
+// sentence joins "16 tags appear on 2 or more entries" and "the remaining 21
+// appear on exactly one entry" with a semicolon, which is structurally ONE
+// sentence; splitting on ';' would sever "tags" from "exactly one entry" and
+// break that sentence) rather than anywhere in the whole section:
+//   1. the sentence must mention `tag`/`tags` -- necessary but NOT
+//      sufficient on its own, since the M1 decoy ("Each tag name is...")
+//      already does this; kept anyway because it costs nothing and rules
+//      out markers landing in a sentence about something else entirely.
+//   2. the sentence must ALSO contain `entry`/`entries` -- the one word this
+//      README consistently uses for "an item in the corpus" ("2 or more
+//      entries", "exactly one entry", "single-entry"). This is what M1
+//      lacks ("word", not "entry") and what a decoy would need to
+//      independently reproduce to slip through -- much narrower ground than
+//      just reusing one of the nine marker phrases.
+// A sentence must satisfy tag-word AND entry-word AND one of the nine
+// marker phrases, ALL THREE in the same sentence, to count.
+//
+// Explicitly measured and NOT claimed to be closed by this fix (see the
+// scratch harness cited above for the exact probes):
+//   - Adversarial sentences that reuse "entry" in a NON-corpus sense right
+//     next to the word "tag" (e.g. "The install script writes exactly one
+//     entry per tag to the local cache file, once per run.") still pass
+//     silently. No regex-only rule found separates "corpus entry" from
+//     "cache/dictionary entry" without also rejecting the real README (the
+//     real acknowledgement sentences do not say "corpus" in the same
+//     sentence as "entry", so requiring that word too would break them).
+//     This is a narrower, harder-to-hit hole than the one this item closes
+//     (the decoy now needs its own natural-sounding use of "entry" glued to
+//     "tag", not just reuse of a common quantifier), left open on the
+//     record rather than patched into a new false rejection.
+//   - This narrows what counts as an honest acknowledgement: an honest
+//     reword that swaps "entry"/"entries" for a synonym the README does not
+//     otherwise use in an entry-bearing sentence -- e.g. "16 tags occur two
+//     or more times; the remaining 21 occur exactly one time." (uses
+//     "exactly one", a marker, but never says "entry") -- now FAILS where
+//     the T-033 code passed it. This is the same class of gap T-034
+//     already tracks (the marker list is a finite enumeration); T-035 does
+//     not fix T-034 and this note is that measurement, made explicit rather
+//     than silently absorbed into "no regression."
 test('README should acknowledge single-entry tag limitation', () => {
   const readmePath = path.join(__dirname, '..', 'README.md');
   const readmeContent = fs.readFileSync(readmePath, 'utf8');
@@ -214,7 +254,19 @@ test('README should acknowledge single-entry tag limitation', () => {
     /\bappears? once\b/i,
     /\boccurs? once\b/i,
   ];
-  const hasWarning = singleEntryMarkers.some((marker) => marker.test(tagVocabSection));
+  // Domain words the claim must ALSO carry, in the SAME sentence as the
+  // marker, so a marker phrase landing in a sentence about something other
+  // than "how many corpus entries each tag has" cannot satisfy this test on
+  // its own (see the comment block above -- this is what T-035 adds).
+  const tagWord = /\btags?\b/i;
+  const entryWord = /\bentr(?:y|ies)\b/i;
+
+  const sentences = tagVocabSection.split(/[.\n]/);
+  const hasWarning = sentences.some((sentence) => {
+    if (!tagWord.test(sentence)) return false;
+    if (!entryWord.test(sentence)) return false;
+    return singleEntryMarkers.some((marker) => marker.test(sentence));
+  });
 
   assert(hasWarning, 'README Tag vocabulary section should acknowledge that some tags appear only once');
 });

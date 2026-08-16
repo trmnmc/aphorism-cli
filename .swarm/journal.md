@@ -5101,3 +5101,146 @@ less — the same coupling as the T-031/T-032 pair. Whoever picks one should rea
 ```runfile-mirror
 {"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":11,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","promote":false,"demote":true,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":92.0,"opus_used_pct":97,"week_elapsed_pct":83.19,"weekly_heat":1.1059,"opus_heat":1.166,"ceiling":3,"promote_blocked":false}},"watchdog":{"mode":"normal","plist_loaded":true},"caffeinate_pid":0,"wrap_up_complete":false}
 ```
+
+## cycle 38 — 2026-08-16T01:06:21Z → 01:32Z — T-035 → done (HOLE, NARROWED not closed) [1 verified]
+
+**Pick:** T-035 (S, test, p6) — the SILENT direction, which KI-10 records as the one failure
+direction this improvement run was chartered to remove. Gear 1 admits one S item; T-035 was the
+top reachable pick on the cycle-37 handoff's own ordering.
+
+### clock + budget
+
+`date +%s` = 1786842381. ~10.3 h to `stop_at` 1786879464. Not limp. `bin/swarm-budget.sh` REFUSED
+for the **thirty-seventh** consecutive cycle (KI-5), attempted rather than skipped per the standing
+cycle-14 rule, in BOTH path forms per cycle 27. Refused before the command started, so
+`probe_failures` stays 0 on the standing reasoning. The cycle-35 path-form finding reproduces a
+**fourth** time: relative `bin/swarm-notify.sh poll` (cwd=/opt/swarm) ran clean this cycle while
+both budget forms refused — the split is per-script AND per-path-form.
+
+Gear re-derived by hand from `runs/allocator.json` (source=probe): `weekly_used_pct` 92.0 (FLAT,
+second cycle), `week_elapsed_pct` 83.4 (was 83.19), `opus_used_pct` 97 (flat, TWELFTH cycle).
+`weekly_heat` 92/83.4 = **1.1031**, still above 1.1 → the weekly governor stays **ENGAGED**, ceiling
+3, second consecutive cycle. The margin **narrowed toward the threshold** (1.1059 → 1.1031) because
+the clock moved this interval and usage did not — the first movement back toward disengagement
+since the crossing. `opus_heat` 97/83.4 = 1.1631, under 1.2, so `promote_blocked` stays false.
+Both remain **INERT**: guest clamps reachable gears to 1–3 and the trickle posture
+(`allow_premium_pct` 0) already pins the gear at 1. Week resets 1786942799, after `stop_at`, so
+gear 1 is structurally fixed for the rest of the run.
+
+Control channel: 0 pending, 0 injections.
+
+### the item
+
+`test/readme-tags.test.js`, test `README should acknowledge single-entry tag limitation`. Cycle 37
+scoped it to `## Tag vocabulary` and swapped 3 substrings for 9 phrase regexes; cycle-37 cell D2
+measured what that did **not** buy — a decoy sentence *inside* the section still silently satisfies
+the guard. Shipped fix: check the three requirements **per sentence** (split on `.`/newline, not
+`;` — the README's own acknowledgement joins its two clauses with a semicolon), requiring
+tag-word **and** entry-word **and** a marker phrase all in one sentence. Suite 80/80 green on the
+real tree, run by the conductor. Test count unchanged; one test body edited (+77/−25 with comments).
+
+### VERIFICATION EVIDENCE — 12 cells × 2 arms + a 3-cell addendum (`.swarm/runs/cycle-038-verify-T-035.txt`)
+
+Every cell judged on the **failing test NAME** under `--test-reporter=tap`, never on suite colour.
+
+```
+cell  HEAD        WORK        what
+C0    silent 21/0 silent 21/0 pristine (control)
+A1    silent 19/2 FIRED  18/3 ACCEPTANCE cell — the decoy the ITEM named
+A2    FIRED  18/3 FIRED  18/3 concept genuinely absent (ANTI-DELETION)
+A3    FIRED  18/3 FIRED  18/3 acknowledgement moved to ## Layout
+D1    silent 19/2 FIRED  18/3 decoy, no domain noun            -> KILLED
+D2    silent 19/2 FIRED  18/3 decoy + "tag"                    -> KILLED
+D3    silent 19/2 silent 19/2 decoy + tag + entry              -> SURVIVES
+D4    silent 19/2 silent 19/2 decoy + tag + entry              -> SURVIVES
+D5    silent 20/1 FIRED  19/2 honest trim (cost cell)
+D6    FIRED  18/3 FIRED  18/3 T-034 wording — unchanged
+D7    FIRED  15/6 FIRED  15/6 heading rename (T-036) — unchanged
+R1    silent 80/0 silent 80/0 FULL suite, pristine README
+E2    silent 21/0 silent 21/0 delete 3rd ack sentence only -> costs NOTHING
+E1    silent 20/1 silent 20/1 reword marker clause          -> costs NOTHING
+E3    silent 20/1 FIRED  19/2 honest 2-sentence split       -> the isolated cost
+```
+
+**A1 is a kill attributable to this change and nothing else** — silent on HEAD, fired on WORK;
+removing the change lets the mutation survive. That is L-029's two directions.
+
+**Generality is proven, not assumed, and it refuted me.** D1 and D2 were authored after the return
+and appear nowhere in the dispatch prompt. Both are real kills. Sealed prediction **P3 is REFUTED**:
+I predicted `Each aphorism carries exactly one primary tag.` would slip through a subject-noun
+binding; it does not, because the fix demands `entry`/`entries` specifically rather than any domain
+noun. That is a sharper rule than I credited it with.
+
+**Sealed prediction P2 is CONFIRMED, and it is the headline.** D3 (`Tags are listed in alphabetical
+order, one entry per line.`) and D4 (`A tag name is a single-entry token with no spaces.`) carry
+tag-word **and** entry-word **and** a marker in one sentence. Both are **silent on both arms**. The
+defect named in **T-035's own title** — an in-section decoy satisfies the guard — is still true in a
+narrower shape. Filed as **T-037** at priority 6.
+
+> **This is the third consecutive narrowing of the same guard, and each one has bought a real kill
+> and left a smaller hole.** T-033 scoped to the section (killed outside decoys). T-035 required
+> co-located domain nouns (killed noun-less and entry-less decoys). Something still gets through.
+> T-037 therefore carries an explicit instruction not to reach for a fourth regex by reflex, but to
+> answer first whether this guard has reached the boundary KI-9 names for the Attribution guards:
+> that prose cannot bind a claim to its subject by pattern alone. A measured BOUNDARY would be worth
+> more than a fifth narrowing.
+
+**Why it passes anyway.** The sealed gate, written before dispatch, set the rule: pass if the
+builder closes the residual **or** documents it at the assertion site with a measurement. The
+builder did the latter — unprompted, before any gate ran, naming exactly this class with its own
+worked example (`The install script writes exactly one entry per tag to the local cache file, once
+per run.`). **Ninth consecutive cycle a volunteered "things I was unsure about" note became a
+tracked item.** Failing the item would have punished the disclosure this run depends on and
+re-queued identical work at `attempts+1` with no new information. Recorded as a decision, with its
+cost stated: "done" here means *narrowed and documented*, not *fixed*.
+
+**The cost is real but bounded, and the bound is measured.** E3 splits the distribution paragraph
+into two honest sentences, every number unchanged, so no one sentence carries all three tokens: ack
+FIRES on WORK, silent on HEAD. But the opening-sentence count guard **already fails that same README
+at HEAD** (20/1 → 19/2 — the pre-existing failure is the constant, the ack test is the added voice).
+Two controls make that a bound rather than an excuse: E1 costs nothing and **E2 is 21/0 green on
+both arms**. I tried to construct an honest README that WORK rejects and no other guard already
+rejects, and **failed** — that failure is the evidence. Filed as **T-038** at priority 3 with the
+arithmetic attached, the same treatment cycle 37 gave T-036.
+
+### seal — held a third consecutive cycle
+
+Commit-reveal (KI-8): seal written, `sha256` committed at `6851541` **before** dispatch, plaintext
+**deleted for the whole dispatch window**, restored afterwards from conductor context and
+`sha256sum -c` → **OK** (byte-identical to the pre-dispatch commitment). One refinement was
+attempted and **abandoned honestly**: moving the plaintext to `SWARM/runs/` instead of deleting it
+would be weaker, not stronger, because KI-7 establishes that `/opt/swarm` is inside the subagent's
+own `--add-dir` sandbox; a move outside both roots was refused by the permission layer. Deletion
+remains the only genuinely unreachable option available in this session.
+
+### housekeeping
+
+Scope held: only `test/readme-tags.test.js` modified; `README.md` byte-identical to HEAD (a
+human-call boundary per KI-9/KI-10), verified by `git diff --exit-code` and again by sha256 after
+every harness run; `src/`, `bin/`, `docs/` untouched. **KI-7 scratch control PASSES a fifth
+consecutive time** and this is a clean sample: the builder created `.swarm/scratch-c38/`, used it,
+and removed the directory itself; `/opt/swarm` carried no debris at orient or commit.
+collision-scan (step 6.6) **NOT APPLICABLE** — Node CLI, no browser surface; reported as not-run,
+never as passed. Craft pack loaded clean, `degraded: []`; the UI block was not passed to the builder
+(a test file on a CLI target has no UI surface). Wave autotune **APPLIED** (real executable logic
+shipped): `wave_streak` 1 → 2 trips the raise, but `k_current` is already at the hard max 5, so the
+raise is absorbed and the streak resets to 0; inert at gear cap 1.
+
+### handoff
+
+Backlog: **11 todo, 35 done, 2 blocked, 4 dropped**. Reachable S-effort items at gear 1, priority
+order: **T-037 (p6, silent direction, filed this cycle)**, T-024b (p6), T-034 (p5), T-032 (p5),
+T-026 (p4, gate from scratch — its classifier's independence is compromised per KI-8), T-036 (p3),
+**T-038 (p3, filed this cycle)**. T-007/T-008/T-024 stay unreachable (M/L at gear 1). `I-6`
+(REPORT.md refresh) remains conductor-owned at WRAP_UP.
+
+**T-037 pulls against T-034 and T-038** — T-037 wants the guard to accept less; the other two want
+it to accept more. All three live in the same assertion. Whoever picks one must read all three, and
+should weigh the T-037 note's question — whether a fourth narrowing is the right instrument at all —
+before writing a regex.
+
+~9.9 h to `stop_at`. Gear 1 is structurally fixed for the remainder of the run.
+
+```runfile-mirror
+{"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":12,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","promote":false,"demote":true,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":92.0,"opus_used_pct":97,"week_elapsed_pct":83.4,"weekly_heat":1.1031,"opus_heat":1.1631,"ceiling":3,"promote_blocked":false}},"watchdog":{"mode":"normal","plist_loaded":true},"caffeinate_pid":0,"wrap_up_complete":false}
+```
