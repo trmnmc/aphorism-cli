@@ -471,3 +471,55 @@ this run something concrete, in the order a human should take them:
    touch; on a cooler week, or inside the 6h floor release, it grants real spend.
 
 **KI-13** (low) remains as filed.
+
+
+---
+
+## Cycle 49–56 addendum — written at WRAP_UP, cycle 56
+
+This retro's body was drafted at cycle 42 and refreshed at cycle 48. Cycles 49–56 are
+recorded here rather than by rewriting above, so the cycle-48 text stays auditable as what
+was known then.
+
+**What worked, cycles 49–56.**
+- The mutation instrument was re-aimed from a code surface to the SPEC's own rule list
+  (cycle 52), producing a 29-clause coverage map — protected / hole / boundary. It found 4
+  holes; cycles 52–54 closed all of them, ending at **29/29**. This is the run's single
+  most valuable method result and it became candidate lesson L-040.
+- The three-arm gate (WITNESS / KILL-BY-NAME / ATTRIBUTION-BY-SUBTRACTION) settled the
+  question the whole run kept circling: what a *new* test buys over the suite that already
+  existed. Cycle 54's L7-ATTR arm — 85p/6f with the six new tests, 85p/0f with them
+  filtered out, same mutant — is the form to reuse.
+- Cycle 55 spent a whole cycle refreshing the distill candidates instead of building. That
+  was correct: the cycle-43 draft scored 6/10 against the refreshed set's 10/10 on the
+  sealed gate (0/4 discriminating), so a WRAP_UP consuming the stale draft would have
+  appended this run's *weakest* five lessons.
+
+**What thrashed, cycles 49–56.**
+- **KI-17, the dashboard staleness family.** Cycle 49 found one stale region; cycle 50's
+  audit of every region with the KI-11 classifier found the live evidence strip had been
+  stale since cycle 42 while renders 43–48 wrote into a legend *comment*. A render script
+  that reports its own `ok` lines is not evidence — reading the rendered artifact is.
+  KI-19 (cycle 51) is the third mechanism in the same family. All repaired in the artifact;
+  the defective pattern is what stays filed.
+- **KI-18.** The burn-up strip the template contract mandates has never been rendered in 56
+  cycles, and was deliberately NOT fabricated: the verified-per-cycle series is not
+  reconstructable from state (measured at cycle 51, not asserted). A guessed chart on the
+  one page a human reads is worse than an absent one.
+- **KI-5, the allowlist gap.** `bin/swarm-playbook.sh` refused for the **55th consecutive
+  cycle**, including this WRAP_UP's append attempt. Attempted every cycle rather than
+  skipped on precedent — the cycle-14 rule, and the right one: the Workflow gate *did*
+  turn out not to be a fixed property of headless sessions.
+
+**Applied-lessons check, cycles 49–56 (extends § Applied lessons check above).**
+- L-031 (mutation-measure, don't read for gaps) — **re-observed, strongest form yet.** The
+  cycle-52 sweep found 4 holes no amount of reading the suite had surfaced in 51 cycles.
+- L-029 (failable AND attributable) — **re-observed.** Generalised into the three-arm gate.
+- L-033 (HOLE vs BOUNDARY) — **re-observed**; this run promotes it to `confidence: high`
+  in the candidate set.
+- L-034 (the REFUTE line staged into `prompt_lines.qa`) — **not exercised** after cycle 39;
+  the run stopped dispatching agents, so no QA agent saw it in this window.
+
+**Cycles run: 56.** The run ends at a finish line, not a stall: 48 done, 6 todo (every one
+human-, deps-, effort- or cycle-39-decision-gated), 2 blocked, 4 dropped, and
+`consecutive_no_value` standing at **0**.

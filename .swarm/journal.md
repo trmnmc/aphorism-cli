@@ -8020,3 +8020,64 @@ and a dedupe note per bullet) precisely so a human can overturn it cheaply.
 ```runfile-mirror
 {"run_label": "improvement-aphorism-cli-2026-08-15", "run_kind": "improvement", "stop_at": "2026-08-16T11:24:24+00:00", "usage_reset_at": "2026-08-15T16:24:32+00:00", "model_policy": "value-routing", "auth_mode": "subscription", "pacing": {"mode": "guest", "dial": 0.3}, "targets": [{"path": "/opt/targets/aphorism-cli", "status": "active", "weight": 1}], "rotation_cursor": 0, "rotation_schedule": [0], "cycles_since_recycle": 25, "budget": {"gear": 1, "k_cap": 1, "mode": "guest", "source": "allocator", "posture": "trickle (allowance measured 0 by a REAL probe at cycle 55 - ok:true/source:probe, SIXTH consecutive real reading)", "promote": false, "demote": true, "probe_failures": 0, "allow_overall_pct": 0, "reserve_overall_pct": 20.42, "weekly": {"ok": true, "weekly_used_pct": 97.0, "opus_used_pct": 97, "week_elapsed_pct": 89.21, "weekly_heat": 1.0873, "opus_heat": 1.0873, "ceiling": 3, "promote_blocked": false}}, "heartbeat": {"ts": 1786877667, "pid": 1076001, "limp": false}, "watchdog": {"mode": "normal", "plist_loaded": true, "lockfile": "/opt/swarm/runs/watchdog.lock", "relaunch_attempts": 0}, "caffeinate_pid": 0, "wrap_up_complete": false}
 ```
+
+## cycle 56 — WRAP_UP (2026-08-16T11:10:49.000Z)
+
+**work:** WRAP_UP. No new work dispatched. Step-4 admission control admitted nothing:
+`stop_at - now - 900` was **-108s** at the clock check, and the smallest work type (inline)
+needs 600s. cycle.md routes to WRAP_UP by its own rule, exactly as cycle 55's handoff
+predicted mechanically.
+
+**board (re-measured, third consecutive cycle):** 48 done, 6 todo, 2 blocked, 4 dropped.
+No conductor-reachable item. Reported as the churn breaker's DONE branch, not the stalled
+one — `consecutive_no_value` is **0**.
+
+**control:** `bin/swarm-notify.sh poll` succeeded from cwd=/opt/swarm (TENTH consecutive
+clean poll). `pending[]` empty, `inject[]` empty. Nothing to apply.
+
+**VERIFICATION EVIDENCE — final suite, forced TAP reporter per L-041:**
+```
+$ node --test --test-reporter=tap test/*.test.js
+1..91
+# tests 91
+# pass 91
+# fail 0
+# cancelled 0
+# skipped 0
+```
+91/91 green. Parsed under an explicitly forced reporter, so a null parse could not fall
+through into a verdict.
+
+**distill (step 2b):** `bin/swarm-playbook.sh append` ATTEMPTED, not skipped on precedent —
+**REFUSED** by the allowlist for the **55th consecutive cycle** (KI-5). Refused before the
+command started, so `probe_failures` stays 0. Prediction S8 in the candidates file held.
+Per that file's own § RECOMMENDATION and cycle 55's handoff, `playbook/learnings.md` is left
+**UNTOUCHED**: it stands at 31 lessons against a stated cap of 20, a pre-existing breach a
+human was already handed (commit a49bafd), and the fallback's literal remedy would mean
+hand-deleting 16 lessons from a shared file whose overflow policy is explicitly someone
+else's call. Destructive and not reversible from this run's artifacts, so not taken.
+`next_id: 37` remains correct — nothing was appended. The five lessons are carried in full
+text in REPORT.md so they survive without the playbook.
+
+**reports (step 2a/3):** RETRO.md +53 lines (cycles 49-56 addendum: the rule-list coverage
+map, the three-arm gate, the KI-17/18/19 staleness family, applied-lessons check).
+REPORT.md +103 lines, paying off the five-addenda debt in one closing section: the cycle
+48-56 change table, the five lessons in full, the ranked human queue, and the final
+verified-vs-claimed split. Neither file was rewritten — appended only, so every earlier
+conductor's text stays auditable as what was known then.
+
+**tag:** `v0.1-overnight` already present; step 4 satisfied.
+
+**headline result of the run:** all **29** SPEC Domain-rule clauses are now asserted by
+permanent tests (cycle 52 mutated the rule list and found 4 holes; 53 closed to 28/29; 54
+closed to 29/29). Two of those holes had been "verified" only by a conductor gate at cycle 7
+— proved once by execution, leaving nothing that would notice a regression. That distinction
+is candidate lesson L-040 and the run's main finding.
+
+**not fixed, deliberately (hard rule 5):** KI-5 (allowlist gap — the repair needs ABSOLUTE
+entries `Bash(/opt/swarm/bin/swarm-budget.sh:*)` and
+`Bash(/opt/swarm/bin/swarm-playbook.sh:*)`), KI-16 (allocator measured a ZERO premium
+allowance by real probe six consecutive cycles, pinning gear 1 all run), KI-2 (HIGH, the
+unaudited attributions). All carried into REPORT.md's ranked human queue.
+
+**outcome:** WRAP_UP complete. Run ends at a finish line.
