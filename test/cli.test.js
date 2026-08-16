@@ -218,3 +218,84 @@ test('--list --json emits newline-delimited JSON, one object per line, in corpus
     'entries must appear in corpus order'
   );
 });
+
+// --- T-044: the "--json composes with the filter and seed flags" clause ------
+//
+// Added under SPEC I-2 for a MEASURED survivor, never for a read-through. The
+// cycle-52 Domain-rule coverage sweep planted one mutant per SPEC Domain-rule
+// clause and ran the shipped suite against each; this clause was one of four whose
+// mutants the 82-test suite passed green. The two mutants below are quoted from
+// that sweep (.swarm/runs/cycle-052-rule-coverage.mjs, cells J3 and J3b) and were
+// registered as survivors BEFORE these tests were conceived.
+//
+// Both violations are SILENT: the CLI still prints a well-formed, single-line JSON
+// object of a real corpus entry with the right keys — it is simply the WRONG entry.
+// Every pre-existing --json test inspects shape (keys, line count, parseability),
+// which is exactly why both mutants walked through them.
+
+test('--json composes with --seed: the seeded JSON pick is reproducible AND is the same entry as the plain-text pick', () => {
+  // Kills J3: `pick(candidates, opts.json ? undefined : opts.seed)` — --json
+  // silently drops the seed and picks at random.
+  //
+  // Arm 1, reproducibility. A random pick over 50 entries repeating 8 times runs
+  // at ~50^-7, so this is deterministic on correct code and effectively never
+  // green on the mutant. The existing '--seed is deterministic across separate
+  // processes' test never passes --json, and the existing --json tests never
+  // compare two runs, so nothing covered this.
+  const outs = new Set();
+  for (let i = 0; i < 8; i += 1) outs.add(run(['--json', '--seed', '42']).stdout);
+  assert.strictEqual(outs.size, 1, '--json --seed must be reproducible across processes');
+
+  // Arm 2, the DISCRIMINATOR. Reproducibility alone would also be satisfied by a
+  // degenerate implementation that ignored the seed and always returned entry 0.
+  // The seed must select the SAME entry with and without --json — an observable
+  // no seed-ignoring implementation can produce, and one that binds the JSON path
+  // to the same selection core as the text path rather than to a remembered value.
+  for (const seed of ['0', '1', '42', '-7', '3.5']) {
+    const asJson = JSON.parse(run(['--json', '--seed', seed]).stdout.trim());
+    const asText = run(['--seed', seed]).stdout;
+    assert.ok(
+      asText.startsWith(asJson.text),
+      `--json --seed ${seed} must select the same entry as --seed ${seed}`
+    );
+  }
+});
+
+test('--json composes with the filter flags: the JSON pick is always a member of the FILTERED set', () => {
+  // Kills J3b: `pick(opts.json ? corpus : candidates, opts.seed)` — --json picks
+  // from the whole corpus, ignoring --author/--tag entirely.
+  //
+  // Sweeping seeds rather than trusting one: a single seed has a ~14% chance of
+  // landing on a Dijkstra entry by luck even under the mutant, which would make a
+  // one-seed test pass on broken code. Across 12 seeds that is (7/50)^12 ~ 1e-10.
+  const authorSet = corpus.filter((e) => e.author.toLowerCase().includes('dijk'));
+  assert.ok(authorSet.length > 0, 'fixture assumption: the corpus has a Dijkstra entry');
+  assert.ok(authorSet.length < corpus.length, 'fixture assumption: the filter must actually narrow');
+
+  const authorTexts = new Set(authorSet.map((e) => e.text));
+  for (let s = 0; s < 12; s += 1) {
+    const r = run(['--json', '--author', 'dijk', '--seed', String(s)]);
+    assert.strictEqual(r.status, 0);
+    const got = JSON.parse(r.stdout.trim());
+    assert.ok(
+      authorTexts.has(got.text),
+      `--json --author dijk --seed ${s} returned an entry outside the filtered set: ${got.author}`
+    );
+  }
+
+  // The same claim for --tag, which travels a different branch of filter().
+  const tagSet = corpus.filter((e) => e.tags.some((t) => t.toLowerCase() === 'humor'));
+  assert.ok(tagSet.length > 0, 'fixture assumption: the corpus has humor-tagged entries');
+  assert.ok(tagSet.length < corpus.length, 'fixture assumption: the tag filter must narrow');
+
+  const tagTexts = new Set(tagSet.map((e) => e.text));
+  for (let s = 0; s < 12; s += 1) {
+    const r = run(['--json', '--tag', 'humor', '--seed', String(s)]);
+    assert.strictEqual(r.status, 0);
+    const got = JSON.parse(r.stdout.trim());
+    assert.ok(
+      tagTexts.has(got.text),
+      `--json --tag humor --seed ${s} returned an entry outside the filtered set: ${got.tags}`
+    );
+  }
+});

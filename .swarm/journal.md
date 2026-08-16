@@ -7522,3 +7522,170 @@ series accumulates instead of requiring archaeology.
 upgraded from asserted to measured). **WRAP_UP owes REPORT.md the KI-18 and KI-19 entries** —
 the report's Known-issues section was already one behind as of the cycle-50 addendum and is
 now two.
+
+
+## cycle 52 — 2026-08-16T10:15Z — the whole spec, mutation-measured: 29 clauses, 4 holes, 2 closed
+
+**Work:** SPEC Domain-rule coverage sweep (inline, zero agents) + T-044.
+**Outcome:** VERIFIED. Coverage 25/29 -> 27/29 protected. Gate 11/11. Suite 82 -> 84, green 3/3.
+
+### what this cycle asked
+
+Cycles 50 and 51 pointed one instrument at one surface: plant a mutant in a full throwaway
+copy, run the project's own `test_cmd`, and see whether the PERMANENT suite notices. Cycle 50
+found the unseeded-uniformity rule had no test; cycle 51 closed it. The obvious generalisation
+is the same instrument pointed at a broader question — **for EVERY clause of SPEC.md § Domain
+rules, does the shipped suite protect it?** That is what ran here: 29 clauses, one mutant each.
+
+This is not a re-confirmation. Cycles 49 and 50 both came back clean on the PRODUCT. This asks
+about the SUITE, where cycle 50 already established the answer is not clean.
+
+### the instrument, and why a SURVIVED verdict means something
+
+A 29-mutant sweep cannot borrow "this mutant is a real defect" from a separate gate the way
+cycle 50 did. So every mutant carries its **own behavioural witness**: a predicate over the
+SHIPPED BINARY's observed behaviour that is TRUE iff the clause holds. Three arms per mutant:
+
+1. **Witness on the mutated tree.** Still holds => the mutation is **INERT** and its suite
+   verdict is VOID — reported as INERT, never as "survived". This arm is what makes SURVIVED
+   mean something: it proves the tree really is broken at the user-facing surface *before*
+   asking whether the suite noticed.
+2. **Suite.** `fail > 0` => KILLED. Green at P0's count => **SURVIVED**.
+3. **Attribution.** On a kill, the failing test NAMES, so a kill is attributable rather than
+   just a red number.
+
+**P0 control: 82 pass / 0 fail, and 29/29 witnesses hold on the pristine tree.** A witness that
+did not hold at P0 would be a broken instrument, not a product bug, and would void the sweep.
+
+### the map
+
+```
+clauses swept:      29
+KILLED (protected): 27   S1 S2 S3 S4 S5 F1 F2 F3 F4 F5 E1 E2 E3 L1 L2 L3 L4 L6
+                         J1 J2 J3 J3b J4 X0 X2a X2b X2c
+SURVIVED (HOLE):     2   L5 L7          <- was 4 before T-044 (J3, J3b closed this cycle)
+INERT / NOT-PLANTED / ANOMALOUS: 0
+```
+
+Full map with per-clause mutants and by-name kill attribution:
+`.swarm/runs/cycle-052-rule-coverage-out.txt`. Harness: `cycle-052-rule-coverage.mjs`.
+
+### THE INSTRUMENT WAS WRONG TWICE, AND ITS OWN CONTROLS CAUGHT BOTH
+
+Recorded as a finding rather than a footnote, because it is the same defect class KI-19 named
+one cycle earlier and this is the first time it has been caught *inside* the cycle that
+committed it.
+
+**(1) S4 was reported INERT on pass 1 — and that was my arithmetic, not a fact.** The front-bias
+mutant is `index = floor(Math.random()**2 * n)`. Under it the back-half share is
+`P(r > sqrt(0.5)) = 0.293` — not zero. The witness asked for `>= 30 of 120` draws in the back
+half to call the distribution uniform, a bar the MUTANT clears at ~35. The witness could not
+separate uniform from biased, so INERT was a verdict about the instrument. Re-powered to 400
+draws with a threshold of 160 (~4 sd below uniform, ~4.8 sd above the mutant); **S4 then read
+KILLED.** The suite had protected that clause all along.
+
+**(2) Passes 1 and 2 resolved ZERO test names on 25 kills.** Both anchored on a TAP `not ok`
+line **this runner never emits**: `node --test` defaults to the SPEC reporter here
+(`✖ <name> (<n>ms)`). The pass/fail counts only ever parsed because the inherited cycle-50
+regex leads with a wildcard char that happens to match the spec reporter's `ℹ`. Fixed against
+the real format; attribution now resolves on every kill.
+
+**Cycle 51's gate is NOT affected, and the inference that it is would be wrong.** Its runner
+passed `--test-reporter=tap` **explicitly**, so its regexes matched its own invocation, and it
+carried an `unparseable` guard that would have failed the cell rather than silently returning
+empty names. **Its 7/7 stands.** The defect is mine: I inherited cycle 50's runner (no TAP flag)
+alongside cycle 51's TAP-shaped parser — precisely the "each script inherits the last one's
+blind spots" mechanism KI-19 describes.
+
+### T-044 — the hole worth closing first
+
+Four holes measured; gear 1 admits one S-effort item. Ranked by what a USER suffers, not by
+what is easiest to fix:
+
+- **J3 / J3b (closed):** `--json` ignoring the seed, or ignoring the filters. The CLI still
+  emits a well-formed single-line JSON object of a real corpus entry with the right keys — it
+  is simply **the wrong entry**. A plausible wrong answer, silently.
+- **L5 / L7 (filed as T-045 / T-046):** `--list --seed` printing one line where 50 belong;
+  `--list --seed abc` exiting 0 where 2 belongs. Loud, immediately visible.
+
+A silent wrong answer outranks a loud one. J3 and J3b were treated as ONE item because they are
+ONE sentence of the spec ("it composes with the filter and seed flags"), not two.
+
+Every pre-existing `--json` test inspects **shape** — keys, line count, parseability. That is
+exactly why both mutants walked through all 82 tests. The two added tests assert **identity**:
+the seeded JSON pick is reproducible AND is the same entry as the plain-text pick for that seed
+(a discriminator no seed-ignoring implementation can produce), and the JSON pick is a member of
+the FILTERED set across 12 seeds on both the `--author` and `--tag` branches (one seed has a
+~14% chance of landing inside the filter by luck even under the mutant; 12 seeds put that at
+~1e-10).
+
+### VERIFICATION EVIDENCE — gate 11/11 (`.swarm/runs/cycle-052-verify-T-044.txt`)
+
+```
+PASS  A    pristine suite 84 pass / 0 fail (84 tests)
+PASS  A2   test count is 84 (82 before + the 2 added) — actual 84
+PASS  J3-kill   --json silently drops the seed -> suite 83p/1f WITH the new tests
+PASS  J3-attr   same mutant, new tests REMOVED -> 82p/0f (survives, so the kill is theirs)
+PASS  J3-names  failing: --json composes with --seed: the seeded JSON pick is reproducible...
+PASS  J3b-kill  --json ignores the filters -> suite 83p/1f WITH the new tests
+PASS  J3b-attr  same mutant, new tests REMOVED -> 82p/0f (survives, so the kill is theirs)
+PASS  J3b-names failing: --json composes with the filter flags: the JSON pick is always...
+PASS  G-L5  --list --seed does a single seeded pick -> 84p/0f — still an OPEN hole
+PASS  G-L7  --list swallows every usage error   -> 84p/0f — still an OPEN hole
+PASS  H     pristine suite green on 3/3 consecutive runs (the new tests spawn 46 processes)
+GATE 11/11
+```
+
+`test_cmd` run by the conductor on the live tree, not reported by an agent:
+
+```
+ℹ tests 84   ℹ pass 84   ℹ fail 0   ℹ duration_ms 3504.988551
+```
+
+Note cells **G-L5 / G-L7**: the two remaining holes must STILL survive. A test that had quietly
+swallowed them would mean the kills above are not attributable to what T-044 claims to close.
+
+### disclosed weakness in this cycle's evidence
+
+**The conductor wrote the sweep, the tests, and the gate that judges them.** Hard rule 2's
+central protection — the builder never saw the check — **does not apply**, because the allocator
+authorises zero agent burn and there was no builder to keep blind. Same disclosure as cycle 51,
+and it is not weakening with repetition.
+
+What carries the result instead: the two mutants are **pre-registered** — measured as survivors
+by the sweep *before* either test was conceived, their text copied verbatim from that harness —
+and the attribution arms (J3-attr, J3b-attr) are measurements whose outcome the author does not
+control. The direction no pre-registration fixes: **a clause I failed to enumerate would not be
+found by its own enumerator.** The 29 clauses are my reading of the spec's Domain rules; a
+reader who splits them differently would get a different denominator. The map is honest about
+what it swept, not about what it might have missed.
+
+### the finding a human should carry forward
+
+**Both remaining holes trace to the same source: item I-3, closed at cycle 7.** L5 (`--list`
+accepts and ignores a valid `--seed`) and L7 (an unparseable seed under `--list` is still a
+usage error) are two of the six rulings I-3 settled. Cycle 7 verified them by EXECUTING the
+shipped binary in a conductor gate — 36/36 checks — and wrote them into SPEC Domain rules and
+README. **That is a gate, not a test.** It proved the behaviour on the day and left nothing
+behind that would notice if it changed. 45 cycles later the permanent suite still does not
+protect either one, and the L7 carve-out was added at cycle 7 *specifically* so that
+`--list --seed abc` reading as exit 0 would be "impossible".
+
+The generalisable lesson, and the reason this is filed rather than merely observed: **a passed
+conductor gate and a permanent test are not interchangeable evidence.** The run has been
+treating the first as if it conferred the second. Two of two remaining holes in a 29-clause
+sweep come from that one substitution.
+
+### board
+
+- **T-044** — done. **T-045 / T-046** — filed todo, each with its mutant quoted verbatim so the
+  next conductor or a human starts from the measurement rather than re-deriving it.
+- Board: 46 done, 8 todo, 2 blocked, 4 dropped. Known issues unchanged at 18 total, 11 open.
+- Wave autotune NOT applied (no wave dispatched, so nothing was measured about code capacity);
+  `k_current` 5, `wave_streak` 0. Fourteenth consecutive zero-agent cycle.
+- Collision-scan not applicable: Node CLI, no browser surface, no classic scripts.
+- Control channel: poll succeeded; `pending[]` and `inject[]` both empty.
+
+```runfile-mirror
+{"run_label": "improvement-aphorism-cli-2026-08-15", "run_kind": "improvement", "stop_at": "2026-08-16T11:24:24+00:00", "usage_reset_at": "2026-08-15T16:24:32+00:00", "model_policy": "value-routing", "auth_mode": "subscription", "pacing": {"mode": "guest", "dial": 0.3}, "targets": [{"path": "/opt/targets/aphorism-cli", "status": "active", "weight": 1}], "rotation_cursor": 0, "rotation_schedule": [0], "cycles_since_recycle": 25, "budget": {"gear": 1, "k_cap": 1, "mode": "guest", "source": "allocator", "posture": "trickle (allowance measured 0 by a REAL probe at cycle 52 \u2014 ok:true/source:probe, FIFTH consecutive real reading)", "promote": false, "demote": true, "probe_failures": 0, "allow_overall_pct": 0, "reserve_overall_pct": 20.85, "weekly": {"ok": true, "weekly_used_pct": 96.0, "opus_used_pct": 97, "week_elapsed_pct": 88.65, "weekly_heat": 1.0829, "opus_heat": 1.0942, "ceiling": 3, "promote_blocked": false, "governor_note": "cycle 52: THIRTEENTH real reading, FIFTH consecutive non-blind one. weekly_heat 96/88.65 = 1.0829; opus_heat 1.0942, still under the 1.2 promote_blocked threshold as all run. The ceiling has never been the binding constraint: guest clamps reachable gears to 1-3 and the gear is pinned at 1 by the ALLOWANCE, measured 0 again."}}, "heartbeat": {"ts": 1786875258, "pid": 981255, "limp": false}, "watchdog": {"mode": "normal", "plist_loaded": true, "lockfile": "/opt/swarm/runs/watchdog.lock", "relaunch_attempts": 0}, "caffeinate_pid": 0, "wrap_up_complete": false}
+```

@@ -3,7 +3,7 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
   "phase": "POLISH",
-  "cycle": 51,
+  "cycle": 52,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -547,6 +547,21 @@
       "cycle": 51,
       "what": "Honest per-test accounting recorded rather than a combined kill figure: M1 is killed by both new tests, M3 by the EQUAL-SPLIT test alone. The REACHABILITY test is silent on M3.",
       "why": "Under u -> u**2 every index remains reachable — the front bias changes the SHARES, not the support — so the reachability test cannot see it, and the gate output shows exactly that (M3: 81 pass / 1 fail). The tempting summary, two tests kill two mutants, would double-count what this cycle bought. Cycle 23 set this rule when T-017 s binary-side kills turned out to belong to a pre-existing test; the same discipline applies when the overlap runs the other way."
+    },
+    {
+      "cycle": 52,
+      "what": "The coverage sweep's own instrument was defective on its first two passes, and BOTH defects were caught by the sweep's controls rather than by review. Recorded as a finding, not a footnote.",
+      "why": "Pass 1 reported S4 (front-bias mutant) as INERT — meaning 'the mutation had no observable effect'. That was FALSE and it was my arithmetic: under index = floor(r**2 * n) the back-half share is P(r > sqrt(0.5)) = 0.293, not 0, and the witness threshold (>=30 of 120 draws) is one the MUTANT clears at ~35. The witness could not separate uniform from biased, so INERT was a verdict about the instrument. Re-powered to 400 draws with a threshold of 160 (~4 sd below uniform, ~4.8 sd above the mutant); S4 then read KILLED. Passes 1 and 2 also resolved ZERO test names on 25 kills: both anchored on a TAP `not ok` line that this runner never emits — `node --test` defaults to the SPEC reporter here (`✖ <name> (<n>ms)`), and the pass/fail counts only ever parsed because the inherited cycle-50 regex leads with a wildcard char that happens to match the spec reporter's `ℹ`. This is exactly the pattern KI-19 named one cycle earlier — a hand-written per-cycle script inheriting the previous script's blind spots — and it is the first time that pattern has been caught INSIDE the cycle that committed it. IMPORTANT, because the obvious inference is wrong: cycle 51's gate is NOT affected. Its runner passed `--test-reporter=tap` explicitly, so its regexes matched its own invocation, and it carried an `unparseable` guard that would have failed the cell rather than silently returning empty names. Its 7/7 stands. The defect is mine: I inherited cycle 50's runner (no TAP flag) alongside cycle 51's TAP-shaped parser."
+    },
+    {
+      "cycle": 52,
+      "what": "T-044 closed the --json composition clause; the other two measured holes (L5, L7) were FILED, not closed.",
+      "why": "Gear 1 admits one S-effort item per cycle, so three holes could not all close. Ranked by what a user would suffer, not by what is easiest: J3/J3b return a PLAUSIBLE WRONG ANSWER — a well-formed JSON object of a real corpus entry that is simply not the one your filter or seed asked for — while L5 and L7 fail loudly at the surface (one line where 50 belong; exit 0 where exit 2 belongs). A silent wrong answer outranks a loud one. J3 and J3b were also treated as ONE item because they are ONE sentence of the spec ('it composes with the filter and seed flags'), not two. L5/L7 are on the board as T-045/T-046 with their mutants quoted verbatim, so the next conductor or a human starts from the measurement rather than re-deriving it."
+    },
+    {
+      "cycle": 52,
+      "what": "L5 and L7 are both I-3 rulings — settled at cycle 7, written into SPEC and README, and never protected by a test in the 45 cycles since.",
+      "why": "Cycle 7 closed I-3 by EXECUTING the shipped binary in a conductor gate (36/36 checks) and writing the rulings into the docs. That is a gate, not a test: it proved the behaviour on the day and left nothing behind that would notice if it changed. The generalisable finding for the hand-off, and the reason this is filed rather than merely observed: a conductor gate and a permanent test are NOT interchangeable evidence, and the run has been treating a passed gate as if the property were thereafter protected. Both remaining holes in a 29-clause sweep trace to the same cycle-7 gate."
     }
   ],
   "known_issues": [
@@ -734,7 +749,8 @@
     "last_e2e_cli_gate_cycle": 50,
     "e2e_cli_gate_note": "Cycle 50 ran a second END-TO-END gate on the shipped binary, this time on the selection surface (12/12 cells over 1000 unseeded child processes and 25 seeds, twice independently; 7/7 attributed mutation arm). Same recording convention as cycle 49: NOT written to last_full_qa_cycle, which means the qa-verify.js workflow (spec-author -> executor -> live-look) and cannot be run at a zero agent allowance. Recording conductor-inline work in the workflow's field would misreport which instrument produced the evidence. last_full_qa_cycle stays 13.",
     "suite_coverage_note_cycle_50": "First measurement in the run of what the SHIPPED SUITE protects, as opposed to what a cycle's gate protects: mutants planted in a full throwaway copy and run past test_cmd. P0 80/0 (sound control), M1 off-by-one SURVIVES 80/0, M3 front bias SURVIVES 80/0, M5 seed-fold collapse killed 78/2. Evidence .swarm/runs/cycle-050-suite-survivors-out.txt. See T-043.",
-    "suite_coverage_note_cycle_51": "T-043 CLOSED: the hole cycle 50 measured is closed. The shipped suite now protects the unseeded uniformity Domain rule. Both cycle-50 survivors are killed and attributable (gate 7/7, .swarm/runs/cycle-051-verify-T-043.txt); 80 -> 82 tests, 1.46s. The measurement cycle 50 introduced - plant a mutant in a full throwaway copy and run the project s own test_cmd - is now the standing way this run asks what the PERMANENT suite protects, as distinct from what a cycle gate protects."
+    "suite_coverage_note_cycle_51": "T-043 CLOSED: the hole cycle 50 measured is closed. The shipped suite now protects the unseeded uniformity Domain rule. Both cycle-50 survivors are killed and attributable (gate 7/7, .swarm/runs/cycle-051-verify-T-043.txt); 80 -> 82 tests, 1.46s. The measurement cycle 50 introduced - plant a mutant in a full throwaway copy and run the project s own test_cmd - is now the standing way this run asks what the PERMANENT suite protects, as distinct from what a cycle gate protects.",
+    "suite_coverage_note_cycle_52": "FULL-SPEC coverage map, generalising the cycle-50/51 instrument from one surface to every Domain rule. 29 clauses, one mutant each, planted in a full throwaway copy and run past the project's own test_cmd. Before this cycle's fix: 25 KILLED / 4 SURVIVED (L5, L7, J3, J3b). After T-044: 27 KILLED / 2 SURVIVED (L5, L7 — filed as T-045/T-046). Every mutant carries its own behavioural WITNESS proving the rule is actually violated at the user-facing surface, so a SURVIVED verdict cannot come from a no-op mutation; P0 control 29/29 witnesses hold, suite green. Evidence: .swarm/runs/cycle-052-rule-coverage-out.txt."
   },
   "counters": {
     "consecutive_no_value": 0,
@@ -783,12 +799,14 @@
     "autotune_note_cycle_50": "NOT applied: zero agents dispatched, so the wave produced no evidence about code capacity. k_current 5, wave_streak 0, both unchanged. TWELFTH consecutive zero-agent cycle.",
     "churn_note_cycle_50": "consecutive_no_value stays 0. EIGHTEENTH consecutive verified-value cycle. An item landed (T-042), filed this same cycle rather than drawn from the standing board - the same disclosure cycle 49 made for T-041, and it is worth noting the pattern is now two cycles old rather than letting it pass twice unremarked. What distinguishes this cycle from cycle 49, which was also a zero-defect confirmation on the shipped binary: the confirmation is NOT the outcome. The cycle found a measured hole in the project's own test suite - two mutants that violate a core Domain rule survive all 80 tests - and filed it as T-043. That is a finding about the repo a user's next maintainer inherits, not a document refresh and not a re-confirmation.",
     "autotune_note_cycle_51": "NOT applied: zero agents dispatched, so the wave produced no evidence about code capacity. k_current 5, wave_streak 0, both unchanged. THIRTEENTH consecutive zero-agent cycle. Note the item was kind:test shipping real executable logic, which is the shape cycles 36/37/38 DID autotune on - the decline here is purely about there being no wave to measure, not about the work type.",
-    "churn_note_cycle_51": "consecutive_no_value stays 0. NINETEENTH consecutive verified-value cycle, and this one needs the SMALLEST caveat of the last ten: an item landed, it came off the STANDING board rather than being filed the same cycle (the disclosure cycles 49 and 50 both had to make), and it CHANGED the shipped product s protection rather than confirming or documenting it. A defect that would silently delete a corpus entry from the product forever is now caught by the repo s own test_cmd. The honest deduction from the counter is for once exactly what happened."
+    "churn_note_cycle_51": "consecutive_no_value stays 0. NINETEENTH consecutive verified-value cycle, and this one needs the SMALLEST caveat of the last ten: an item landed, it came off the STANDING board rather than being filed the same cycle (the disclosure cycles 49 and 50 both had to make), and it CHANGED the shipped product s protection rather than confirming or documenting it. A defect that would silently delete a corpus entry from the product forever is now caught by the repo s own test_cmd. The honest deduction from the counter is for once exactly what happened.",
+    "autotune_note_cycle_52": "NOT applied: zero agents dispatched, so the wave produced no evidence about code capacity. k_current 5, wave_streak 0, both unchanged. FOURTEENTH consecutive zero-agent cycle. Same note as cycle 51: the item was kind:test shipping real executable logic, the shape cycles 36/37/38 DID autotune on — the decline is purely about there being no wave to measure, not about the work type.",
+    "churn_note_cycle_52": "consecutive_no_value stays 0. TWENTIETH consecutive verified-value cycle, and like cycle 51 it needs a small caveat rather than a large one: an item landed (T-044), and it CHANGED what the shipped repo protects rather than confirming or documenting it. The caveat that does belong: T-044 was FILED this cycle off this cycle's own measurement, which is the cycle-49/50 disclosure shape, not cycle 51's standing-board shape. What is new in kind: the cycle produced a COVERAGE MAP of all 29 SPEC Domain-rule clauses — the first time the run has asked what the permanent suite protects across the whole spec rather than at one surface."
   },
   "last_cycle": {
-    "cycle": 51,
-    "work": "T-043 — close the unprotected uniformity Domain rule",
-    "outcome": "verified: gate 7/7, suite 80 -> 82",
+    "cycle": 52,
+    "work": "SPEC Domain-rule coverage sweep (29 clauses) + T-044",
+    "outcome": "verified: map 25/29 -> 27/29 protected, gate 11/11, suite 82 -> 84",
     "items_verified": 1,
     "agents_dispatched": 0
   }

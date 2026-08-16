@@ -1,0 +1,111 @@
+P0 — pristine copy: every witness must HOLD and the suite must be green.
+     A witness that does not hold here is a BROKEN INSTRUMENT, not a product bug.
+
+  suite: 84 pass / 0 fail  OK
+  witnesses: 29/29 hold
+  P0 OK — the instrument is sound; verdicts below are meaningful.
+
+SWEEP — one mutant per SPEC Domain-rule clause.
+
+S1   KILLED    seeded pick is deterministic  [suite 78p/6f]
+     mutant: a seeded pick becomes random
+     killed by: --seed is deterministic across separate processes | --json composes with --seed: the seeded JSON pick is reproducible AND is the same entry as the plain-text pick | pick: same seed over the same candidates always returns the same element | pick: Infinity seed is deterministic and returns a valid member (+2 more)
+S2   KILLED    Infinity / -Infinity are accepted AND deterministic  [suite 82p/2f]
+     mutant: non-finite seeds go random again (the I-1 hole, re-planted)
+     killed by: pick: Infinity seed is deterministic and returns a valid member | pick: -Infinity seed is deterministic and returns a valid member
+S3   KILLED    without --seed, selection is uniform over the candidate set  [suite 82p/2f]
+     mutant: off-by-one: the last corpus entry is unreachable forever
+     killed by: pick: every candidate is REACHABLE by an unseeded draw | pick: unseeded draws split the interval EQUALLY across candidates (uniform)
+S4   KILLED    without --seed, selection is uniform over the candidate set  [suite 83p/1f]
+     mutant: unseeded selection heavily biased toward the front of the corpus
+     killed by: pick: unseeded draws split the interval EQUALLY across candidates (uniform)
+S5   KILLED    the SAME seed and set yield the same aphorism (distinct seeds are not collapsed)  [suite 82p/2f]
+     mutant: every seed folds to one state — still deterministic, but reaches ONE entry
+     killed by: different seeds do not all collapse to one aphorism | pick: different seeds generally produce different results
+F1   KILLED    --author matches case-insensitively  [suite 83p/1f]
+     mutant: --author becomes case-SENSITIVE
+     killed by: filter: author match is case-insensitive
+F2   KILLED    --author matches by SUBSTRING containment  [suite 80p/4f]
+     mutant: --author becomes an exact whole-field match
+     killed by: author filter is case-insensitive and narrows the list | --json composes with the filter flags: the JSON pick is always a member of the FILTERED set | filter: author match is case-insensitive | filter: author and tag together narrow to the intersection (AND)
+F3   KILLED    --tag matches a WHOLE tag (--tag desi does not match design)  [suite 83p/1f]
+     mutant: --tag becomes a substring match, so --tag desi matches design
+     killed by: --tag matches membership, not substring containment
+F4   KILLED    --tag matches case-insensitively  [suite 83p/1f]
+     mutant: --tag becomes case-SENSITIVE
+     killed by: filter: tag match is case-insensitive
+F5   KILLED    supplying both filters narrows to the intersection (AND, not OR)  [suite 77p/7f]
+     mutant: the two filters UNION instead of intersecting
+     killed by: --tag matches membership, not substring containment | --list prints exactly one line per matching entry, no drops | --list preserves corpus order (first and last line match) | --list --json emits newline-delimited JSON, one object per line, in corpus order (+3 more)
+E1   KILLED    empty set after filtering is exit code 1, not an empty success  [suite 82p/2f]
+     mutant: no-match exits 0
+     killed by: no match exits 1 with stderr only and zero bytes on stdout | --tag matches membership, not substring containment
+E2   KILLED    empty set writes a human-readable message on stderr  [suite 83p/1f]
+     mutant: the no-match message disappears — a silent failure
+     killed by: no match exits 1 with stderr only and zero bytes on stdout
+E3   KILLED    empty set writes ZERO BYTES on stdout  [suite 82p/2f]
+     mutant: the no-match message ALSO goes to stdout, poisoning a pipe
+     killed by: no match exits 1 with stderr only and zero bytes on stdout | --tag matches membership, not substring containment
+L1   KILLED    --list prints EVERY aphorism in the filtered set  [suite 78p/6f]
+     mutant: --list silently truncates to the first 5 entries
+     killed by: --list prints every entry in the filtered set | author filter is case-insensitive and narrows the list | --list prints exactly one line per matching entry, no drops | --list preserves corpus order (first and last line match) (+2 more)
+L2   KILLED    --list prints in CORPUS ORDER  [suite 81p/3f]
+     mutant: --list emits the set in reverse corpus order
+     killed by: --list preserves corpus order (first and last line match) | --list --json emits newline-delimited JSON, one object per line, in corpus order | README `--list` format literal matches the shipped binary's actual --list output (T-017)
+L3   KILLED    --list prints ONE PER LINE  [suite 78p/6f]
+     mutant: the whole filtered set collapses onto one line
+     killed by: --list prints every entry in the filtered set | author filter is case-insensitive and narrows the list | --list prints exactly one line per matching entry, no drops | --list preserves corpus order (first and last line match) (+2 more)
+L4   KILLED    --list line form is `<text> SPACE EM-DASH SPACE <author>`  [suite 82p/2f]
+     mutant: the EM DASH separator degrades to a hyphen
+     killed by: --list preserves corpus order (first and last line match) | README `--list` format literal matches the shipped binary's actual --list output (T-017)
+L5   SURVIVED  --list accepts a valid --seed and IGNORES it (no pick happens)  [suite 84p/0f]
+     mutant: --list --seed stops listing and does a single seeded pick instead
+L6   KILLED    --list exits 0  [suite 78p/6f]
+     mutant: --list exits 3 on a successful listing
+     killed by: --list prints every entry in the filtered set | author filter is case-insensitive and narrows the list | --list prints exactly one line per matching entry, no drops | --list preserves corpus order (first and last line match) (+2 more)
+L7   SURVIVED  a seed that fails to parse is STILL a usage error under --list  [suite 84p/0f]
+     mutant: --list swallows every usage error, including an unparseable seed
+J1   KILLED    --json emits a SINGLE-LINE JSON object  [suite 83p/1f]
+     mutant: --json pretty-prints across many lines
+     killed by: --json output is exactly one line, never pretty-printed
+J2   KILLED    --json carries at minimum the keys text, author, tags  [suite 83p/1f]
+     mutant: the tags key is dropped from --json output
+     killed by: --json emits a single-line JSON object with text/author/tags
+J3   KILLED    --json composes with the SEED flag  [suite 83p/1f]
+     mutant: --json ignores --seed, so a seeded JSON pick is random
+     killed by: --json composes with --seed: the seeded JSON pick is reproducible AND is the same entry as the plain-text pick
+J3b  KILLED    --json composes with the FILTER flags  [suite 83p/1f]
+     mutant: --json ignores the filters and picks from the whole corpus
+     killed by: --json composes with the filter flags: the JSON pick is always a member of the FILTERED set
+J4   KILLED    --list --json emits one JSON OBJECT per line (NDJSON)  [suite 83p/1f]
+     mutant: each NDJSON line becomes a one-element ARRAY instead of an object
+     killed by: --list --json emits newline-delimited JSON, one object per line, in corpus order
+X0   KILLED    exit code 0 on success  [suite 77p/7f]
+     mutant: a successful ordinary run exits 5
+     killed by: bare invocation prints one attributed aphorism and exits 0 | --seed is deterministic across separate processes | --json emits a single-line JSON object with text/author/tags | output is pipe-safe — no ANSI escapes when not a TTY (+3 more)
+X2a  KILLED    exit code 2 on an UNKNOWN FLAG  [suite 81p/3f]
+     mutant: an unknown flag is silently ignored
+     killed by: unknown flag is a usage error | unknown short flag is a usage error | unknown flag is a usage error, exit 2, stdout clean
+X2b  KILLED    exit code 2 on a MISSING FLAG ARGUMENT  [suite 81p/3f]
+     mutant: a value flag with no value is silently ignored
+     killed by: --author missing value at end of argv is a usage error | --tag missing value because next token is another flag is a usage error | --seed missing value at end of argv is a usage error
+X2c  KILLED    exit code 2 on a SEED that Number() parses to NaN  [suite 81p/3f]
+     mutant: --seed abc is accepted and falls back to a random pick
+     killed by: non-numeric --seed is a usage error | non-numeric --seed= equals form is a usage error | non-numeric seed is a usage error, exit 2
+
+================ COVERAGE MAP ================
+clauses swept:    29
+KILLED (protected): 27  S1 S2 S3 S4 S5 F1 F2 F3 F4 F5 E1 E2 E3 L1 L2 L3 L4 L6 J1 J2 J3 J3b J4 X0 X2a X2b X2c
+SURVIVED (HOLE):    2  L5 L7
+INERT (void):       0  
+NOT-PLANTED:        0  
+ANOMALOUS:          0  
+
+HOLES — the suite is green on a product that violates these clauses:
+  L5  --list accepts a valid --seed and IGNORES it (no pick happens)
+      mutant that survived: --list --seed stops listing and does a single seeded pick instead
+  L7  a seed that fails to parse is STILL a usage error under --list
+      mutant that survived: --list swallows every usage error, including an unparseable seed
+
+A SURVIVED cell is a suite hole, not a product defect: the product is correct,
+but nothing would tell you if it stopped being correct.

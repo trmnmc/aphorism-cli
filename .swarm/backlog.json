@@ -1122,6 +1122,61 @@
       "value": "M",
       "acceptance": "Add a test that protects the SPEC Domain rule 'without --seed, selection is uniform over the filtered candidate set'. Admitted under SPEC I-2 as a measured HOLE, not a BOUNDARY: the rule exists and the surviving mutants violate it. Prove it in BOTH L-029 directions against BOTH measured survivors - the test must fail against M1 (off-by-one, last entry unreachable) and against M3 (front bias, u -> u^2), and with the test removed each mutant must survive again. The test must be deterministic enough not to flake: prefer seeding the draw source or choosing a sample size and threshold whose false-failure rate is computed and stated in a comment, not guessed. It is a UNIT test over the module, not 1000 child processes - the e2e measurement is T-042's job and costs 45s, which does not belong in a suite that runs in 1.5s.",
       "notes": "MEASURED, not suspected. .swarm/runs/cycle-050-suite-survivors.mjs plants each defect in a full throwaway copy of the repo and runs the project's own test_cmd:\n  P0 unmutated copy      80 pass / 0 fail   (control: the copy machinery is sound)\n  M1 off-by-one          80 pass / 0 fail   SURVIVES - the last corpus entry is unreachable forever\n  M3 front bias u->u^2   80 pass / 0 fail   SURVIVES\n  M5 seed-fold collapse  78 pass / 2 fail   killed - the seeded path IS protected\n\nThe first P0 run scored 66/14 on an unmutated tree and the control caught it: the harness had copied only bin+src+test, and test/readme-tags.test.js reads README.md and docs/ from the tree root. Fixed in the harness; no verdict was drawn from the broken control.\n\nWHY IT MATTERS BEYOND THE COVERAGE NUMBER: cycles 13-40 grew the README-guard family to 1511 of the repo's 2101 test lines while the rule governing the product's central behaviour - which aphorism a user actually gets - had no test at all. M1 is the sharp case: a one-character off-by-one silently deletes an entry from the product forever, and nothing in the repo would notice.\n\nPRIORITY 2, above the fenced guard items and just under T-040: product-touching, S-effort (so gear 1 admits it), conductor-reachable at zero agents, and no standing decision fences it - unlike T-024b/T-032/T-039, which the cycle-39 family decision holds.\n\nIF THIS DOES NOT LAND BEFORE WRAP_UP it must be promoted to a known_issue. It is filed as a backlog item rather than a KI on the explicit ground that this run intends to land it next cycle; an unprotected core rule left on an unworked board at stop_at is a KI, and the WRAP_UP pass owes the human that promotion.\n\nCLOSED cycle 51, gate 7/7 (.swarm/runs/cycle-051-verify-T-043.txt). Suite 80 -> 82 tests, 1.46s (unchanged in practice). Two tests added, both order-agnostic: REACHABILITY (every candidate reachable by some unseeded draw) and EQUAL-SPLIT (each candidate owns exactly its share of the swept interval). Math.random is replaced by an exact midpoint sweep of [0,1), so the false-failure rate is ZERO by construction rather than computed from a threshold - the acceptance offered seeding the draw source OR a justified statistical threshold, and the first branch is strictly better in a 1.5s suite.\n\nHONEST ACCOUNTING OF WHAT THE TWO TESTS BUY, separately: M1 is killed by BOTH (2 fail). M3 is killed by the EQUAL-SPLIT test ALONE (1 fail) - under u -> u**2 every index is still reachable, so the reachability test is silent on it. Reporting both tests as killing both mutants would have inflated the item twofold; that is the cycle-23 accounting rule.\n\nSTRICT ATTRIBUTION (cycle-5 form) holds for both: mutate AND filter the two new tests out and each mutant returns to exactly 80/0, the cycle-50 measured baseline. The cycle-6 DENOMINATOR control confirms the filter removes exactly 2 tests against pristine source, so R1 cannot be green by over-filtering."
+    },
+    {
+      "id": "T-044",
+      "title": "The `--json composes with the filter and seed flags` clause has no test — close it",
+      "kind": "test",
+      "status": "done",
+      "priority": 3,
+      "effort": "S",
+      "value": "M",
+      "model": "conductor-inline",
+      "deps": [],
+      "attempts": 0,
+      "files_hint": [
+        "test/cli.test.js"
+      ],
+      "filed_cycle": 52,
+      "closed_cycle": 52,
+      "acceptance": "The two mutants the cycle-52 Domain-rule sweep measured as SURVIVORS of the shipped suite (J3: --json drops the seed and picks at random; J3b: --json ignores the filters and picks from the whole corpus) are both KILLED by the project's own test_cmd, each kill attributable BY NAME to a test added this cycle, proven twice per L-029 (the mutant dies with the test present and SURVIVES with it removed). The two other measured holes (L5, L7) must STILL survive as a negative control — a test that swallowed them would mean the kills are not attributable to what this item claims.",
+      "notes": "Filed and closed cycle 52 off the Domain-rule coverage sweep, NOT off a reading of the suite (L-031). Both violations are SILENT: the CLI still emits a well-formed single-line JSON object of a real corpus entry with the right keys — it is simply the WRONG entry. Every pre-existing --json test inspects SHAPE (keys, line count, parseability), which is exactly why both mutants walked through 82 tests. Chosen over the other two measured holes (T-045/T-046) because those fail LOUDLY at the surface (the user sees one line where 50 belong, or a 0 exit where 2 belongs) while these two return a plausible wrong answer. Gate 11/11: .swarm/runs/cycle-052-verify-T-044.txt."
+    },
+    {
+      "id": "T-045",
+      "title": "MEASURED HOLE: the `--list accepts a valid --seed and IGNORES it` ruling is documented but unprotected",
+      "kind": "test",
+      "status": "todo",
+      "priority": 4,
+      "effort": "S",
+      "value": "M",
+      "model": "sonnet",
+      "deps": [],
+      "attempts": 0,
+      "files_hint": [
+        "test/cli.test.js"
+      ],
+      "filed_cycle": 52,
+      "acceptance": "The cycle-52 sweep's L5 mutant — `if (opts.list)` narrowed to `if (opts.list && opts.seed === undefined)`, so `--list --seed 1` stops listing and does a single seeded pick — is KILLED by the project's own test_cmd, attributable by name, proven twice per L-029. The pristine suite must stay green and the L7 hole must still survive (negative control).",
+      "notes": "MEASURED at cycle 52 (.swarm/runs/cycle-052-rule-coverage-out.txt, cell L5), not read off the suite. This is one of the SIX rulings item I-3 settled at cycle 7: cycle 7 verified it by EXECUTING the binary in a conductor gate (--list byte-identical across unseeded / --seed 1 / --seed 999999 / --seed Infinity) and wrote it into SPEC Domain rules and README — but the check was a gate, not a test, so nothing permanent inherited it. 45 cycles later the suite still does not protect it. Not picked at cycle 52: gear 1 admits one S item per cycle and T-044 outranked it (a silent wrong answer beats a loud one)."
+    },
+    {
+      "id": "T-046",
+      "title": "MEASURED HOLE: `a seed that fails to parse is still a usage error under --list` is documented but unprotected",
+      "kind": "test",
+      "status": "todo",
+      "priority": 5,
+      "effort": "S",
+      "value": "M",
+      "model": "sonnet",
+      "deps": [],
+      "attempts": 0,
+      "files_hint": [
+        "test/cli.test.js"
+      ],
+      "filed_cycle": 52,
+      "acceptance": "The cycle-52 sweep's L7 mutant — `if (opts.error)` narrowed to `if (opts.error && !argv.includes('--list'))`, so `--list --seed abc` exits 0 and prints the whole list instead of exiting 2 — is KILLED by the project's own test_cmd, attributable by name, proven twice per L-029. The pristine suite must stay green and the L5 hole must still survive (negative control).",
+      "notes": "MEASURED at cycle 52 (.swarm/runs/cycle-052-rule-coverage-out.txt, cell L7). Same provenance as T-045 and the same gap: this is the parse-failure CARVE-OUT that item I-3 added at cycle 7 precisely so that `--list --seed abc` reading as exit 0 would be 'impossible' — the SPEC says so, the README says so, the conductor's cycle-7 gate proved it of the binary, and the permanent suite has never checked it. The mutant makes --list swallow EVERY usage error, not just the seed one, and 82 tests stayed green."
     }
   ]
 }

@@ -1,0 +1,15 @@
+PASS  A    want true  got true   pristine suite 84 pass / 0 fail (84 tests)
+PASS  A2   want true  got true   test count is 84 (82 before + the 2 added) — actual 84
+PASS  J3-kill want true  got true   --json silently drops the seed and picks at random -> suite 83p/1f WITH the new tests
+PASS  J3-attr want true  got true   same mutant with the new tests REMOVED -> 82p/0f (survives, so the kill is theirs)
+PASS  J3-names want true  got true   failing: --json composes with --seed: the seeded JSON pick is reproducible AND is the same entry as the plain-text pick
+PASS  J3b-kill want true  got true   --json ignores the filters and picks from the whole corpus -> suite 83p/1f WITH the new tests
+PASS  J3b-attr want true  got true   same mutant with the new tests REMOVED -> 82p/0f (survives, so the kill is theirs)
+PASS  J3b-names want true  got true   failing: --json composes with the filter flags: the JSON pick is always a member of the FILTERED set
+PASS  G-L5 want true  got true   --list --seed stops listing and does a single seeded pick -> 84p/0f — still an OPEN hole, not silently closed
+PASS  G-L7 want true  got true   --list swallows every usage error, including an unparseable seed -> 84p/0f — still an OPEN hole, not silently closed
+PASS  H    want true  got true   pristine suite green on 3/3 consecutive runs (the new tests spawn 46 processes)
+
+GATE 11/11
+GATE PASSED — the two tests kill J3 and J3b, the kills are attributable to them,
+they close nothing else by accident, and the suite is not flaky.
