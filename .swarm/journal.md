@@ -7476,3 +7476,49 @@ than combined.
 ```runfile-mirror
 {"run_label": "improvement-aphorism-cli-2026-08-15", "run_kind": "improvement", "stop_at": "2026-08-16T11:24:24+00:00", "usage_reset_at": "2026-08-15T16:24:32+00:00", "model_policy": "value-routing", "auth_mode": "subscription", "pacing": {"mode": "guest", "dial": 0.3}, "targets": [{"path": "/opt/targets/aphorism-cli", "status": "active", "weight": 1}], "rotation_cursor": 0, "rotation_schedule": [0], "cycles_since_recycle": 25, "budget": {"gear": 1, "k_cap": 1, "mode": "guest", "source": "allocator", "posture": "trickle (allowance measured 0 by a REAL probe at cycle 51 - ok:true/source:probe, FOURTH consecutive real reading)", "promote": false, "demote": true, "probe_failures": 0, "allow_overall_pct": 0, "reserve_overall_pct": 20.98, "weekly": {"ok": true, "weekly_used_pct": 96, "opus_used_pct": 97, "week_elapsed_pct": 88.49, "weekly_heat": 1.0849, "opus_heat": 1.0962, "ceiling": 3, "promote_blocked": false}}, "heartbeat": {"ts": 1786873453, "pid": 977537, "limp": false}, "watchdog": {"mode": "normal", "plist_loaded": true, "lockfile": "/opt/swarm/runs/watchdog.lock", "relaunch_attempts": 0}, "caffeinate_pid": 0, "wrap_up_complete": false}
 ```
+
+### cycle 51 addendum — step 8 (dashboard): KI-19, and KI-18's premise is now measured
+
+Filed as a second commit on the cycle-49/50 precedent: both findings came after the cycle-51
+work was already committed and pushed, and rewriting pushed history to make the cycle look
+like one clean unit would be dressing up the sequence.
+
+**KI-19 (medium) — the two header fields have been stale for four cycles, and the mechanism is
+a third distinct one.** The pre-render audit found `<div>gen …</div>` reading **07:28 (cycle
+47)** and `<div>next …</div>` still describing the cycle-47 REPORT.md refresh — quoting *13
+known issues open* against an actual 10 — directly above a banner reading cycle 50.
+
+This is **not** KI-17. KI-17 is a render writing into an HTML comment: the work happens and
+lands in the wrong copy. Here the substitution **never existed at all** — `c49`/`c50`/`c51-dash.mjs`
+each carry anchors for banner, target node, evidence strip and timeline, and nothing for the
+two fields the template contract puts at the very top of the page.
+
+That makes three distinct staleness mechanisms on one page in three cycles: **KI-17 wrong copy,
+KI-18 never rendered, KI-19 never substituted.** The pattern is the finding — hand-written
+per-cycle render scripts have **no completeness check**, so each one inherits the previous
+script's blind spots along with its anchors. Repaired in this render and the audit extended
+to assert both fields carry cycle-51 content (`runs/c51-dash-audit.mjs` → `AUDIT PASS`). The
+defect stays open; the durable fix is a template-level render that enumerates every mandated
+region, which is a human's edit under hard rule 5.
+
+**KI-18 — cycle 50's premise checked rather than inherited.** Cycle 50 declined to fabricate
+the burn-up strip because the cumulative verified-per-cycle series "is not reconstructable."
+That was a judgment. It is now a measurement:
+
+```
+cycle-prefixed commits: 103   distinct cycle numbers: 51   missing cycle numbers: []
+carrying a [N verified] marker anywhere in the message: 21 of 51
+cycles WITHOUT one: 1-28, 31, 32
+```
+
+The convention began around cycle 29 and has held since, except for the two no-value cycles.
+**59% of the series is absent from the commit log**, so the refusal to draw the chart stands —
+now on a number rather than on an opinion. The journal remains a theoretical source, but
+parsing 51 blocks under an endgame clock is exactly what cycle 50 declined, and the remedy is
+still far cheaper at the other end: have step 7 write `counters.verified_this_cycle` so the
+series accumulates instead of requiring archaeology.
+
+**Known issues: 18 total, 11 open** (KI-19 new; KI-18 unchanged in severity, its premise
+upgraded from asserted to measured). **WRAP_UP owes REPORT.md the KI-18 and KI-19 entries** —
+the report's Known-issues section was already one behind as of the cycle-50 addendum and is
+now two.
