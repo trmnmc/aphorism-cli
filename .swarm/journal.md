@@ -6635,3 +6635,132 @@ tag it advertises.
 ```runfile-mirror
 {"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":20,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","posture":"trickle (allowance structurally 0 — allocator re-read cycle 46)","promote":false,"demote":true,"probe_failures":0,"allow_overall_pct":0,"reserve_overall_pct":22.41,"weekly":{"ok":true,"weekly_used_pct":95,"opus_used_pct":97,"week_elapsed_pct":86.66,"weekly_heat":1.0962,"opus_heat":1.1193,"ceiling":3,"promote_blocked":false,"governor_note":"cycle 46: weekly_heat 95/86.66 = 1.0962. Eighth reading. Per L-032 no trend is claimed. Structural fact unchanged and the only one acted on: the ceiling has never been binding in this run, because guest clamps reachable gears to 1-3 and the gear is pinned at 1 by the ALLOWANCE, not the ceiling. opus_heat 1.1193, under 1.2, so promote_blocked stays false either way."}},"heartbeat":{"ts":1786862900,"pid":797207,"limp":false},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"caffeinate_pid":0,"wrap_up_complete":false}
 ```
+
+## cycle 47 — 2026-08-16T07:35Z — the hand-off catches up with the product
+
+**work:** REPORT.md refresh + KI-16, conductor-inline, ZERO AGENTS (ninth consecutive).
+**outcome:** 1 verified. No backlog item landed — this is the standing hand-off obligation,
+the same call cycle 42 made for RETRO.md.
+
+### why this, over the three S-effort items on the board
+
+The board's three reachable items (T-024b, T-032, T-039) are all held by the cycle-39 family
+decision — no further narrowing of the prose-anchored README guards this run — and cycle 44
+measured that the gear is NOT what holds them. Taking one would mean either overriding a
+standing measured decision or writing a fourth BOUNDARY comment, which cycle 39 already did
+four times and cycle 39's own churn note called what it was: "nothing was fixed". T-024 is
+not dispatchable (one child blocked at the attempts cap; cycle 33 measured its remedy
+unavailable without a README document change). T-008 is gated on a human. T-040 is gated on
+a human by construction.
+
+Against that, REPORT.md was **factually wrong about the shipped product**. Cycle 46 changed
+the tag vocabulary from 37 to 12; the report still described a 37-tag corpus, in two places,
+and still listed T-007 in its Unfinished-work table as an item only "a run on a healthy
+weekly window" could reach — six cycles after a gear-1 zero-agent cycle landed it. The
+report is this run's deliverable to a human who will read it at stop_at and has no other
+window into the night. A deliverable that misdescribes what ships is the highest-value
+defect on the board, and it is conductor-work by nature.
+
+### what changed in the document
+
+- Headline corrected: **two** product behaviour changes this run, not one (I-1 seed fix,
+  T-007 retag), with the retag flagged as a **breaking change** to `--tag` — 26 retired tag
+  names now take the no-match path.
+- New section on T-007: what it fixed (21 of 37 tags matched exactly one entry), what it
+  cost (the breaking change), and the two judgment calls inside it that only a human can
+  ratify (T-040) — including that `testing → debugging` dissolves the corpus's only tag for
+  testing as a discipline.
+- **Two of this document's own claims retracted in place**, not deleted: the 37-tag corpus,
+  and the prediction that T-007 needed a healthy window. The second is the more useful
+  retraction, and it is generalised rather than patched: the error was reading the gear's
+  *dispatch* cap as a cap on *work*. Nine consecutive zero-agent cycles, one of which shipped
+  a product change. The Unfinished-work table now tells its reader to ask whether an item
+  needs an agent or only a worker.
+- Every count re-measured: corpus 12 tags (0 singletons, thinnest pool 3), backlog 54/42/4/2/6,
+  46 cycles, 102 commits, 93 decisions, 2101 test lines, 15 known issues (11 open, 2
+  mitigated, 2 resolved), 4 notifications against 29 poll lines.
+- KI-5 extended with the cycle-46/47 second failure mode: the allowlist entries are
+  cwd-relative and the pacer does not guarantee cwd. Proven both ways this cycle —
+  `bin/swarm-notify.sh poll` from `/opt/swarm` SUCCEEDED (first successful poll of the run),
+  the absolute `/opt/swarm/bin/swarm-budget.sh` was REFUSED. A settings fix using relative
+  entries closes neither reliably; absolute entries close both.
+
+### KI-16 — the allocator fails open
+
+`runs/allocator.json`, rewritten at 07:10Z by this cycle's pacer tick, reads every usage
+field zeroed with `"ok": false, "source": "none"` — and `allow_overall_pct: 10`. A non-zero
+spend authorisation derived from no data. The last REAL reading, six cycles old, was 95%
+weekly / 97% opus.
+
+The discriminator against the innocent explanation (the week rolled over, counters are
+legitimately fresh): `week_resets_at` is **0**. A genuine reset carries a future epoch, and
+the true reset is 1786942799 — 19 h away, past `stop_at`. Sharper still, the same script's
+jq-missing fallback emits `allow 0`: **the conservative default exists in the file and the
+no-data path does not use it.** Distinct from KI-14, which wipes the swarm's spend counter on
+a false rollover; this is the whole file defaulting permissive when blind.
+
+The allowance was declined and the cycle held at zero agents. Filed, not fixed (hard rule 5).
+
+### VERIFICATION EVIDENCE
+
+Gate authored AFTER the document, parsing its prose and comparing against measurements
+re-derived from the live repo — `.swarm/runs/cycle-047-gate.mjs`, full output in
+`cycle-047-gate-out.txt`:
+
+```
+PASS  C3    distinct tags (must-have row)      claimed=12    measured=12
+PASS  C16   retag: pre-retag singleton tags    claimed=21    measured=21
+PASS  C23   cycles completed                   claimed=46    measured=46
+PASS  C42   allocator allowance while blind    claimed=10    measured=10
+PASS  C47   unfinished-work table lists exactly the 6 live todos      measured=true
+PASS  C48   T-007 no longer appears as unfinished work                measured=true
+PASS  C49   the report does not still describe a 37-tag corpus        measured=true
+51/51 cells green
+```
+
+Negative control — 14 planted false claims, each asserted to redden its OWN cell
+(`cycle-047-negative-control.mjs`, output in `cycle-047-negative-control-out.txt`):
+
+```
+P0   unmutated copy            expect 0 red   got 0 red    PASS
+M1   C3    12 tags -> 37 (the exact regression this refresh exists to prevent)  red=[C3,C49] PASS
+M11  C47   a done item smuggled back into the unfinished-work table   red=[C47,C48] PASS
+M13  C23   headline cycle count stale                                 red=[C23] PASS
+negative control: ALL MUTATIONS CAUGHT BY THEIR OWN CELL
+```
+
+Full suite, run by the conductor: `ℹ tests 80 · pass 80 · fail 0` (1447 ms).
+
+**Two gate cells went RED on the first run and both were real defects in the conductor's own
+work, fixed rather than argued away:** C16 (a regex expecting bold where the prose was plain
+— an instrument defect) and C29 (the artifact count could not be stably true of a document
+whose gating writes artifacts; the claim was re-scoped to cycles 1–46 and the cell now
+excludes `cycle-047-*`). Two negative-control mutations also failed to APPLY when their
+anchors moved under them (M5, M14) — the harness reports a non-applying mutation as FAIL
+rather than skipping it, which is why they were caught.
+
+### not run, reported as not-run
+
+design-panel, build-wave, review-fix, qa-verify (all modes), collision-scan (N/A — CLI, no
+browser surface). Budget probe: attempted in both the cwd-relative and absolute forms, refused
+both times (KI-5); refused before the command started, so `probe_failures` stays 0. The
+allocator's own usage source reports itself absent (KI-16), so no burn figure this run is a
+measurement. The tag consolidation still has no reviewer but its author — the gate proves the
+mechanical properties, not the editorial judgment (T-040).
+
+### wave autotune / churn
+
+**autotune:** NOT applied — zero agents dispatched, nothing measured about code capacity.
+`k_current` 5, `wave_streak` 0.
+**churn:** `consecutive_no_value` stays 0. Fifteenth consecutive verified-value cycle, on the
+cycle-42 label: verified-value-with-no-item-landed. Nothing a CLI user can observe changed.
+
+### filed this cycle
+
+- **KI-16** (high, open) — the allocator fails open.
+- No backlog change. The six todos and two blocked items are unchanged; T-040 remains the
+  one item whose answer a human owes the run rather than the reverse.
+
+```runfile-mirror
+{"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":21,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","posture":"trickle (allocator BLIND at cycle 47 — ok:false/source:none; its 10% allowance declined, see KI-16)","promote":false,"demote":true,"probe_failures":0,"allow_overall_pct":10,"reserve_overall_pct":90,"weekly":{"ok":false,"weekly_used_pct":0,"opus_used_pct":0,"week_elapsed_pct":0,"governor_note":"cycle 47: the allocator's usage probe returned nothing (source:none, ok:false), so every weekly figure here is a DEFAULT, not a reading. The last real reading was cycle 46: 95% weekly / 97% opus. No gear decision was taken on these zeroes; gear stays 1."}},"heartbeat":{"ts":1786864373,"pid":797207,"limp":false},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"caffeinate_pid":0,"wrap_up_complete":false}
+```

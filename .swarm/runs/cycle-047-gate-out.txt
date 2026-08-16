@@ -1,0 +1,53 @@
+PASS  C1    corpus entries                                       claimed=50                           measured=50
+PASS  C2    distinct authors                                     claimed=24                           measured=24
+PASS  C3    distinct tags (must-have row)                        claimed=12                           measured=12
+PASS  C4    tag singletons                                       claimed=0                            measured=0
+PASS  C5    tags with pool >= 5                                  claimed=7                            measured=7
+PASS  C6    tags in 2-4 band                                     claimed=5                            measured=5
+PASS  C7    thinnest tag pool                                    claimed=3                            measured=3
+PASS  C8    largest tag pool                                     claimed=14                           measured=14
+PASS  C9    suite pass count                                     claimed=80                           measured=80
+PASS  C10   suite fail count                                     claimed=0                            measured=0
+PASS  C11   stats: corpus line tags                              claimed=12                           measured=12
+PASS  C12   stats: prior tag count                               claimed=37                           measured=37
+PASS  C13   retag: tags before -> after                          claimed=37                           measured=37
+PASS  C14   retag: tags after                                    claimed=12                           measured=12
+PASS  C15   retag: retired tag names                             claimed=26                           measured=26
+PASS  C15b  retired names really are 26 and really are gone      claimed=26 retired                   measured=true
+PASS  C16   retag: pre-retag singleton tags                      claimed=21                           measured=21
+PASS  C17   retag: every surviving pool >= 3                     claimed=3                            measured=3
+PASS  C18   backlog total                                        claimed=54                           measured=54
+PASS  C19   backlog done                                         claimed=42                           measured=42
+PASS  C20   backlog dropped                                      claimed=4                            measured=4
+PASS  C21   backlog blocked                                      claimed=2                            measured=2
+PASS  C22   backlog todo                                         claimed=6                            measured=6
+PASS  C23   cycles completed                                     claimed=46                           measured=46
+PASS  C24   cycle in flight                                      claimed=47                           measured=47
+PASS  C25   stats: cycles completed                              claimed=46                           measured=46
+PASS  C26   commits total                                        claimed=102                          measured=102
+PASS  C27   commits this run                                     claimed=96                           measured=96
+PASS  C28   decisions recorded                                   claimed=93                           measured=93
+PASS  C29   verification artifacts (cycles 1-46)                 claimed=233                          measured=233
+PASS  C30   source lines                                         claimed=549                          measured=549
+PASS  C31   test lines                                           claimed=2101                         measured=2101
+PASS  C32   README-guard share of test lines                     claimed=1511                         measured=1511
+PASS  C33   test-line denominator in that same sentence          claimed=2101                         measured=2101
+PASS  C34   known issues recorded                                claimed=Fifteen                      measured=Fifteen
+PASS  C35   known issues open                                    claimed=11                           measured=11
+PASS  C36   known issues mitigated                               claimed=2                            measured=2
+PASS  C37   known issues resolved                                claimed=2                            measured=2
+PASS  C38   notifications sent                                   claimed=4                            measured=4
+PASS  C39   poll log lines                                       claimed=29                           measured=29
+PASS  C40   playbook lessons staged                              claimed=9                            measured=9
+PASS  C41   playbook staged denominator                          claimed=15                           measured=15
+PASS  C42   allocator allowance while blind                      claimed=10                           measured=10
+PASS  C43   allocator last measured weekly                       claimed=95                           measured=95
+PASS  C44   allocator last measured opus                         claimed=97                           measured=97
+PASS  C45   allocator really reports ok:false / source:none / week_resets_at 0 claimed=ok=false source=none resets= measured=true
+PASS  C46   remote tag v0.1-overnight still absent (report claims not-yet-pushed) claimed=ls-remote empty              measured=true
+PASS  C47   unfinished-work table lists exactly the 6 live todos claimed=table ids == todo ids        measured=true
+PASS  C48   T-007 no longer appears as unfinished work           claimed=absent from the table        measured=true
+PASS  C49   the report does not still describe a 37-tag corpus as current claimed=no live 37-tag claim         measured=true
+PASS  C50   HEAD is the cycle-46 retag commit and the tree is otherwise the measured one claimed=cycle 46: T-007 — tag taxono measured=true
+
+51/51 cells green   (report: /opt/targets/aphorism-cli/REPORT.md)

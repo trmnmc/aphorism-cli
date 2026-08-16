@@ -15,12 +15,20 @@ This repo has been through **two** SWARM runs, and this report covers both:
 | Build | 2026-08-14 05:38 → 05:44 UTC | SMOKE (25-min pipeline validation) | product shipped, 5/5 must-haves, 48 tests |
 | Improvement | 2026-08-15 21:38 UTC → in flight, stops 2026-08-16 11:24 UTC | allocator auto-kickoff, brief *"harden tests, fix playbook items, polish docs — no new features"* | 11/11 improvement must-haves closed, 80 tests |
 
-**Cycles completed: 40**, cycle 41 in flight (this report was written by it). The run has
+**Cycles completed: 46**, cycle 47 in flight (this refresh was written by it). The run has
 not reached WRAP_UP; nothing below is a wrap-up summary, and the counts are live as of
-2026-08-16 03:15 UTC.
+2026-08-16 07:25 UTC.
 
-**Product behaviour changed in exactly one way this run** (the I-1 seed fix). Everything
-else was tests, guards, documentation and triage — which is what the brief asked for.
+**Product behaviour changed in exactly two ways this run** — the I-1 seed fix (cycle 3)
+and the tag-vocabulary consolidation (T-007, cycle 46, and it is a **breaking change** to
+`--tag`; see below). Everything else was tests, guards, documentation and triage — which
+is what the brief asked for.
+
+_Correction carried by this refresh._ Between cycle 41 and cycle 46 this document said
+"changed in exactly one way", described a **37-tag** corpus, and listed T-007 as unfinished
+work that only "a run on a healthy window" could reach. All three statements were made
+false by cycle 46, which landed T-007 at gear 1 with **zero agents dispatched**. The
+prediction is corrected in place rather than quietly deleted — see *Unfinished work*.
 
 ## Run it
 
@@ -42,10 +50,10 @@ requirement.
 | Must-have | Status | Evidence (re-measured 2026-08-16 03:10 UTC) |
 |---|---|---|
 | One attributed aphorism to stdout, exit 0 | ✅ shipped | suite green; covered by `test/cli.test.js` end-to-end process tests |
-| Corpus of ≥ 40 entries as structured data | ✅ shipped | conductor re-count: **50** entries, **24** authors, **37** distinct tags (21 singletons, 4 tags ≥5 uses, 12 tags in the 2–4 band) |
+| Corpus of ≥ 40 entries as structured data | ✅ shipped | conductor re-count: **50** entries, **24** authors, **12** distinct tags (0 singletons, 7 tags ≥5 uses, 5 tags in the 2–4 band; thinnest pool 3, largest 14) |
 | Flags `--author` `--tag` `--seed` `--list` `--json` `--help` | ✅ shipped | `test/args.test.js` + `test/cli.test.js` |
 | No-match → stderr only, empty stdout, non-zero exit | ✅ shipped | asserted in `test/cli.test.js`; unchanged this run |
-| `node --test` suite over pick/filter/seed/no-match/format | ✅ shipped | **80 pass / 0 fail**, 1.32 s |
+| `node --test` suite over pick/filter/seed/no-match/format | ✅ shipped | **80 pass / 0 fail**, 1.49 s |
 
 ### Improvement run (2026-08-15/16) — 11 items, every one conductor-verified
 
@@ -65,16 +73,41 @@ Each row's evidence file is committed in `.swarm/runs/`. The conductor authored 
 | **I-4b** risk-ranked attribution triage | ✅ done, cycle 10 | 50-row triage (HIGH 8 / MEDIUM 16 / LOW 26) at `docs/corpus-attribution-triage.md`. Gated against a conductor ranking **sealed to disk before dispatch**; the agent surfaced 4 HIGH entries the sealed list had missed, so the pre-commitment measured the conductor too. `cycle-010-verify-I-4b.txt` |
 | **I-4a** remove language overclaiming the corpus as audited | ✅ done, cycle 11 | The `src/corpus.js` header described a hedging policy the file does not follow (1 of 50 hedged against 8 HIGH-risk named attributions); the claim was **deleted**, not softened. `cycle-011-verify-I-4a.txt` |
 | **I-5** repair or losslessly hand off the SWARM playbook | ⚠️ **done by clause 2** (hand-off), cycle 12 | Duplicate lesson IDs repaired losslessly (31 in, 31 out, bodies an identical multiset, 17/17 harness checks + 4 negative controls). The **20-lesson cap breach was NOT fixed** and is handed to a human with a computed drop-list — the file's overflow rule drops one lesson per append and extrapolating it to shed 11 would delete 5 `[apply:]`-bearing lessons. See `playbook/HANDOFF-cap-2026-08-15.md`. `cycle-012-verify-I-5.txt` |
-| **I-6** refresh this report | ✅ done, cycle 41 | This document. Gated by re-measuring every falsifiable claim in it against the repo, not by reading it. |
+| **I-6** refresh this report | ✅ done, cycle 41 | This document. Gated by re-measuring every falsifiable claim in it against the repo, not by reading it. Refreshed again at cycles 44 and 47 on the same standard — the cycle-47 pass exists because cycle 46 changed the product and left this document describing a corpus that no longer ships. |
+
+### The one product change after the chartered items — T-007, cycle 46
+
+The tag vocabulary was consolidated from **37 tags to 12**, by retagging existing entries
+only: no aphorism text or author was touched, and no entry was added or removed. Twenty-six
+low-count tag names were folded onto a surviving neighbour. The problem it fixed is
+user-visible and was measured, not assumed — 21 of the 37 tags matched exactly one
+aphorism, so `--tag` on any of them returned the same line every time. Every tag now has a
+pool of at least 3.
+
+**This is a breaking change to a shipped contract.** Anyone who scripted `--tag
+optimization` (or any of the other 25 folded names) now gets the no-match path: empty
+stdout, a stderr line, non-zero exit. The README's *Tag vocabulary changes* section lists
+all 26 retired names. The suite stayed green across the change (80/80), and two fixtures
+the retag invalidated were rebuilt from the live corpus.
+
+**Two judgment calls in it are logged for a human to ratify or reverse — backlog T-040.**
+(1) Several fold mappings are defensible but debatable, and one is load-bearing:
+`testing → debugging` dissolves the corpus's only tag for testing as a discipline, because
+only 2 entries were about testing and manufacturing a third would have been dishonest
+tagging. (2) A `.swarm/SPEC.md` Domain-rules illustration named a tag the change removed
+and was re-pointed at a surviving one; the rule itself is untouched. Reversing either is
+cheap — the fold map is a data table in `.swarm/runs/cycle-046-retag.mjs`.
 
 ## What the run actually spent itself on
 
 Worth stating plainly, because the item list above understates it. After the 11 chartered
 items closed at cycle 12, cycles 13–40 went almost entirely into **one thing**: the
 README-guard family — tests that check the README's factual claims against the code, the
-corpus, other files, and the filesystem.
+corpus, other files, and the filesystem. Cycles 41–47 went into the hand-off itself
+(this report, `RETRO.md`, the KI-5 root cause, backlog hygiene) plus the single product
+change described above.
 
-That family is now **1511 of the repo's 2051 test lines** (`test/readme-tags.test.js`),
+That family is now **1511 of the repo's 2101 test lines** (`test/readme-tags.test.js`),
 against 549 lines of shipped source. Twenty-eight items were opened against it (T-012
 through T-039). The honest accounting of where they landed:
 
@@ -108,7 +141,11 @@ and it is a human's call.
 
 ## Known issues
 
-Thirteen open, from `.swarm/state.json`. Grouped by who can settle them.
+**Fifteen recorded** in `.swarm/state.json`: 11 open, 2 mitigated with the root cause
+still open (KI-7, KI-8), 2 resolved (KI-3, KI-4). Grouped below by who can settle them.
+(An earlier version of this line said "thirteen open"; it was counting recorded entries,
+resolved ones included, against a smaller list. Corrected at cycle 47, which also filed
+KI-16.)
 
 ### About the product — a human must settle these
 
@@ -153,7 +190,16 @@ Recorded here rather than fixed, because hard rule 5 fences SWARM's own code dur
   not a boundary.
 - **KI-5 (medium, open)** — `bin/swarm-playbook.sh` is not on the Bash allowlist in a
   headless session, so `validate`/`parse`/`append`/`record-applied` all refuse. Attempted
-  and refused on **40 consecutive cycles**. Combined with the 31-lessons-against-a-cap-of-20
+  and refused on **46 consecutive cycles**. Root-caused at cycle 43: `SWARM/.claude/settings.json`
+  was never migrated from the macOS host, so its allow entries do not cover these scripts.
+  Cycles 46–47 added a second, independent failure mode with the same symptom: the
+  allowlist entries are **cwd-relative**, and the pacer does not guarantee the session's
+  cwd is `/opt/swarm` — cycle 46 ran from the target directory, where even the working
+  `bin/swarm-notify.sh` entry failed with exit 127 before permissions were consulted.
+  Cycle 47 confirmed the split by running both forms: `bin/swarm-notify.sh poll` from
+  `/opt/swarm` succeeded, the absolute path `/opt/swarm/bin/swarm-budget.sh` was refused.
+  **A fix that adds only relative allow entries closes neither reliably; absolute entries
+  close both.** Combined with the 31-lessons-against-a-cap-of-20
   breach, this makes the shared playbook **inert**: `cmd_parse` exits 2 on any validate
   output, so every future kickoff falls back to defaults and applies zero lessons until the
   count reaches 20.
@@ -168,6 +214,19 @@ Recorded here rather than fixed, because hard rule 5 fences SWARM's own code dur
   tick inside HTML comment regions. The page renders correctly; what it corrupts is anchor
   uniqueness. Caught by the uniqueness guard **aborting loudly** rather than splicing into a
   comment — the guard working as designed.
+- **KI-16 (high, open, filed cycle 47)** — the allocator **fails open**: with its usage
+  probe returning nothing (`"ok": false`, `"source": "none"`, every usage field zeroed) it
+  still emits a 10% spend allowance. Full measurement and the discriminator that rules out
+  a week rollover are in *Why the run stopped dispatching agents* above. The conservative
+  default already exists in the same script — its jq-missing fallback emits allow 0 — and
+  the no-data path simply does not use it.
+- **KI-15 (low, open)** — playbook `apply_mode: auto` stages every apply-able lesson with
+  no capability gate on target shape. Measured this run: 9 of 15 staged lessons were
+  not-exercised, and 8 of those 9 were **structurally unreachable** rather than unlucky —
+  four browser-specific and three React/UI-specific lessons staged against a zero-dependency
+  Node CLI with neither surface, plus one routing lesson unreachable at gear 1. The
+  conductor staged them faithfully rather than editing the playbook's intent mid-run
+  (hard rule 5), which is correct and leaves the gap where it belongs: in the staging step.
 - **KI-13 (low, open)** — allocator posture `halted` has no defined conductor semantics for
   an already-running run. `swarm-pacer.sh` skips on `halted`, but that skip governs
   auto-kickoff only, so an in-flight run keeps cycling with its allowance spent. This run
@@ -203,20 +262,30 @@ usage window would restart all six — so here is the per-item measurement inste
 (cycle-44 gate, 15/15 with three negative controls,
 `.swarm/runs/cycle-044-verify-reachability.txt`).
 
-**Correcting this report's own earlier framing.** Cycles 41–43 recorded that "all six
-remaining todos need a builder [because the allowance is 0]". True as far as it goes, but
-it conflates two different constraints. **Three of the six are S-effort, and gear 1
-explicitly admits S-effort builds** — the gear is not what holds them. A standing,
+**Correcting this report's own earlier framing, twice.** First: cycles 41–43 recorded that
+"all six remaining todos need a builder [because the allowance is 0]". True as far as it
+goes, but it conflates two different constraints. **Three of the six are S-effort, and
+gear 1 explicitly admits S-effort builds** — the gear is not what holds them. A standing,
 measured decision is. More window alone will not restart those three.
+
+Second, and sharper because this document made the claim itself: cycles 41–45 listed
+**T-007 as gear-blocked**, needing "a run on a healthy weekly window". **That was wrong,
+and cycle 46 disproved it by landing the item** — conductor-inline, zero agents dispatched,
+at the same gear 1 that supposedly forbade it. The error was treating the gear's *dispatch*
+cap as a cap on *work*. It is not: the allowance governs what may be spent on subagents,
+and a conductor that does the work itself spends none. Cycles 39–47 were all zero-agent,
+and one of them shipped a product change. Whoever reads the table below should apply the
+same test before accepting "unreachable": ask whether the item needs an agent, or only a
+worker.
 
 | Item | Binding constraint | What would unblock it | Who |
 |---|---|---|---|
-| **T-007** consolidate the tag taxonomy | **Gear.** M-effort; gear 1 admits S-effort builds only | A run on a healthy weekly window | Any run — but re-read the Domain rules first: retagging silently changes what shipped `--tag` queries return, which is a behaviour change to a live contract even though it adds no feature |
-| **T-008** deepen the corpus past 50 entries | **Gear _and_ a dependency.** L-effort, and `deps: [T-006]`, which is blocked on a human | The attribution audit lands first, then a healthy window | Human, then any run |
-| **T-024** structural re-shape of the prose-anchored README guards (umbrella) | **Gear.** M-effort, and not itself dispatchable — it closes when its children do | A healthy window | Any run |
+| **T-008** deepen the corpus past 50 entries | **Effort _and_ a dependency.** L-effort, and `deps: [T-006]`, which is blocked on a human | The attribution audit lands first, or a decision to ship the added entries with their own triage in the same change (the item's own second path, which `deps` cannot express) | Human, then any run |
+| **T-024** structural re-shape of the prose-anchored README guards (umbrella) | **Its own measurements.** M-effort and not itself dispatchable — it closes when its children do, and one child (T-024a) is blocked at the attempts cap. Cycle 33 further measured that "read structure instead of prose" is **not available at all** for the Attribution counts without a README document change (V0:F_MD is red on a pristine README) | The KI-9 remedy option 2 — give the README's counts real structure — which is a human's call, not more clock | Human decision, then any run |
 | **T-024b** band-heading "N tags" count | **Not the gear — a standing decision.** S-effort, so gear 1 would admit it. Held by the cycle-39 family decision: no further *narrowing* of these guards this run | T-024 landing, or an argued BOUNDARY per SPEC I-2 | Any run |
 | **T-032** two count-markers in one true sentence manufacture a spurious claim | **Not the gear — a standing decision.** Same as T-024b | Same as T-024b | Any run |
 | **T-039** heading-to-table stop rule relocates mis-attachment | **Not the gear — its own filing terms.** S-effort; filed explicitly as a member of the T-024 umbrella so it does not become a seventh narrowing | T-024 landing, or an argued BOUNDARY | Any run |
+| **T-040** ratify the two judgment calls inside the T-007 retag | **A human.** Filed by the conductor against its own change; nothing blocks on it | Read the fold map in `.swarm/runs/cycle-046-retag.mjs` and either ratify or reverse — reversal is cheap | human |
 
 **Why the three S-effort items are fenced rather than simply unfinished.** Every README
 guard this run built extracts a number by anchoring to a position or a literal inside an
@@ -226,15 +295,19 @@ three kills, introduced two new false rejections, and left the silent direction 
 These guards fail *loud* — they reject a correct README, they do not pass a wrong one —
 but a maintainer's cheapest escape from a false rejection is deleting the guard, so the
 accumulated risk is the whole family going at once. A seventh narrowing does not reduce
-that risk; changing what the extractions *read* does, and that is T-024.
+that risk; changing what the extractions *read* does — and cycle 33 measured that for the
+Attribution counts, changing what they read requires changing the **document**, not just
+the test. That is why the remedy in the table above is a README-structure decision (KI-9
+option 2) and not simply "land T-024".
 
 **What this means for the run's status.** All six improvement must-haves (I-1…I-6) are
 closed and conductor-verified, so the definition-of-done is met. The target is still not
 `DONE`, and the report should not imply otherwise: `DONE` also requires that no remaining
 candidate pass the value ratchet, and **T-008 passes it** — the picker is uniform, so the
 repeat rate is corpus size, and a user meets a repeat by use ~9.6 (60.1% by use 10). It is
-real, user-visible, and out of reach tonight. Nor is the target `stalled`: that needs six
-consecutive no-value cycles or a wholly blocked board, and neither holds.
+real, user-visible, and out of reach tonight *because it is gated on a human's attribution
+call*, not because of the clock. Nor is the target `stalled`: that needs six consecutive
+no-value cycles or a wholly blocked board, and neither holds.
 
 ## Night control log
 
@@ -245,19 +318,19 @@ Four notifications were sent (`auto-kickoff`, `goodnight`, and two `posture` pus
 
 | Stat | Value |
 |---|---|
-| Cycles run | **40 completed**, 41 in flight (stop_at 2026-08-16 11:24 UTC — a premature stop would be visible here) |
-| Commits | **95 total**, 91 of them this improvement run; `master` in sync with `origin/master` |
-| Backlog | 53 items — **41 done**, 4 dropped, 2 blocked, 6 todo |
+| Cycles run | **46 completed**, 47 in flight (stop_at 2026-08-16 11:24 UTC — a premature stop would be visible here) |
+| Commits | **102 total**, 96 of them this improvement run; `master` in sync with `origin/master` |
+| Backlog | 54 items — **42 done**, 4 dropped, 2 blocked, 6 todo |
 | Tests | **80 pass / 0 fail** (was 48 at the build run's wrap-up) |
-| Source size | 549 lines shipped (`src/` + `bin/`), 2051 lines of tests, zero dependencies |
-| Corpus | 50 aphorisms · 24 authors · 37 tags |
-| Decisions recorded | 79 |
-| Verification artifacts | 196 files in `.swarm/runs/` from cycles 1–40 (cycle 41's own artifacts excluded — that count is still moving as this report is written) |
-| Agents dispatched | **Not tallied in a machine-readable field — reported as a bound rather than a fabricated count.** Effective wave size was 1 on every cycle of this run (gear 1), so at most one builder per cycle; cycles 39–41 dispatched none |
+| Source size | 549 lines shipped (`src/` + `bin/`), 2101 lines of tests, zero dependencies |
+| Corpus | 50 aphorisms · 24 authors · **12 tags** (was 37 until cycle 46) |
+| Decisions recorded | 93 |
+| Verification artifacts | **233** files in `.swarm/runs/` from cycles 1–46, plus cycle 47's own, which are still being written as this refresh is gated (the earlier report's "196 from cycles 1–40" used the same convention) |
+| Agents dispatched | **Not tallied in a machine-readable field — reported as a bound rather than a fabricated count.** Effective wave size was 1 on every cycle of this run (gear 1), so at most one builder per cycle; **cycles 39–47 dispatched none** — nine consecutive zero-agent cycles, one of which (46) still shipped a product change |
 | Models used | sonnet (builders), conductor on fable; design-panel, review-fix and the premium tiers never dispatched this run |
-| Notifications sent | 4 |
+| Notifications sent | 4 (`auto-kickoff`, `goodnight`, two `posture`); 29 further log lines are control-channel polls, not sends |
 | Reverted merges | 0 (gear 1 dispatches a single builder into the tree; two items were rejected at the gate and their changes reverted by hand, cycles 31 and 32) |
-| Pace | mode **guest**, dial 0.3, gear pinned at **1** for the entire run. The weekly window resets 2026-08-17 05:00 UTC, *after* `stop_at`, so gear 1 was structurally fixed from kickoff. Window utilization: **not measured** — `bin/swarm-budget.sh` was refused by the allowlist on all 40 cycles (KI-5), so every burn figure in the runfile is a placeholder. Voluntary idle cycles: 0 |
+| Pace | mode **guest**, dial 0.3, gear pinned at **1** for the entire run. The weekly window resets 2026-08-17 05:00 UTC, *after* `stop_at`, so gear 1 was structurally fixed from kickoff. Window utilization: **not measured** — `bin/swarm-budget.sh` was refused by the allowlist on every cycle that attempted it (46 attempts through cycle 47, KI-5), so every burn figure in the runfile is a placeholder. Voluntary idle cycles: 0 |
 
 ### Why the run stopped dispatching agents at cycle 39
 
@@ -278,16 +351,35 @@ and 40 held at zero agents on a conservative reading of an ambiguous posture; th
 turned that into a measurement.
 
 The practical consequence: cycles 39 onward are conductor-only. They cost the conductor
-session but no agent burn, and the wakeup interval was stretched to 1800 s to reflect that.
+session but no agent burn. The wakeup interval was stretched to 1800 s while that was read
+as "no work is reachable"; cycle 46 disproved that reading by landing a product item with
+no agents, and cycle 47 moved the interval back down to 1200 s accordingly.
+
+**Cycle-47 addendum — the allocator went blind, and it fails OPEN.** At 07:10 UTC
+`SWARM/runs/allocator.json` was rewritten with every usage field zeroed and
+`"source": "none"`, `"ok": false` — the usage probe returned nothing at all. This is not a
+week rollover: `week_resets_at` is 0 (a real reset would carry a future epoch), and the
+real reset is not due until 2026-08-17 02:19 UTC. **The hazard is what it emits while
+blind:** `allow_overall_pct` **10**, not 0. A conductor that reads the allowance without
+checking `ok` would take a probe blackout as authorisation to spend 10% of a window last
+measured at **95% weekly / 97% opus** six cycles earlier. Cycle 47 declined the allowance
+on that ground and stayed at zero agents. Recorded as **KI-16**, not fixed — hard rule 5
+fences SWARM's own code during a run. It is adjacent to KI-14 but distinct: KI-14 wipes the
+swarm's spend counter on a false rollover; KI-16 is the whole file defaulting to a
+permissive number when it has no data at all.
 
 ## Honest hand-off
 
 **Machine-checked.** Every must-have and every improvement item above, by commands the
 conductor authored *at verification time* and ran itself; builders never saw the checks, so
-they could not code to them. Re-measured fresh for this report at 2026-08-16 03:10–03:15
-UTC: the 80-test suite, corpus size and shape, the tag distribution numbers, the repo's
-git sync state and the absent remote tag. Where a check could not be run, it is named as
-not-run below rather than rendered as passed.
+they could not code to them. Re-measured fresh for this refresh at 2026-08-16 07:15–07:30
+UTC by `.swarm/runs/cycle-047-measure.mjs` (output: `cycle-047-measure.txt`), which reads
+the live repo and never reads this document: the 80-test suite, corpus size and shape, the
+new tag distribution, backlog and known-issue counts, commit counts, the repo's git sync
+state and the still-absent remote tag. Every number in this report was then re-derived from
+that output by an independent gate (`cycle-047-gate.mjs`) that parses the prose and compares
+it against the measurements, with a negative control. Where a check could not be run, it is
+named as not-run below rather than rendered as passed.
 
 **Reported as not run, never as passed.**
 
@@ -300,7 +392,14 @@ not-run below rather than rendered as passed.
 - **The live-look QA stage is not applicable** — a CLI has no browser surface. Its cheap
   analogue (output survives a pipe unchanged) was folded into the cycle-13 conductor harness
   as check S7.
-- **Window utilization was never measured** — the budget probe was refused on all 40 cycles.
+- **Window utilization was never measured** — the budget probe was refused on all 46 attempts,
+  and as of cycle 47 the allocator's own usage source reports itself absent (KI-16). No burn
+  figure anywhere in this run's state is a measurement.
+- **The tag consolidation was not reviewed by anyone but its author.** The conductor
+  proposed the fold map, executed it, and gated it. The gate proves the mechanical
+  properties (no text or author changed, no entry added or removed, every tag pool ≥ 3,
+  suite green); it cannot prove the mappings are the *right* editorial calls. That is
+  T-040, and it is why the change is reported as landed rather than as settled.
 - **The kickoff spec-confirmation gate was never confirmed by a human.** This was a headless
   allocator auto-kickoff with no user present, and SKILL.md defines no non-interactive
   behaviour for that gate. Recorded as a deviation at cycle 1 rather than treated as
@@ -326,14 +425,24 @@ not-run below rather than rendered as passed.
    deliberately gated behind T-006 so it cannot multiply the unaudited attribution surface.
    **Both are features, which this run's brief forbade.** A future feature-bearing run should
    pick T-005 first.
-4. **Two SWARM tooling bugs need your hand, not the swarm's** — KI-14 (the allocator's
-   rollover comparison silently refills a spend cap) and KI-5 (the playbook is inert until
-   someone culls it to the cap; `playbook/HANDOFF-cap-2026-08-15.md` has the computed
-   drop-list and the reason the swarm declined to apply it).
-5. **Push the tag:** `git push origin v0.1-overnight`.
+4. **Ratify or reverse the tag consolidation (T-040).** Twenty-six tag names were retired
+   and `--tag` on any of them now returns the no-match path. The mechanics are proven; the
+   editorial judgment is yours, and the load-bearing call is `testing → debugging`, which
+   leaves the corpus with no tag for testing as a discipline. Reversal is cheap — the fold
+   map is a data table in `.swarm/runs/cycle-046-retag.mjs`.
+5. **Three SWARM tooling bugs need your hand, not the swarm's** — KI-14 (the allocator's
+   rollover comparison silently refills a spend cap), KI-16 (the allocator emits a
+   permissive 10% allowance while reporting `ok: false` and no usage source — it fails
+   open), and KI-5 (the playbook is inert until someone culls it to the cap;
+   `playbook/HANDOFF-cap-2026-08-15.md` has the computed drop-list and the reason the swarm
+   declined to apply it; the allowlist fix must use **absolute** paths — see KI-5 above for
+   why relative entries close neither failure mode).
+6. **Push the tag:** `git push origin v0.1-overnight`.
 
 ---
 
-Repo tagged `v0.1-overnight` (local; not yet pushed). Generated by the cycle-41 conductor at
-2026-08-16T03:15:00+00:00, superseding the 2026-08-14T05:58:00 report, which described only
-the SMOKE build run and was 40 cycles out of date.
+Repo tagged `v0.1-overnight` (local; not yet pushed). Generated by the cycle-47 conductor at
+2026-08-16T07:30:00+00:00, superseding the cycle-41 report (2026-08-16T03:15:00), which
+described a 37-tag corpus this run no longer ships and listed T-007 as unreachable six
+cycles before it landed. That report in turn superseded the 2026-08-14T05:58:00 one, which
+covered only the SMOKE build run.
