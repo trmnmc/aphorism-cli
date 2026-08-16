@@ -7365,3 +7365,114 @@ Known issues: **17 total, 10 open** (KI-18 new; KI-17 extended, still open and s
 at the source). The target node was re-patched to those numbers by a second asserted
 substitution rather than a hand edit. **WRAP_UP owes REPORT.md the KI-18 entry and the KI-17
 extension** — the report's Known-issues section is one behind as of this commit.
+
+## cycle 51 — 2026-08-16T09:45Z — T-043: the product's central rule finally has a test
+
+**work type:** build-class test item (conductor-inline; zero agents dispatched — thirteenth consecutive)
+**outcome:** 1 verified · **gate 7/7 · suite 80 → 82 tests, 1.46s**
+
+### why this, over the board
+
+The cycle-50 note ranked `T-043` first and the reasoning survived re-checking: it is the only
+item on the board that is none of blocked, dep-gated or decision-fenced, it is S-effort (which
+gear 1 admits), and it is the last item touching **what a user actually gets** rather than what
+a document says about it. The rest of the board re-checked unchanged — `T-024b`/`T-032`/`T-039`
+held by the cycle-39 family decision, `T-024` not dispatchable at zero agents, `T-008`/`T-040`
+gated on a human.
+
+**The recycle question was decided first, because it decided the shape of the cycle.**
+`cycles_since_recycle` reached 25, which trips hard rule 7. Deferred, and the counter is
+deliberately **left at 25 rather than reset** so the trip stays visible to whoever inherits
+this run. WRAP_UP is ~85 minutes out and emits a strict superset of a recycle note
+(REPORT.md + RETRO.md + distilled candidates + a final block); spending one of the last two
+work cycles on the smaller artifact would have cost T-043 to buy something redundant.
+
+### what was built
+
+Two tests in `test/select.test.js`, protecting the Domain rule *"without `--seed`, selection is
+uniform over the filtered candidate set"* — the rule governing which aphorism a user gets,
+which cycle 50 measured to have **no test at all** while the README-guard family had grown to
+1511 of the repo's 2101 test lines.
+
+**Deterministic, not statistical.** The acceptance offered two branches: seed the draw source,
+or pick a sample size and threshold whose false-failure rate is *computed and stated*. The
+first branch is strictly better in a suite that runs in 1.5s — `Math.random` is replaced by an
+exact midpoint sweep `u_i = (i + 0.5)/(n·K)` of the unit interval, so both assertions are exact
+and the false-failure rate is **zero by construction**. No threshold to choose, none to justify,
+nothing to flake. Midpoints rather than boundaries, so no floating-point tie-breaking is
+involved.
+
+**Both assertions are order-agnostic**, and that is the load-bearing design choice — see the
+decisive check below.
+
+### VERIFICATION EVIDENCE
+
+`.swarm/runs/cycle-051-verify-T-043.txt` (harness: `cycle-051-verify-T-043.mjs`, which reuses
+the cycle-50 copy machinery rather than writing a third one):
+
+```
+PASS  P0     unmutated copy of the LIVE tree is green
+             82 pass / 0 fail  (baseline 80 + 2 added this cycle)
+PASS  A.M1   M1 is now KILLED and the kill is attributed by name
+             80 pass / 2 fail — killed by: REACHABLE | EQUALLY; no other test failed
+PASS  A.M3   M3 is now KILLED and the kill is attributed by name
+             81 pass / 1 fail — killed by: EQUALLY; no other test failed
+PASS  R1.M1  with the new tests removed, M1 SURVIVES again — 80 pass / 0 fail
+PASS  R1.M3  with the new tests removed, M3 SURVIVES again — 80 pass / 0 fail
+PASS  R2     the skip pattern removes exactly 2 tests: 82 -> 80 pass / 0 fail
+PASS  D      a reversed but STILL-UNIFORM rewrite is NOT rejected — 82 / 0
+GATE 7/7
+```
+
+`node --test test/*.test.js` on the live tree: **82 pass / 0 fail, duration 1455ms.**
+
+### the decisive check is the one no acceptance clause asked for
+
+Every acceptance-shaped cell above asks whether a *violating* implementation is caught — and a
+guard that merely froze today's arithmetic (`floor(u·n)`, that exact mapping) catches both
+cycle-50 survivors too. The two readings separate **only** on an implementation that is uniform
+but mapped differently, which is not hypothetical: the rule promises uniformity over the
+candidate set and says nothing about ordering, so walking the candidates in reverse honours it
+exactly. A mapping-pinned guard would then fire on a **correct** rewrite — a false rejection a
+maintainer resolves by deleting the guard, which is worse than never having written it. So the
+probe was run: `index = n-1-floor(u·n)` leaves the suite at 82/0. This is the cycle-21/22
+consistent-change method transplanted from documents to an algorithm.
+
+### honest accounting of what the two tests buy, separately
+
+**M1 is killed by both. M3 is killed by the equal-split test alone.** Under `u → u²` every index
+is still *reachable* — the front bias changes the shares, not the support — so the reachability
+test is genuinely silent on M3, and the gate shows it (81 pass / 1 fail). "Two tests kill two
+mutants" would double-count what this cycle bought. Cycle 23 set this rule when T-017's
+binary-side kills turned out to belong to a pre-existing test; the overlap runs the other way
+here and the discipline is the same.
+
+### disclosed weakness in this cycle's evidence
+
+**The conductor wrote both the test and the gate that judges it.** Hard rule 2's central
+protection — the builder never saw the check, so it cannot have coded to the check — **does not
+apply to T-043**, because the allocator authorises zero agent burn and there was no builder to
+keep blind. Recording it rather than letting a 7/7 gate imply a separation that did not exist.
+
+What carries the result instead, weaker than the usual arrangement but not nothing: both
+mutants are **pre-registered** — measured as survivors at cycle 50, before this test was
+conceived, their text copied verbatim from that harness — and the attribution arms are
+measurements whose outcome the author does not control. The direction no pre-registration
+fixes is that *a hole this test does not cover would not be found by its own author.* That is
+why check D exists, and why the per-test kill attribution above is stated separately rather
+than combined.
+
+### board
+
+- **T-043** — done. The cycle-50 standing instruction (*promote to a known_issue if it does not
+  land before WRAP_UP*) is **discharged, not carried forward**.
+- First item in three cycles drawn from the **standing board** rather than filed the same cycle
+  — the disclosure cycles 49 and 50 both had to make does not apply here.
+- Board: 45 done, 6 todo, 2 blocked, 4 dropped. Known issues unchanged at 17 total, 10 open.
+- Wave autotune NOT applied (no wave dispatched, so nothing was measured about code capacity);
+  `k_current` 5, `wave_streak` 0.
+- Collision-scan not applicable: Node CLI, no browser surface, no classic scripts.
+
+```runfile-mirror
+{"run_label": "improvement-aphorism-cli-2026-08-15", "run_kind": "improvement", "stop_at": "2026-08-16T11:24:24+00:00", "usage_reset_at": "2026-08-15T16:24:32+00:00", "model_policy": "value-routing", "auth_mode": "subscription", "pacing": {"mode": "guest", "dial": 0.3}, "targets": [{"path": "/opt/targets/aphorism-cli", "status": "active", "weight": 1}], "rotation_cursor": 0, "rotation_schedule": [0], "cycles_since_recycle": 25, "budget": {"gear": 1, "k_cap": 1, "mode": "guest", "source": "allocator", "posture": "trickle (allowance measured 0 by a REAL probe at cycle 51 - ok:true/source:probe, FOURTH consecutive real reading)", "promote": false, "demote": true, "probe_failures": 0, "allow_overall_pct": 0, "reserve_overall_pct": 20.98, "weekly": {"ok": true, "weekly_used_pct": 96, "opus_used_pct": 97, "week_elapsed_pct": 88.49, "weekly_heat": 1.0849, "opus_heat": 1.0962, "ceiling": 3, "promote_blocked": false}}, "heartbeat": {"ts": 1786873453, "pid": 977537, "limp": false}, "watchdog": {"mode": "normal", "plist_loaded": true, "lockfile": "/opt/swarm/runs/watchdog.lock", "relaunch_attempts": 0}, "caffeinate_pid": 0, "wrap_up_complete": false}
+```

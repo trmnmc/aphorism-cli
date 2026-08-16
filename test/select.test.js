@@ -172,6 +172,124 @@ test('pick: finite seed determinism is unchanged by the non-finite-seed fix', ()
   }
 });
 
+// --- Uniformity of the UNSEEDED draw ------------------------------------
+//
+// SPEC Domain rule: "without --seed, selection is uniform over the filtered
+// candidate set." Cycle 50 measured that rule to be completely unprotected:
+// two mutants that violate it -- an off-by-one that makes the LAST candidate
+// unreachable forever, and a u -> u**2 front bias -- each survived all 80
+// tests untouched. The pre-existing unseeded tests only assert "returns a
+// valid member", which both mutants satisfy.
+//
+// DETERMINISTIC, NOT STATISTICAL. A sampling test of uniformity carries a
+// false-failure rate by construction; this suite runs in ~1.5s and a flaky
+// test inside it is worse than the hole it closes. So the draw SOURCE is
+// seeded instead: Math.random is replaced by an exact sweep of the unit
+// interval. That makes both properties below exact assertions whose
+// false-failure rate is ZERO -- there is no threshold to choose and none to
+// justify.
+//
+// The two assertions are deliberately ORDER-AGNOSTIC. The rule promises
+// uniformity; it does not promise which u maps to which candidate, and a
+// reimplementation that walked the candidates in reverse would still honour
+// it. Pinning the mapping would freeze an incidental choice and false-reject
+// an honest rewrite -- the failure mode the cycle-21/22 consistent-change
+// method exists to avoid.
+//
+// Sweep: u_i = (i + 0.5) / (n * K), i in [0, n*K). These are bucket
+// MIDPOINTS, never the boundaries, so no floating-point tie-breaking is
+// involved; each of the n equal sub-intervals of [0, 1) receives exactly K.
+const UNIFORM_K = 20;
+
+const UNIFORM_CASES = [
+  [
+    'synthetic n=8',
+    Array.from({ length: 8 }, (_, i) => ({
+      text: `synthetic ${i}`,
+      author: 'test',
+      tags: ['test'],
+    })),
+  ],
+  [`corpus n=${corpus.length}`, corpus],
+];
+
+// Returns how many of the n*K swept draws landed on each candidate index,
+// plus how many times pick actually consulted the seeded source. A pick that
+// never consults it has not been measured by this sweep at all, so `draws`
+// is asserted rather than assumed -- an implementation that drew from
+// somewhere else would otherwise pass here vacuously.
+function sweepIndexCounts(candidates, K) {
+  const n = candidates.length;
+  const total = n * K;
+  const counts = new Array(n).fill(0);
+  const realRandom = Math.random;
+  let draws = 0;
+
+  try {
+    for (let i = 0; i < total; i++) {
+      const u = (i + 0.5) / total;
+      Math.random = () => {
+        draws++;
+        return u;
+      };
+      const got = pick(candidates);
+      const index = candidates.indexOf(got);
+      assert.ok(
+        index >= 0,
+        `pick returned a non-member of candidates at u=${u}`
+      );
+      counts[index]++;
+    }
+  } finally {
+    Math.random = realRandom;
+  }
+
+  return { counts, draws, total };
+}
+
+test('pick: every candidate is REACHABLE by an unseeded draw', () => {
+  for (const [label, candidates] of UNIFORM_CASES) {
+    const { counts, draws } = sweepIndexCounts(candidates, UNIFORM_K);
+
+    assert.ok(
+      draws > 0,
+      `${label}: pick never consulted the seeded draw source, so this sweep ` +
+        'measured nothing -- the unseeded path is drawing from somewhere else'
+    );
+
+    const unreachable = counts
+      .map((count, index) => (count === 0 ? index : -1))
+      .filter((index) => index >= 0);
+
+    assert.deepStrictEqual(
+      unreachable,
+      [],
+      `${label}: no unseeded draw can ever return candidate(s) at index ` +
+        `[${unreachable.join(', ')}] of ${counts.length}`
+    );
+  }
+});
+
+test('pick: unseeded draws split the interval EQUALLY across candidates (uniform)', () => {
+  for (const [label, candidates] of UNIFORM_CASES) {
+    const { counts, draws } = sweepIndexCounts(candidates, UNIFORM_K);
+
+    assert.ok(
+      draws > 0,
+      `${label}: pick never consulted the seeded draw source, so this sweep ` +
+        'measured nothing -- the unseeded path is drawing from somewhere else'
+    );
+
+    assert.deepStrictEqual(
+      counts,
+      new Array(candidates.length).fill(UNIFORM_K),
+      `${label}: the draw interval is not split evenly -- each candidate ` +
+        `should own exactly ${UNIFORM_K} of the ${counts.length * UNIFORM_K} ` +
+        `swept draws, got [${counts.join(', ')}]`
+    );
+  }
+});
+
 test('pick: single-element candidates always returns that element regardless of seed', () => {
   const single = [corpus[0]];
   assert.deepStrictEqual(pick(single, 1), corpus[0]);

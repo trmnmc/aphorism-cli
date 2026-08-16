@@ -1,0 +1,19 @@
+PASS  P0  unmutated copy of the LIVE tree is green
+        82 pass / 0 fail  (this is the new baseline: 80 + 2 added this cycle)
+PASS  A.M1  M1 is now KILLED and the kill is attributed by name
+        80 pass / 2 fail — killed by: pick: every candidate is REACHABLE by an unseeded draw | pick: unseeded draws split the interval EQUALLY across candidates (uniform); no other test failed
+        unseeded off-by-one — the last candidate is unreachable forever
+PASS  A.M3  M3 is now KILLED and the kill is attributed by name
+        81 pass / 1 fail — killed by: pick: unseeded draws split the interval EQUALLY across candidates (uniform); no other test failed
+        unseeded selection heavily biased toward the front of the corpus
+PASS  R1.M1  with the new tests removed, M1 SURVIVES again at the pre-cycle baseline
+        80 pass / 0 fail (want 80 / 0 — the cycle-50 measured baseline)
+PASS  R1.M3  with the new tests removed, M3 SURVIVES again at the pre-cycle baseline
+        80 pass / 0 fail (want 80 / 0 — the cycle-50 measured baseline)
+PASS  R2  the skip pattern removes exactly the 2 tests added this cycle, and nothing else
+        pristine 82 pass -> filtered 80 pass / 0 fail (want a drop of exactly 2, to 80)
+PASS  D  a reversed but STILL-UNIFORM rewrite is NOT rejected
+        82 pass / 0 fail (want 82 / 0)
+        reversed but STILL UNIFORM — an honest rewrite that must not be rejected
+
+GATE 7/7
