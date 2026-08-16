@@ -8081,3 +8081,55 @@ allowance by real probe six consecutive cycles, pinning gear 1 all run), KI-2 (H
 unaudited attributions). All carried into REPORT.md's ranked human queue.
 
 **outcome:** WRAP_UP complete. Run ends at a finish line.
+
+### cycle 56 addendum — the close-out steps, recorded after the fact
+
+**dashboard (step 5):** final render via `runs/c56-dash.mjs`, based on `c55-dash.mjs` per
+the handoff (NOT c54/c53/c52, never `cycle47-dashboard.mjs` — KI-17). Then
+`runs/c56-dash-audit.mjs`, with every `mustMatch` regex updated to cycle 56 — an audit
+carried forward unedited would correctly fail, and correctly failing is not passing.
+
+**VERIFICATION EVIDENCE — post-render audit of the ARTIFACT, not the render script's own
+`ok` lines (KI-17):**
+```
+meta gen        live=1 inComment=0   2026-08-16T11:11:52+00:00
+meta next       live=1 inComment=0   "the run is over"
+meta notify     live=1 inComment=0   cycle 56, 0 pending
+banner          live=1 inComment=0   cycle 56 DONE RUN COMPLETE 91/91
+target node     live=1 inComment=1   DONE, cycle 56, tagged, pushed
+evidence strip  live=1 inComment=1   FINAL SUITE ... 91 pass 0 fail
+burnup strip    live=0 inComment=1   <- KI-18, recorded as a FAILURE, not fabricated
+timeline ticks  live=27 inComment=16
+AUDIT PASS
+```
+
+**commit + push (hard rule 1):** `6e0bf55` committed and pushed, `83b4a23..6e0bf55
+master -> master`. Tag `v0.1-overnight` already present from an earlier cycle; step 4
+satisfied without re-tagging.
+
+**wrap-up push (step 9):** SENT — `notify.log`: `11:12:59 send wrap-up ok`. The
+cwd-relative form from `/opt/swarm`, exactly as prediction S9 said it would work.
+
+**control channel archived (step 9):** `control.json` and `notify.log` both moved to
+`.1786878787` suffixes. The next run lazy-inits fresh.
+
+**WATCHDOG NOT DISARMED — reported as not-done, never as done (step 7).**
+`systemctl disable --now swarm-watchdog.timer` FAILED: *"Failed to disable unit:
+Interactive authentication required."* The timer is still `active` and `enabled`. This
+session has no polkit authorisation, so the disarm is a human's to run.
+Why this is safe rather than a live hazard, and the honest limit of that claim: BOTH
+guards key on `wrap_up_complete`, which is now `true` — `bin/swarm-pacer.sh:182` exits on
+it, and `bin/swarm-watchdog.sh:270` logs `run-complete` on it, with the REPORT.md-exists
+check at :279 as the independent safety net (REPORT.md exists in the only target). So a
+firing should decide DONE rather than relaunch. That is **code-verified, NOT
+execution-verified** — running the pacer to prove it was also not permitted in this
+session. The next scheduled firing writing `decision=run-complete` to `runs/pacer.log`
+would be the actual evidence; a human can read that line to confirm.
+For the human: `sudo systemctl disable --now swarm-watchdog.timer` (and
+`swarm-pacer.timer`) closes this properly.
+
+**caffeinate (step 8):** none — `caffeinate_pid` is 0. Linux/VPS; servers do not sleep and
+kickoff correctly never spawned one. Nothing to identity-check, nothing to kill.
+
+**`cycles_since_recycle` stays 25, unreset.** RECYCLE tripped and was deferred every cycle
+since; resetting it at WRAP_UP would erase that it was never actually run. Left visible.
