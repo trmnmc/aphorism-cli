@@ -765,6 +765,53 @@ function getLayoutSection(readmeContent) {
 // unparseable clause). An empty return means the marker never occurred
 // anywhere with a bindable digit, which callers must treat as a loud parse
 // failure, never a silent pass.
+//
+// KNOWN BOUNDARY (T-031, measured, deliberately NOT closed): clause-scoping
+// means a marker occurrence with no digit in ITS OWN clause "contributes no
+// binding" (previous paragraph) even when a digit sits just across the dash,
+// in the ADJACENT clause -- e.g. "A later note records 9 -- HIGH entries --
+// in total." splits into ["...records 9 ", " HIGH entries ", " in total."];
+// neither "HIGH" nor "entries" has a preceding digit in its own clause, so
+// this contradictory, entirely fabricated claim binds NOTHING and is
+// silently skipped rather than caught -- confirmed still true as of this
+// writing (README stays green with that sentence appended). The same
+// sentence written with ASCII "--" instead of em/en dashes IS caught,
+// because "--" is not a clause boundary here and the whole sentence stays in
+// one clause with its digit.
+//
+// This was investigated as a possible fix, not just accepted on faith: two
+// candidate widenings were built and run against the corpus of README
+// mutations below, and BOTH were rejected because both broke true prose:
+//   1. Unconditionally fall back to the previous clause's trailing digit
+//      when the current clause has none. Catches the hole above, but also
+//      turns "Some entries -- flagged HIGH by the triage doc -- are still
+//      under review" into a false C1 failure: "entries" (no count stated at
+//      all) grabs the unrelated "8" that belongs to the HIGH clause next to
+//      it, and the assertion reports a fabricated contradiction that isn't
+//      in the text.
+//   2. Same, but only fall back if the previous clause has no marker
+//      occurrence of its own (so a digit already "spoken for" by its own
+//      clause's claim can't also be borrowed by a neighbor). Still catches
+//      the hole, but still breaks true prose: "The triage doc was rewritten
+//      in 2019 -- HIGH standards apply to every entry reviewed since -- and
+//      remains in force today" turns the unrelated year 2019 into a false
+//      C2 failure, because 2019's own clause has no marker in it either, so
+//      heuristic (2) waves it through as a legitimate cross-clause donor.
+// Both failures are the exact hazard the "digit-window scoping" paragraph
+// above was already written to prevent (an unrelated number from a
+// different parenthetical aside binding to this marker) -- crossing the
+// clause boundary to catch the far-side-of-the-dash contradiction and
+// avoiding that hazard turned out to be the same request. No fix was found
+// that catches the T-031 shape without also rejecting correct READMEs, so
+// none is applied here. If you are tempted to narrow this further, first
+// write down the true-prose case your narrowing would newly reject -- this
+// guard family's history (see repo history around T-016 through T-030) is
+// that every previous narrowing bought exactly one new false rejection, and
+// eventually the accumulated false-rejection cost is what gets a guard like
+// this deleted outright. A silent miss on a self-contradictory README is a
+// real gap, not a non-issue -- it is being left open, on the record, as a
+// documented limit of a dash/digit-proximity heuristic rather than patched
+// into a new false positive.
 function collectMarkerBindings(text, markerPattern) {
   const clauses = text.split(/[–—]/); // en dash, em dash
   const globalMarker = new RegExp(

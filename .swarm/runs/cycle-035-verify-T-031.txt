@@ -1,0 +1,80 @@
+cycle 35 — VERIFICATION EVIDENCE — T-031, closed BOUNDARY (SPEC I-2)
+=====================================================================
+
+The claim under test is NOT "a fix works". The builder shipped no fix. The claim is:
+"no widening of collectMarkerBindings closes the dash-boundary silent hole without
+buying a new false rejection on TRUE prose." That claim is what the BOUNDARY verdict
+rests on, and a code review cannot settle it — every candidate fix LOOKS reasonable.
+
+So the gate rebuilt both candidate widenings from the SHIPPED helper and measured them.
+The builder's report of its own rejected work was not accepted as evidence.
+
+Harness: .swarm/runs/cycle-035-gate.js   Baseline: .swarm/runs/cycle-035-baseline.txt
+Arms: HEAD (committed) | WORK (shipped tree) | V1 (unconditional previous-clause digit
+fallback) | V2 (that fallback, gated on the previous clause holding no marker of its own)
+
+44 cells — 11 README mutations x 4 arms
+---------------------------------------
+
+cell  HEAD        WORK        V1          V2          what
+G0    GREEN 78/78 GREEN 78/78 GREEN 78/78 GREEN 78/78 pristine README (control)
+G1    GREEN 78/78 GREEN 78/78 RED 76/78   RED 76/78   T-031 THE SILENT HOLE
+G1b   RED 76/78   RED 76/78   RED 76/78   RED 76/78   discriminator: same sentence, ASCII "--"
+G2    RED 76/78   RED 76/78   RED 76/78   RED 76/78   T-032: TRUE prose, two markers
+G3    RED 77/78   RED 77/78   RED 77/78   RED 77/78   kill: single false HIGH count
+G4    RED 77/78   RED 77/78   RED 77/78   RED 77/78   kill: contradiction in a later dash clause
+G5    RED 76/78*  RED 76/78*  RED 76/78*  RED 76/78*  kill: no claim parses -- must fail LOUD
+N1    GREEN 78/78 GREEN 78/78 GREEN 78/78 GREEN 78/78 SEALED cell: "No HIGH entry has been settled."
+N2    GREEN 78/78 GREEN 78/78 GREEN 78/78 GREEN 78/78 SEALED cell: "Every entry is listed there."
+CA    GREEN 78/78 GREEN 78/78 RED 77/78   RED 77/78   builder case A: entries marker, no count
+CB    GREEN 78/78 GREEN 78/78 RED 77/78   RED 77/78   builder case B: unrelated year 2019
+
+(* = the "could not find a claim" LOUD parse-miss message was emitted)
+
+Automatic checks (the gate exits non-zero if any fails — a pass is not a matter of my eyesight)
+-----------------------------------------------------------------------------------------------
+PASS  WORK is behaviourally identical to HEAD on every cell (the comment-only claim)
+PASS  the silent hole G1 is REAL on HEAD and still open on WORK (GREEN both)
+PASS  V1 actually CLOSES the hole (G1 RED) -- the premise the BOUNDARY argues against
+PASS  V2 actually CLOSES the hole (G1 RED)
+PASS  V1 buys a NEW false rejection on true prose (CA or CB RED while GREEN on HEAD)
+PASS  V2 buys a NEW false rejection on true prose (CA or CB RED while GREEN on HEAD)
+PASS  no kill traded away: every cell RED on HEAD is still RED on WORK
+PASS  G5 parse-miss still fails LOUD on WORK
+
+GATE PASSES
+
+Full suite, run directly in the target, not in a harness copy
+-------------------------------------------------------------
+$ node --test test/args.test.js test/cli.test.js test/readme-tags.test.js test/select.test.js
+  ℹ tests 78   ℹ pass 78   ℹ fail 0
+
+What the grid actually proves, and what it does not
+---------------------------------------------------
+1. The BOUNDARY is EARNED. Both natural widenings close the hole and both break true
+   prose, measured from the shipped code rather than reported by the agent that
+   rejected them. The trade runs exactly the direction the cycle-25 standing finding
+   predicted. R2 of the seal — "a fix exists that closes G1 while leaving true prose
+   green" — did NOT trigger on either candidate.
+
+2. The comment-only claim is verified BEHAVIOURALLY, not by reading the diff: HEAD and
+   WORK agree on all 11 cells. A functional change hiding in a comment block would
+   have shown up here.
+
+3. THE HOLE IS STILL OPEN. This gate does not close T-031's defect; it closes the
+   QUESTION of whether to keep narrowing. A self-contradicting README still passes
+   green when the digit sits across a dash from its marker. Tracked as KI-10, open,
+   with the measurement attached. An item closed is not a defect fixed, and this file
+   exists partly so that distinction cannot be lost later.
+
+4. THE CONDUCTOR'S SEAL WAS PARTLY WRONG, and the grid is what showed it. The seal
+   (/opt/swarm/runs/cycle-035-precommit.md, sha256 83faa408…70a8) predicted the builder
+   would ship the fallback — it did not; it built both candidates, measured the cost,
+   and reversed. That is seal condition R1, triggered. Worse for the seal: the two
+   false-rejection cells it NAMED, N1 and N2, are GREEN on all four arms and demonstrate
+   nothing. N1 borrows the digit 8, which happens to equal the truth, so no mismatch is
+   reported; N2 says "entry", which the /\bentries\b/ marker never matches. The seal was
+   right about the DIRECTION of the cost and wrong in every cell it wrote down. The cost
+   argument stands on the builder's cases A and B, which are better constructed than the
+   conductor's. Recorded because a seal that is only ever reported as vindicated is not
+   being read honestly.

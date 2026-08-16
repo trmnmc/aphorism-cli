@@ -4657,3 +4657,180 @@ Step-8 notifications: none due — phase unchanged (POLISH), no target became st
 `publish_failures` stayed 0. Artifact publish skipped silently: no Artifact tool in a headless VPS
 session, which cycle.md states is not a publish failure. The local `runs/dashboard.html` write IS
 the publication here.
+
+## cycle 35 — 2026-08-16T00:11:46Z — T-031 closed BOUNDARY on a 44-cell gate; a lost cycle-34 finding recovered at hygiene [1 verified]
+
+**gear 1** (guest, dial 0.3, k_cap 1). `swarm-budget.sh` REFUSED for the THIRTY-FOURTH consecutive
+cycle (KI-5), attempted in both path forms per the standing rule. **This cycle CORRECTS cycles 33
+and 34 on the mechanism.** Both concluded the reachable/unreachable split is per-SCRIPT and not
+per-path-form. That reading came from a sample that only ever exercised `swarm-notify.sh` in its
+working form. Measured here: the ABSOLUTE form `/opt/swarm/bin/swarm-notify.sh poll` was REFUSED;
+the RELATIVE form `bin/swarm-notify.sh poll` with cwd `/opt/swarm` ran clean. So path form matters
+too — notify is reachable in exactly one form, budget in neither. Gear re-derived by hand from
+`runs/allocator.json` (`source=probe`): weekly_used_pct 90.0 (flat), week_elapsed_pct 82.67,
+opus_used_pct 97 (flat, ninth cycle). weekly_heat 90/82.67 = **1.0887** < 1.1 → governor
+disengaged; the margin WIDENED back (1.0918 → 1.0887), reversing cycle 34's narrowing, because the
+clock moved this interval and usage did not. opus_heat 1.1733 → `promote_blocked` false and inert.
+Week resets 1786942799, after `stop_at` 1786879464: gear 1 is structurally fixed for the rest of
+the run. Tree clean at orient. Control channel: `pending[]`, `applied[]` empty, no `inject` array.
+Craft pack clean, `degraded: []`; `craft.ui` not applicable to a Node CLI.
+
+### step 3 — the mandatory 5th-cycle hygiene pass earned its keep
+
+Cycle 35 is a multiple of 5, so the full SPEC re-read + backlog hygiene ran. It found that
+**cycle 34's second finding does not exist on the board.** Cycle 34's gate produced two findings.
+T-031 was written to `backlog.json` correctly. The other was journaled at length as "T-030 (p5,
+LOUD)" and **never written to the backlog at all** — the id `T-030` was already taken by an
+unrelated item filed and dropped at cycle 33. Cycle 34 read a taken id as free. Consequences: the
+finding survived only as journal prose, nothing on the board pointed at it, and T-031's own
+"COUPLED WITH T-030" cross-reference — which cycle 34's handoff called load-bearing — pointed at a
+dropped item with an unrelated title.
+
+Refiled as **T-032** (p5) with the full mechanism, and T-031's cross-reference repaired. Then the
+whole board was swept for the same defect: every item id mentioned in journal cycles 31–34 was
+checked against `backlog.json`, and all 46 ids are now unique. This was the only loss.
+
+Worth naming plainly: **the failure class is the run's own.** A finding that silently does not
+exist, filed by the cycle that spent itself removing silent failure from the product's guards, in
+the orchestrator's own bookkeeping layer. The 5th-cycle hygiene pass is the control that exists for
+exactly this, and it is the second time in three cycles that a scheduled check has caught a
+conductor error rather than an agent's.
+
+### the pick
+
+`consecutive_no_value` is 0, so no forced switch binds. **T-031** (p3) is the board's highest-value
+item and the reason is one word: it is the only **SILENT** hole. Its siblings (T-032 p5, T-024b p6,
+T-027 p7, T-026 p4) all fail LOUD — they reject a correct README, which is irritating and safe.
+S-effort, so admissible under gear 1's "S-effort sonnet builds only".
+
+### baseline before dispatch, with a real discriminator
+
+`.swarm/runs/cycle-035-baseline.txt`, run before any agent existed. Every cell matched
+expectation — including a discriminator that turns the mechanism from a hypothesis into a
+measurement:
+
+```
+B0  GREEN 78/78  pristine control
+B1  GREEN 78/78  the filed silent hole, reproduced: "...records 9 — HIGH entries — in total."
+B1b RED   76/78  DISCRIMINATOR: the identical sentence with ASCII "--" IS caught
+B2  RED   76/78  T-032's cell, re-measured live rather than inherited from cycle 34
+B3  RED   77/78  existing kill, single false HIGH count
+B4  RED   77/78  cycle-34 cell G1, contradiction in a later dash clause
+```
+
+B1b is the point: it varies ONE thing — the dash character — and flips the verdict, so the
+clause split is provably the mechanism and not a plausible story about one.
+
+An honest note on the harness: the first baseline run reported the CONTROL as RED, which is what a
+control is for. Two harness bugs, both mine, neither in the product: `execFileSync` does not expand
+the `test/*.test.js` glob in `test_cmd`, and node's summary lines are `ℹ pass N`, not TAP `# pass N`.
+Fixed and re-run before anything was dispatched. A gate whose control fails is a broken gate, and it
+would have reported six false REDs as findings.
+
+### the seal, and where it was writable
+
+Predictions sealed before dispatch to `/opt/swarm/runs/cycle-035-precommit.md`
+(sha256 `83faa408…70a8`). **A correction to cycle 34's self-criticism:** cycle 34 called its
+in-target seal "a regression from cycle 33's practice" of sealing to `/home/swarm/.swarm-seal/`.
+Measured this cycle — that path is outside this session's allowed working directories; both a write
+and an `ls` are refused by the harness. The cycle-33 practice is **not reproducible** under the
+current permission scope, so cycle 34 described as sloppiness something the sandbox had already
+decided. This seal sits on the orchestrator side instead, which is better than in-target but is
+still not confidentiality (KI-8: subagents can read `/opt/swarm`). Stated, not papered over.
+
+### VERIFICATION EVIDENCE — 44 cells, 4 arms
+
+The builder returned **BOUNDARY**: no fix, a 47-line documented limit at the helper, and a report
+that both candidate widenings it had built broke true prose. That report is precisely what a gate
+must not accept — the entire verdict rests on "no fix exists without a worse cost", and every
+candidate fix *looks* reasonable in review. So the gate **rebuilt both candidates from the shipped
+helper** and measured them. Harness `.swarm/runs/cycle-035-gate.js`, write-up
+`.swarm/runs/cycle-035-verify-T-031.txt`. Arms: HEAD, WORK (as shipped), V1 (unconditional
+previous-clause digit fallback), V2 (that fallback gated on the previous clause holding no marker
+of its own).
+
+```
+cell  HEAD        WORK        V1          V2          what
+G0    GREEN 78/78 GREEN 78/78 GREEN 78/78 GREEN 78/78 pristine control
+G1    GREEN 78/78 GREEN 78/78 RED 76/78   RED 76/78   THE SILENT HOLE
+G2    RED 76/78   RED 76/78   RED 76/78   RED 76/78   T-032's false rejection
+G3/G4 RED 77/78   RED 77/78   RED 77/78   RED 77/78   existing kills
+G5    RED 76/78*  RED 76/78*  RED 76/78*  RED 76/78*  parse miss still fails LOUD
+N1    GREEN 78/78 GREEN 78/78 GREEN 78/78 GREEN 78/78 SEALED cell — proves nothing (below)
+N2    GREEN 78/78 GREEN 78/78 GREEN 78/78 GREEN 78/78 SEALED cell — proves nothing (below)
+CA    GREEN 78/78 GREEN 78/78 RED 77/78   RED 77/78   TRUE prose: marker, no count stated
+CB    GREEN 78/78 GREEN 78/78 RED 77/78   RED 77/78   TRUE prose: unrelated year 2019
+
+PASS  WORK is behaviourally identical to HEAD on every cell (the comment-only claim)
+PASS  V1 CLOSES the hole (G1 RED)        PASS  V2 CLOSES the hole (G1 RED)
+PASS  V1 buys a NEW false rejection on true prose   PASS  V2 does too
+PASS  no kill traded away: every cell RED on HEAD is still RED on WORK
+PASS  G5 parse-miss still fails LOUD on WORK
+GATE PASSES
+
+$ node --test test/args.test.js test/cli.test.js test/readme-tags.test.js test/select.test.js
+  ℹ tests 78   ℹ pass 78   ℹ fail 0     <- run in the target, not in a harness copy
+```
+
+**The BOUNDARY is earned, not conceded.** Both natural widenings close the hole AND both break true
+prose, measured from the shipped code rather than reported by the agent that rejected them. Seal
+condition R2 — "a fix exists that closes G1 while leaving true prose green" — did not trigger on
+either. The comment-only claim is verified BEHAVIOURALLY (HEAD ≡ WORK on all 11 cells), so a
+functional change hiding in a comment block would have surfaced here.
+
+### the seal was partly WRONG, and the grid is what showed it
+
+Seal condition **R1 TRIGGERED**: P1 predicted the builder would ship the fallback. It did not — it
+built both candidates, measured the cost, and reversed its own direction. That is the better
+outcome and it arrived without me.
+
+Worse for the seal, and the part that matters: the two false-rejection cells the seal NAMED, **N1
+and N2, are GREEN on all four arms and demonstrate nothing.** N1 ("No HIGH entry has been settled.")
+borrows the digit 8, which happens to equal the truth, so no mismatch is ever reported. N2 ("Every
+entry is listed there.") says *entry*, which the `/\bentries\b/` marker never matches. The seal was
+right about the DIRECTION of the cost and wrong in every cell it wrote down; the cost argument
+stands on the builder's cases A and B, which are better constructed than the conductor's. Recorded
+because a seal only ever reported as vindicated is not being read honestly — and because the cells
+were sealed BEFORE dispatch precisely so this could not be quietly dropped.
+
+P3 held (G2 unchanged at RED 76/78 fail=2 on all four arms). P4 held (G3, G4 stay RED).
+
+### what closed, and what did NOT
+
+**T-031 → done, resolution BOUNDARY.** The ITEM is closed; **the HOLE IS STILL OPEN**, now tracked
+as **KI-10** (medium, "open by decision, not by neglect") with the full measurement attached. A
+self-contradicting README still passes green when the digit sits across a dash from its marker.
+SPEC I-2 provides for exactly this — a BOUNDARY survivor is documented, never "hardened" — but an
+item closed is not a defect fixed, and that distinction is written into the backlog entry, the
+known issue, and the evidence file so it cannot be lost by a later reader scanning outcomes.
+
+**KI-9 amended, not rewritten.** Its claim that these guards "fail LOUD on wordings they cannot
+parse, which is the safe direction" was accurate for everything examined through cycle 34 and is
+not accurate in general. The original text is left standing with the correction in front of it.
+
+The real remedy for this whole family remains KI-9 option (2): give the two counts real structure
+in the README so the guard stops reading English. That retires KI-10, KI-9, T-032 and the rest
+together, it is a README change (out of the builder file scope used all run), and it is a human's
+call.
+
+### housekeeping
+
+Scope held: only `test/readme-tags.test.js` modified; README, `src/`, `bin/`, `docs/` untouched.
+KI-7 scratch control PASSES again (second consecutive cycle) — the builder removed its own scratch
+directory. collision-scan (step 6.6) NOT APPLICABLE — Node CLI, no browser surface; reported as
+not-run, never as passed. Wave autotune NOT applied on this run's own cycle-33 precedent (the
+shipped diff is 47 lines of comment and zero lines of logic, so the wave measured nothing about
+parallel code capacity); `k_current` 4, `wave_streak` 1, inert at gear cap 1.
+
+### handoff
+
+Backlog: 9 todo, 32 done, 2 blocked, 4 dropped. **T-032 (p5) is now the sharpest open member of
+this family** and it is the one filed this cycle. The board no longer has a silent hole tracked as
+an ITEM — the remaining silent miss is KI-10 and it is open by decision. Anyone taking T-032 should
+read KI-10's remedy first: two cycles have now measured that narrowing this helper trades one
+failure for another, and the third narrowing is unlikely to be different. `I-6` (REPORT.md refresh)
+remains the conductor-owned WRAP_UP item.
+
+```runfile-mirror
+{"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":9,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","promote":false,"demote":true,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":90,"opus_used_pct":97,"week_elapsed_pct":82.67,"weekly_heat":1.0887,"opus_heat":1.1733,"ceiling":5,"promote_blocked":false}},"watchdog":{"mode":"normal","plist_loaded":true},"caffeinate_pid":0,"wrap_up_complete":false}
+```

@@ -3,7 +3,7 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
   "phase": "POLISH",
-  "cycle": 34,
+  "cycle": 35,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -420,13 +420,29 @@
       "severity": "medium",
       "cycle_found": 32,
       "status": "open",
-      "why_it_matters": "These guards are the only thing standing between the README and a silently false claim about the corpus. They currently work on the shipped text and fail LOUD on wordings they cannot parse, which is the safe direction -- nothing is broken for a user today. The risk is the one cycle 25 identified and this issue now quantifies: a maintainer who reformats the Attribution paragraph in a perfectly reasonable way gets a red suite, and the cheapest escape from a false rejection is DELETING the guard, which would take C1 and C2 with it. Twice-measured evidence that no prose-reading rule fixes this is the input a human needs, and it is a judgment call a swarm should not make alone.",
+      "why_it_matters": "AMENDED AT CYCLE 35: the clause below that these guards \"fail LOUD on wordings they cannot parse, which is the safe direction\" is NO LONGER COMPLETE, and it is left standing with this correction rather than quietly rewritten. Cycle 35 measured a wording they fail SILENT on -- a contradictory count whose digit sits across a dash from its marker binds nothing and is skipped, so a self-contradicting README passes green (KI-10). The loud-only framing held for every case examined through cycle 34; it does not hold in general. Original text follows. These guards are the only thing standing between the README and a silently false claim about the corpus. They currently work on the shipped text and fail LOUD on wordings they cannot parse, which is the safe direction -- nothing is broken for a user today. The risk is the one cycle 25 identified and this issue now quantifies: a maintainer who reformats the Attribution paragraph in a perfectly reasonable way gets a red suite, and the cheapest escape from a false rejection is DELETING the guard, which would take C1 and C2 with it. Twice-measured evidence that no prose-reading rule fixes this is the input a human needs, and it is a judgment call a swarm should not make alone.",
       "remedy": "NOT another attempt at the same shape -- that is what the attempts cap is for, and the second attempt confirmed rather than contradicted the first. The choice is a human one, between three options this run can lay out but should not pick: (1) ACCEPT AND DOCUMENT -- state at the extraction site that the guard reads the shipped wording and fails loud on rewordings, and that the correct response to a red C1/C2 is to check the numbers and then adjust the template, never to delete the assertion. Cheapest, honest, and consistent with SPEC I-2, which explicitly allows a BOUNDARY survivor to be documented rather than hardened. (2) CHANGE THE DOCUMENT, NOT THE PARSER -- put the two counts somewhere with real structure the guard can read (a small table, or a fenced key: value block in the Attribution section), which removes the English sentence from the loop entirely. This is the only option that actually satisfies T-024's stated remedy, and it is a README change, which is out of the builder file scope this run has used throughout. (3) DROP C1/C2 and rely on the triage document alone. Option 2 is the conductor's lean and it is recorded as a lean, not a decision; it is also the only one of the three that would make T-029 disappear as a side effect.",
       "related": [
         "T-024",
         "T-024a",
         "T-029",
-        "KI-8"
+        "KI-8",
+        "KI-10"
+      ]
+    },
+    {
+      "id": "KI-10",
+      "desc": "SILENT MISS, LEFT OPEN BY A MEASURED DECISION. The README Attribution guards (C1 corpus size, C2 HIGH-risk count) bind a count to its marker only within the marker's own dash-delimited clause. A contradictory count whose DIGIT sits across an em/en dash from its MARKER therefore binds nothing at all, and an occurrence that binds nothing is skipped rather than counted as unparseable -- so a self-contradicting README passes GREEN. Reproduced at cycle 35: appending \"A later audit note records 9 (em dash) HIGH entries (em dash) in total.\" to the Attribution section leaves the suite at 78/78 while the true HIGH count is 8. Written with ASCII \"--\" instead, the identical contradiction IS caught -- the dash clause split is provably the mechanism, not a guess.",
+      "severity": "medium",
+      "cycle_found": 34,
+      "status": "open by decision, not by neglect",
+      "why_it_matters": "This is the one failure DIRECTION this improvement run was chartered to remove. Every other open member of this guard family fails LOUD -- it rejects a correct README, which is irritating and safe. This one lets a README that contradicts itself in plain sight pass green, which is worse than having no guard, because a green suite is read as a claim that the numbers were checked. It also corrects KI-9's \"fails loud, which is the safe direction\" framing, which was accurate for everything examined up to cycle 34 and is not accurate in general.",
+      "remedy": "NOT another narrowing of collectMarkerBindings. That was measured at cycle 35 and the measurement is the reason this issue exists rather than a fix: a 44-cell gate (11 README mutations x 4 arms) rebuilt BOTH natural widenings from the shipped helper -- V1, an unconditional fallback to the previous clause's trailing digit, and V2, that fallback gated on the previous clause holding no marker of its own. BOTH close this hole (cell G1 RED) and BOTH buy a NEW false rejection on entirely TRUE prose (cells CA and CB RED, GREEN on HEAD): a sentence naming a marker with no count at all borrows the neighbouring clause's digit, and an unrelated year does the same. Crossing the clause boundary to catch this shape and avoiding the unrelated-number hazard are the same request. The real fix is KI-9 remedy option (2): give the two counts real structure in the README (a small table or a fenced key: value block) so the guard stops reading English. That is a README change, out of the builder file scope used throughout this run, and it would retire this issue, KI-9, T-032 and the rest of the family together. A human should make that call. Evidence: .swarm/runs/cycle-035-verify-T-031.txt, harness .swarm/runs/cycle-035-gate.js, boundary documented in a 47-line comment at the helper in test/readme-tags.test.js.",
+      "related": [
+        "T-031",
+        "T-032",
+        "KI-9",
+        "T-024"
       ]
     }
   ],
@@ -448,12 +464,14 @@
     "churn_note_cycle_33": "consecutive_no_value 2 -> 0. ONE item landed (T-028, closed STAY-RED on two independent measured refutations of two different candidate fixes). T-026 did NOT land -- the conductor's BOUNDARY verdict was refuted and the item was reopened as a HOLE with the fix recorded. Reset rather than incremented because one item did reach done on a complete, acceptance-satisfying, twice-measured outcome, and the forced work-type switch produced exactly what it exists to produce: it broke a three-cycle run of dispatching builders at one file and it caught a conductor error that a fourth such cycle would have committed. Recorded with the caveat that the honest headline of this cycle is a conductor error found, not two items closed.",
     "autotune_note_cycle_33": "Wave autotune NOT applied; k_current stays 4, wave_streak stays 0. Cycle 8 set the rule that autotune keys on the ITEM KIND rather than the dispatch mechanism, and cycle 19 applied it to decline autotune on a kind:qa measurement item that changed no product or test logic. This cycle is that same shape and more so: no agent wrote code at all, and the only tracked-file change is a comment block. Inert either way -- effective wave size = min(k_current 4, gear cap 1) = 1, and gear 1 is structurally fixed because the weekly window resets at 1786942799, after stop_at 1786879464.",
     "autotune_note_cycle_34": "CLEAN branch: zero reverts, zero failed verifies -- T-029 passed its gate outright. Autotune APPLIES (cycle-9 rule: it keys on the ITEM KIND, not the dispatch mechanism, and kind:\"fix\" on a test file is build-class code dispatched through the documented headless substitute for build-wave). wave_streak 0 -> 1; k_current stays 4 because the raise happens at a streak of 2. INERT this run either way: effective wave size = min(k_current 4, gear cap 1) = 1, and gear 1 is structurally fixed because the weekly window resets at 1786942799, after stop_at 1786879464. Carried for a future run on a healthier window.",
+    "autotune_note_cycle_35": "Wave autotune NOT applied; k_current stays 4, wave_streak stays 1. The wave was clean by the letter (zero reverts, zero failed verifies, the item closed at its gate), which would move the streak to 2 and raise k_current to 5. Declined on this run's OWN cycle-33 precedent, which is the closer match: autotune keys on the item KIND, and cycle 33 declined a raise for an item whose only tracked-file change was a comment block, on the ground that no agent wrote executable code and the wave therefore measured nothing about how much parallel CODE this target can absorb. Cycle 35 is exactly that shape -- the shipped diff is 47 lines of comment and zero lines of logic. Raising k on it would record a capacity learning the run never observed. INERT either way: effective wave size = min(k_current 4, gear cap 1) = 1, and gear 1 is structurally fixed because the weekly window resets at 1786942799, after stop_at 1786879464.",
+    "churn_note_cycle_35": "consecutive_no_value stays 0. THIRD consecutive verified-value cycle. Recorded with the caveat that belongs on it: the item closed BOUNDARY, so the defect it names is still open (KI-10). What was verified is the DECISION -- 44 cells proving both candidate fixes close the hole and both break true prose -- not a repair. The counter measures items landed and this item did land on a complete, acceptance-satisfying outcome that SPEC I-2 explicitly provides for; but a reader scanning only the counter would infer a fix that does not exist, so the caveat travels with it.",
     "churn_note_cycle_34": "consecutive_no_value stays 0. T-029 reached done on a 26-cell, 4-arm gate with every acceptance clause proven twice and non-positionally. Second consecutive verified-value cycle after the cycle-31/32 pair of no-value cycles."
   },
   "last_cycle": {
-    "cycle": 34,
-    "work": "T-029 (silent hole in the Attribution count extraction)",
-    "outcome": "1 verified",
-    "commit": "099fe9f"
+    "cycle": 35,
+    "work": "T-031 (dash-boundary SILENT hole) closed BOUNDARY + step-3 hygiene repaired a lost cycle-34 finding (T-032)",
+    "outcome": "1 verified (a DECISION, not a repair -- the hole stays open as KI-10)",
+    "commit": "pending"
   }
 }
