@@ -5390,3 +5390,27 @@ measures nothing about code capacity). `consecutive_no_value` stays 0.
 ```runfile-mirror
 {"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":13,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","posture":"halted","promote":false,"demote":true,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":93.0,"opus_used_pct":97,"week_elapsed_pct":83.67,"weekly_heat":1.1115,"opus_heat":1.1593,"ceiling":3,"promote_blocked":false}},"watchdog":{"mode":"normal","plist_loaded":true},"caffeinate_pid":0,"wrap_up_complete":false}
 ```
+
+### addendum — steps 8 and 9
+
+**Render clean.** 9 substitutions, **0 no-ops**, 0 containment breaches, 0 comment breaches. The
+KI-11 anchor-uniqueness check (carried forward verbatim from the cycle-38 repair) reported
+`1 total, 1 live, 0 inside comment regions` — this cycle's anchor was not one of the leaked ones,
+so it spliced cleanly at its single live site. 26 timeline ticks. `data-expected` parses and matches
+`next_wakeup_at`, so no dead staleness banner. Artifact publish skipped silently — no Artifact tool
+in a headless VPS session, which is not a publish failure; `publish_failures` stays 0. Phase
+unchanged (POLISH), no stall, so no phase-change or stall push was due.
+
+**Wakeup: 1800s, and the reason is the allocator, not the churn breaker.** This was a
+verified-value cycle, so the 900–1800s no-value band does not apply on its own terms — cycle.md's
+nominal band here is 90s. It was overridden deliberately, and the override is recorded rather than
+disguised: **zero agents does not mean zero burn.** With no subagents dispatched, the conductor
+session *is* the cost. At 90s the remaining ~9.8 h is roughly **390 more conductor wakeups** against
+an allowance the allocator has already declared spent; at 1800s it is about **20**. cycle.md defines
+no halted band — that gap is KI-13 — so the value was chosen inside the range the skill already uses
+rather than invented, and this cycle is **not** relabelled as no-value to justify the number. Gears
+never touch the wakeup delay; this is not a gear. Clamp satisfied: 1786846443 + 900 ≤ stop_at
+1786879464.
+
+ScheduleWakeup not called — on the VPS `bin/swarm-pacer.sh` reads `next_wakeup_at` every 5 min and
+spawns the cycle, so the field is the schedule.
