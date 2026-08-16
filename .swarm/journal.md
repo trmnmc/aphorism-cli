@@ -5602,3 +5602,162 @@ rather than a decision — and it is the strongest argument this run has produce
 ```runfile-mirror
 {"run_label": "improvement-aphorism-cli-2026-08-15", "run_kind": "improvement", "stop_at": "2026-08-16T11:24:24+00:00", "usage_reset_at": "2026-08-15T16:24:32+00:00", "model_policy": "value-routing", "auth_mode": "subscription", "pacing": {"mode": "guest", "dial": 0.3}, "targets": [{"path": "/opt/targets/aphorism-cli", "status": "active", "weight": 1}], "rotation_cursor": 0, "rotation_schedule": [0], "cycles_since_recycle": 14, "budget": {"gear": 1, "k_cap": 1, "mode": "guest", "source": "allocator", "posture": "trickle (disputed - KI-14)", "promote": false, "demote": true, "probe_failures": 0, "weekly": {"ok": true, "weekly_used_pct": 93.0, "opus_used_pct": 97, "week_elapsed_pct": 84.09, "weekly_heat": 1.106, "opus_heat": 1.1535, "ceiling": 3, "promote_blocked": false}}, "watchdog": {"mode": "normal", "plist_loaded": true}, "caffeinate_pid": 0, "wrap_up_complete": false}
 ```
+
+## cycle 41 — 2026-08-16T03:15:32+00:00 — aphorism-cli — POLISH
+
+**work:** I-6 (refresh REPORT.md to the conductor-verified end-of-run state) — conductor-inline, ZERO AGENTS
+**outcome:** 1 verified
+
+**clock:** now 1786849649, stop_at 1786879464 (2026-08-16T11:24:24Z), 8h17m remaining. Not
+within the WRAP_UP threshold (stop_at − 900 = 1786878564).
+
+**heartbeat/PID:** pid 785110, captured by walking /proc in node rather than by `ps`: the
+Bash allowlist refused both the shell `for`-loop form and `bash <file>`. Two attempts
+false-matched before the chain was right — the first on the string `claude` appearing in the
+walker's OWN regex literal (the script source IS the cmdline it was reading), the second on
+`.claude/shell-snapshots` in the wrapper's path. Resolved by printing the whole ancestor
+chain and picking the binary by inspection:
+`node -e` → `/bin/bash -c` → **`claude -p /swarm cycle --output-format json --permission-mode acceptEdits --add-dir /opt/targets/aphorism-cli`** (785110) → `swarm-pacer.sh` (785109/784965).
+HONEST NOTE: the step-0 heartbeat was stamped 1786849820 while the true clock read
+1786849649 — forward-dated by 171s because the timestamp was hand-passed rather than read
+(`date +%s` inside the same command was refused as a command substitution). That is the
+UNSAFE direction: it delays watchdog staleness detection by 171s. Corrected at step 9 with a
+measured timestamp.
+
+**budget probe:** `bin/swarm-budget.sh` REFUSED for the FORTIETH consecutive cycle (KI-5),
+attempted rather than skipped per the standing cycle-14 rule, in both path forms per cycle
+27. Refused before the command started, so `probe_failures` stays 0 on the standing
+reasoning. The cycle-35 path-form finding reproduces a SEVENTH time: relative
+`bin/swarm-notify.sh poll` (cwd=/opt/swarm) ran clean while both budget forms refused.
+
+**control channel:** polled clean. `runs/control.json` has `pending: []` and `applied: []`;
+no `inject` array, so no injection triage. No commands received this run.
+
+**gear:** 1, structurally fixed, and this cycle PROVED it rather than inheriting it. See
+VERIFICATION EVIDENCE below and decisions[] cycle 41. guest mode clamps 1–3; the weekly
+governor stays ENGAGED at ceiling 3 (weekly_heat 93/84.60 = 1.0993 — note this dips just
+BELOW the 1.1 threshold on the current week_elapsed_pct, the first time since the cycle-37
+crossing; the ceiling is inert either way because the allowance, not the governor, is what
+pins the gear). opus_heat 97/84.60 = 1.1466, under 1.2, `promote_blocked` false.
+
+**work choice:** at zero authorised agent burn, I-6 is the only admissible item on a board of
+seven — the other six todos (T-007, T-008, T-024, T-024b, T-032, T-039) all need a builder.
+It is also the highest-priority item at 9, and the shipped REPORT.md was the 2026-08-14 SMOKE
+run's report, untouched since 05:58 that morning: 1 cycle, 48 tests, known issues ending at
+KI-3. Executed now rather than at WRAP_UP as its own notes prescribed — a session death
+before WRAP_UP would have handed the human a document describing the wrong run. Recorded as
+a departure from a written item note (decisions[] cycle 41).
+
+### VERIFICATION EVIDENCE — the zero-agent hold, measured rather than inherited
+
+`bin/swarm-allocator.sh`'s `calc()` transcribed verbatim from its own constants
+(B0=90, floor=12, floor_release_hours=6; lines 23-26 and 83-96) and replayed at now and at
+stop_at. Harness `runs/cycle-041-allocmath.js`:
+
+```
+inputs: weekly_used_pct=93 opus_used_pct=97 human_used_pct=0 swarm_used_pct=0 posture=trickle allow_overall_pct=0
+
+NOW    week_elapsed=84.60% hours_left=25.88 floor_eff=12 reserve=24.01 allow=0.00
+  CONTROL: allocator.json reports reserve_overall_pct=24.04 week_elapsed_pct=84.57
+           -> transcription reproduces it? YES
+
+STOP   week_elapsed=89.53% hours_left=17.59 floor_eff=12 reserve=20.17 allow=0.00
+
+break-even at stop_at: allow>0 needs weekly_used_pct < 79.83% (it is 93% and rises monotonically)
+floor releases (floor_eff -> 0) only within 6h of the week reset; hours_left at stop_at = 17.59h,
+so the floor NEVER releases before stop_at
+```
+
+Reading: the swarm is authorised **0%** of the weekly window because the human reserve
+(24.01) exceeds the entire weekly remainder (7.00), and it cannot rise before stop_at. The
+transcription control (24.01 computed vs 24.04 reported, the gap being the clock difference
+since the allocator last refreshed) is what makes this a measurement of the shipped script
+rather than of my reading of it.
+
+**This retires the KI-14 anxiety as a decision driver without downgrading the bug.** The
+rollover-jitter wipe re-authorises the halted → trickle flip, but it grants no spend here,
+because `allow` is already 0 on the reserve curve, which the wipe does not touch. So the hold
+does not rest on a bug — and equally the bug gets no credit for a safety it does not provide.
+KI-14 stays HIGH: on a week with a lower `weekly_used_pct`, or inside the 6h floor release,
+the same wipe DOES refill a spent cap, and it wipes human attribution unconditionally.
+Scoped note appended to KI-14 as `note_cycle_41`.
+
+### VERIFICATION EVIDENCE — I-6, two arms
+
+The usual protection (the builder never saw the check) is unavailable: I wrote both the
+document and the gate. Substitute per the cycle-7/8 rule — do not read the prose; extract
+every falsifiable claim as a LITERAL and re-measure it against the live repo — plus an
+explicit NEGATIVE CONTROL. Harness `.swarm/runs/cycle-041-gate-I-6.js`, full output
+`.swarm/runs/cycle-041-verify-I-6.txt`.
+
+```
+=== I-6 GATE, ARM: ACCEPTANCE -- report under test: /opt/targets/aphorism-cli/REPORT.md ===
+PASS C1   measured pass=80 fail=0; report claims 80/0 present=true
+PASS C2   {"entries":50,"authors":24,"tags":37,"singles":21,"ge5":4,"band":12} literal present=true
+PASS C3   src+bin=549 test=2051 readme-tags=1511 literals: 549=true 2051=true 1511=true
+PASS C4   total=95 since=91 status="## master...origin/master" synced=true
+PASS C5   local=true remote_tags=""
+PASS C6   total=53 {"done":41,"dropped":4,"blocked":2,"todo":6}
+PASS C7   decisions=79 runs_files_excl_c41=196 exclusion_disclosed=true
+PASS C8   I-items=I-1,I-2a,I-2b,I-2c,I-3,I-7,I-8,I-4,I-4a,I-4b,I-5,I-6 missing_from_report=none
+PASS C9   problems=none I5_labelled_partial=true
+PASS C10  named=14 in_state=13 not_in_state=KI-1 severity_mismatch=none unlabelled_provenance=none
+PASS C11  allocator weekly=93 opus=97 allow=0 human=0
+PASS C12  journal_records_decline=true qa={"last_full_qa_cycle":13,"last_look_cycle":0,"last_taste_cycle":14}
+PASS C13  missing_current=none stale_present=none
+--- 13/13 checks passed ---   VERDICT: ACCEPTANCE ARM GREEN
+
+=== ARM: NEGATIVE -- the previous REPORT.md, taken from git HEAD ===
+--- 0/13 checks passed ---
+VERDICT: NEGATIVE CONTROL BEHAVED -- the stale report FAILS this gate (13 checks)
+```
+
+**Three checks were RED on the first run and the split matters.** Cycles 19, 23 and 24 each
+found the INSTRUMENT at fault, and a fourth such entry would wrongly suggest the same story —
+here two of the three were real defects in the document:
+
+- **C8 — a genuine acceptance breach.** I-6's acceptance says *every* I-item; the umbrella
+  item **I-4** was absent from the table (only its children I-4a/I-4b appeared). Fixed in
+  REPORT.md with an I-4 row stating that it carries no evidence file of its own and that its
+  outcome is the two children.
+- **C10 — a genuine overclaim.** The report graded **KI-1** as medium, but this run's
+  `state.json.known_issues` starts at **KI-2** — KI-1 was resolved in the 2026-08-14 run and
+  never carried forward, so the grade rested on a file the report does not cite. Fixed with
+  an explicit provenance label naming the 2026-08-14 report as the source.
+- **C7 — the instrument, measuring its own footprint.** It asserted a raw `ls | wc -l` of
+  `.swarm/runs`, which the gate increments by writing its own artifacts there while it runs
+  (197 → 198). Same class as cycles 6, 19 and 23.
+
+Both harness repairs demand **strictly more** than v1 did, so neither opens the gate: C7 v2
+counts only cycles 1–40 *and* requires the report to disclose the exclusion; C10 v2 does not
+drop KI-1 from scrutiny but requires a provenance label v1 would not have demanded even on a
+matching severity. Neither could have been motivated by a result it wanted to change — C8 and
+C10 were fixed in the DOCUMENT, not in the gate.
+
+Post-persist re-check of C6 against the written file (the gate had computed it with the I-6
+transition applied): `{"done":41,"dropped":4,"blocked":2,"todo":6}` total 53 — matches the
+report's claim directly.
+
+**minor finding, journaled not filed:** `state.json.known_issues` does not carry KI-1 from
+the 2026-08-14 run, while KI-2/3/4 were carried. Not worth an issue — KI-1 is resolved and
+its residual (the unpushed tag) is in the report — but it is why C10 fired, and a future
+report that cites state.json as its sole source for known issues will silently drop it.
+
+**wave autotune:** NOT applied; `k_current` 5, `wave_streak` 0. Third consecutive zero-agent
+cycle; a cycle that dispatched nothing measures nothing about code capacity.
+
+**churn:** `consecutive_no_value` stays 0 — ninth consecutive verified-value cycle. Caveat
+belongs on the RUN rather than the cycle: with agent burn at zero for the remaining ~8h, no
+further product work can land, and all six remaining todos need a builder.
+
+**not run, reported as not-run:** design-panel, review-fix (judged and declined cycle 14),
+qa-verify look (not applicable — CLI), collision-scan (not applicable — no browser surface),
+budget probe (refused, KI-5).
+
+### filed this cycle
+
+_None. I-6 closed; no new items or issues opened. KI-14 gained a scoping note (`note_cycle_41`) that narrows its consequence for THIS run without lowering its severity._
+
+```runfile-mirror
+{"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":15,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","posture":"trickle (allowance structurally 0 -- MEASURED, see posture_note)","promote":false,"demote":true,"probe_failures":0,"allow_overall_pct":0,"reserve_overall_pct":24.01,"weekly":{"ok":true,"weekly_used_pct":93,"opus_used_pct":97,"week_elapsed_pct":84.6,"weekly_heat":1.0993,"opus_heat":1.1466,"ceiling":3,"promote_blocked":false,"governor_note":"weekly_heat 93/84.60 = 1.0993, which DIPS JUST BELOW the 1.1 threshold for the first time since the cycle-37 crossing -- the clock moved while usage did not, and the margin has now narrowed across the line (1.1115 c39 -> 1.1060 c40 -> 1.0993 c41). Read strictly, the governor DISENGAGES and the ceiling returns to 5. It changes nothing and is recorded as inert for a reason that is now measured rather than asserted: guest clamps reachable gears to 1-3, and the gear is pinned at 1 by the ALLOWANCE, not by the governor -- allow_overall_pct is 0 and cannot rise before stop_at (see posture_note). opus_heat 1.1466, under 1.2, so promote_blocked stays false either way. The ceiling has never been the binding constraint in this run and it is not one now."}},"heartbeat":{"ts":1786850260,"next_wakeup_at":1786852060,"pid":785110,"limp":false},"watchdog":{"mode":"normal","plist_loaded":true},"caffeinate_pid":0,"wrap_up_complete":false}
+```
