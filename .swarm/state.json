@@ -3,7 +3,7 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T05:38:14+00:00",
   "phase": "POLISH",
-  "cycle": 45,
+  "cycle": 46,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -660,13 +660,13 @@
     "autotune_note_cycle_44": "Wave autotune NOT applied; k_current stays 5, wave_streak stays 0. SIXTH consecutive zero-agent cycle -- no wave dispatched, no agent ran. Autotune measures how much parallel CODE a target can absorb, and a cycle that dispatched nothing measures nothing about that. Same reasoning as cycles 39-43. Inert either way: effective wave size = min(k_current 5, gear cap 1) = 1, and gear 1 is structurally fixed for the rest of the run.",
     "churn_note_cycle_44": "consecutive_no_value stays 0. TWELFTH consecutive verified-value cycle, on the same honest label cycles 42 and 43 used: verified-value-with-no-item-landed. NO BACKLOG ITEM LANDED and none could. What this cycle added that its predecessors did not: it CORRECTED a claim those predecessors had been repeating. Cycles 41-43 all recorded that the six remaining todos are held by the zero allowance; the cycle-44 gate measured per item and found that framing conflates two constraints -- three of the six are S-effort, which gear 1 explicitly ADMITS, so the gear is not what holds them (a standing measured decision is, S6/S8c). A human reading the old framing would conclude that more window restarts all six; for half of them that is false. Also repaired the I-6 SPEC checkbox, which had read unticked since cycle 41 while the item read done.",
     "autotune_note_cycle_45": "Wave autotune NOT applied; k_current stays 5, wave_streak stays 0. SEVENTH consecutive zero-agent cycle — no wave dispatched, no agent ran. Autotune measures how much parallel CODE a target can absorb, and a cycle that dispatched nothing measures nothing about that. Same reasoning as cycles 39-44. Inert either way: effective wave size = min(k_current 5, gear cap 1) = 1, and gear 1 is structurally fixed for the rest of the run.",
-    "churn_note_cycle_45": "consecutive_no_value stays 0. THIRTEENTH consecutive verified-value cycle, on the honest label cycles 42-44 used: verified-value-with-no-item-landed. NO BACKLOG ITEM LANDED. The caveat that belongs on this one is narrower than its predecessors' and points the other way: this cycle did not produce a measurement about the PRODUCT at all — it repaired the ORCHESTRATOR'S OWN bookkeeping. Nothing a user of the CLI can observe changed, and nobody should read the counter as product progress. What is real: the board's ordering contradicted the run's own measured rulings, and a next-run conductor or a human reading it top-down would have been steered into the guard family cycle 39 decided by measurement to stop working on, before reaching either item with a user-visible defect behind it. That is a defect in the hand-off itself, which is this run's remaining deliverable."
+    "churn_note_cycle_45": "consecutive_no_value stays 0. THIRTEENTH consecutive verified-value cycle, on the honest label cycles 42-44 used: verified-value-with-no-item-landed. NO BACKLOG ITEM LANDED. The caveat that belongs on this one is narrower than its predecessors' and points the other way: this cycle did not produce a measurement about the PRODUCT at all — it repaired the ORCHESTRATOR'S OWN bookkeeping. Nothing a user of the CLI can observe changed, and nobody should read the counter as product progress. What is real: the board's ordering contradicted the run's own measured rulings, and a next-run conductor or a human reading it top-down would have been steered into the guard family cycle 39 decided by measurement to stop working on, before reaching either item with a user-visible defect behind it. That is a defect in the hand-off itself, which is this run's remaining deliverable.",
+    "autotune_note_cycle_46": "NOT applied: zero agents dispatched, so the wave produced no evidence about code capacity. k_current 5, wave_streak 0, both unchanged."
   },
   "last_cycle": {
-    "cycle": 45,
-    "work": "step-3 backlog hygiene: priority inversion repaired, live schema gap closed — conductor-inline, ZERO AGENTS",
-    "outcome": "1 verified (board repair, no backlog item — see churn note)",
-    "ts": 1786860600,
-    "stale_field_note": "This field read cycle 41 at the start of cycle 45 — cycles 42, 43 and 44 each wrote their journal block and their counters but never updated last_cycle, so the summary field a resume path reads first was three cycles behind the file it lives in. Found by this cycle's hygiene pass while orienting, not by a check aimed at it. Repaired here; recorded because it is the same defect class the pass went looking for in the backlog (a bookkeeping field asserting something nothing ever checked against the data)."
+    "cycle": 46,
+    "work": "T-007 tag taxonomy consolidation (37 tags -> 12) — conductor-inline, ZERO AGENTS",
+    "outcome": "1 verified (T-007 done; gate 12/12, suite 80/80, mutation proof 3/3)",
+    "ts": 1786864200
   }
 }

@@ -6452,3 +6452,186 @@ KI-5).
 ```runfile-mirror
 {"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":19,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","posture":"trickle (allowance structurally 0 -- re-read cycle 45)","promote":false,"demote":true,"probe_failures":0,"allow_overall_pct":0,"reserve_overall_pct":22.73,"weekly":{"ok":true,"weekly_used_pct":94.0,"opus_used_pct":97,"week_elapsed_pct":86.24,"ceiling":3,"promote_blocked":false}},"heartbeat":{"ts":1786860046,"pid":797207,"limp":false},"watchdog":{"mode":"normal","plist_loaded":true},"caffeinate_pid":0,"wrap_up_complete":false}
 ```
+
+---
+
+## cycle 46 — 2026-08-16T06:35Z — T-007: the tag taxonomy stops lying about being a taxonomy
+
+**work:** T-007, conductor-inline, ZERO AGENTS (eighth consecutive zero-agent cycle).
+**outcome:** 1 verified. First product-touching change in this run since cycle 40.
+
+### why this item, when the last five cycles said no product work was reachable
+
+Cycles 41–45 each recorded that no substantive work was reachable under a zero allowance.
+Cycle 44 corrected half of that: it measured that 3 of 6 todos are S-effort and gear 1 admits
+them, so the allowance was never what held them. Cycle 45 then re-ranked the board and put
+T-007 at the top of the unblocked queue. This cycle simply did the item the previous two
+cycles' measurements pointed at. The reachability argument that made it possible is the one
+cycle 44 established: a zero agent allowance forbids DISPATCH, not work — the conductor is
+already running and already paid for.
+
+**The defect, in the product's own terms.** The corpus carried 37 tags across 50 aphorisms.
+21 of them matched exactly one entry, so `--tag yagni` (and twenty others) returned the same
+line every time — a random-aphorism CLI whose randomness silently vanished for 57% of its
+advertised vocabulary. The README already confessed this in a sentence. A confession is not
+a fix.
+
+### the change, and the shape chosen to keep it auditable
+
+The transform is a **mechanical fold map**, not per-entry conductor taste: 26 low-count tag
+names rename onto a surviving neighbour, tags not named keep their name, results dedupe in
+first-appearance order. The map is a data table in `.swarm/runs/cycle-046-retag.mjs`, so the
+edit is readable line by line and reversible by editing one object. This mattered because the
+alternative — hand-retagging 50 entries — produces an output that can only be checked against
+the judgment that produced it.
+
+Result: **37 tags → 12**, thinnest pool 3 (`philosophy`), no entry left tagless, and **no
+aphorism text, author, or entry count touched**. `design` 14, `simplicity` 12, `humor` 9,
+`debugging` 7, `teamwork` 7, `complexity` 5, `performance` 5, `language` 4, `process` 4,
+`readability` 4, `reliability` 4, `philosophy` 3.
+
+The README `## Tag vocabulary` section was regenerated to match, and a new
+`## Tag vocabulary changes` section names all 26 folded tags and states plainly that
+`--tag <old-name>` now exits 1 — this is a **breaking change to a documented surface** and it
+is documented as one, not buried.
+
+### the two test fixtures this change invalidated — and why neither was re-pointed
+
+Retagging broke two tests. Both breaks were the tests **working**, and the distinction
+governed how each was repaired.
+
+**1. `cli.test.js` — `--tag matches membership, not substring containment`.** This guards a
+real Domain rule and probed it with `--tag test`, relying on the corpus containing a tag
+(`testing`) that has `test` as a proper substring. Folding `testing` into `debugging` removed
+the only such pair, and the test's own fixture assertion failed loudly rather than passing
+vacuously.
+
+The cheap repair — pick a new literal pair — was **rejected**: it would reintroduce the same
+dependency on one tag name surviving the next retagging. The probe now **constructs** its pair
+from the live corpus (any real tag `T` and a proper prefix `P` that is not itself a tag) and
+**adds a positive control** asserting `--tag T` still succeeds. Without that control an
+implementation that matched nothing at all would pass, which the original could not detect.
+This is a strictly stronger test than the one it replaces.
+
+Proved in three cells (`.swarm/runs/cycle-046-mutation-out.txt`), per the standing
+mutation-attribution directive:
+
+```
+cell 1  mutation ON, test PRESENT   -> fails=1
+        failing: ["--tag matches membership, not substring containment"]
+        PASS  the probe fails against the substring mutation
+cell 2  mutation ON, test REMOVED   -> fails=0
+        PASS  the mutation survives without the probe (kill is attributable to it alone)
+cell 3  mutation OFF, test PRESENT  -> fails=0
+        PASS  baseline is green (no false positive)
+restore: both files byte-identical to pre-harness
+```
+
+The mutation is `src/select.js` whole-tag equality → substring containment: exactly the
+implementation the test's name forbids. Cell 2 is the one that makes this evidence rather
+than a green tick — no other test in the suite kills that mutant.
+
+**A harness defect found by its own control cell, reported because it nearly passed.** The
+first run of that harness invoked `node --test <test-dir>` instead of the spec's
+`node --test test/*.test.js`; node reported a single directory-level failure and **all three
+cells read FAIL** — including cell 3, the unmutated baseline. A harness whose baseline fails
+is measuring itself. Had cells 1 and 2 been the only cells, the run would have read as a
+successful kill and been journaled as one.
+
+**2. `select.test.js` — AND-narrowing.** Its "combining two non-overlapping filters yields the
+empty set" check used `tag: 'management'`. That tag folded away, so the check **still passed
+— vacuously**: the result is empty because the tag no longer exists, not because the AND
+narrowed anything. Nothing in the suite would have reported this. Repaired by asserting both
+premises (the tag exists; no Dijkstra entry carries it) before the AND, so the same silent
+decay fails loudly next time.
+
+### VERIFICATION EVIDENCE — gate authored at verification time
+
+Every positive claim is paired with a control re-running the **identical predicate** against a
+sealed pre-edit snapshot, which must come back RED. The builder here was the conductor, so
+"the builder never saw the check" is not available as a guarantee; the controls are what
+replace it. Full output: `.swarm/runs/cycle-046-gate-out.txt`.
+
+```
+PASS  A1   every tag has >= 3 entries (vocabulary 12 tags, thinnest 3); tags below 3: []
+PASS  A1n  CONTROL — identical predicate on the sealed pre-edit corpus must be RED:
+           30 of 37 tags were below 3
+PASS  A2   all 50 (text, author) pairs byte-identical to the sealed snapshot, in the same
+           corpus order — no aphorism added, dropped, reworded or re-attributed
+PASS  A2n  CONTROL — the same comparison against a one-character-perturbed snapshot is RED
+PASS  A3   every one of the 12 tags returns >= 3 distinct lines through `--tag <t> --list`
+PASS  A3n  CONTROL — pre-edit, 30 tags could not have cleared A3 (21 of them returned a
+           FIXED single entry, the exact defect T-007 names)
+PASS  A4a  --tag DESIGN and --tag design return identical output (case-insensitive)
+PASS  A4b  --tag desi (proper prefix of "design") exits 1, empty stdout — whole-tag matching
+PASS  A5   every sampled folded-away tag now exits 1
+PASS  A5n  CONTROL — all 7 sampled tags DID match pre-edit, so A5 measures a real change
+PASS  A6   README lists 12 tag rows; 0 count mismatches, 0 corpus tags absent from the tables
+PASS  A7   src/corpus.js byte-identical to the snapshot once every tags line is masked
+12/12 checks passed
+```
+
+A3 is the acceptance sentence checked the way a user meets it: driven through the shipped
+binary, not through a `src/` import. A6 re-derives the README's numbers from `--list --json`
+rather than trusting `readme-tags.test.js` — that file is itself part of what changed this
+cycle, so using it to validate the change would be circular.
+
+Full suite, run by the conductor:
+
+```
+ℹ tests 80
+ℹ suites 0
+ℹ pass 80
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+```
+
+### the SPEC edit, stated because it touches a locked document
+
+`SPEC.md` Domain rules illustrated whole-tag matching with "`--tag test` does not match a
+`testing` tag" — naming a tag this cycle removed. The **rule is untouched**; only the
+illustration moved, to "`--tag desi` does not match a `design` tag". Leaving it would have
+created a doc/behaviour divergence of exactly the class I-3 exists to close. Recorded here and
+filed as **T-040** for a human to ratify rather than treated as settled.
+
+### the judgment call that could have gone the other way
+
+`testing` → `debugging` is the load-bearing fold. It dissolves the corpus's only tag for
+testing as a discipline. The alternative was to keep `testing` alive by tagging a third entry
+with it — but only two entries (Knuth's "proved it correct, not tried it" and Dijkstra's
+"testing shows the presence, not the absence, of bugs") are actually about testing, and
+stretching a third would be manufacturing a pool, which is the very thing T-007 exists to
+stop. A second option existed and was rejected as coding-to-the-check: naming the merged
+family `testing` instead of `debugging` would have kept the old `test`/`testing` substring
+fixture alive for free. Five of the seven merged entries are about debugging; the family was
+named for what it mostly is, and the fixture was fixed properly instead. Filed as T-040.
+
+### not run, reported as not-run
+
+design-panel, build-wave, review-fix (judged and declined cycle 14), qa-verify full/taste/look
+(look is N/A — CLI, no browser surface), collision-scan (N/A — no classic browser scripts),
+budget probe (refused, KI-5 — attempted this cycle in the cwd-relative form and refused before
+the command started, so `probe_failures` stays 0), `swarm-notify.sh poll` (this session's cwd
+is the TARGET dir, not `/opt/swarm`, so the allowlist's relative `bin/swarm-notify.sh` entry
+does not resolve — control channel read directly from `runs/control.json` instead: `pending`
+empty, no `inject` array, so control processing was a no-op either way).
+
+**wave autotune:** NOT applied — zero agents dispatched, so nothing was measured about code
+capacity. `k_current` 5, `wave_streak` 0.
+
+**churn:** `consecutive_no_value` → 0. Fourteenth consecutive verified-value cycle, and the
+first since cycle 40 that a CLI user can observe: `--tag` now draws from a real pool for every
+tag it advertises.
+
+### filed this cycle
+
+- **T-007 → done.**
+- **T-040 filed** (todo, S): the two judgment calls above, for a human to ratify or reverse.
+- No new known issue. KI-2 (unaudited attributions) is untouched and still HIGH — A2 proves no
+  author field moved.
+
+```runfile-mirror
+{"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":20,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","posture":"trickle (allowance structurally 0 — allocator re-read cycle 46)","promote":false,"demote":true,"probe_failures":0,"allow_overall_pct":0,"reserve_overall_pct":22.41,"weekly":{"ok":true,"weekly_used_pct":95,"opus_used_pct":97,"week_elapsed_pct":86.66,"weekly_heat":1.0962,"opus_heat":1.1193,"ceiling":3,"promote_blocked":false,"governor_note":"cycle 46: weekly_heat 95/86.66 = 1.0962. Eighth reading. Per L-032 no trend is claimed. Structural fact unchanged and the only one acted on: the ceiling has never been binding in this run, because guest clamps reachable gears to 1-3 and the gear is pinned at 1 by the ALLOWANCE, not the ceiling. opus_heat 1.1193, under 1.2, so promote_blocked stays false either way."}},"heartbeat":{"ts":1786862900,"pid":797207,"limp":false},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"caffeinate_pid":0,"wrap_up_complete":false}
+```

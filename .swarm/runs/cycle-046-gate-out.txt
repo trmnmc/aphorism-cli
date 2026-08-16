@@ -1,0 +1,14 @@
+PASS  A1  every tag has >= 3 entries (vocabulary 12 tags, thinnest 3); tags below 3: []
+PASS  A1n  CONTROL — identical predicate on the sealed pre-edit corpus must be RED: 30 of 37 tags were below 3
+PASS  A2  all 50 (text, author) pairs byte-identical to the sealed snapshot, in the same corpus order — no aphorism added, dropped, reworded or re-attributed
+PASS  A2n  CONTROL — the same comparison against a one-character-perturbed snapshot must be RED
+PASS  A3  every one of the 12 tags returns >= 3 distinct lines through `--tag <t> --list`; offenders: []
+PASS  A3n  CONTROL — pre-edit, 30 tags could not have cleared A3 (21 of them returned a FIXED single entry, the exact defect T-007 names)
+PASS  A4a  --tag DESIGN and --tag design return identical output (case-insensitive)
+PASS  A4b  --tag desi (proper prefix of "design") exits 1 with empty stdout — whole-tag matching, not substring
+PASS  A5  every sampled folded-away tag now exits 1: ["yagni","opensource","pragmatism","testing","management","data","naming"]
+PASS  A5n  CONTROL — all 7 sampled tags DID match pre-edit, so A5 measures a real change
+PASS  A6  README lists 12 tag rows; 0 count mismatches, 0 corpus tags absent from the tables
+PASS  A7  src/corpus.js is byte-identical to the sealed snapshot once every tags line is masked — the edit touched tags lines and nothing else
+
+12/12 checks passed

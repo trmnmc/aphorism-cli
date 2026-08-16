@@ -141,7 +141,7 @@ loud; the aphorism is the product.
 - Filtering: `--author` matches by substring containment, case-insensitively, against the
   aphorism's `author` field (e.g., `--author dijk` matches "Edsger W. Dijkstra"); `--tag`
   matches a whole tag, case-insensitively, for membership in the aphorism's `tags` array
-  (e.g., `--tag test` does not match a `testing` tag). Supplying both narrows to the
+  (e.g., `--tag desi` does not match a `design` tag). Supplying both narrows to the
   intersection (AND, not OR).
 - Empty candidate set after filtering is an error, not an empty success: exit code 1,
   a human-readable message on stderr, and zero bytes on stdout.

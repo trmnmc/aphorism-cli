@@ -17,12 +17,12 @@ const corpus = [
   {
     text: 'Premature optimization is the root of all evil.',
     author: 'Donald Knuth',
-    tags: ['performance'],
+    tags: ['performance', 'optimization'],
   },
   {
     text: 'Beware of bugs in the above code; I have only proved it correct, not tried it.',
     author: 'Donald Knuth',
-    tags: ['debugging', 'humor'],
+    tags: ['testing', 'humor'],
   },
   {
     text: 'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
@@ -32,7 +32,7 @@ const corpus = [
   {
     text: 'There are only two hard things in computer science: cache invalidation and naming things.',
     author: 'Phil Karlton',
-    tags: ['readability', 'performance'],
+    tags: ['naming', 'caching'],
   },
   {
     text: 'Simplicity is prerequisite for reliability.',
@@ -42,7 +42,7 @@ const corpus = [
   {
     text: 'The competent programmer is fully aware of the strictly limited size of his own skull.',
     author: 'Edsger W. Dijkstra',
-    tags: ['complexity', 'simplicity'],
+    tags: ['humility', 'simplicity'],
   },
   {
     text: 'If debugging is the process of removing software bugs, then programming must be the process of putting them in.',
@@ -52,12 +52,12 @@ const corpus = [
   {
     text: 'Testing shows the presence, not the absence, of bugs.',
     author: 'Edsger W. Dijkstra',
-    tags: ['debugging'],
+    tags: ['testing'],
   },
   {
     text: 'Elegance is not a dispensable luxury but a quality that decides between success and failure.',
     author: 'Edsger W. Dijkstra',
-    tags: ['simplicity', 'design'],
+    tags: ['elegance', 'design'],
   },
   {
     text: 'The question of whether computers can think is like the question of whether submarines can swim.',
@@ -92,22 +92,22 @@ const corpus = [
   {
     text: 'I call it my billion-dollar mistake. It was the invention of the null reference.',
     author: 'C.A.R. Hoare',
-    tags: ['reliability', 'language'],
+    tags: ['errors', 'history'],
   },
   {
     text: 'Adding manpower to a late software project makes it later.',
     author: 'Fred Brooks',
-    tags: ['teamwork'],
+    tags: ['management'],
   },
   {
     text: 'The bearing of a child takes nine months, no matter how many women are assigned.',
     author: 'Fred Brooks',
-    tags: ['teamwork', 'humor'],
+    tags: ['management', 'humor'],
   },
   {
     text: 'All programmers are optimists.',
     author: 'Fred Brooks',
-    tags: ['humor', 'teamwork'],
+    tags: ['humor', 'psychology'],
   },
   {
     text: 'Plan to throw one away; you will, anyhow.',
@@ -127,7 +127,7 @@ const corpus = [
   {
     text: 'It is better to have 100 functions operate on one data structure than 10 functions on 10 data structures.',
     author: 'Alan Perlis',
-    tags: ['design'],
+    tags: ['design', 'data'],
   },
   {
     text: 'If you have a procedure with 10 parameters, you probably missed some.',
@@ -142,12 +142,12 @@ const corpus = [
   {
     text: 'Be conservative in what you send, be liberal in what you accept.',
     author: 'Jon Postel',
-    tags: ['reliability'],
+    tags: ['interoperability', 'robustness'],
   },
   {
     text: 'Organizations which design systems are constrained to produce designs which are copies of the communication structures of these organizations.',
     author: 'Melvin Conway',
-    tags: ['design', 'teamwork'],
+    tags: ['architecture', 'organization'],
   },
   {
     text: 'Make it work, make it right, make it fast.',
@@ -157,7 +157,7 @@ const corpus = [
   {
     text: "I'm not a great programmer; I'm just a good programmer with great habits.",
     author: 'Kent Beck',
-    tags: ['process'],
+    tags: ['habits'],
   },
   {
     text: 'Do the simplest thing that could possibly work.',
@@ -167,32 +167,32 @@ const corpus = [
   {
     text: "Focus is a matter of deciding what things you're not going to do.",
     author: 'John Carmack',
-    tags: ['simplicity'],
+    tags: ['focus'],
   },
   {
     text: 'Talk is cheap. Show me the code.',
     author: 'Linus Torvalds',
-    tags: ['process'],
+    tags: ['pragmatism'],
   },
   {
     text: 'Bad programmers worry about the code. Good programmers worry about data structures and their relationships.',
     author: 'Linus Torvalds',
-    tags: ['design'],
+    tags: ['design', 'data'],
   },
   {
     text: 'Fancy algorithms are slow when n is small, and n is usually small.',
     author: 'Rob Pike',
-    tags: ['performance'],
+    tags: ['performance', 'algorithms'],
   },
   {
     text: 'The bigger the interface, the weaker the abstraction.',
     author: 'Rob Pike',
-    tags: ['design', 'complexity'],
+    tags: ['design', 'abstraction'],
   },
   {
     text: 'A little copying is better than a little dependency.',
     author: 'Rob Pike',
-    tags: ['design'],
+    tags: ['dependencies', 'design'],
   },
   {
     text: 'Clear is better than clever.',
@@ -202,22 +202,22 @@ const corpus = [
   {
     text: 'Errors are values.',
     author: 'Rob Pike',
-    tags: ['reliability', 'design'],
+    tags: ['errors', 'design'],
   },
   {
     text: 'All problems in computer science can be solved by another level of indirection.',
     author: 'David Wheeler',
-    tags: ['complexity', 'design'],
+    tags: ['abstraction', 'design'],
   },
   {
     text: "It's easier to ask forgiveness than it is to get permission.",
     author: 'Grace Hopper',
-    tags: ['teamwork'],
+    tags: ['culture'],
   },
   {
     text: "The most dangerous phrase in the language is, 'We've always done it this way.'",
     author: 'Grace Hopper',
-    tags: ['teamwork'],
+    tags: ['culture'],
   },
   {
     text: 'Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away.',
@@ -227,17 +227,17 @@ const corpus = [
   {
     text: "You aren't gonna need it.",
     author: 'Ron Jeffries',
-    tags: ['simplicity'],
+    tags: ['yagni', 'simplicity'],
   },
   {
     text: 'Given enough eyeballs, all bugs are shallow.',
     author: 'Eric S. Raymond',
-    tags: ['debugging', 'teamwork'],
+    tags: ['debugging', 'opensource'],
   },
   {
     text: 'Code is read much more often than it is written.',
     author: 'Guido van Rossum',
-    tags: ['readability'],
+    tags: ['readability', 'style'],
   },
   {
     text: 'C makes it easy to shoot yourself in the foot; C++ makes it harder, but when you do, it blows away your whole leg.',
@@ -257,7 +257,7 @@ const corpus = [
   {
     text: 'The best way to predict the future is to invent it.',
     author: 'Alan Kay',
-    tags: ['philosophy'],
+    tags: ['innovation'],
   },
   {
     text: "It's not a bug, it's an undocumented feature.",

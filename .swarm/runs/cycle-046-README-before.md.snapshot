@@ -52,54 +52,41 @@ entry in the filtered set, in corpus order.
 
 ## Tag vocabulary
 
-The corpus contains 12 distinct tags. The distribution is uneven, but every tag is a real pool: 12 tags appear on 2 or more entries. On the other side of that count, 0 tags appear exactly once and 0 tags sit on exactly one entry, so `--tag` never returns a foregone conclusion.
+The corpus contains 37 distinct tags. They are not evenly distributed: 16 tags appear on 2 or more entries; the remaining 21 appear on exactly one entry.
 
-7 tags have a robust pool (5+ entries):
+4 tags have a robust pool (5+ entries):
 | Tag | Count |
 |---|---|
-| `design` | 14 |
-| `simplicity` | 12 |
+| `design` | 13 |
+| `simplicity` | 10 |
 | `humor` | 9 |
-| `debugging` | 7 |
-| `teamwork` | 7 |
-| `complexity` | 5 |
-| `performance` | 5 |
+| `debugging` | 5 |
 
-5 tags appear 3–4 times:
+12 tags appear 2–4 times:
 | Tag | Count |
 |---|---|
-| `language` | 4 |
-| `process` | 4 |
-| `readability` | 4 |
-| `reliability` | 4 |
-| `philosophy` | 3 |
+| `performance` | 4 |
+| `language` | 3 |
+| `readability` | 3 |
+| `abstraction` | 2 |
+| `complexity` | 2 |
+| `culture` | 2 |
+| `data` | 2 |
+| `errors` | 2 |
+| `management` | 2 |
+| `philosophy` | 2 |
+| `process` | 2 |
+| `testing` | 2 |
 
-The smallest pool holds three aphorisms, so `--tag` always has something to choose between — with a `--seed` the choice is still deterministic, and without one it is a real draw rather than a foregone conclusion.
+The remaining 21 tags appear exactly once: `algorithms`, `architecture`, `caching`, `dependencies`, `elegance`, `focus`, `habits`, `history`, `humility`, `innovation`, `interoperability`, `naming`, `opensource`, `optimization`, `organization`, `pragmatism`, `psychology`, `reliability`, `robustness`, `style`, `yagni`.
+
+Single-entry tags are real — they match real aphorisms in the corpus — but `--tag` on one of them returns the same line every time.
 
 To find available tags at the command line, run:
 
 ```sh
 node bin/aphorism.js --list --json | jq -r ".tags[]" | sort | uniq -c | sort -rn
 ```
-
-## Tag vocabulary changes
-
-The vocabulary above replaces an earlier 37-tag one in which 21 tags matched exactly one
-aphorism, so `--tag` on any of them returned the same line every time. It was consolidated
-by **retagging existing aphorisms only** — no aphorism text or author was changed, and no
-entry was added or removed. Twenty-six low-count tag names were folded onto a surviving
-neighbour and no longer match anything:
-
-optimization, algorithms and caching to performance; naming and style to readability;
-elegance, yagni and focus to simplicity; abstraction and humility to complexity;
-architecture, dependencies and data to design; errors, robustness and interoperability to
-reliability; history to language; innovation to philosophy; culture, management,
-organization, psychology and opensource to teamwork; habits and pragmatism to process; and
-testing to debugging.
-
-If you scripted one of those names, `--tag <old-name>` now exits 1 with a message on
-stderr rather than printing an aphorism. The fold map that produced this change is
-`.swarm/runs/cycle-046-retag.mjs`.
 
 ## Exit codes
 

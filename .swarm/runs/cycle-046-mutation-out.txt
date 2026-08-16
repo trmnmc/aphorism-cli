@@ -1,0 +1,11 @@
+cell 1  mutation ON, test PRESENT   -> fails=1
+        failing: ["--tag matches membership, not substring containment"]
+        PASS  the probe fails against the substring mutation
+cell 2  mutation ON, test REMOVED   -> fails=0
+        failing: []
+        PASS  the mutation survives without the probe (kill is attributable to it alone)
+cell 3  mutation OFF, test PRESENT  -> fails=0
+        PASS  baseline is green (no false positive)
+
+MUTATION PROOF COMPLETE
+restore: both files byte-identical to pre-harness

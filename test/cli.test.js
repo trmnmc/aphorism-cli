@@ -97,27 +97,59 @@ test('output is pipe-safe — no ANSI escapes when not a TTY', () => {
 });
 
 test('--tag matches membership, not substring containment', () => {
-  // Fixture assumptions, derived from the live corpus rather than hardcoded:
-  // no tag is the literal string "test", but at least one tag (e.g. "testing")
-  // contains "test" as a substring. That makes "--tag test" a probe that only
-  // a substring-matching implementation would satisfy.
-  const hasExactTagMatch = corpus.some((e) => e.tags.includes('test'));
-  assert.strictEqual(
-    hasExactTagMatch,
-    false,
-    'fixture assumption violated: corpus now has a literal "test" tag'
-  );
-  const hasSubstringTagMatch = corpus.some((e) =>
-    e.tags.some((t) => t.includes('test'))
-  );
+  // The probe is CONSTRUCTED from the live corpus rather than naming a tag
+  // literal. Cycle 46 (T-007) consolidated the tag vocabulary and folded the
+  // `testing` tag away; this test had hardcoded "test"/"testing" as its
+  // substring pair and failed loudly when that pair stopped existing, which
+  // is the fixture assertion working. Rebuilding the pair from whatever tags
+  // the corpus actually holds removes the dependency on any one tag name
+  // surviving a future retagging.
+  //
+  // Wanted: a real tag T and a proper prefix P of T such that P is not itself
+  // a tag. Then "--tag P" is satisfiable ONLY by a substring/prefix matcher,
+  // while "--tag T" must still succeed -- the positive control, without which
+  // an implementation that matched NOTHING would also pass this test.
+  const allTags = new Set();
+  for (const e of corpus) for (const t of e.tags) allTags.add(t.toLowerCase());
+
+  let whole = null;
+  let prefix = null;
+  for (const t of [...allTags].sort()) {
+    for (let len = t.length - 1; len >= 1; len--) {
+      const p = t.slice(0, len);
+      if (!allTags.has(p)) {
+        whole = t;
+        prefix = p;
+        break;
+      }
+    }
+    if (whole) break;
+  }
   assert.ok(
-    hasSubstringTagMatch,
-    'fixture assumption violated: corpus no longer has any tag containing "test" as a substring'
+    whole && prefix,
+    'fixture assumption violated: no corpus tag has a proper prefix that is not itself a tag, ' +
+      'so no substring-vs-whole-tag probe can be built from this corpus'
   );
 
-  const r = run(['--tag', 'test']);
-  assert.strictEqual(r.status, 1, '--tag test should match nothing by membership');
-  assert.strictEqual(r.stdout, '');
+  const rPrefix = run(['--tag', prefix]);
+  assert.strictEqual(
+    rPrefix.status,
+    1,
+    '--tag ' + prefix + ' (a proper prefix of the real tag "' + whole +
+      '") should match nothing by membership'
+  );
+  assert.strictEqual(rPrefix.stdout, '');
+
+  // Positive control: the whole tag the prefix was cut from must still match,
+  // so the exit 1 above is attributable to whole-tag matching and not to a
+  // --tag flag that has stopped matching anything at all.
+  const rWhole = run(['--tag', whole]);
+  assert.strictEqual(
+    rWhole.status,
+    0,
+    '--tag ' + whole + ' should match by membership (positive control)'
+  );
+  assert.ok(rWhole.stdout.trim().length > 0);
 });
 
 test('--list prints exactly one line per matching entry, no drops', () => {

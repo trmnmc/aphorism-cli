@@ -71,7 +71,25 @@ test('filter: author and tag together narrow to the intersection (AND)', () => {
   }
 
   // Sanity: combining two non-overlapping filters yields the empty set.
-  const none = filter(corpus, { author: 'dijkstra', tag: 'management' });
+  // Both halves must be individually NON-empty, or the AND proves nothing --
+  // an empty result would be explained by the tag simply not existing. This
+  // read "tag: 'management'" until cycle 46 (T-007) folded that tag away,
+  // at which point it was passing vacuously; the two assertions below now
+  // hold the premise in place so the same silent decay fails loudly instead.
+  const nonOverlapTag = 'teamwork';
+  assert.ok(
+    corpus.some((e) => e.tags.some((t) => t.toLowerCase() === nonOverlapTag)),
+    'fixture assumption violated: tag "' + nonOverlapTag + '" is not in the corpus'
+  );
+  assert.ok(
+    !corpus.some(
+      (e) =>
+        e.author.toLowerCase().includes('dijkstra') &&
+        e.tags.some((t) => t.toLowerCase() === nonOverlapTag)
+    ),
+    'fixture assumption violated: some Dijkstra entry now carries "' + nonOverlapTag + '"'
+  );
+  const none = filter(corpus, { author: 'dijkstra', tag: nonOverlapTag });
   assert.strictEqual(none.length, 0);
 });
 
