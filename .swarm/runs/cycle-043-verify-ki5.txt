@@ -1,0 +1,62 @@
+cycle 43 — KI-5 ROOT CAUSE GATE — full output
+harness: .swarm/runs/cycle-043-gate-ki5.js
+run at: 2026-08-16T04:4x UTC, conductor-inline, zero agents
+
+=== KI-5 GATE: does the allowlist PREDICT every measured cell? ===
+
+PASS cell 1  predicted=DENY  observed=DENY  :: bin/swarm-budget.sh
+       relative, cwd=/opt/swarm
+PASS cell 2  predicted=DENY  observed=DENY  :: /opt/swarm/bin/swarm-budget.sh
+       absolute
+PASS cell 3  predicted=DENY  observed=DENY  :: /opt/swarm/bin/swarm-notify.sh poll
+       NEW — absolute form, same script+args as cell 4
+PASS cell 4  predicted=ALLOW observed=ALLOW :: bin/swarm-notify.sh poll
+       relative, cwd=/opt/swarm — ran clean
+PASS cell 5  predicted=DENY  observed=DENY  :: bin/swarm-playbook.sh parse
+       NEW — relative form, the form that works for notify
+PASS cell 6  predicted=DENY  observed=DENY  :: awk /^## cycle 42/,0 .swarm/journal.md
+       NEG CONTROL — awk absent from allowlist
+PASS cell 7  predicted=ALLOW observed=ALLOW :: pgrep -a -f claude
+       NEG CONTROL — pgrep present, ran clean
+
+--- 7/7 cells predicted correctly ---
+
+=== STRUCTURAL CLAIMS about the allowlist ===
+SWARM-script entries present: [
+  "Bash(/Users/truman/Projects/SWARM/bin/swarm-notify.sh:*)",
+  "Bash(bin/swarm-notify.sh:*)"
+]
+PASS S1 exactly two SWARM-script entries exist
+PASS S2 one is a macOS-absolute path
+PASS S3 that macOS path does not exist on this host
+PASS S4 no entry for swarm-budget.sh in any form
+PASS S5 no entry for swarm-playbook.sh in any form
+PASS S6 no entry for the VPS absolute prefix /opt/swarm/bin
+PASS S7 additionalDirectories is empty (target reachable only via --add-dir)
+PASS S8 CONSEQUENCE: WRAP_UP `bin/swarm-playbook.sh append ...` is predicted DENY
+PASS S9 CONSEQUENCE: WRAP_UP `bin/swarm-notify.sh send wrap-up ...` is predicted ALLOW
+
+--- 9/9 structural claims hold ---
+
+GATE GREEN
+
+===========================================================================
+SCOPE DISCIPLINE — what this gate does NOT establish
+===========================================================================
+
+The predictor models ONE rule: an invocation is permitted iff some `Bash(X:*)` entry has X
+as the command's leading token. That rule predicted 7/7 cells including two negative
+controls, but the transcript contains at least one behaviour it does NOT model:
+
+  - `cd /opt/swarm` ran CLEAN with no `cd` entry in the allowlist (builtin handling), while
+    `cd /opt/swarm && echo ... && bin/swarm-budget.sh` was refused with the checker naming
+    the compound's parts separately.
+
+So the harness clearly decomposes compound commands and treats some builtins specially.
+That layer is NOT characterised here and no claim is made about it. Every cell above is a
+SIMPLE command, which is the domain the predictor was built for and tested in. Two cells in
+this cycle's transcript were excluded for exactly this reason (both compound), rather than
+being counted as passes — a predictor scored only on the cases it was designed for, with
+the excluded cases named.
+
+The decision-relevant conclusions (S8, S9) are both about simple commands.
