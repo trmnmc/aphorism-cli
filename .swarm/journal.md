@@ -7116,3 +7116,200 @@ durable repairs (strip the legend from the published artifact, or give the live 
 machine-distinguishable ids) are edits a human makes to the template.
 
 Known issues: 16 total, 9 open.
+
+## cycle 50 — 2026-08-16T09:13Z — T-042: the selection surface is sound; the suite that guards it is not
+
+**work type:** QA (conductor-inline; zero agents dispatched — twelfth consecutive)
+**outcome:** 1 verified · **no product defect · one measured hole in the shipped test suite**
+
+### why this, over the board
+
+The cycle-49 note ranked a REPORT.md addition first (candidate 2) and an end-to-end gate on
+an untested selection surface fourth (candidate 4). This cycle took the fourth, and the
+REPORT.md addition rode along as a byproduct rather than as the headline. The reason is
+clock arithmetic, not disagreement: **WRAP_UP refreshes REPORT.md inside two hours anyway**,
+so spending the cycle on it pays twice for one document. Cycles 46, 47 and 48 were all
+document refreshes; cycle 49 broke that with a product measurement and was the better cycle
+for it. A measurement can still find something. A refresh cannot.
+
+The rest of the board re-checked exactly as the note left it: `T-024b`/`T-032`/`T-039` are
+held by the cycle-39 family decision, `T-024` is not dispatchable, `T-008`/`T-040` are gated
+on a human, and `T-041` is a confirmation that must not be re-confirmed.
+
+### what was measured, and by three instruments not one
+
+`.swarm/runs/cycle-050-gate.mjs` — every ARM A/B cell spawns the real binary as a child
+process; modules are `require()`d only to DERIVE EXPECTATIONS. Two bindings kept explicitly
+distinct, which matters for what the mutation arm can prove:
+
+- **ARM B** binds process output to an INDEPENDENT derivation from the PRISTINE module, so a
+  mutated copy disagrees with pristine and reddens.
+- **ARM C** is a property of the module UNDER TEST, which is why arm C has mutation coverage
+  at all. C's claim about the BINARY is licensed by B — B is the tie between this module and
+  what the user runs. Stated in the gate's header rather than left for a reader to infer.
+
+Run twice, independently, ~50 min apart:
+
+### VERIFICATION EVIDENCE
+
+`.swarm/runs/cycle-050-verify-T-042.txt` (second run; first run's figures in brackets):
+
+```
+PASS  A0   all 1000 spawns exited 0 and printed a recognisable corpus entry   [unrecognised/failed=0]
+PASS  A1   every one of the 50 entries is reachable (appeared in 1000 runs)   [distinct=50/50 missing=[]]
+PASS  A2   the distribution is uniform (chi-square df=49 < 85.35 at p=0.001)   [chi2=35.80 min=10 max=29]
+PASS  A3   the observed first-repeat run length matches uniform-over-50 within 3 SE   [blocks=108
+             observed=9.25 predicted=9.54 sd=4.30 SE=0.41 dev=0.29]
+PASS  B1   all 25 sampled seeds: the PROCESS prints the entry an independent derivation predicts   [25/25]
+PASS  B2   all 25 sampled seeds are byte-identical across two separate spawns   [25/25]
+PASS  B3   a NaN-parsing seed is exit 2, zero bytes on stdout, message on stderr   [exit2/stdout0B x2]
+PASS  C1   every entry is reachable by SOME integer seed in 0..9999   [reachable=50/50]
+PASS  C2   seeds 0..99 reach what a UNIFORM map predicts (within 3 sd)   [observed=44 predicted=43.4]
+PASS  C3   every member of every one of the 12 --tag sets is reachable by some seed   [12/12]
+
+12/12 cells green      [run 1: 12/12, chi2=59.60, A3 observed 9.05 dev 0.50]
+```
+
+Full suite, run by the conductor before and after every edit: `ℹ tests 80 · pass 80 · fail 0`.
+
+**The green is not the evidence.** `cycle-050-negative-control.mjs` plants 7 defects in
+throwaway copies and requires that the cells which redden are the cells that should detect
+THAT defect — a kill by an unrelated cell is scored a MISS.
+
+```
+P0  unmutated copy                          red=[]              expect=[]                    PASS
+M1  unseeded off-by-one, last entry lost     red=[A1]            expect=[A1] may=[A2,A3]      PASS
+M2  unseeded pinned to entry 0               red=[A1,A2,A3]      expect=[A1,A2,A3]            PASS
+M3  unseeded biased to the front (u -> u^2)  red=[A2,A3]         expect=[A2,A3] may=[A1]      PASS
+M4  --seed silently ignored                  red=[B1,B2]         expect=[B1,B2]               PASS
+M5  every seed folds to ONE entry            red=[B1,C1,C2,C3]   mustStayGreen=[B2]           PASS
+M6  a NaN seed is accepted                   red=[B3]            expect=[B3]                  PASS
+7/7 mutation checks passed
+```
+
+**M5 is the cell split earning its keep.** A fold collapse leaves `--seed` perfectly
+deterministic while making it useless, so B2 (determinism) is REQUIRED to stay green and
+only the reachability cells catch it. Determinism tests cannot see this class of defect;
+that is the whole reason arm C exists.
+
+### the finding, which came from the THIRD instrument
+
+The gate says the product is correct. The mutation arm says the gate can fail and each kill
+is attributable. Together that is another confirmation — which is what cycle 49 was, and
+what this run has been warned twice not to manufacture. The question worth asking of a
+mutation arm you have just built is the one it can answer for free: **the mutants are
+already written, so run them past `test_cmd` instead of past the gate.**
+
+`.swarm/runs/cycle-050-suite-survivors.mjs` plants each defect in a full throwaway copy of
+the repo and runs the project's own test command:
+
+```
+P0  unmutated copy       80 pass / 0 fail   OK (copy machinery sound)
+M1  off-by-one           80 pass / 0 fail   SURVIVES — the last corpus entry is unreachable forever
+M3  front bias u -> u^2  80 pass / 0 fail   SURVIVES
+M5  seed-fold collapse   78 pass / 2 fail   killed — the seeded path IS protected
+```
+
+**The SPEC Domain rule "without `--seed`, selection is uniform over the filtered candidate
+set" has no test.** Two mutants that violate it outright survive all 80 tests. M1 is the
+sharp case: a one-character off-by-one silently deletes an aphorism from the product forever
+and nothing in the repo notices. Meanwhile cycles 13–40 grew the README-guard family to 1511
+of the repo's 2101 test lines.
+
+Classified **HOLE, not BOUNDARY** (SPEC I-2): the rule is already written and merely
+unprotected, so this is not the cycle-4 M16 situation where a test would silently promote
+today's implementation to a promise. Filed as **T-043**, p2, S-effort, conductor-reachable,
+unfenced — the first live item in months that is none of blocked, dep-gated or
+decision-fenced. Recorded with its opposite: had M5 survived, the call would have been
+harder, because no rule promises seed surjectivity. It did not, so that call is not made.
+
+### the harness's own defect, caught by its own control
+
+**P0 scored 66 pass / 14 fail on an UNMUTATED copy** on the first run of the survivor
+measurement. The copy took `bin` + `src` + `test` only, and `test/readme-tags.test.js` reads
+`README.md` and `docs/` from the tree root. Every SURVIVES verdict drawn from that run would
+have been void — and would have looked like a *bigger* finding, not a smaller one. Fixed in
+the harness (copy everything but `.git` and `.swarm`); no verdict was taken from the broken
+control. This is the second cycle running where the control caught the conductor rather than
+the code (cycle 49's M6 over-broad expectation was the first).
+
+**One honest limitation, stated rather than discovered later.** A3's estimator discards the
+final incomplete block, which right-censors the longest run in the stream and biases the
+observed mean slightly DOWN. Both runs landed below the prediction (9.05 and 9.25 vs 9.54),
+consistent with that bias and well inside 3 SE either way. The cell is sound as a
+falsification test; it should not be quoted as an unbiased point estimate of the repeat rate.
+The exact closed-form value is what REPORT.md now quotes.
+
+### hand-off updates
+
+**REPORT.md** gained two things. (1) The cycle-49 addition the previous note asked for — the
+`--tag` surface is now end-to-end verified, and the C5 measurement (a retired tag name and a
+never-existing one are byte-identical, so a user is never told `testing` became `debugging`)
+is named as handed to T-040. (2) This cycle's result, and the **T-008 arithmetic**, which is
+new and decision-relevant:
+
+```
+  50 entries (today) -> first repeat expected on run  9.5   P(repeat by run 10) 61.8%
+ 100 entries         -> first repeat expected on run 13.2   P(repeat by run 10) 37.2%
+ 238 entries         -> first repeat expected on run 20.0   P(repeat by run 10) 17.4%
+ no-repeat rotation over 50 -> first repeat on run 51 exactly
+```
+
+Doubling the corpus buys **3.7 runs**; the deferred rotation nice-to-have buys **41.5**, at
+zero new attributions against a KI-2 queue a human already holds. Put in the report as a
+decision FRAME, not a recommendation: a run does not get to re-open its own non-goals on the
+strength of its own arithmetic, and quietly demoting T-008 on it would be doing exactly that.
+Cycle 14's empirical 9.60 / 60.1% were 3000-trial estimates and are consistent with the exact
+values to within their own noise — recorded so the two numbers in the hand-off do not read as
+a contradiction.
+
+### step-3 hygiene (cycle 50 is a multiple of 5)
+
+Full SPEC.md re-read: all six improvement must-haves closed, product must-haves unchanged,
+Domain rules re-anchored — and the re-read is what made the HOLE/BOUNDARY call above
+answerable from the text rather than from memory. Board: 9 live items against a ~30 cap, no
+dedupe needed. **One ordering violation fixed, one field:** T-040 (product-touching —
+README.md, .swarm/SPEC.md) sat at p9, below three test-only items that a standing decision
+fences off from being worked at all, contradicting the single rule the cycle-45 re-rank
+stated for itself. Moved to p3. No scope, acceptance, status, effort or dep touched anywhere.
+
+### not run, reported as not-run
+
+design-panel, build-wave, review-fix, `qa-verify.js` (all modes), collision-scan (N/A — CLI,
+no browser surface). `bin/swarm-budget.sh` refused for the **49th** consecutive cycle (KI-5),
+attempted rather than skipped per the standing cycle-14 rule; refused before the command
+started, so `probe_failures` stays 0. `bin/swarm-notify.sh poll` SUCCEEDED from cwd=/opt/swarm
+(fourth successful poll) — `pending[]`, `applied[]` and `inject[]` all empty.
+`state.json.qa.last_full_qa_cycle` deliberately left at 13.
+
+### budget
+
+`runs/allocator.json` is a REAL reading for the **third consecutive cycle**: `ok:true`,
+`source:probe`, `allow_overall_pct 0`, reserve 21.36, weekly 96.0 / opus 97 / elapsed 88.
+Eleventh real reading. `weekly_heat` 96.0/88 = **1.0909**; `opus_heat` 1.1023, still under the
+1.2 `promote_blocked` threshold as all run. Gear pinned at 1 by the **allowance**, measured 0
+for the third straight cycle — not by the ceiling, which has never been binding under guest.
+
+### wave autotune / churn
+
+**autotune:** NOT applied — zero agents dispatched, nothing measured about code capacity.
+`k_current` 5, `wave_streak` 0.
+**churn:** `consecutive_no_value` stays 0. Eighteenth consecutive verified-value cycle. T-042
+was filed this same cycle rather than drawn from the standing board — the same disclosure
+cycle 49 made, and noted as a two-cycle pattern rather than left to pass twice unremarked.
+What separates this from cycle 49's confirmation: the outcome is not the confirmation. T-043
+is a finding about the repo the next maintainer inherits.
+
+### filed this cycle
+
+- **T-042** — filed and closed (kind `qa`, the gate above).
+- **T-043** — NEW, p2, todo. The uniformity rule has no test; both survivors measured.
+  Carries an explicit standing instruction: **if it does not land before WRAP_UP it must be
+  promoted to a known_issue.** It is a board item rather than a KI only because this run
+  intends to land it next cycle at zero agent cost.
+- **T-040** — priority 9 -> 3 (hygiene, above).
+- Known issues unchanged at 16 total, 9 open. Board: 44 done, 7 todo, 2 blocked, 4 dropped.
+
+```runfile-mirror
+{"run_label": "improvement-aphorism-cli-2026-08-15", "run_kind": "improvement", "stop_at": "2026-08-16T11:24:24+00:00", "usage_reset_at": "2026-08-15T16:24:32+00:00", "model_policy": "value-routing", "auth_mode": "subscription", "pacing": {"mode": "guest", "dial": 0.3}, "targets": [{"path": "/opt/targets/aphorism-cli", "status": "active", "weight": 1}], "rotation_cursor": 0, "rotation_schedule": [0], "cycles_since_recycle": 24, "budget": {"gear": 1, "k_cap": 1, "mode": "guest", "source": "allocator", "posture": "trickle (allowance measured 0 by a REAL probe at cycle 50 - ok:true/source:probe, THIRD consecutive real reading)", "promote": false, "demote": true, "probe_failures": 0, "allow_overall_pct": 0, "reserve_overall_pct": 21.36, "weekly": {"ok": true, "weekly_used_pct": 96.0, "opus_used_pct": 97, "week_elapsed_pct": 88, "weekly_heat": 1.0909, "opus_heat": 1.1023, "ceiling": 3, "promote_blocked": false, "governor_note": "cycle 50: ELEVENTH real reading, THIRD consecutive non-blind one. weekly_heat 96.0/88 = 1.0909; opus_heat 1.1023, still under the 1.2 promote_blocked threshold as all run. The ceiling has never been the binding constraint in this run: guest clamps reachable gears to 1-3 and the gear is pinned at 1 by the ALLOWANCE, measured 0 again this cycle."}}, "heartbeat": {"ts": 1786871587, "pid": 902143, "limp": false}, "watchdog": {"mode": "normal", "plist_loaded": true, "lockfile": "/opt/swarm/runs/watchdog.lock", "relaunch_attempts": 0}, "caffeinate_pid": 0, "wrap_up_complete": false}
+```

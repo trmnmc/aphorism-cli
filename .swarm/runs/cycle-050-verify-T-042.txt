@@ -1,0 +1,28 @@
+PASS  S1   corpus holds 50 entries and the binary under test exists   [N=50 help exit=0]
+PASS  S2   text+author identifies an entry uniquely (the observation key is well-defined)   [50/50 distinct keys]
+PASS  A0   all 1000 spawns exited 0 and printed a recognisable corpus entry   [unrecognised/failed=0]
+PASS  A1   every one of the 50 entries is reachable (appeared in 1000 runs)   [distinct=50/50 missing=[]]
+PASS  A2   the distribution is uniform (chi-square df=49 < 85.35 at p=0.001)   [chi2=35.80 min=10 max=29 expected=20]
+PASS  A3   the observed first-repeat run length matches uniform-over-50 within 3 SE   [blocks=108 observed=9.25 predicted=9.54 sd=4.30 SE=0.41 dev=0.29]
+PASS  B1   all 25 sampled seeds: the PROCESS prints the entry an independent derivation predicts   [25/25]
+PASS  B2   all 25 sampled seeds are byte-identical across two separate spawns   [25/25]
+PASS  B3   a seed that Number() parses to NaN is exit 2, zero bytes on stdout, message on stderr   [--seed abc->exit2/stdout0B --seed NaN->exit2/stdout0B]
+PASS  C1   every entry is reachable by SOME integer seed in 0..9999   [reachable=50/50]
+PASS  C2   seeds 0..99 reach the number of distinct entries a UNIFORM map predicts (within 3 sd)   [observed=44 predicted=43.4 sd=2.40]
+PASS  C3   inside every one of the 12 --tag sets, every member is reachable by some seed in 0..1999   [12/12 tag sets fully reachable]
+
+  invariant     2/2
+  unseeded      4/4
+  seeded        3/3
+  reachability  3/3
+
+12/12 cells green
+
+--- T-008 arithmetic (uniform selection, corpus size -> expected first repeat) ---
+    50 entries -> first repeat expected on run 9.5
+    75 entries -> first repeat expected on run 11.5
+   100 entries -> first repeat expected on run 13.2
+   150 entries -> first repeat expected on run 16.0
+   200 entries -> first repeat expected on run 18.4
+   250 entries -> first repeat expected on run 20.5
+  to push the expected first repeat past run 20 the corpus needs ~238 entries

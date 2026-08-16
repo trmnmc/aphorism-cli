@@ -1,0 +1,16 @@
+PASS  P0  unmutated copy (the control on the control)
+        red=[] expect=[]
+PASS  M1  unseeded off-by-one: the LAST corpus entry can never be picked
+        red=[A1] expect=[A1] may=[A2,A3]
+PASS  M2  unseeded pinned: every unseeded run prints corpus entry 0
+        red=[A1,A2,A3] expect=[A1,A2,A3]
+PASS  M3  unseeded biased toward the front of the corpus (u -> u^2)
+        red=[A2,A3] expect=[A2,A3] may=[A1]
+PASS  M4  --seed is silently ignored: the seeded branch never runs
+        red=[B1,B2] expect=[B1,B2]
+PASS  M5  every seed folds to the same state: --seed is deterministic but reaches ONE entry
+        red=[B1,C1,C2,C3] expect=[B1,C1,C2,C3] mustStayGreen=[B2]
+PASS  M6  a NaN seed is accepted instead of exiting 2
+        red=[B3] expect=[B3]
+
+7/7 mutation checks passed

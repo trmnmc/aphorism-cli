@@ -98,6 +98,50 @@ tagging. (2) A `.swarm/SPEC.md` Domain-rules illustration named a tag the change
 and was re-pointed at a surviving one; the rule itself is untouched. Reversing either is
 cheap — the fold map is a data table in `.swarm/runs/cycle-046-retag.mjs`.
 
+### What has actually been run against the shipped binary — cycles 49–50
+
+Everything above this line was verified by gates that read modules, fixtures or prose. Two
+late cycles pointed the instrument at the thing a user actually types instead: they spawn
+`bin/aphorism.js` as a child process a few hundred times and ask what comes back. Modules
+are loaded only to *derive expectations*, never to produce observations.
+
+**Cycle 49 — the `--tag` surface after the retag. No defect found.** 135/135 cells: all 12
+live tags print an entry that genuinely carries that tag and reproduce the exact membership,
+count and corpus order under `--list`; all 26 retired names exit 1 with zero bytes on
+stdout; the whole-tag rule, the `--author` AND intersection, and the `--help` discovery
+recipe hold end to end. A 14-mutation arm attributes every kill. This is a **confirmation,
+not a repair** — the retag landed cleanly and nothing needed to change.
+
+One consequence was measured and is handed to a human rather than acted on: a **retired tag
+name and a name that never existed are byte-identical** in exit code, stdout and stderr, so
+a user whose `--tag testing` worked last week is never told it became `debugging`. That is
+what the Domain rule requires, so it is not a defect — a "did you mean" hint would be a
+feature, fenced by this run's non-goals. Appended to **T-040**.
+
+**Cycle 50 — the selection surface. No product defect found, but a real hole in the
+suite.** 12/12 cells over 1000 unseeded spawns and 25 seeds, with a 7-mutation arm that
+attributes every kill. What it establishes, none of which had been measured at the binary
+before: every one of the 50 entries is reachable; the unseeded distribution is uniform on a
+chi-square test at p=0.001 (χ²=59.6, df=49); every sampled seed — including `Infinity`,
+`-Infinity`, `1e300`, negatives and fractions — prints exactly the entry an independent
+derivation predicts, and is byte-identical across two separate spawns; every entry is
+reachable by *some* seed, and every member of every one of the 12 `--tag` sets is reachable
+by some seed. Cycle 14 had measured unseeded uniformity once, but over the **module**, with
+a loose ±20% min/max band; the seeded path's reachability had never been measured at any
+level by anything.
+
+**The finding is about the tests, not the product.** Planting two defects that plainly
+violate the Domain rule *"without `--seed`, selection is uniform over the filtered candidate
+set"* — an off-by-one that makes the **last corpus entry unreachable forever**, and a heavy
+bias toward the front of the corpus — leaves the shipped suite at **80 pass / 0 fail in both
+cases**. Both survive. (A control on an unmutated copy scores 80/0, so the measurement is
+sound; a third mutation that collapses every seed to one entry *is* killed, 78/2.) So the
+run spent cycles 13–40 hardening README guards to 1511 of 2101 test lines while the rule
+governing the product's central behaviour had **no test at all**. It is a HOLE in SPEC I-2's
+sense — a stated rule, violated by a surviving mutant — not a BOUNDARY, and it is filed as
+**T-043**. Evidence: `.swarm/runs/cycle-050-gate.mjs`,
+`cycle-050-negative-control.mjs`, `cycle-050-suite-survivors.mjs`.
+
 ## What the run actually spent itself on
 
 Worth stating plainly, because the item list above understates it. After the 11 chartered
@@ -308,6 +352,29 @@ repeat rate is corpus size, and a user meets a repeat by use ~9.6 (60.1% by use 
 real, user-visible, and out of reach tonight *because it is gated on a human's attribution
 call*, not because of the clock. Nor is the target `stalled`: that needs six consecutive
 no-value cycles or a wholly blocked board, and neither holds.
+
+**What T-008 would actually buy, before anyone starts writing aphorisms.** The repeat rate
+is now measured end to end (cycle 50) and not merely asserted: selection is uniform over all
+50 entries at the shipped binary, so the arithmetic below is the whole story and there is no
+cheaper selection-side fix hiding behind it. Exact closed-form values — cycle 14's empirical
+9.60 and 60.1% were 3000-trial estimates, consistent with these to within their own noise:
+
+| corpus size | first repeat expected on run | P(a repeat by run 10) |
+|---|---|---|
+| 50 (today) | 9.5 | 61.8% |
+| 100 | 13.2 | 37.2% |
+| 238 | 20.0 | 17.4% |
+
+**Doubling the corpus buys 3.7 runs.** Reaching "no repeat before run 20" needs ~238
+entries — roughly 190 new attributions, every one of them carrying the KI-2 attribution risk
+a human already holds a queue for. By contrast the deferred nice-to-have,
+**no-repeat-until-exhausted rotation, moves the first repeat from 9.5 to exactly 51** at zero
+new attributions. On the metric that produced the finding, rotation is ~5× better than
+doubling the corpus and carries none of its risk. That does not overturn T-008 — a deeper
+corpus is worth having on its own merits, and rotation is a feature this run's non-goals
+fence out. It does mean **whoever picks T-008 up should decide against rotation on purpose
+rather than by default**, which the taste judge flagged at kickoff (use-twice 4/10, naming
+exactly this deferral) and nobody has quantified until now.
 
 ## Night control log
 
