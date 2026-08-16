@@ -7313,3 +7313,55 @@ is a finding about the repo the next maintainer inherits.
 ```runfile-mirror
 {"run_label": "improvement-aphorism-cli-2026-08-15", "run_kind": "improvement", "stop_at": "2026-08-16T11:24:24+00:00", "usage_reset_at": "2026-08-15T16:24:32+00:00", "model_policy": "value-routing", "auth_mode": "subscription", "pacing": {"mode": "guest", "dial": 0.3}, "targets": [{"path": "/opt/targets/aphorism-cli", "status": "active", "weight": 1}], "rotation_cursor": 0, "rotation_schedule": [0], "cycles_since_recycle": 24, "budget": {"gear": 1, "k_cap": 1, "mode": "guest", "source": "allocator", "posture": "trickle (allowance measured 0 by a REAL probe at cycle 50 - ok:true/source:probe, THIRD consecutive real reading)", "promote": false, "demote": true, "probe_failures": 0, "allow_overall_pct": 0, "reserve_overall_pct": 21.36, "weekly": {"ok": true, "weekly_used_pct": 96.0, "opus_used_pct": 97, "week_elapsed_pct": 88, "weekly_heat": 1.0909, "opus_heat": 1.1023, "ceiling": 3, "promote_blocked": false, "governor_note": "cycle 50: ELEVENTH real reading, THIRD consecutive non-blind one. weekly_heat 96.0/88 = 1.0909; opus_heat 1.1023, still under the 1.2 promote_blocked threshold as all run. The ceiling has never been the binding constraint in this run: guest clamps reachable gears to 1-3 and the gear is pinned at 1 by the ALLOWANCE, measured 0 again this cycle."}}, "heartbeat": {"ts": 1786871587, "pid": 902143, "limp": false}, "watchdog": {"mode": "normal", "plist_loaded": true, "lockfile": "/opt/swarm/runs/watchdog.lock", "relaunch_attempts": 0}, "caffeinate_pid": 0, "wrap_up_complete": false}
 ```
+
+### cycle 50 addendum — step 8 (dashboard): KI-17 was bigger than cycle 49 found, and KI-18
+
+Filed as a second commit rather than folded into the first, on the cycle-49 precedent: the
+findings came after the cycle-50 work was already committed and pushed, and rewriting pushed
+history to make the cycle look like one clean unit would be dressing up the sequence.
+
+**Cycle 49 repaired the one region it had caught. This cycle audited all of them.**
+`runs/c50-dash-audit.mjs` runs the KI-11 comment-classifier — a byte offset is inside a
+comment iff the nearest preceding `<!--` is later than the nearest preceding `-->` — over
+every region the template contract names, and reports live vs commented counts for each.
+
+```
+banner            live=1  inComment=0
+target node       live=1  inComment=1
+evidence strip    live=1  inComment=1   <- LIVE copy held CYCLE 42 content
+burnup strip      live=0  inComment=1   <- never rendered, 50 cycles
+timeline ticks    live=20 inComment=16
+```
+
+**KI-17, second region, and older than the first.** The live `<pre class="evidence">` still
+carried cycle 42's evidence while the legend's placeholder copy carried cycle 48's. Renders
+43–48 had been writing verification evidence into an HTML comment for **seven cycles**, and
+cycle 49's repair did not touch the region. Repaired here, anchored *between* the
+`<!-- TARGETS -->` and `<!-- /TARGETS -->` markers with an exact match-count assertion, and
+confirmed by **re-running the audit after the render** rather than by reading the diff.
+
+What this changes about the issue is not the count. Cycle 49 framed it as a scripting slip
+that had fired twice; it is broader — **nothing asserts that a render reached the live copy**,
+so every region is exposed independently and each fails silently on its own schedule. The
+durable repair is still a human's template edit. The cheap standing mitigation cost one
+script this cycle: run the audit after every render and require every mandated region to
+report `live=1`.
+
+**KI-18 (low) — the burn-up strip has never been rendered, in 50 cycles.** `live=0`; the only
+occurrence in the file is the legend placeholder. Found only because KI-17 prompted an audit
+of *every* region instead of the one already known to be broken. A stale region at least
+shows something; an absent one is invisible by construction.
+
+**Not fixed, and the reason is the reason.** The cumulative verified-items-per-cycle series
+is not reconstructable from `state.json` or `backlog.json` — no item records the cycle it was
+verified in — so drawing it now means parsing 50 journal blocks under an endgame clock, or
+approximating the bar heights. **A fabricated bar chart on the one page a human actually looks
+at is worse than an absent one**, because it would be the only region on the page not backed
+by a measurement. The remedy belongs at the other end and is cheap there: have step 7 write a
+per-cycle `counters.verified_this_cycle`, which turns the series into a running total instead
+of an archaeology problem.
+
+Known issues: **17 total, 10 open** (KI-18 new; KI-17 extended, still open and still not fixed
+at the source). The target node was re-patched to those numbers by a second asserted
+substitution rather than a hand edit. **WRAP_UP owes REPORT.md the KI-18 entry and the KI-17
+extension** — the report's Known-issues section is one behind as of this commit.
