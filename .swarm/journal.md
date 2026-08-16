@@ -7806,3 +7806,102 @@ enumerated the clause can only protect the clause as that reader understood it.
 ```runfile-mirror
 {"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":25,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","posture":"trickle (allowance measured 0 by a REAL probe at cycle 52 — ok:true/source:probe, FIFTH consecutive real reading)","promote":false,"demote":true,"probe_failures":0,"allow_overall_pct":0,"reserve_overall_pct":20.85,"weekly":{"ok":true,"weekly_used_pct":96,"opus_used_pct":97,"week_elapsed_pct":88.65,"weekly_heat":1.0829,"opus_heat":1.0942,"ceiling":3,"promote_blocked":false,"governor_note":"cycle 52: THIRTEENTH real reading, FIFTH consecutive non-blind one. weekly_heat 96/88.65 = 1.0829; opus_heat 1.0942, still under the 1.2 promote_blocked threshold as all run. The ceiling has never been the binding constraint: guest clamps reachable gears to 1-3 and the gear is pinned at 1 by the ALLOWANCE, measured 0 again."}},"heartbeat":{"ts":1786876214,"pid":1061814,"limp":false},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"caffeinate_pid":0,"wrap_up_complete":false}
 ```
+
+## cycle 54 — 2026-08-16T10:45Z — T-046: the coverage map closes at 29/29
+
+**Work:** build-wave, 1 item — T-046 (kind `test`, S-effort, one sonnet builder as a direct
+Agent call; Workflow is review-gated in a `-p` session, the documented fallback).
+**Outcome:** VERIFIED. Gate 10/10. Suite 85 -> 91, green 3/3. Coverage 28/29 -> **29/29 protected**.
+
+### the item, and why it was the only pick
+
+Cycle 52's full-spec sweep mutated all 29 Domain-rule clauses and found four holes; cycles 52
+and 53 closed three. **L7** was the last, and it is the twin of the one cycle 53 closed — both
+trace to item **I-3, settled at cycle 7 by a conductor gate that proved the behaviour by
+execution and left nothing behind that would notice a regression.**
+
+```
+bin/aphorism.js:  if (opts.error)  ->  if (opts.error && !argv.includes('--list'))
+```
+
+so `--list` swallows **every** usage error, not only the seed one the SPEC carve-out names.
+**82 tests stayed green** against it at cycle 52, and 85 still did at cycle 53 (that run's
+NEG-L7 arm). The reason is a plain gap in the cross product: the pre-existing usage-error tests
+(`unknown flag is a usage error…`, `non-numeric seed is a usage error…`) never pass `--list`,
+and every pre-existing `--list` test passes only flags that parse.
+
+Board reality re-measured, unchanged from cycle 53's reading: **T-046 was the only
+conductor-reachable item on the board.** T-040's acceptance is literally "a human confirms two
+judgment calls"; T-008 is deps-gated on human-gated T-006; T-024 is M-effort, which gear 1 does
+not admit; T-024b / T-032 / T-039 are held by the cycle-39 family decision. No item was
+manufactured to have one.
+
+### the assertion, and what the builder was and was not told
+
+The builder was given the **rule** (`opts.error` is checked first, absolutely, and `--list` must
+not suppress it) and never the mutant, never the verify command — the gate was authored after the
+return, per hard rule 2.
+
+Both halves of the observable are asserted, not just the exit code: **exit 2 AND zero-byte stdout
+AND the `aphorism: ` diagnostic on stderr.** Exit code alone is the cheap assertion and it is the
+wrong one here — the failure mode being guarded against is *the corpus printing*, and a status-only
+test would pass on an implementation that exits 2 after writing 4528 bytes. Six tests: the
+non-numeric seed the carve-out names, an empty seed value (`--seed=`), a whitespace-only seed
+value, and an unknown flag — each in **both flag orders**, since the precedence rule is a claim
+about position-independence. The unknown-flag cases matter on their own: the mutant swallows every
+usage error, so a test set that only covered the seed case would leave half of it unprotected.
+
+### VERIFICATION EVIDENCE — gate 10/10 (`.swarm/runs/cycle-054-verify-T-046.txt`)
+
+```
+PASS  CTRL-PRISTINE   unmutated copy 91 pass / 0 fail (91 tests)
+PASS  A     live tree test_cmd: 91 pass / 0 fail (91 tests)
+PASS  A2    test count is 91, expected 91 (85 at cycle 53 + 6)
+PASS  WITNESS-L7   --list --seed abc: pristine exit 2/0B stdout -> mutant exit 0/4528B stdout ;;
+                   --list --nosuchflag: pristine exit 2/0B stdout -> mutant exit 0/4528B stdout
+PASS  DENOM       pristine + skip-pattern: 85 tests (91 - 6 expected), 0 fail
+PASS  L7-KILL     --list swallows every usage error -> 85p/6f
+PASS  L7-NAMES    6 failing; seed-case named=true flag-case named=true
+PASS  L7-ATTR     same mutant, new tests removed -> 85p/0f (survives, so the kill is the new tests')
+PASS  POS-L5      --list --seed does a single seeded pick -> 90p/1f (cycle 53's T-045 test still holds)
+PASS  H           pristine copy green on 3/3 consecutive runs
+GATE 10/10
+```
+
+**What that gate is worth.** The mutant text is pre-registered — copied verbatim from
+`cycle-052-rule-coverage.mjs` cell L7, measured as a survivor of the whole 82-test suite before
+these tests were conceived. `L7-ATTR` is the arm whose outcome the author does not control: the
+same mutant with only the six new tests filtered out survives at 85p/0f, so the kill is
+attributable to them and to nothing else already in the suite. `WITNESS-L7` proves the mutation
+is not inert at the user-facing surface (4528 bytes of corpus where the pristine binary writes
+zero). `POS-L5` is a regression control added this cycle: cycle 53's test must still kill L5, or
+the 29/29 claim is false. Diff scope confirmed by the conductor: `test/cli.test.js` only,
+**59 insertions, 0 deletions** — no existing test weakened, no production file touched.
+
+**What that does NOT fix:** the tests protect the rule as the reader who enumerated the clause
+understood it. A clause mis-stated in the SPEC is mis-protected here too, and 29/29 is a map of
+the SPEC's own rule list — not a claim about behaviours the SPEC never wrote down.
+
+### board
+
+- **T-046** — done. Coverage map **29/29 protected**; the cycle-52 sweep is fully paid off.
+- Board: 48 done, 6 todo, 2 blocked, 4 dropped. Known issues unchanged at 18 total, 11 open.
+- **No conductor-reachable item remains.** Every one of the 6 todos is human-gated, deps-gated,
+  effort-gated at gear 1, or held by the cycle-39 family decision. This is a real finish line,
+  not a stall — recorded so WRAP_UP reports it as such.
+- Wave autotune: CLEAN wave (zero reverts, zero failed verifies) -> `wave_streak` 0 -> 1;
+  `k_current` unchanged at 5. Inert as ever: effective wave size = min(5, gear cap 1) = 1.
+- `cycles_since_recycle` left at 25 — tripped, deferred, NOT reset, twenty-ninth consecutive
+  cycle. WRAP_UP is one or two cycles away and produces a strictly better artifact of the same
+  kind; left visible as an unpaid debt rather than quietly discharged.
+- Collision-scan not applicable: Node CLI, no browser surface, no classic scripts.
+- Budget probe: `bin/swarm-budget.sh` REFUSED for the **fifty-third** consecutive cycle (KI-5),
+  attempted rather than skipped per the standing cycle-14 rule. Refused before the command
+  started, so `probe_failures` stays 0. `bin/swarm-notify.sh poll` SUCCEEDED (eighth
+  consecutive) from cwd=/opt/swarm; `control.json` `pending[]` and `inject[]` both empty.
+- Gear 1 / guest / dial 0.3, unchanged. Budget block carries cycle 52's fifth-consecutive real
+  allocator reading (allowance 0); no fresh real probe this cycle. Gear 1 either way.
+
+```runfile-mirror
+{"run_label": "improvement-aphorism-cli-2026-08-15", "run_kind": "improvement", "stop_at": "2026-08-16T11:24:24+00:00", "usage_reset_at": "2026-08-15T16:24:32+00:00", "model_policy": "value-routing", "auth_mode": "subscription", "pacing": {"mode": "guest", "dial": 0.3}, "targets": [{"path": "/opt/targets/aphorism-cli", "status": "active", "weight": 1}], "rotation_cursor": 0, "rotation_schedule": [0], "cycles_since_recycle": 25, "budget": {"gear": 1, "k_cap": 1, "mode": "guest", "source": "allocator", "posture": "trickle (allowance measured 0 by a REAL probe at cycle 52 — ok:true/source:probe, FIFTH consecutive real reading)", "promote": false, "demote": true, "probe_failures": 0, "allow_overall_pct": 0, "reserve_overall_pct": 20.85, "weekly": {"ok": true, "weekly_used_pct": 96.0, "opus_used_pct": 97, "week_elapsed_pct": 88.65, "weekly_heat": 1.0829, "opus_heat": 1.0942, "ceiling": 3, "promote_blocked": false, "governor_note": "cycle 52: THIRTEENTH real reading, FIFTH consecutive non-blind one. weekly_heat 96/88.65 = 1.0829; opus_heat 1.0942, still under the 1.2 promote_blocked threshold as all run. The ceiling has never been the binding constraint: guest clamps reachable gears to 1-3 and the gear is pinned at 1 by the ALLOWANCE, measured 0 again."}}, "heartbeat": {"ts": 1786877132, "pid": 1068373, "limp": false}, "watchdog": {"mode": "normal", "plist_loaded": true, "lockfile": "/opt/swarm/runs/watchdog.lock", "relaunch_attempts": 0}, "caffeinate_pid": 0, "wrap_up_complete": false}
+```

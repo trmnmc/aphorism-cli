@@ -361,3 +361,62 @@ test('--list accepts a valid --seed and IGNORES it: output is byte-identical acr
     '--tag design --list --seed must be byte-identical to the unseeded form'
   );
 });
+
+// --- T-046 ------------------------------------------------------------------
+//
+// MEASURED HOLE: "a seed that fails to parse is still a usage error under
+// --list" is documented (SPEC.md, README.md) but was never protected by a
+// permanent test. The existing usage-error tests above ('unknown flag is a
+// usage error...', 'non-numeric seed is a usage error...') never pass --list;
+// the --list tests above never pass a flag that fails to parse. Neither side
+// of that cross product was covered, so a regression that let --list suppress
+// opts.error (e.g. checking `if (opts.list)` before `if (opts.error)`) would
+// print the corpus instead of failing, and nothing here would notice.
+//
+// Every case below asserts all three halves of the observable: exit 2,
+// stdout is exactly empty (the failure mode being guarded against is the
+// corpus printing to stdout), and stderr carries the `aphorism: ` prefix.
+
+test('--list --seed abc is a usage error, exit 2, stdout empty, stderr carries the diagnostic', () => {
+  const r = run(['--list', '--seed', 'abc']);
+  assert.strictEqual(r.status, 2);
+  assert.strictEqual(r.stdout, '');
+  assert.match(r.stderr, /^aphorism: /);
+});
+
+test('--seed abc --list (erroring flag BEFORE --list) is still a usage error, exit 2, stdout empty', () => {
+  const r = run(['--seed', 'abc', '--list']);
+  assert.strictEqual(r.status, 2);
+  assert.strictEqual(r.stdout, '');
+  assert.match(r.stderr, /^aphorism: /);
+});
+
+test('--list --seed=  (empty seed value) is a usage error, exit 2, stdout empty', () => {
+  const r = run(['--list', '--seed=']);
+  assert.strictEqual(r.status, 2);
+  assert.strictEqual(r.stdout, '');
+  assert.match(r.stderr, /^aphorism: /);
+});
+
+test('--list --seed "   " (whitespace-only seed value) is a usage error, exit 2, stdout empty', () => {
+  const r = run(['--list', '--seed', '   ']);
+  assert.strictEqual(r.status, 2);
+  assert.strictEqual(r.stdout, '');
+  assert.match(r.stderr, /^aphorism: /);
+});
+
+test('--list --nosuchflag (unknown flag) is a usage error, exit 2, stdout empty — --list does not swallow it', () => {
+  const r = run(['--list', '--nosuchflag']);
+  assert.strictEqual(r.status, 2);
+  assert.strictEqual(r.stdout, '');
+  assert.match(r.stderr, /^aphorism: /);
+  assert.match(r.stderr, /nosuchflag/);
+});
+
+test('--nosuchflag --list (unknown flag BEFORE --list) is still a usage error, exit 2, stdout empty', () => {
+  const r = run(['--nosuchflag', '--list']);
+  assert.strictEqual(r.status, 2);
+  assert.strictEqual(r.stdout, '');
+  assert.match(r.stderr, /^aphorism: /);
+  assert.match(r.stderr, /nosuchflag/);
+});
