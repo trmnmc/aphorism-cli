@@ -1,0 +1,58 @@
+=== CYCLE 45 — PRE-STATE MEASUREMENT (backlog hygiene) ===
+snapshot: /opt/targets/aphorism-cli/.swarm/runs/cycle-045-backlog-PRE.json (183889 bytes)
+
+PASS P1     live board is under the ~30-item hygiene cap -> 8 live (todo 6 [T-007,T-008,T-024,T-024b,T-032,T-039], blocked 2 [T-006,T-024a]), total 53
+PASS P2     priority is ASCENDING-URGENCY (lower number = more urgent) -> all 5 kickoff must-haves [T-001,T-002,T-003,I-1,I-4] sit at the minimum 1; range 1..9
+PASS P3a    the partition is non-vacuous — both sides non-empty -> product-touching=[T-006,T-007,T-008] test-only=[T-024,T-024a,T-024b,T-032,T-039]
+PASS P3b    NEG CONTROL — the fabricated claim "T-024 is product-touching" is REJECTED -> T-024 files_hint=["test/readme-tags.test.js"]
+PASS P3c    NEG CONTROL — the fabricated claim "T-008 is test-only" is REJECTED -> T-008 files_hint=["src/corpus.js","docs/corpus-attribution-triage.md"]
+PASS P4     INVERSION PRESENT: some test-only todo outranks a product-touching todo -> best test-only priority 5 (T-032) outranks worst product-touching 9 (T-008)
+       ordering as filed: T-032:p5/G  T-024:p6/G  T-024b:p6/G  T-039:p6/G  T-007:p8/U  T-008:p9/U
+PASS P5     a LIVE item is missing `value`, so step-4 value scoring cannot run on it -> missing value: [T-039]
+       (also missing on done items, inert: [T-029,T-037,T-038])
+PASS P6a    items whose notes claim "at full priority" -> [T-007,T-008]
+PASS P6b    that claim is FALSE — the claimants hold the LOWEST-urgency live priorities -> T-007:p8, T-008:p9 vs live max 9
+PASS P6c    NEG CONTROL — the phrase is not matching every item -> T-032 and T-024 notes do NOT carry the phrase
+PASS P7a    T-008 depends on T-006 -> ["T-006"]
+PASS P7b    T-006 is blocked on a human, so the dep can never be satisfied autonomously -> T-006 status=blocked
+PASS P7c    T-008's own notes document an OR-branch that `deps` cannot express -> notes name two paths; deps encodes only the human-audit-first one
+PASS P8a    each family item names a DISTINCT mechanism (no dedupe warranted) -> T-024a:extractNearestPrecedingCount | T-024b:band-heading | T-032:two count markers | T-039:heading-to-table stop rule
+PASS P8b    they share one file but not one mechanism — same-file is not duplication -> all four files_hint = ["test/readme-tags.test.js"]
+PASS P9     cycle-44 S8c re-measured: every S-effort todo names T-024 as its instrument -> T-024b:names T-024 | T-032:names T-024 | T-039:names T-024
+PASS P9n    NEG CONTROL — the product-touching todos do NOT name T-024 -> T-007, T-008 carry no T-024 reference
+PASS P10    no commit has touched src/ or readme-tags.test.js since cycle 40 — the cycle-32/35/40 premises still describe HEAD -> 034cf86 cycle 40: T-026 closed BOUNDARY with its HOLE branch refuted on a 15-cell gate; non-discrimination finding measu
+
+--- PRE: 18/18 checks passed ---  MEASUREMENT COMPLETE
+
+=== CYCLE 45 — POST GATE (backlog hygiene) ===
+
+PASS A1     live priorities are exactly as derived -> {"T-006":2,"T-007":3,"T-008":4,"T-024a":5,"T-024":6,"T-032":7,"T-024b":8,"T-039":8}
+PASS A2     CLAIM 1 holds POST: every product-touching live item outranks every test-only one -> worst product-touching p4 < best test-only p5
+PASS A2n    NEG CONTROL — the IDENTICAL check goes RED on the PRE snapshot (it is failable) -> PRE: worst product-touching p9 vs best test-only p4 — inverted
+PASS A3     CLAIM 2 holds POST: T-024 outranks all three items that name it as their instrument -> T-024 p6 strictly above [T-024b:p8,T-032:p7,T-039:p8]
+PASS A3n    NEG CONTROL — the IDENTICAL check goes RED on the PRE snapshot -> PRE: T-024 p6 was TIED with T-024b/T-039 at p6, not above them
+PASS A4a    T-039 now carries a `value` -> value=M
+PASS A4b    no LIVE item is missing `value` -> all 8 live items scoreable
+PASS A4c    the done-item omissions were NOT backfilled with invented numbers -> T-029/T-037/T-038 still undefined, as measured in PRE
+PASS A5a    the measurably-false "at full priority" sentence is gone from both items -> absent from T-007 and T-008
+PASS A5b    it was CORRECTED, not deleted — the correction names the old value and the cycle -> both carry the correction marker and their prior priority
+PASS A5c    NEG CONTROL — the sentence WAS present in PRE (A5a is not vacuous) -> present on both in the snapshot
+PASS A6a    T-008 deps are UNCHANGED — the cycle-14 judgment was not silently reversed -> ["T-006"]
+PASS A6b    the unsatisfiable-dep fact is on the board, not only in the journal -> T-008 notes carry it
+PASS A7     SCOPE: only priority/value/notes moved, and only on the 8 named live items -> 53 items compared, 0 out-of-scope diffs
+PASS A7n    NEG CONTROL — the scope check catches an out-of-scope edit and an in-scope-item/out-of-scope-FIELD edit -> caught [T-001.title,T-024.acceptance]
+PASS A8a    no item added, removed or renamed -> 53 ids identical
+PASS A8b    no status changed — hygiene reprioritises, it does not close or drop -> all 53 statuses identical
+
+       board as it now reads, top-down:
+         p2 T-006   blocked product  Human audit of corpus attributions
+         p3 T-007   todo    product  Consolidate the tag taxonomy so every advertised tag has a rea
+         p4 T-008   todo    product  Deepen the corpus beyond the 50 most-quoted lines
+         p5 T-024a  blocked test-only  Re-shape the Attribution count extraction to bind each count t
+         p6 T-024   todo    test-only  Re-shape the prose-anchored extractions in readme-tags.test.js
+         p7 T-032   todo    test-only  LOUD: a true prose sentence carrying two count markers manufac
+         p8 T-024b  todo    test-only  Re-shape the band-heading "N tags" count extraction to read st
+         p8 T-039   todo    test-only  The heading-to-table stop rule RELOCATES mis-attachment: a ban
+PASS A9     the first UNBLOCKED-status item a top-down reader now reaches is product-touching -> T-007 (was T-032, test-only, in PRE)
+
+--- POST: 18/18 checks passed ---  GATE GREEN
