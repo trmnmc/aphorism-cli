@@ -1,0 +1,245 @@
+[
+ {
+  "id": "P0",
+  "item": "control",
+  "why": "PRISTINE: unmutated README, all three isolated patterns",
+  "isolated": {
+   "README band table headings must state the correct count of tags in their band": {
+    "pass": 4,
+    "fail": 0,
+    "failed": [],
+    "unparseable": false
+   },
+   "README Attribution section HIGH-risk count must match the triage doc table (C2)": {
+    "pass": 4,
+    "fail": 0,
+    "failed": [],
+    "unparseable": false
+   }
+  },
+  "full": {
+   "pass": 80,
+   "fail": 0,
+   "failed": [],
+   "unparseable": false
+  },
+  "restored": true
+ },
+ {
+  "id": "B1",
+  "item": "T-024b",
+  "why": "true lead-in carrying its own \"N tags\" count: \"Of 37 tags, 4 tags carry 5+ entries each:\" (37 and 4 are BOTH true)",
+  "isolated": {
+   "README band table headings must state the correct count of tags in their band": {
+    "pass": 3,
+    "fail": 1,
+    "failed": [
+     "README band table headings must state the correct count of tags in their band"
+    ],
+    "unparseable": false
+   }
+  },
+  "full": {
+   "pass": 79,
+   "fail": 1,
+   "failed": [
+    "README band table headings must state the correct count of tags in their band"
+   ],
+   "unparseable": false
+  },
+  "restored": true
+ },
+ {
+  "id": "B2",
+  "item": "T-024b",
+  "why": "FAILABLE control: a genuinely WRONG band count (5, truth is 4) must still be RED",
+  "isolated": {
+   "README band table headings must state the correct count of tags in their band": {
+    "pass": 3,
+    "fail": 1,
+    "failed": [
+     "README band table headings must state the correct count of tags in their band"
+    ],
+    "unparseable": false
+   }
+  },
+  "full": {
+   "pass": 79,
+   "fail": 1,
+   "failed": [
+    "README band table headings must state the correct count of tags in their band"
+   ],
+   "unparseable": false
+  },
+  "restored": true
+ },
+ {
+  "id": "C1",
+  "item": "T-026",
+  "why": "prose carrying a coincidental band-shaped token between heading and table: \"Requires Node 18+ to run.\"",
+  "isolated": {
+   "README band table headings must state the correct count of tags in their band": {
+    "pass": 3,
+    "fail": 1,
+    "failed": [
+     "README band table headings must state the correct count of tags in their band"
+    ],
+    "unparseable": false
+   },
+   "every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)": {
+    "pass": 4,
+    "fail": 0,
+    "failed": [],
+    "unparseable": false
+   },
+   "every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band": {
+    "pass": 3,
+    "fail": 1,
+    "failed": [
+     "every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band"
+    ],
+    "unparseable": false
+   }
+  },
+  "full": {
+   "pass": 78,
+   "fail": 2,
+   "failed": [
+    "every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band",
+    "README band table headings must state the correct count of tags in their band"
+   ],
+   "unparseable": false
+  },
+  "restored": true
+ },
+ {
+  "id": "C2",
+  "item": "T-026",
+  "why": "HOLE probe: the C1 layout PLUS a deleted row (`debugging` 5) under that same heading",
+  "isolated": {
+   "README band table headings must state the correct count of tags in their band": {
+    "pass": 3,
+    "fail": 1,
+    "failed": [
+     "README band table headings must state the correct count of tags in their band"
+    ],
+    "unparseable": false
+   },
+   "every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)": {
+    "pass": 3,
+    "fail": 1,
+    "failed": [
+     "every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)"
+    ],
+    "unparseable": false
+   },
+   "every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band": {
+    "pass": 3,
+    "fail": 1,
+    "failed": [
+     "every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band"
+    ],
+    "unparseable": false
+   }
+  },
+  "full": {
+   "pass": 77,
+   "fail": 3,
+   "failed": [
+    "every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band",
+    "every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)",
+    "README band table headings must state the correct count of tags in their band"
+   ],
+   "unparseable": false
+  },
+  "restored": true
+ },
+ {
+  "id": "C3",
+  "item": "T-026",
+  "why": "ISOLATING control: the deleted row ALONE, no prose line -- establishes the deletion is caught absent the T-026 shape",
+  "isolated": {
+   "README band table headings must state the correct count of tags in their band": {
+    "pass": 4,
+    "fail": 0,
+    "failed": [],
+    "unparseable": false
+   },
+   "every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)": {
+    "pass": 3,
+    "fail": 1,
+    "failed": [
+     "every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)"
+    ],
+    "unparseable": false
+   },
+   "every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band": {
+    "pass": 3,
+    "fail": 1,
+    "failed": [
+     "every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band"
+    ],
+    "unparseable": false
+   }
+  },
+  "full": {
+   "pass": 78,
+   "fail": 2,
+   "failed": [
+    "every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band",
+    "every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)"
+   ],
+   "unparseable": false
+  },
+  "restored": true
+ },
+ {
+  "id": "A1",
+  "item": "T-032",
+  "why": "a second, semantically DIFFERENT HIGH-marked count in the same section: \"Of those, 3 HIGH entries name a primary source.\"",
+  "isolated": {
+   "README Attribution section HIGH-risk count must match the triage doc table (C2)": {
+    "pass": 3,
+    "fail": 1,
+    "failed": [
+     "README Attribution section HIGH-risk count must match the triage doc table (C2)"
+    ],
+    "unparseable": false
+   }
+  },
+  "full": {
+   "pass": 78,
+   "fail": 2,
+   "failed": [
+    "README Attribution section corpus-size claim must match corpus.length (C1)",
+    "README Attribution section HIGH-risk count must match the triage doc table (C2)"
+   ],
+   "unparseable": false
+  },
+  "restored": true
+ },
+ {
+  "id": "A2",
+  "item": "T-032",
+  "why": "FAILABLE control: a genuinely WRONG HIGH count (9, truth is 8) must still be RED",
+  "isolated": {
+   "README Attribution section HIGH-risk count must match the triage doc table (C2)": {
+    "pass": 3,
+    "fail": 1,
+    "failed": [
+     "README Attribution section HIGH-risk count must match the triage doc table (C2)"
+    ],
+    "unparseable": false
+   }
+  },
+  "full": {
+   "pass": 79,
+   "fail": 1,
+   "failed": [
+    "README Attribution section HIGH-risk count must match the triage doc table (C2)"
+   ],
+   "unparseable": false
+  },
+  "restored": true
+ }
+]

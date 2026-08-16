@@ -374,6 +374,69 @@ function getTagVocabSection(readmeContent) {
 // "N<dash>M" shape)? Used below to tell an ordinary prose sentence apart
 // from what is plausibly ANOTHER band heading, so the heading-to-table scan
 // knows where it must stop rather than reading through it.
+//
+// ---------------------------------------------------------------------------
+// T-026 — CLOSED AS A DOCUMENTED BOUNDARY (cycle 40), not hardened.
+//
+// The question T-026 asked: a band heading separated from its table by prose
+// that carries a coincidental band-shaped token -- "Requires Node 18+ to
+// run." -- aborts this scan. Is that a silent HOLE?
+//
+// MEASURED: no. It is LOUD, and the HOLE branch of the item's acceptance is
+// refuted by measurement, not by argument
+// (.swarm/runs/cycle-040-prose-anchor-probe.js, raw JSON alongside it; every
+// cell restored README.md byte-identical to HEAD, PRISTINE 80/80, DENOMINATOR
+// and FAILABLE controls green):
+//
+//   cell  layout                                   full suite  guards that fire
+//   C1    heading + "Requires Node 18+ to run."      78/2      EXACT, BAND
+//   C2    C1 + a deleted `debugging` row             77/3      EXACT, BAND, T-019
+//   C3    the deleted row ALONE (no prose)           78/2      EXACT, T-019
+//
+// C2 is the decisive cell: with the prose line present, deleting a row is
+// STILL caught (T-019 fires, exactly as it does in the isolating C3 control).
+// Nothing is masked, so there is no hole to close.
+//
+// WHAT THE MEASUREMENT FOUND INSTEAD, and the reason this comment is longer
+// than a "wontfix" would need to be. The stop rule does not PREVENT
+// mis-attachment; it RELOCATES it. Measured directly against the shipped
+// extractor (.swarm/runs/cycle-040-band-dump.js -- it lifts these two helpers
+// out of this file rather than re-implementing them, so it measures the
+// shipped code and not a copy):
+//
+//   pristine : band [5, inf) owns {design 13, simplicity 10, humor 9, debugging 5}
+//   C1       : that band is GONE. A band [18, inf) appears, headed by
+//              "Requires Node 18+ to run.", owning those same four rows.
+//
+// The real heading is correctly denied a foreign table -- but the prose line
+// is itself a candidate heading on the next loop iteration, matches its own
+// "18+" token, scans forward, and is handed the very table the real heading
+// was just stopped from reaching. The block comment below is accurate as
+// written ("a heading with no table of its own ... still never has a foreign
+// table grafted onto it HERE") and that precision now matters: the graft lands
+// on the prose line, one line lower.
+//
+// WHY LOOSENING THE DIGIT-SHAPE HEURISTIC IS STILL THE WORSE TRADE, even
+// though the current rule is not clean. Loosening means reading THROUGH a
+// band-shaped line to find a table further down. That reintroduces the
+// original hazard -- one heading's search reaching into a different heading's
+// table -- while leaving the relocation above untouched, because the prose
+// line would go on matching as a heading either way. It buys nothing and
+// costs the one thing the stop rule does buy.
+//
+// EXACT PROSE SHAPE OUT OF SCOPE: any line between a band heading and its
+// `| Tag | Count |` table that itself matches lineHasBandToken -- i.e. carries
+// an "N+" or "N<dash>M" token -- whether or not that token has anything to do
+// with tag bands ("Node 18+", "2-4 business days", a version range).
+//
+// The recorded right answer is NOT a further narrowing of this heuristic. It
+// is T-024, the umbrella re-shape: derive from document STRUCTURE (a heading
+// recognised AS a heading) rather than from digit shapes in a line. See the
+// cycle-25 standing decision and the cycle-40 non-discrimination finding in
+// state.json decisions[] -- a true sentence and a false one in the same
+// wording frame produce byte-identical suite output, so a maintainer who trips
+// one of these cannot tell a false rejection from a real catch.
+// ---------------------------------------------------------------------------
 function lineHasBandToken(line) {
   return /(\d+)\s*\+/.test(line) || /(\d+)\s*[-‐‑‒–—―]\s*(\d+)/.test(line);
 }

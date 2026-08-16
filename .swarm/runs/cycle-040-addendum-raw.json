@@ -1,0 +1,98 @@
+[
+ {
+  "id": "A3",
+  "truth": "TRUE  (8 < 9, and the suite itself derives 8 from the triage doc)",
+  "sentence": "Fewer than 9 are rated HIGH.",
+  "guard": "README Attribution section HIGH-risk count must match the triage doc table (C2)",
+  "predict": "FIRES = false rejection",
+  "iso": {
+   "pass": 3,
+   "fail": 1,
+   "failed": [
+    "README Attribution section HIGH-risk count must match the triage doc table (C2)"
+   ],
+   "unparseable": false
+  },
+  "full": {
+   "pass": 79,
+   "fail": 1,
+   "failed": [
+    "README Attribution section HIGH-risk count must match the triage doc table (C2)"
+   ],
+   "unparseable": false
+  },
+  "restored": true
+ },
+ {
+  "id": "A4",
+  "truth": "TRUE  (50 < 51, and the suite itself derives 50 from corpus.length)",
+  "sentence": "Fewer than 51 entries are listed.",
+  "guard": "README Attribution section corpus-size claim must match corpus.length (C1)",
+  "predict": "FIRES = false rejection",
+  "iso": {
+   "pass": 3,
+   "fail": 1,
+   "failed": [
+    "README Attribution section corpus-size claim must match corpus.length (C1)"
+   ],
+   "unparseable": false
+  },
+  "full": {
+   "pass": 79,
+   "fail": 1,
+   "failed": [
+    "README Attribution section corpus-size claim must match corpus.length (C1)"
+   ],
+   "unparseable": false
+  },
+  "restored": true
+ },
+ {
+  "id": "A5",
+  "truth": "FALSE (8 is not < 7)  -- FAILABLE control, same frame",
+  "sentence": "Fewer than 7 are rated HIGH.",
+  "guard": "README Attribution section HIGH-risk count must match the triage doc table (C2)",
+  "predict": "must FIRE",
+  "iso": {
+   "pass": 3,
+   "fail": 1,
+   "failed": [
+    "README Attribution section HIGH-risk count must match the triage doc table (C2)"
+   ],
+   "unparseable": false
+  },
+  "full": {
+   "pass": 79,
+   "fail": 1,
+   "failed": [
+    "README Attribution section HIGH-risk count must match the triage doc table (C2)"
+   ],
+   "unparseable": false
+  },
+  "restored": true
+ },
+ {
+  "id": "A6",
+  "truth": "FALSE (50 is not < 49) -- FAILABLE control, same frame",
+  "sentence": "Fewer than 49 entries are listed.",
+  "guard": "README Attribution section corpus-size claim must match corpus.length (C1)",
+  "predict": "must FIRE",
+  "iso": {
+   "pass": 3,
+   "fail": 1,
+   "failed": [
+    "README Attribution section corpus-size claim must match corpus.length (C1)"
+   ],
+   "unparseable": false
+  },
+  "full": {
+   "pass": 79,
+   "fail": 1,
+   "failed": [
+    "README Attribution section corpus-size claim must match corpus.length (C1)"
+   ],
+   "unparseable": false
+  },
+  "restored": true
+ }
+]

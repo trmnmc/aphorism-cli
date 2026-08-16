@@ -5414,3 +5414,191 @@ never touch the wakeup delay; this is not a gear. Clamp satisfied: 1786846443 + 
 
 ScheduleWakeup not called — on the VPS `bin/swarm-pacer.sh` reads `next_wakeup_at` every 5 min and
 spawns the cycle, so the field is the schedule.
+
+
+---
+
+## cycle 40 — 2026-08-16T02:2x UTC — aphorism-cli — inline measurement (conductor-only, zero agents)
+
+**gear 1 · guest · posture trickle (DISPUTED, see below) · 1 item verified · 0 agents dispatched**
+
+### the headline: the halt was real, its removal was a bug
+
+Cycle 39 halted agent dispatch because `runs/allocator.json` reported `posture: halted` —
+`trickle_used_pct` had reached the configured `trickle_pct` cap of 4. This cycle the pacer logged
+`allocator-refreshed posture=trickle` at 02:16:47 and spawned a cycle. Read at face value, that is
+permission to resume dispatching.
+
+It is not. `bin/swarm-allocator.sh` decides a week rolled over with an exact integer comparison,
+`[ "$WRST" -ne "$S_WRST" ]`, against `week_resets_at` from the usage probe — and on a mismatch it
+wipes ALL attribution: `HU=0; HP=0; SU=0; SP=0; TU=0`. That upstream value is **not stable to the
+integer second**.
+
+**VERIFICATION EVIDENCE** — `runs/cycle-040-resets-jitter.json`, 25 samples at 5s over 125s, plus a
+4-sample burst that caught the crossing live:
+
+```
+2026-08-17T04:59:59.954603+00:00 -> 1786942799
+2026-08-17T05:00:00.110580+00:00 -> 1786942800
+2026-08-17T05:00:00.317042+00:00 -> 1786942800
+2026-08-17T05:00:00.463901+00:00 -> 1786942800
+
+25-sample run: distinct ints [1786942799, 1786942800], consecutive flips 1
+```
+
+The API returns `seven_day.resets_at` with sub-second precision sitting on a whole-second boundary,
+so successive probes truncate to different integers. At 02:16:47 the stored `1786942799` met a
+probed `1786942800`, the rollover branch fired, and `trickle_used_pct` went **4 → 0**. No week rolled
+over: the real reset is `1786942800` = 2026-08-17T05:00Z, ~26.7h out and well after `stop_at`
+`1786879464`.
+
+So the trickle allowance is still spent; the counter that said so was erased by clock jitter. Filed
+as **KI-14 (high** — it disables a spend governor, and wipes the human reserve attribution by the
+same branch**)**. Not fixed live: hard rule 5 fences `bin/`.
+
+**Decision: held at zero agents for a second cycle.** Accepting the flip would launder a bug into
+permission to burn. The independent numbers agree it should not be accepted — `weekly_used_pct` 93
+against `week_elapsed_pct` 84.09, `opus_used_pct` 97. And the asymmetry is one-sided: holding costs
+some foregone builder work on internal test guards no CLI user will ever see; resuming spends
+against a spent allowance on an account at 97% premium.
+
+Budget probe: `bin/swarm-budget.sh` refused for the **39th** consecutive cycle (KI-5), attempted in
+both path forms per cycle 27; relative `bin/swarm-notify.sh poll` ran clean from the same cwd, the
+per-script/per-path-form split reproducing a sixth time. `probe_failures` stays 0 (refused before
+starting). Gear re-derived by hand: `weekly_heat` 93/84.09 = **1.1060**, governor engaged at ceiling
+3 for a fourth cycle — margin narrowed (1.1115 → 1.1060) because the clock moved and usage did not.
+`opus_heat` 97/84.09 = 1.1535, under 1.2, `promote_blocked` false. Both inert: guest clamps 1–3, the
+posture pins gear 1.
+
+Control channel: poll clean, no pending commands, no injections. Both trees clean at orient.
+
+Cycle 40 is a `% 5` cycle: full SPEC.md re-read done. **I-1…I-5 are verified done; only I-6 (the
+wrap-up REPORT refresh) is open**, so the improvement run's must-haves are complete and the run is in
+VALUE_LOOP. Backlog hygiene: 9 live items (7 todo, 2 blocked), well under the ~30 cap; no dedupe or
+drops needed.
+
+### the work: measure the three remaining prose-anchor items
+
+Cycle 39 closed the acknowledgement-guard family as a documented BOUNDARY and was explicit that the
+verdict **must not** extend to T-024b, T-026 and T-032, which it had not measured. Measuring them is
+the recorded next step, and it is gear-1 sanctioned test triage that needs no agent.
+
+Harness `.swarm/runs/cycle-040-prose-anchor-probe.js`, method inherited from cycle 39: every cell
+isolated with `--test-name-pattern` (neighbouring count guards fire for their own unrelated reasons
+and would otherwise be misread as this guard's verdict), `--test-reporter=tap` for by-name
+attribution (cycles 19 and 23 each lost a cycle to the default reporter), README restored from git
+and asserted byte-identical after every cell. Four controls required before any verdict: PRISTINE,
+DENOMINATOR, FAILABLE, RESTORE.
+
+**VERIFICATION EVIDENCE** — 15 cells, all four controls green:
+
+```
+cell item    guard  isolated          full-suite     verdict
+P0   control BAND   pass=4 fail=0     pass=80 fail=0 SILENT
+P0   control C2     pass=4 fail=0     pass=80 fail=0 SILENT
+B1   T-024b  BAND   pass=3 fail=1     pass=79 fail=1 FIRES
+B2   T-024b  BAND   pass=3 fail=1     pass=79 fail=1 FIRES   <- FAILABLE control
+C1   T-026   BAND   pass=3 fail=1     pass=78 fail=2 FIRES
+C1   T-026   T019   pass=4 fail=0     pass=78 fail=2 SILENT
+C2   T-026   T019   pass=3 fail=1     pass=77 fail=3 FIRES
+C3   T-026   T019   pass=3 fail=1     pass=78 fail=2 FIRES   <- isolating control
+A1   T-032   C2     pass=3 fail=1     pass=78 fail=2 FIRES
+A2   T-032   C2     pass=3 fail=1     pass=79 fail=1 FIRES   <- FAILABLE control
+
+DENOMINATOR: all isolated runs executed >= 1 test: OK
+PRISTINE 80/80 · README restored byte-identical after every cell: yes
+```
+
+**T-026: HOLE branch REFUTED, closed as a documented BOUNDARY.** Its acceptance made HOLE
+conditional on the layout leaving the suite GREEN. C1 is 78/2. And C2 — the layout *plus* a deleted
+`debugging` row — fires T-019 exactly as the C3 isolating control (deletion alone) does, so the
+deletion is not masked and there is no hole to close. This is the one item the measurement genuinely
+settles, and it is settled against the hypothesis that filed it.
+
+**The mechanism, measured rather than read.** I predicted from reading the extractor that the stop
+rule *relocates* mis-attachment instead of preventing it, wrote the prediction into the harness
+before running it, and measured it against the shipped helpers (`cycle-040-band-dump.js` lifts
+`lineHasBandToken` / `extractBandTablesFromReadme` out of the test file rather than
+re-implementing them, so it measures the shipped code, not my copy):
+
+```
+pristine : band [5, inf) headed "4 tags have a robust pool (5+ entries):"
+           rows {design 13, simplicity 10, humor 9, debugging 5}
+C1       : that band is GONE. band [18, inf) headed "Requires Node 18+ to run."
+           rows {design 13, simplicity 10, humor 9, debugging 5}
+PREDICTION CONFIRMED: true
+```
+
+The real heading is correctly denied a foreign table — and the prose line, one line lower, is handed
+it instead. Filed as **T-039**, explicitly bound to the T-024 umbrella so it does not become a
+seventh narrowing.
+
+### the finding that outlives the items
+
+**A true sentence and a false sentence in the same frame are byte-identical to the suite.** Reached
+independently on two guards, each with its own paired failable control:
+
+| cell | sentence | truth | signature |
+|---|---|---|---|
+| B1 | "Of 37 tags, 4 tags carry 5+ entries each:" | TRUE | iso 3/1, full 79/1, BAND |
+| B2 | count 5 where truth is 4 | FALSE | iso 3/1, full 79/1, BAND |
+| A3 | "Fewer than 9 are rated HIGH." | TRUE (8 < 9) | iso 3/1, full 79/1, C2 |
+| A5 | "Fewer than 7 are rated HIGH." | FALSE | iso 3/1, full 79/1, C2 |
+| A4 | "Fewer than 51 entries are listed." | TRUE (50 < 51) | iso 3/1, full 79/1, C1 |
+| A6 | "Fewer than 49 entries are listed." | FALSE | iso 3/1, full 79/1, C1 |
+
+A3–A6 exist because the first pass had one soft spot and it should not be buried: cell A1's sentence
+("Of those, 3 HIGH entries name a primary source.") trips **both** C1 and C2 — one sentence carrying
+both the `\bHIGH\b` and `\bentries\b` markers, wider than T-032 predicted — but its *truth* depends
+on a fact about the triage doc this run cannot settle, so a false-rejection verdict resting on it
+would rest on an unverified premise. The addendum re-derives the finding on sentences true by
+arithmetic from figures the suite itself computes from source. The verdict does not need A1.
+
+**This strengthens the cycle-25 standing finding rather than restating it.** Cycle 25 held the
+failure direction was safe: these guards reject a correct README loudly, they never pass a wrong one
+silently. Measured true — and measured incomplete. Loudness without discrimination is not a safe
+failure. The maintainer who trips one cannot diagnose it as false, and their cheapest
+correct-looking action is deleting the guard, which is exactly the cumulative risk cycle 25 named.
+The case for T-024 no longer rests on taste about prose anchors; it rests on a measured property of
+the failure signal.
+
+**T-024b and T-032 stay OPEN.** The measurement proves their false rejections are real and
+non-discriminating; it does not prove no structural reading exists, and both acceptances require
+BOUNDARY be *argued against* a measurement, not asserted. One candidate rule for T-024b — "the count
+token nearest the bounds token" — was identified and deliberately NOT measured: it is positional,
+positional selection is disqualified by the `collectMarkerBindings` reasoning, and measuring a
+seventh narrowing would work against this run's own cycle-39 conclusion that T-024 is the instrument.
+
+### the gate
+
+**VERIFICATION EVIDENCE** — 7 checks, authored at verification time:
+
+```
+G1 full suite            # tests 80  # pass 80  # fail 0   (unchanged)
+G2 comment-only edit     added 63 | added NON-comment 0 | removed 0
+G3 at the extraction site boundary note line 379, lineHasBandToken line 440
+G4 required clauses      EXACT PROSE SHAPE OUT OF SCOPE: 1 | WHY LOOSENING...WORSE TRADE: 1
+G5 product files touched M test/readme-tags.test.js only (+ untracked .swarm/runs artifacts)
+G6 README vs HEAD        git diff --stat -- README.md: (no output — identical)
+G7 probe re-run POST-edit all 15 cells reproduce identically; PRISTINE still 80/80
+```
+
+G7 is the one that matters: it proves by measurement, not by reading the diff, that a 63-line
+comment changed nothing about what the guard does.
+
+### honest headline
+
+One item closed, and again nothing was *repaired* — but the shape differs from cycle 39. Cycle 39
+documented four defects it decided not to fix. This cycle **refuted** one: T-026 was filed on the
+suspicion of a silent hole, and there is no hole. Removing a false entry from the board is real
+value. The genuinely new result is the non-discrimination finding, which is a measured property
+rather than a decision — and it is the strongest argument this run has produced for T-024.
+
+### filed this cycle
+
+- **KI-14** (high, open) — allocator week-rollover jitter silently refills the trickle spend cap.
+- **T-039** (todo, S) — the stop rule relocates mis-attachment onto the prose line; bound to T-024.
+
+```runfile-mirror
+{"run_label": "improvement-aphorism-cli-2026-08-15", "run_kind": "improvement", "stop_at": "2026-08-16T11:24:24+00:00", "usage_reset_at": "2026-08-15T16:24:32+00:00", "model_policy": "value-routing", "auth_mode": "subscription", "pacing": {"mode": "guest", "dial": 0.3}, "targets": [{"path": "/opt/targets/aphorism-cli", "status": "active", "weight": 1}], "rotation_cursor": 0, "rotation_schedule": [0], "cycles_since_recycle": 14, "budget": {"gear": 1, "k_cap": 1, "mode": "guest", "source": "allocator", "posture": "trickle (disputed - KI-14)", "promote": false, "demote": true, "probe_failures": 0, "weekly": {"ok": true, "weekly_used_pct": 93.0, "opus_used_pct": 97, "week_elapsed_pct": 84.09, "weekly_heat": 1.106, "opus_heat": 1.1535, "ceiling": 3, "promote_blocked": false}}, "watchdog": {"mode": "normal", "plist_loaded": true}, "caffeinate_pid": 0, "wrap_up_complete": false}
+```
