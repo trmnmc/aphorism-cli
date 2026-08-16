@@ -299,3 +299,65 @@ test('--json composes with the filter flags: the JSON pick is always a member of
     );
   }
 });
+
+// --- cycle 53 (T-045) -------------------------------------------------------
+//
+// PROVENANCE. The mutant below is cell L5 of the cycle-52 full-spec coverage sweep
+// (.swarm/runs/cycle-052-rule-coverage.mjs). It was registered as a SURVIVOR of the
+// whole 84-test suite before this test was conceived:
+//
+//     bin/aphorism.js:  if (opts.list)  ->  if (opts.list && opts.seed === undefined)
+//
+// so `--list --seed 1` stops listing and does a single seeded pick instead.
+//
+// WHY IT SURVIVED 45 CYCLES. The ruling — "`--list` accepts a valid `--seed` but
+// ignores it; no random selection occurs" (SPEC Domain rules; README) — was settled
+// by item I-3 at cycle 7 and verified there by EXECUTING the shipped binary in a
+// conductor gate. That gate proved the behaviour on the day and left nothing behind
+// that would notice a regression. Every pre-existing --list test invokes --list
+// WITHOUT a seed, so none of them can see this mutation at all.
+//
+// A conductor gate and a permanent test are not interchangeable evidence. This is
+// the gate's own check, promoted to something that runs on every `node --test`.
+
+test('--list accepts a valid --seed and IGNORES it: output is byte-identical across seeds', () => {
+  // Byte-identity rather than a line count, deliberately. A line-count assertion
+  // would catch L5 (one pick vs ~50 lines) but would sit green on a seed that
+  // REORDERED or RESAMPLED the same number of lines. Identity is the assertion the
+  // rule actually makes, and it is the discriminator: no implementation that lets
+  // the seed reach selection can hold it across five different seeds.
+  const baseline = run(['--list']);
+  assert.strictEqual(baseline.status, 0);
+  assert.ok(baseline.stdout.trim().split('\n').length >= 40, 'fixture: --list should be long');
+
+  for (const seed of ['0', '1', '42', '-7', '999999']) {
+    const r = run(['--list', '--seed', seed]);
+    assert.strictEqual(r.status, 0, `--list --seed ${seed} must exit 0`);
+    assert.strictEqual(r.stderr, '', `--list --seed ${seed} must write nothing to stderr`);
+    assert.strictEqual(
+      r.stdout,
+      baseline.stdout,
+      `--list --seed ${seed} must be byte-identical to unseeded --list`
+    );
+  }
+
+  // The rule is about --list, not about the plain --list surface only: the same
+  // sentence governs the NDJSON and filtered forms, which travel the same branch.
+  // Same rule, same edit, no new machinery — so they are covered here rather than
+  // left as a second known hole.
+  const ndjson = run(['--list', '--json']);
+  assert.strictEqual(ndjson.status, 0);
+  assert.strictEqual(
+    run(['--list', '--json', '--seed', '3']).stdout,
+    ndjson.stdout,
+    '--list --json --seed must be byte-identical to unseeded --list --json'
+  );
+
+  const filtered = run(['--tag', 'design', '--list']);
+  assert.strictEqual(filtered.status, 0);
+  assert.strictEqual(
+    run(['--tag', 'design', '--list', '--seed', '5']).stdout,
+    filtered.stdout,
+    '--tag design --list --seed must be byte-identical to the unseeded form'
+  );
+});

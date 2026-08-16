@@ -1146,7 +1146,7 @@
       "id": "T-045",
       "title": "MEASURED HOLE: the `--list accepts a valid --seed and IGNORES it` ruling is documented but unprotected",
       "kind": "test",
-      "status": "todo",
+      "status": "done",
       "priority": 4,
       "effort": "S",
       "value": "M",
@@ -1158,7 +1158,8 @@
       ],
       "filed_cycle": 52,
       "acceptance": "The cycle-52 sweep's L5 mutant — `if (opts.list)` narrowed to `if (opts.list && opts.seed === undefined)`, so `--list --seed 1` stops listing and does a single seeded pick — is KILLED by the project's own test_cmd, attributable by name, proven twice per L-029. The pristine suite must stay green and the L7 hole must still survive (negative control).",
-      "notes": "MEASURED at cycle 52 (.swarm/runs/cycle-052-rule-coverage-out.txt, cell L5), not read off the suite. This is one of the SIX rulings item I-3 settled at cycle 7: cycle 7 verified it by EXECUTING the binary in a conductor gate (--list byte-identical across unseeded / --seed 1 / --seed 999999 / --seed Infinity) and wrote it into SPEC Domain rules and README — but the check was a gate, not a test, so nothing permanent inherited it. 45 cycles later the suite still does not protect it. Not picked at cycle 52: gear 1 admits one S item per cycle and T-044 outranked it (a silent wrong answer beats a loud one)."
+      "notes": "MEASURED at cycle 52 (.swarm/runs/cycle-052-rule-coverage-out.txt, cell L5), not read off the suite. This is one of the SIX rulings item I-3 settled at cycle 7: cycle 7 verified it by EXECUTING the binary in a conductor gate (--list byte-identical across unseeded / --seed 1 / --seed 999999 / --seed Infinity) and wrote it into SPEC Domain rules and README — but the check was a gate, not a test, so nothing permanent inherited it. 45 cycles later the suite still does not protect it. Not picked at cycle 52: gear 1 admits one S item per cycle and T-044 outranked it (a silent wrong answer beats a loud one).\n\nCLOSED cycle 53, conductor-inline (zero agents — the allocator's measured allowance is 0). One test added to test/cli.test.js asserting BYTE-IDENTITY of --list output across five seeds, plus the --list --json (NDJSON) and --tag-filtered forms of the same rule. Gate 9/9 (.swarm/runs/cycle-053-verify-T-045.txt): the pre-registered L5 mutant fails the suite by name (84p/1f), and with the new test filtered out the SAME mutant survives at 84p/0f, so the kill is attributable. NEG-L7 confirms T-046's hole is still open at 85p/0f. Suite 84 -> 85.",
+      "done_cycle": 53
     },
     {
       "id": "T-046",

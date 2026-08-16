@@ -1,0 +1,10 @@
+PASS  CTRL-PRISTINE   unmutated copy 85 pass / 0 fail (85 tests)
+PASS  A   live tree test_cmd: 85 pass / 0 fail (85 tests)
+PASS  A2   test count is 85, expected 85 (84 at cycle 52 + 1)
+PASS  DENOM   pristine + skip-pattern: 84 tests (85 - 1 expected), 0 fail
+PASS  L5-KILL   --list --seed does a single seeded pick instead of listing -> 84p/1f
+PASS  L5-NAMES   failing: --list accepts a valid --seed and IGNORES it: output is byte-identical across seeds
+PASS  L5-ATTR   same mutant, new test removed -> 84p/0f (survives, so the kill is the new test's)
+PASS  NEG-L7   --list swallows every usage error -> 85p/0f — still an OPEN hole (T-046)
+PASS  H   pristine copy green on 3/3 consecutive runs
+GATE 9/9
