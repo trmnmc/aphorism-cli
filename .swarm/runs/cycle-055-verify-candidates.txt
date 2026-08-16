@@ -1,0 +1,31 @@
+
+--- NEW      : /opt/swarm/runs/wrapup-candidates.md
+PASS  A  cap       exactly 5 candidate bullets :: 5 bullets
+PASS  B  ids       ids are exactly L-037..L-041, unique, from next_id 37 :: L-037,L-038,L-039,L-040,L-041
+PASS  C  grammar   every bullet carries [confidence:] and [source:] :: 0 malformed
+PASS  D  roles     every [apply: prompt <role>] uses a real role :: 5 apply lines, bad=[]
+PASS  H  cap-note  the 31-vs-20 cap breach and the 36 arithmetic are preserved :: cap paragraph
+PASS  I  ki5       KI-5 root cause names both missing scripts :: both named
+PASS  E* recency   candidates cite cycles 52, 53 AND 54 :: cycles cited: 52/53/54
+PASS  F* themes    the four cycle-52/54 themes are present by name :: all four
+PASS  G* lossless  every cycle-43 id has an explicit disposition (KEPT/MERGED/REWRITTEN/EXTENDED) :: 5/5 disposed
+PASS  J* repair    the settings repair is stated with ABSOLUTE /opt/swarm/bin entries :: absolute entries
+NEW       score 10/10 (discriminating 4/4)
+
+--- CONTROL  : /opt/targets/aphorism-cli/.swarm/runs/cycle-055-wrapup-candidates.c43.md
+PASS  A  cap       exactly 5 candidate bullets :: 5 bullets
+PASS  B  ids       ids are exactly L-037..L-041, unique, from next_id 37 :: L-037,L-038,L-039,L-040,L-041
+PASS  C  grammar   every bullet carries [confidence:] and [source:] :: 0 malformed
+PASS  D  roles     every [apply: prompt <role>] uses a real role :: 5 apply lines, bad=[]
+PASS  H  cap-note  the 31-vs-20 cap breach and the 36 arithmetic are preserved :: cap paragraph
+PASS  I  ki5       KI-5 root cause names both missing scripts :: both named
+FAIL  E* recency   candidates cite cycles 52, 53 AND 54 :: cycles cited: none
+FAIL  F* themes    the four cycle-52/54 themes are present by name :: missing: coverage map, attribution-by-subtraction, witness arm, gate!=test
+FAIL  G* lossless  every cycle-43 id has an explicit disposition (KEPT/MERGED/REWRITTEN/EXTENDED) :: no disposition: L-037,L-038,L-039,L-040,L-041
+FAIL  J* repair    the settings repair is stated with ABSOLUTE /opt/swarm/bin entries :: absolute entries
+CONTROL   score 6/10 (discriminating 0/4)
+
+=== VERDICT ===
+NEW passes every check      : YES (10/10)
+CONTROL fails every disc arm: YES (0/4 discriminating passed)
+GATE PASS  — 10/10 new, 6/10 control

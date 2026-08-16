@@ -7905,3 +7905,118 @@ the SPEC's own rule list — not a claim about behaviours the SPEC never wrote d
 ```runfile-mirror
 {"run_label": "improvement-aphorism-cli-2026-08-15", "run_kind": "improvement", "stop_at": "2026-08-16T11:24:24+00:00", "usage_reset_at": "2026-08-15T16:24:32+00:00", "model_policy": "value-routing", "auth_mode": "subscription", "pacing": {"mode": "guest", "dial": 0.3}, "targets": [{"path": "/opt/targets/aphorism-cli", "status": "active", "weight": 1}], "rotation_cursor": 0, "rotation_schedule": [0], "cycles_since_recycle": 25, "budget": {"gear": 1, "k_cap": 1, "mode": "guest", "source": "allocator", "posture": "trickle (allowance measured 0 by a REAL probe at cycle 52 — ok:true/source:probe, FIFTH consecutive real reading)", "promote": false, "demote": true, "probe_failures": 0, "allow_overall_pct": 0, "reserve_overall_pct": 20.85, "weekly": {"ok": true, "weekly_used_pct": 96.0, "opus_used_pct": 97, "week_elapsed_pct": 88.65, "weekly_heat": 1.0829, "opus_heat": 1.0942, "ceiling": 3, "promote_blocked": false, "governor_note": "cycle 52: THIRTEENTH real reading, FIFTH consecutive non-blind one. weekly_heat 96/88.65 = 1.0829; opus_heat 1.0942, still under the 1.2 promote_blocked threshold as all run. The ceiling has never been the binding constraint: guest clamps reachable gears to 1-3 and the gear is pinned at 1 by the ALLOWANCE, measured 0 again."}}, "heartbeat": {"ts": 1786877132, "pid": 1068373, "limp": false}, "watchdog": {"mode": "normal", "plist_loaded": true, "lockfile": "/opt/swarm/runs/watchdog.lock", "relaunch_attempts": 0}, "caffeinate_pid": 0, "wrap_up_complete": false}
 ```
+
+## cycle 55 — 2026-08-16T10:58Z — the distill set catches up with the run that earned it
+
+**Work:** inline, zero agents — refresh `SWARM/runs/wrapup-candidates.md`.
+**Outcome:** VERIFIED. Gate **10/10** on the refreshed set, **6/10** on the sealed cycle-43
+draft used as a negative control (**0/4** on the discriminating arms). Suite 91 pass / 0 fail.
+
+### why this, and why it was the only thing worth doing
+
+The board has had **no conductor-reachable item since cycle 54** — re-measured again this
+cycle at the step-3 hygiene pass (cycle 55 % 5 == 0, full SPEC re-read): all 6 todos are
+human-gated (T-040, T-006→T-008), effort-gated at gear 1 (T-024, M-effort), or held by the
+cycle-39 family decision (T-024b / T-032 / T-039). No item was manufactured to have one, and
+`backlog.json` was not touched — a hygiene pass that changes nothing is a result, not a skip.
+
+What WAS stale was the run's memory. `wrapup-candidates.md` was pre-drafted at **cycle 43**
+and had not been touched since. Cycles 46-54 then produced the strongest method lessons of
+the run — the full-spec mutation sweep, the coverage map, the three-arm gate. A WRAP_UP that
+consumed the cycle-43 file would have appended this run's *weakest* five candidates and
+silently dropped its best work. This is also the cheapest possible insurance against a
+session death: if this file is all that survives to morning, it is the distilled run.
+
+### what changed, and the cap that forced every choice
+
+Five candidates in, five out — the distill cap is 5 per run — but cycles 46-54 supplied
+**seven** more lesson-shaped observations, so the refresh is a *selection*, not an append.
+Every disposition is written into the file as a table rather than asserted:
+
+- **L-037** (structure-not-prose extraction) — kept unchanged; nothing since contradicts it.
+- **L-038** (author-authors-gate) — **rewritten**. Cycle 54 supplied a second mechanism for
+  the same principle, so the bullet now carries both: a document's previous version must
+  score 0, and a test's kill must survive **attribution-by-subtraction**. One principle —
+  *add an arm whose outcome you cannot choose* — observed in two different media.
+- **L-039 + old L-040** — **merged into one**. Both are the same root cause: the conductor
+  assumed a filesystem boundary the agent does not have (a relative scratch path lands
+  outside the target; a baseline sealed inside `<target>/.swarm/runs/` is readable by every
+  builder). Merging them freed an id.
+- **new L-040** — the freed id carries the run's headline finding: **a conductor gate and a
+  permanent test are not interchangeable evidence.** Both holes still open after cycle 52's
+  sweep traced to item I-3, settled at cycle 7 by a gate that verified 36/36 by executing the
+  shipped binary and left nothing that would notice a regression. Tail clause: point the
+  mutation instrument at the SPEC's own **rule list**, not one code surface — the output is a
+  coverage map, a hand-off artifact a per-surface gate never produces.
+- **L-041** (UNPARSEABLE + forced reporter) — **extended** with the handoff clause: the
+  `node --test` SPEC-reporter trap was paid for at cycles 19, 23 and again at 52, and stopped
+  costing cycles only once the heartbeat note named it.
+
+One cycle-54 observation was **refused a slot on purpose**: "tell the builder the rule, never
+the mutant" is already doctrine — `reference/cycle.md` step 6.1 — and re-observing doctrine is
+a RETRO line, not a new lesson. Recorded in the file's table so the omission is visible.
+
+### VERIFICATION EVIDENCE — gate 10/10 vs 6/10 control (`.swarm/runs/cycle-055-verify-candidates.txt`)
+
+```
+--- NEW      : /opt/swarm/runs/wrapup-candidates.md
+PASS  A  cap       exactly 5 candidate bullets :: 5 bullets
+PASS  B  ids       ids are exactly L-037..L-041, unique, from next_id 37 :: L-037..L-041
+PASS  C  grammar   every bullet carries [confidence:] and [source:] :: 0 malformed
+PASS  D  roles     every [apply: prompt <role>] uses a real role :: 5 apply lines, bad=[]
+PASS  H  cap-note  the 31-vs-20 cap breach and the 36 arithmetic are preserved
+PASS  I  ki5       KI-5 root cause names both missing scripts :: both named
+PASS  E* recency   candidates cite cycles 52, 53 AND 54 :: cycles cited: 52/53/54
+PASS  F* themes    the four cycle-52/54 themes are present by name :: all four
+PASS  G* lossless  every cycle-43 id has an explicit disposition :: 5/5 disposed
+PASS  J* repair    the settings repair uses ABSOLUTE /opt/swarm/bin entries
+NEW       score 10/10 (discriminating 4/4)
+--- CONTROL  : .swarm/runs/cycle-055-wrapup-candidates.c43.md   (sealed cycle-43 draft)
+FAIL  E* recency   :: cycles cited: none
+FAIL  F* themes    :: missing: coverage map, attribution-by-subtraction, witness arm, gate!=test
+FAIL  G* lossless  :: no disposition: L-037,L-038,L-039,L-040,L-041
+FAIL  J* repair    :: absolute entries
+CONTROL   score 6/10 (discriminating 0/4)
+GATE PASS  — 10/10 new, 6/10 control
+```
+
+**What that gate is worth.** The conductor authored both the artifact and its gate this
+cycle, which is precisely the failure mode candidate L-038 exists to name — so the gate was
+run under L-038's own rule. The cycle-43 draft was **copied to disk before the rewrite** and
+scored on the identical ten checks. Six shared checks pass on both, which is the point: they
+bound the append (cap, ids, grammar, roles) and were never expected to discriminate. The four
+starred arms are the ones whose outcome the author cannot choose by writing well — a set that
+had not been refreshed cannot cite cycle 52, cannot name attribution-by-subtraction, and
+cannot dispose of ids it does not know were re-shuffled. The control scores **0/4** on them.
+Gate script authored AFTER the artifact: `.swarm/runs/cycle-055-gate-candidates.mjs`.
+
+**What that does NOT establish.** The gate proves the refreshed set is *current, lossless and
+well-formed*. It says nothing about whether these are the right five lessons — that is a
+judgment call, it is the conductor's, and the file shows its reasoning (a disposition table
+and a dedupe note per bullet) precisely so a human can overturn it cheaply.
+
+### standing floor + board
+
+- `test_cmd` green: **91 pass / 0 fail** — the target repo was not touched this cycle beyond
+  `.swarm/`, and the floor was re-run rather than assumed.
+- Board unchanged: 48 done, 6 todo, 2 blocked, 4 dropped. Known issues 18 total, 11 open.
+- **The finish line is real, and this is the second cycle to re-measure it.** WRAP_UP is next.
+- Step-3 hygiene (cycle % 5 == 0): full SPEC.md re-read, board re-measured, zero edits.
+- `cycles_since_recycle` left at **25** — tripped, deferred, NOT reset, thirtieth consecutive
+  cycle. WRAP_UP produces a strictly better artifact of the same kind; the debt stays visible.
+- Wave autotune: not a build wave, `k_current` 5 / `wave_streak` 1 unchanged.
+- Budget probe: `bin/swarm-budget.sh` REFUSED for the **fifty-fourth** consecutive cycle
+  (KI-5), attempted rather than skipped per the standing cycle-14 rule. Refused before the
+  command started, so `probe_failures` stays 0.
+- `bin/swarm-notify.sh poll` SUCCEEDED (**ninth** consecutive) from cwd `/opt/swarm`;
+  `control.json` `pending[]` and `inject[]` both empty. Nothing to triage.
+- **A fresh REAL allocator probe landed this cycle** — `runs/allocator.json` `ok:true`,
+  `source:probe`, `allow_overall_pct 0`, reserve 20.42, weekly 97 / opus 97 / elapsed 89.21.
+  That is the **sixth consecutive** real zero-allowance reading. Gear 1, guest, dial 0.3,
+  unchanged and unchangeable: the weekly window resets at 1786942799, long after `stop_at`.
+- Admission arithmetic recorded: at step 4, `stop_at − now − 900 = 897s`; the inline work
+  type's budget is 600s, so it admitted with margin. No wave type did.
+
+```runfile-mirror
+{"run_label": "improvement-aphorism-cli-2026-08-15", "run_kind": "improvement", "stop_at": "2026-08-16T11:24:24+00:00", "usage_reset_at": "2026-08-15T16:24:32+00:00", "model_policy": "value-routing", "auth_mode": "subscription", "pacing": {"mode": "guest", "dial": 0.3}, "targets": [{"path": "/opt/targets/aphorism-cli", "status": "active", "weight": 1}], "rotation_cursor": 0, "rotation_schedule": [0], "cycles_since_recycle": 25, "budget": {"gear": 1, "k_cap": 1, "mode": "guest", "source": "allocator", "posture": "trickle (allowance measured 0 by a REAL probe at cycle 55 - ok:true/source:probe, SIXTH consecutive real reading)", "promote": false, "demote": true, "probe_failures": 0, "allow_overall_pct": 0, "reserve_overall_pct": 20.42, "weekly": {"ok": true, "weekly_used_pct": 97.0, "opus_used_pct": 97, "week_elapsed_pct": 89.21, "weekly_heat": 1.0873, "opus_heat": 1.0873, "ceiling": 3, "promote_blocked": false}}, "heartbeat": {"ts": 1786877667, "pid": 1076001, "limp": false}, "watchdog": {"mode": "normal", "plist_loaded": true, "lockfile": "/opt/swarm/runs/watchdog.lock", "relaunch_attempts": 0}, "caffeinate_pid": 0, "wrap_up_complete": false}
+```
