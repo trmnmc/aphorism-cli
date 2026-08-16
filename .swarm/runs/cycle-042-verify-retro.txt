@@ -1,0 +1,41 @@
+
+=== RETRO GATE, ARM: ACCEPTANCE — RETRO.md as written this cycle ===
+PASS C1  suite counts  measured pass=80 fail=0; doc must state 48 green (kickoff) and 80 green
+PASS C2  board counts  measured {"done":41,"dropped":4,"blocked":2,"todo":6} total=53
+PASS C3  done-by-kind  measured {"feature":3,"docs":7,"fix":6,"qa":4,"test":21}
+PASS C4  attempt-capped items  measured attempts>=1: {"T-009":[1,"done"],"T-021":[1,"done"],"T-024a":[2,"blocked"]}
+PASS C5  merge hashes exist  measured 3 merge commits: d737296,73604d3,b47d0e0 (each 2 parents)
+PASS C6  merge count bounded  measured merge-commit total = 3; doc must name exactly cycles 15/16/17
+PASS C7  allocator literals  measured weekly=94 opus=97 elapsed=85.04 allow=0/0
+PASS C8  reset falls after stop_at  measured week_resets_at=1786942799 > stop_at=1786879464 by 17.59h; doc must cite BOTH raw numbers
+PASS C9  floor-release arithmetic  re-ran allocmath live: allow@now=0.00 allow@stop=0.00 reserve@now=23.60 vs reported 23.67 (transcription control |d|<0.15) reserve@stop=20.17 hours_left@stop=17.59h
+PASS C10 known-issue grades  state.json carries 13 issues (KI-2,KI-3,KI-4,KI-5,KI-6,KI-7,KI-8,KI-9,KI-10,KI-11,KI-12,KI-13,KI-14); EVERY graded severity must match, and any id absent from state.json needs a source-run label
+PASS C11 applied-lessons coverage  runfile.playbook.applied has 15: L-003,L-006,L-007,L-008,L-011,L-016,L-018,L-020,L-021,L-022,L-024,L-026,L-029,L-031,L-034; the section must name exactly these — no more, no fewer
+PASS C12 applied-lessons tally  the stated tally must MATCH the verdicts written in the section (not merely sum to 15)
+PASS C13 this-run provenance  doc must describe the 2026-08-15 improvement run, not the 2026-08-14 SMOKE run
+PASS C14 must-haves closed  measured 12 I-items, 0 not done
+PASS C15 no unverified "passed"  signals not run must be reported as not-run: weekly-reset utilization and the floor release both fall outside the run
+--- 15/15 checks passed ---
+
+=== RETRO GATE, ARM: NEGATIVE CONTROL — the 2026-08-14 SMOKE retro from git HEAD ===
+FAIL C1  suite counts  measured pass=80 fail=0; doc must state 48 green (kickoff) and 80 green
+FAIL C2  board counts  measured {"done":41,"dropped":4,"blocked":2,"todo":6} total=53
+FAIL C3  done-by-kind  measured {"feature":3,"docs":7,"fix":6,"qa":4,"test":21}
+FAIL C4  attempt-capped items  measured attempts>=1: {"T-009":[1,"done"],"T-021":[1,"done"],"T-024a":[2,"blocked"]}
+FAIL C5  merge hashes exist  measured 3 merge commits: d737296,73604d3,b47d0e0 (each 2 parents)
+FAIL C6  merge count bounded  measured merge-commit total = 3; doc must name exactly cycles 15/16/17
+FAIL C7  allocator literals  measured weekly=94 opus=97 elapsed=85.04 allow=0/0
+FAIL C8  reset falls after stop_at  measured week_resets_at=1786942799 > stop_at=1786879464 by 17.59h; doc must cite BOTH raw numbers
+FAIL C9  floor-release arithmetic  re-ran allocmath live: allow@now=0.00 allow@stop=0.00 reserve@now=23.60 vs reported 23.67 (transcription control |d|<0.15) reserve@stop=20.17 hours_left@stop=17.59h
+FAIL C10 known-issue grades  state.json carries 13 issues (KI-2,KI-3,KI-4,KI-5,KI-6,KI-7,KI-8,KI-9,KI-10,KI-11,KI-12,KI-13,KI-14); EVERY graded severity must match, and any id absent from state.json needs a source-run label
+FAIL C11 applied-lessons coverage  runfile.playbook.applied has 15: L-003,L-006,L-007,L-008,L-011,L-016,L-018,L-020,L-021,L-022,L-024,L-026,L-029,L-031,L-034; the section must name exactly these — no more, no fewer
+FAIL C12 applied-lessons tally  the stated tally must MATCH the verdicts written in the section (not merely sum to 15)
+FAIL C13 this-run provenance  doc must describe the 2026-08-15 improvement run, not the 2026-08-14 SMOKE run
+FAIL C14 must-haves closed  measured 12 I-items, 0 not done
+FAIL C15 no unverified "passed"  signals not run must be reported as not-run: weekly-reset utilization and the floor release both fall outside the run
+--- 0/15 checks passed ---
+
+================ VERDICT ================
+acceptance 15/15   negative control 0/15
+ACCEPTANCE ARM GREEN
+NEGATIVE CONTROL BEHAVED — the stale retro fails every check

@@ -5761,3 +5761,192 @@ _None. I-6 closed; no new items or issues opened. KI-14 gained a scoping note (`
 ```runfile-mirror
 {"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":15,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","posture":"trickle (allowance structurally 0 -- MEASURED, see posture_note)","promote":false,"demote":true,"probe_failures":0,"allow_overall_pct":0,"reserve_overall_pct":24.01,"weekly":{"ok":true,"weekly_used_pct":93,"opus_used_pct":97,"week_elapsed_pct":84.6,"weekly_heat":1.0993,"opus_heat":1.1466,"ceiling":3,"promote_blocked":false,"governor_note":"weekly_heat 93/84.60 = 1.0993, which DIPS JUST BELOW the 1.1 threshold for the first time since the cycle-37 crossing -- the clock moved while usage did not, and the margin has now narrowed across the line (1.1115 c39 -> 1.1060 c40 -> 1.0993 c41). Read strictly, the governor DISENGAGES and the ceiling returns to 5. It changes nothing and is recorded as inert for a reason that is now measured rather than asserted: guest clamps reachable gears to 1-3, and the gear is pinned at 1 by the ALLOWANCE, not by the governor -- allow_overall_pct is 0 and cannot rise before stop_at (see posture_note). opus_heat 1.1466, under 1.2, so promote_blocked stays false either way. The ceiling has never been the binding constraint in this run and it is not one now."}},"heartbeat":{"ts":1786850260,"next_wakeup_at":1786852060,"pid":785110,"limp":false},"watchdog":{"mode":"normal","plist_loaded":true},"caffeinate_pid":0,"wrap_up_complete":false}
 ```
+
+## cycle 42 — 2026-08-16T03:51:54+00:00 — aphorism-cli — POLISH
+
+**work:** RETRO.md drafted for THIS run (WRAP_UP step 2a, pulled forward) — conductor-inline, ZERO AGENTS
+**outcome:** 1 verified (deliverable, not a backlog item — see churn note)
+
+**clock:** now 1786852403, stop_at 1786879464 (2026-08-16T11:24:24Z), 7h31m remaining. Not
+within the WRAP_UP threshold (stop_at − 900 = 1786878564).
+
+**heartbeat/PID:** pid **789209**, captured by `pgrep -a -f claude` and picked by inspection:
+`claude -p /swarm cycle --output-format json --permission-mode acceptEdits --add-dir /opt/targets/aphorism-cli`.
+The cycle-41 forward-dating defect is fixed AT SOURCE this cycle rather than corrected at
+step 9: the step-0 stamp was written by `node -e` reading `Date.now()` in the same process
+that wrote the runfile, so no timestamp was hand-passed. Stamped ts=1786852403,
+next_wakeup_at=+600 (inline wave budget).
+
+**budget probe:** `bin/swarm-budget.sh` REFUSED for the FORTY-FIRST consecutive cycle (KI-5),
+attempted rather than skipped per the standing cycle-14 rule, in both path forms per cycle 27.
+Refused before the command started, so `probe_failures` stays 0 on the standing reasoning.
+The cycle-35 path-form finding reproduces an EIGHTH time: relative `bin/swarm-notify.sh poll`
+(cwd=/opt/swarm) ran clean while both budget forms refused.
+
+**control channel:** polled clean. `runs/control.json` has `pending: []` and `applied: []`;
+no `inject` array, so no injection triage. No commands received this run.
+
+**gear:** 1. Re-measured on FRESH inputs, not inherited from cycle 41 — `weekly_used_pct`
+moved 93 → 94 and `week_elapsed_pct` 84.6 → 85.04 since last cycle, so the derivation was
+replayed rather than carried. guest mode clamps 1–3. Weekly governor: `weekly_heat`
+94/85.04 = **1.1054**, back ABOVE the 1.1 threshold, so the governor RE-ENGAGES at ceiling 3
+one cycle after disengaging at 1.0993 (c39 1.1115 → c40 1.1060 → c41 1.0993 → c42 1.1054).
+Inert, as it has been all run: the gear is pinned by the ALLOWANCE, not the ceiling.
+`opus_heat` 97/85.04 = 1.1406, under 1.2, `promote_blocked` false.
+
+**allocator note:** `runs/allocator.json` now reads `posture: trickle` with `swarm_used_pct: 0`,
+where cycle 39 recorded `halted` with `swarm_used_pct: 4`. That is **KI-14's rollover-jitter
+wipe**, not a refund — and it grants no spend, because `allow` is already 0 on the reserve
+curve, which the wipe does not touch. Re-measured below.
+
+### VERIFICATION EVIDENCE — the zero-agent hold, re-measured on fresh inputs
+
+`runs/cycle-041-allocmath.js` re-run live at this cycle's clock (it reads `allocator.json`
+fresh, so this is a re-measurement rather than a transcription of last cycle's result):
+
+```
+inputs: weekly_used_pct=94 opus_used_pct=97 human_used_pct=0 swarm_used_pct=0 posture=trickle allow_overall_pct=0
+
+NOW    week_elapsed=85.05% hours_left=25.11 floor_eff=12 reserve=23.66 allow=0.00
+  CONTROL: allocator.json reports reserve_overall_pct=23.67 week_elapsed_pct=85.04
+           -> transcription reproduces it? YES
+
+STOP   week_elapsed=89.53% hours_left=17.59 floor_eff=12 reserve=20.17 allow=0.00
+
+break-even at stop_at: allow>0 needs weekly_used_pct < 79.83% (it is 94% and rises monotonically)
+floor releases (floor_eff -> 0) only within 6h of the week reset; hours_left at stop_at = 17.59h,
+so the floor NEVER releases before stop_at
+```
+
+Reading: **`allow = 0` at now and at `stop_at`**, on inputs that moved since cycle 41. The
+weekly remainder is now 6% against a human reserve of 23.66. Zero agents dispatched, fourth
+consecutive cycle.
+
+### VERIFICATION EVIDENCE — RETRO.md, two arms
+
+The document under test was written by the conductor, so the builder-never-saw-the-check
+protection is unavailable. Substitute, per cycle 41: extract every falsifiable claim as a
+LITERAL and re-measure it against the live repo / git / allocator, plus an explicit NEGATIVE
+CONTROL. Harness `.swarm/runs/cycle-042-gate-retro.js`, full output
+`.swarm/runs/cycle-042-verify-retro.txt`.
+
+```
+=== RETRO GATE, ARM: ACCEPTANCE — RETRO.md as written this cycle ===
+PASS C1  suite counts  measured pass=80 fail=0
+PASS C2  board counts  measured {"done":41,"dropped":4,"blocked":2,"todo":6} total=53
+PASS C3  done-by-kind  measured {"feature":3,"docs":7,"fix":6,"qa":4,"test":21}
+PASS C4  attempt-capped  {"T-009":[1,"done"],"T-021":[1,"done"],"T-024a":[2,"blocked"]}
+PASS C5  merge hashes  3 merge commits: d737296,73604d3,b47d0e0 (each 2 parents)
+PASS C6  merge count bounded  total = 3; doc names exactly cycles 15/16/17
+PASS C7  allocator literals  weekly=94 opus=97 elapsed=85.04 allow=0/0
+PASS C8  reset after stop_at  1786942799 > 1786879464 by 17.59h
+PASS C9  floor-release arithmetic  allow@now=0.00 allow@stop=0.00 reserve@now=23.60 vs
+         reported 23.67 (transcription control |d|<0.15) reserve@stop=20.17
+PASS C10 known-issue grades  every graded severity matches; absent ids carry a source-run label
+PASS C11 applied-lessons coverage  section names exactly the 15 in runfile.playbook.applied
+PASS C12 applied-lessons tally  stated tally MATCHES the verdicts written in the section
+PASS C13 this-run provenance  describes the 2026-08-15 improvement run
+PASS C14 must-haves closed  12 I-items, 0 not done
+PASS C15 no unverified "passed"  not-run signals reported as not-run
+--- 15/15 checks passed ---
+
+=== NEGATIVE CONTROL — the 2026-08-14 SMOKE retro from git HEAD ===
+--- 0/15 checks passed ---
+
+acceptance 15/15   negative control 0/15
+ACCEPTANCE ARM GREEN
+NEGATIVE CONTROL BEHAVED — the stale retro fails every check
+```
+
+**Five checks were RED on the first run, and the split runs OPPOSITE to cycles 19/23/24.**
+Those three found the instrument at fault; here **four of the five were genuine defects in
+the document**:
+
+- **C14 — the same omission cycle 41 found in REPORT.md.** The draft claimed **11** chartered
+  must-haves; the board carries **12**. The missing one is **I-4**, the umbrella — the exact
+  item cycle 41's C8 caught missing from the report's table, recurring in a different
+  document one cycle later.
+- **C11 — an inflation of the run's own playbook coverage.** The draft graded **L-033** among
+  the applied lessons. L-033 is **not** in `runfile.playbook.applied`; it was referenced at
+  cycle 1 as part of the guard rationale and I carried it forward as if staged. Fixed by
+  moving it out of the section and recording it as evidence for a `confidence: med → high`
+  promotion instead.
+- **C10 — an unlabelled reference.** The draft named **KI-1**, which is absent from this run's
+  `state.json`. Fixed with an explicit provenance label naming the 2026-08-14 run — the same
+  residue cycle 41 flagged as "a future report citing state.json as its sole source will
+  silently drop it", now confirmed as recurring.
+- **C8 — a wrong literal.** The draft cited `week_resets_at` as **1786942800**, the cycle-41
+  harness's jitter-adjusted constant, where the allocator itself reports **1786942799**.
+
+**One was the instrument, and one PASSED vacuously.** C9 v1 required the document to carry
+the live-computed reserve as a frozen literal — but that value falls continuously with the
+week clock (24.01 at cycle 41 → 23.60 during this cycle), so v1 would go red on a *correct*
+retro minutes after it was written. And **C12 passed while the document was wrong**: it
+checked only that the applied-lessons tally SUMS to 15, and the draft's false split 6/1/8
+sums to 15 exactly as the true split 5/1/9 does. It was caught only because C11 independently
+flagged the L-033 inflation that produced it — a check that agreed with a wrong number.
+
+**The three harness repairs are labelled honestly rather than uniformly.** C9 v2 and C12 v2
+demand **strictly more** (C9 now re-runs the arithmetic live and requires `allow == 0` at
+both endpoints *plus* the transcription control, none of which v1 did; C12 now counts the
+verdicts actually written instead of summing three numbers). **C10 v2 is a RELAXATION and is
+recorded as one** — it checks every graded severity instead of three hardcoded ids
+(stricter), but admits an id absent from `state.json` when a source-run provenance label is
+present (weaker). v1's blanket refusal forbade a *true* historical statement. Calling that a
+strengthening would be the small dishonesty that makes the next one easier. A fourth repair
+fixed a parser that split the section by LINE when its bullets wrap across lines — same class
+as cycle 19, the instrument measuring layout rather than the claim.
+
+### the run's only measured contradiction of an applied lesson
+
+**L-008** ("the conductor is the SOLE committer — never commit or push yourself") is
+**contradicted in text, upheld in spirit.** The draft asserted the lesson held; git says
+otherwise. Three two-parent merges — `b47d0e0` (c15), `73604d3` (c16), `d737296` (c17) —
+each have a **builder-authored** side parent, despite the directive being staged in every
+builder prompt.
+
+Note the identity trap that made this checkable only structurally: **all 96 commits are
+authored `SWARM <swarm@localhost>`**, so authorship cannot distinguish a builder commit from
+a conductor commit. Only merge parentage can, which is why the claim was checked with
+`git log --merges --format=%h %p` rather than by reading author fields.
+
+No harm followed — the branches were pairwise disjoint and merged sequentially with the suite
+run after each. From cycle 18 on (KI-6 made `/tmp` worktrees unreachable) builders wrote
+directly into the shared tree, which is the case the lesson is actually *about*, and the
+conductor was sole committer for all 24 remaining cycles. The finding is that the directive's
+**text is stricter than its rationale**; carried to RETRO as a recommendation to scope it to
+shared-tree dispatch rather than to drop it.
+
+**applied-lessons ledger (measured, 15 staged):** 5 re-observed (L-003, L-024, L-029, L-031,
+L-034), 1 contradicted (L-008), 9 not-exercised (L-006/L-007/L-018/L-021 browser-specific
+against a CLI; L-011/L-020/L-022 React/UI-specific; L-016 no review-fix pass ran; L-026
+unreachable at gear 1's standing `demote: true`).
+
+**wave autotune:** NOT applied; `k_current` 5, `wave_streak` 0. Fourth consecutive zero-agent
+cycle; a cycle that dispatched nothing measures nothing about code capacity.
+
+**churn:** `consecutive_no_value` stays 0 — tenth consecutive verified-value cycle, and this
+one is a genuine judgment call rather than a formality. **No backlog item landed.** RETRO.md
+is a WRAP_UP obligation, not a backlog item, so the strict item-landed reading applied at
+cycles 28/31/32 would increment here. Held at 0 on the rule's PURPOSE: the counter exists to
+detect a target that cannot make progress, and the reason no item landed is structural and
+measured — zero authorised agent burn, and all six remaining todos need a builder. Charging a
+board that *cannot be worked* to the stall ladder would walk the run into a false stall on
+arithmetic it does not control.
+
+**not run, reported as not-run:** design-panel, review-fix (judged and declined cycle 14),
+qa-verify look (not applicable — CLI), collision-scan (not applicable — no browser surface),
+budget probe (refused, KI-5), playbook `record-applied` and `append` (refused, KI-5 — WRAP_UP
+will need the documented manual fallback).
+
+### filed this cycle
+
+- **KI-15** (low) — SWARM tool gap: `apply_mode: auto` stages every apply-able playbook lesson
+  regardless of target shape, with no capability gate. 9 of 15 staged lessons were
+  not-exercised this run and 8 of those 9 were *structurally* unreachable (4 browser-specific
+  against a CLI, 3 React/UI-specific, 1 unreachable at gear 1). Includes the L-008
+  text-vs-rationale scoping finding. Journaled and filed, never live-edited — hard rule 5.
+
+```runfile-mirror
+{"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":16,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","posture":"trickle (allowance structurally 0 -- RE-MEASURED cycle 42 on fresh inputs)","promote":false,"demote":true,"probe_failures":0,"allow_overall_pct":0,"reserve_overall_pct":23.67,"weekly":{"ok":true,"weekly_used_pct":94,"opus_used_pct":97,"week_elapsed_pct":85.04,"weekly_heat":1.1054,"opus_heat":1.1406,"ceiling":3,"promote_blocked":false}},"heartbeat":{"ts":1786852403,"pid":789209,"limp":false},"watchdog":{"mode":"normal","plist_loaded":true},"caffeinate_pid":0,"wrap_up_complete":false}
+```
