@@ -4957,3 +4957,147 @@ at 1786942799, after stop_at 1786879464.
 ```runfile-mirror
 {"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":10,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","promote":false,"demote":true,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":91.0,"opus_used_pct":97,"week_elapsed_pct":82.94,"weekly_heat":1.0972,"opus_heat":1.1695,"ceiling":5,"promote_blocked":false}},"watchdog":{"mode":"normal","plist_loaded":true},"caffeinate_pid":0,"wrap_up_complete":false}
 ```
+
+
+---
+
+## cycle 37 — 2026-08-16T00:45:24Z → 01:05Z — T-033 → done (HOLE, FIXED) [1 verified]
+
+gear 1 (guest/trickle, k_cap 1) · **weekly governor ENGAGED for the first time this run** ·
+probe REFUSED (36th consecutive, KI-5) · wave: 1 sonnet builder, direct Agent call
+
+### budget — the governor crossed its threshold
+
+`bin/swarm-budget.sh` refused in BOTH path forms for the 36th cycle running (attempted, not skipped,
+per the standing cycle-14 rule; refused before the command started, so `probe_failures` stays 0). The
+cycle-35 path-form finding reproduces again: relative `bin/swarm-notify.sh poll` ran clean this cycle.
+
+Gear re-derived by hand from `runs/allocator.json` (`source: probe`): `weekly_used_pct` **92.0** (was
+91.0), `week_elapsed_pct` 83.19, `opus_used_pct` 97 (flat, ELEVENTH cycle).
+
+```
+weekly_heat = 92 / 83.19 = 1.1059   -> CROSSES 1.1 for the first time in the run
+```
+
+Read against `bin/swarm-budget.sh` lines 18 and 135 (read, not executed — that is the allowlist gap
+itself): `heat > 1.1` sets **ceiling 3**; `> 1.3` would set ceiling 2 plus a promote block. So the
+weekly governor is **ENGAGED**, `ceiling` 5 → 3. `opus_heat` = 97/83.19 = 1.1660, still under 1.2, so
+`promote_blocked` stays false.
+
+**The engagement is INERT and that is worth stating plainly rather than reporting a posture change
+that changes nothing:** guest mode already clamps reachable gears to 1–3, and the trickle posture with
+`allow_premium_pct 0` already pins the gear at 1. A ceiling of 3 binds nothing that was not already
+bound. Recorded because eleven cycles of journal entries say "governor disengaged" and a future reader
+needs the crossing to be visible, not because the run's behaviour moved.
+
+### the item
+
+**T-033 closed HOLE, fixed.** The guard at `test/readme-tags.test.js:160` asked "does the document
+acknowledge that some tags appear once?" and answered with three substring calls over the whole
+document. Shipped fix has two halves: **scope** the search to the `## Tag vocabulary` section, and
+replace the three literals with **nine phrase-level regexes** for the single-occurrence concept.
+Suite 80/80 green on the real tree, run by the conductor. Test count unchanged — one test body edited.
+
+### VERIFICATION EVIDENCE — 12 checks, 2 arms (`.swarm/runs/cycle-037-verify-T-033.txt`)
+
+Every cell judged on the **failing test NAME** under `--test-reporter=tap`, never on suite colour —
+cycle 36 proved the silent cell's suite-level red is masked by a neighbouring guard.
+
+```
+cell  HEAD                     WORK                     what
+C0    80/80 ack=silent         80/80 ack=silent         pristine (control)
+C1    78/80 ack=FIRED          79/80 ack=silent         P1 acceptance: the reword the ITEM named
+C2    77/80 ack=FIRED          77/80 ack=FIRED          P2: concept genuinely absent (ANTI-DELETION)
+C3    78/80 ack=silent         77/80 ack=FIRED          P3: outside decoy — SILENT HOLE CLOSED
+D1    77/80 ack=FIRED          77/80 ack=FIRED          reword in phrasing NEITHER side named
+D2    78/80 ack=silent         78/80 ack=silent         decoy INSIDE the section
+D3    75/80 ack=silent         74/80 ack=FIRED          section heading renamed
+D4    78/80 ack=silent         77/80 ack=FIRED          acknowledgement MOVED to another section
+A1-A7 PASS (all seven acceptance checks) · D4/D4b PASS · D1, D2, D3 FAIL — 9/12
+```
+
+**D4 is why the item passes**, and no acceptance clause asked for it. Move the genuine acknowledgement
+*verbatim* into the Attribution section and strip it from Tag vocabulary: **ack FIRES on WORK, SILENT
+on HEAD.** HEAD's whole-document search cannot tell *the concept, stated on-topic* from *the words,
+stated anywhere*; the fixed version can. The scoping half is real, new, and wording-independent.
+
+**D1 is why the headline is only half a repair, and this is the sharp finding of the cycle.** T-033's
+acceptance clause **named the exact reword wording** — "just once", "only one" — and the shipped
+marker list contains **exactly those two phrases**. The acceptance was in the dispatch prompt. So C1
+passing cannot distinguish a general fix from one fitted to the clause. D1, authored after the return
+using phrasing named by neither side ("each backed by a lone aphorism"), is **still falsely rejected**.
+Not a regression — HEAD rejects it identically — but the LOUD direction is **narrowed, not closed**.
+
+> This is hard rule 2's hazard arriving through an **acceptance clause** rather than through a verify
+> command. The rule is enforced by never putting verify commands in the backlog; the acceptance is
+> handed to the builder *by design*, and this cycle is the first time that channel visibly bit. The
+> commit-reveal seal does nothing about it. Filed as **T-034**; the general form goes to distillation:
+> **an acceptance clause that names a literal test input is self-fulfilling, and the conductor's
+> discriminator must use different inputs.**
+
+**D2**: an in-section decoy (`Each tag name is exactly one word.`) still silently satisfies — silent
+on both arms, so scoping changed the silent hole's **shape**, not its existence. Filed as **T-035** at
+priority 6, *above* T-034, because it is the SILENT direction and KI-10 records that as the one
+failure direction this run was chartered to remove.
+
+**D3** is the fix's only measured cost — the sole cell where WORK is worse than HEAD. The new
+`assert(tagVocabStart !== -1)` makes a heading rename newly fire the ack test. Accepted on a
+measurement rather than waved through: that rename **already fails five other guards at HEAD**, so the
+fix adds a sixth voice to an edit already loudly rejected, and never flips a green README red. Filed
+as **T-036** at priority 3, with that arithmetic attached.
+
+The builder disclosed the marker-list ceiling **unprompted, before any gate ran**, in both of its first
+two uncertainty notes — eighth consecutive cycle an honest "things I was unsure about" became an item.
+
+### the instrument failed before the item did — fourth time this run
+
+Gate check **D4 v1 measured nothing** and its FAIL was discarded, not reported. It anchored the "moved"
+sentence before `\n## Exit codes` — the heading *immediately after* Tag vocabulary — so the sentence
+landed at the end of the very section it claimed to have left. Re-anchored on `\n## Layout`; the
+check's predicate is byte-identical, only the mutation moved. **The failure direction was the dangerous
+one**: v1 manufactured a FAIL *against* the item, the mirror image of cycle 19's manufactured KILLED.
+It was caught by noticing a result that contradicted the mechanism — a scoped guard has no way to
+ignore a moved sentence — rather than by a control, which is the weaker way to catch it. D1, D2 and D3
+stayed FAILED as authored and were not touched.
+
+### seal — held, and refuted me
+
+Commit-reveal (KI-8) a second consecutive cycle: seal written, `sha256` committed at `07efb5a` before
+dispatch, **plaintext deleted for the whole dispatch window**, restored after and `sha256sum -c` **OK**.
+P1 (HOLE with a shipped fix) and P2 (scoping + widening) both CONFIRMED. P3 PARTIALLY REFUTED — I
+predicted the builder would miss the redundancy entirely; it named the triple redundancy at README
+55/81/83 and that another test guards one of them, though it never made the subsumption argument.
+**Sealed cell G4's HEAD arm was REFUTED**: I predicted the moved-acknowledgement cell RED on both arms;
+it is silent on HEAD, obviously so in hindsight since a sentence moved elsewhere is still in the
+document. The refutation is what *made* D4 the gate's strongest evidence — a cell both arms fail proves
+nothing about the fix.
+
+### housekeeping
+
+Scope held: only `test/readme-tags.test.js` modified; `README.md` byte-identical to HEAD (a human-call
+boundary per KI-9/KI-10), `src/`, `bin/`, `docs/` untouched. KI-7 scratch control **PASSES a fourth
+consecutive cycle** and this one is a clean sample, unlike cycle 30's permission-denied non-sample —
+the builder used `.swarm/scratch-c37/` and removed it itself; `/opt/swarm` empty at orient and commit.
+collision-scan (step 6.6) **NOT APPLICABLE** — Node CLI, no browser surface; reported as not-run, never
+as passed. Craft pack loaded clean, `degraded: []`; the UI block was not passed to the builder (a test
+file on a CLI target has no UI surface). Control channel: 0 pending, 0 injections. Wave autotune
+APPLIED (real executable logic shipped): `wave_streak` 0 → 1, `k_current` stays 5 (raise needs streak 2,
+and 5 is the hard max); inert at gear cap 1.
+
+### handoff
+
+Backlog: **10 todo, 34 done, 2 blocked, 4 dropped**. Reachable S-effort items at gear 1, priority
+order: **T-035 (p6, silent direction, filed this cycle)**, T-024b (p6), T-034 (p5, filed this cycle),
+T-032 (p5), T-026 (p4, carries a measured fix but its classifier's independence is compromised per
+KI-8 — gate from scratch), T-036 (p3, filed this cycle). T-007/T-008/T-024 stay unreachable (M/L at
+gear 1). `I-6` (REPORT.md refresh) remains conductor-owned at WRAP_UP.
+
+**T-034 and T-035 pull opposite ways** — T-034 wants the guard to accept more, T-035 wants it to accept
+less — the same coupling as the T-031/T-032 pair. Whoever picks one should read both first.
+
+~10.5h to `stop_at`. Gear 1 is structurally fixed for the rest of the run (weekly window resets
+1786942799, after `stop_at` 1786879464), and the governor engaging this cycle does not change that.
+
+```runfile-mirror
+{"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":11,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","promote":false,"demote":true,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":92.0,"opus_used_pct":97,"week_elapsed_pct":83.19,"weekly_heat":1.1059,"opus_heat":1.166,"ceiling":3,"promote_blocked":false}},"watchdog":{"mode":"normal","plist_loaded":true},"caffeinate_pid":0,"wrap_up_complete":false}
+```

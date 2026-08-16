@@ -157,16 +157,66 @@ test('README must list all single-entry tags', () => {
   }
 });
 
+// (T-033) This is a CONTENT guard ("does the doc say a thing"), not an
+// EXTRACTION guard ("find this number") like every other test in this file --
+// that is what lets it fail in two directions at once, and why it needed its
+// own measurement rather than another narrowing of the anchor wording.
+//
+// Three cells were measured (scratch harness, not committed):
+//   P1 -- honest reword of the two acknowledgement sentences (numbers
+//         untouched, limitation still plainly stated, just reworded away
+//         from the three old hardcoded substrings) -- old code: FALSE
+//         REJECTION. Fires when it must not.
+//   P2 -- limitation genuinely not acknowledged anywhere -- old code:
+//         correctly fires. Must keep firing.
+//   P3 -- decoy sentence ("Install with exactly one command.") inserted in
+//         an unrelated section (Usage), genuine acknowledgement removed from
+//         Tag vocabulary -- old code: SILENT SATISFACTION. Passes when it
+//         must not, because a whole-document substring search cannot tell
+//         "the concept, stated somewhere on-topic" from "the words, stated
+//         anywhere at all".
+//
+// The fix applies the same structural discipline already used by every
+// other test below (scope to the Tag vocabulary section, the one place this
+// claim is meaningfully made) plus a widened set of phrase-level markers for
+// the single-occurrence CONCEPT rather than 3 literal strings. Scoping is
+// what kills P3 (the decoy lives outside the section, so it is never seen);
+// widening the marker set is what saves P1 (an honest paraphrase still uses
+// one of "exactly once" / "exactly one" / "only once" / "just once" /
+// "only one" / "single-entry" / "one entry" / "appears once" / "occurs
+// once" somewhere in the section -- and even where P1 reworded a sentence
+// away from all of them, the section's OTHER already-true "appear exactly
+// once" sentence, guarded independently for correctness elsewhere in this
+// file, still carries the concept). P2 still fails because none of these
+// markers appear anywhere in the section once the concept is genuinely gone.
 test('README should acknowledge single-entry tag limitation', () => {
   const readmePath = path.join(__dirname, '..', 'README.md');
   const readmeContent = fs.readFileSync(readmePath, 'utf8');
 
-  // Check for language describing the limitation
-  const hasWarning = readmeContent.includes('exactly one') ||
-                     readmeContent.includes('single-entry') ||
-                     readmeContent.includes('Single-entry');
+  // Scope to the Tag vocabulary section -- mirrors the inline slice the
+  // first test in this file already does (getTagVocabSection is defined
+  // later but hoisted; kept inline here too, matching that earlier test's
+  // own convention, rather than reaching forward for the helper).
+  const tagVocabStart = readmeContent.indexOf('## Tag vocabulary');
+  assert(tagVocabStart !== -1, 'README must have a Tag vocabulary section');
+  const nextSection = readmeContent.indexOf('\n## ', tagVocabStart + 1);
+  const tagVocabEnd = nextSection > -1 ? nextSection : readmeContent.length;
+  const tagVocabSection = readmeContent.substring(tagVocabStart, tagVocabEnd);
 
-  assert(hasWarning, 'README should acknowledge that some tags appear only once');
+  const singleEntryMarkers = [
+    /\bexactly once\b/i,
+    /\bexactly one\b/i,
+    /\bonly once\b/i,
+    /\bjust once\b/i,
+    /\bonly one\b/i,
+    /\bsingle-entry\b/i,
+    /\bone entry\b/i,
+    /\bappears? once\b/i,
+    /\boccurs? once\b/i,
+  ];
+  const hasWarning = singleEntryMarkers.some((marker) => marker.test(tagVocabSection));
+
+  assert(hasWarning, 'README Tag vocabulary section should acknowledge that some tags appear only once');
 });
 
 // ---------------------------------------------------------------------------

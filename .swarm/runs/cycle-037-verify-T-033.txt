@@ -1,0 +1,43 @@
+cell | HEAD | WORK | what
+C0  | 80/80 fail=0 ack=silent            | 80/80 fail=0 ack=silent            | pristine README (control)
+C1  | 78/80 fail=2 ack=FIRED             | 79/80 fail=1 ack=silent            | P1 acceptance: honest reword of the two named sentences
+C2  | 77/80 fail=3 ack=FIRED             | 77/80 fail=3 ack=FIRED             | P2 acceptance: limitation genuinely not acknowledged (ANTI-DELETION control)
+C3  | 78/80 fail=2 ack=silent            | 77/80 fail=3 ack=FIRED             | P3 acceptance: marker only in an unrelated OUTSIDE sentence, genuine acknowledgement gone
+D1  | 77/80 fail=3 ack=FIRED             | 77/80 fail=3 ack=FIRED             | DECISIVE: FULL honest reword in phrasing named by NEITHER the item nor the marker list
+D2  | 78/80 fail=2 ack=silent            | 78/80 fail=2 ack=silent            | RESIDUAL: decoy marker INSIDE the section, genuine acknowledgement gone
+D3  | 75/80 fail=5 ack=silent            | 74/80 fail=6 ack=FIRED             | NEW ANCHOR: the section heading is renamed, every claim still true
+D4  | 78/80 fail=2 ack=silent            | 77/80 fail=3 ack=FIRED             | SCOPING PROOF: genuine acknowledgement MOVED verbatim to another section
+
+--- failing test names per cell ---
+C0 HEAD: []
+C0 WORK: []
+C1 HEAD: ["README should acknowledge single-entry tag limitation","README opening sentence must state correct multi-entry and single-entry tag counts"]
+C1 WORK: ["README opening sentence must state correct multi-entry and single-entry tag counts"]
+C2 HEAD: ["README must correctly describe single-entry tag count","README should acknowledge single-entry tag limitation","README opening sentence must state correct multi-entry and single-entry tag counts"]
+C2 WORK: ["README must correctly describe single-entry tag count","README should acknowledge single-entry tag limitation","README opening sentence must state correct multi-entry and single-entry tag counts"]
+C3 HEAD: ["README must correctly describe single-entry tag count","README opening sentence must state correct multi-entry and single-entry tag counts"]
+C3 WORK: ["README must correctly describe single-entry tag count","README should acknowledge single-entry tag limitation","README opening sentence must state correct multi-entry and single-entry tag counts"]
+D1 HEAD: ["README must correctly describe single-entry tag count","README should acknowledge single-entry tag limitation","README opening sentence must state correct multi-entry and single-entry tag counts"]
+D1 WORK: ["README must correctly describe single-entry tag count","README should acknowledge single-entry tag limitation","README opening sentence must state correct multi-entry and single-entry tag counts"]
+D2 HEAD: ["README must correctly describe single-entry tag count","README opening sentence must state correct multi-entry and single-entry tag counts"]
+D2 WORK: ["README must correctly describe single-entry tag count","README opening sentence must state correct multi-entry and single-entry tag counts"]
+D3 HEAD: ["README tags must exist in corpus","every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band","every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)","README band table headings must state the correct count of tags in their band","README opening sentence must state correct multi-entry and single-entry tag counts"]
+D3 WORK: ["README tags must exist in corpus","README should acknowledge single-entry tag limitation","every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band","every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)","README band table headings must state the correct count of tags in their band","README opening sentence must state correct multi-entry and single-entry tag counts"]
+D4 HEAD: ["README must correctly describe single-entry tag count","README opening sentence must state correct multi-entry and single-entry tag counts"]
+D4 WORK: ["README must correctly describe single-entry tag count","README should acknowledge single-entry tag limitation","README opening sentence must state correct multi-entry and single-entry tag counts"]
+
+--- checks ---
+PASS  A1 C0 control green both arms  [HEAD 80/80 fail=0 ack=silent WORK 80/80 fail=0 ack=silent]
+PASS  A2 C1 false rejection GONE on WORK  [79/80 fail=1 ack=silent]
+PASS  A3 C1 false rejection RETURNS on HEAD (L-029)  [78/80 fail=2 ack=FIRED]
+PASS  A4 C2 real catch still fires on WORK (anti-deletion)  [77/80 fail=3 ack=FIRED]
+PASS  A5 C2 also fired on HEAD  [77/80 fail=3 ack=FIRED]
+PASS  A6 C3 silent hole CLOSED on WORK  [77/80 fail=3 ack=FIRED]
+PASS  A7 C3 silent hole PRESENT on HEAD (L-029)  [78/80 fail=2 ack=silent]
+FAIL  D1 general honest reword accepted on WORK  [77/80 fail=3 ack=FIRED]
+FAIL  D2 in-section decoy caught on WORK  [78/80 fail=2 ack=silent]
+FAIL  D3 heading rename does not newly fire ack on WORK  [HEAD ack=false WORK ack=true]
+PASS  D4 acknowledgement moved out of section is caught on WORK  [77/80 fail=3 ack=FIRED]
+PASS  D4b HEAD does NOT catch the move (proves scoping is new)  [78/80 fail=2 ack=silent]
+
+9/12 checks pass
