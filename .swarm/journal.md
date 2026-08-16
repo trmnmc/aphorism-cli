@@ -6921,3 +6921,149 @@ cycle-42 label: verified-value-with-no-item-landed. Nothing a CLI user can obser
 ```runfile-mirror
 {"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":22,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","posture":"trickle (allowance measured 0 by a REAL probe at cycle 48 — ok:true/source:probe)","promote":false,"demote":true,"probe_failures":0,"allow_overall_pct":0,"reserve_overall_pct":21.83,"weekly":{"ok":true,"weekly_used_pct":95.0,"opus_used_pct":97,"week_elapsed_pct":87.4,"weekly_heat":1.087,"opus_heat":1.1099,"ceiling":3,"promote_blocked":false,"governor_note":"cycle 48: NINTH real reading, and the allocator is no longer blind (cycle 47 read ok:false/source:none and is excluded, not plotted). weekly_heat 95.0/87.4 = 1.0870. The ceiling has never been binding: guest clamps reachable gears to 1-3 and the gear is pinned at 1 by the ALLOWANCE, measured 0 this cycle."}},"heartbeat":{"ts":1786866594,"pid":835214,"limp":false},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"caffeinate_pid":0,"wrap_up_complete":false}
 ```
+
+---
+
+## cycle 49 — 2026-08-16T08:22Z — T-041: end-to-end gate on the SHIPPED binary's `--tag`
+
+**work type:** QA (conductor-inline; zero agents dispatched — eleventh consecutive)
+**outcome:** 1 verified · **no defect found**
+
+### why this, over the board
+
+The cycle-48 note fenced every alternative and it re-checked true: `T-024b`/`T-032`/`T-039`
+are held by the cycle-39 family decision, `T-024` is not dispatchable, `T-008`/`T-040` are
+gated on a human, and both hand-off documents were refreshed at cycles 47–48 — refreshing
+either again is the manufactured-work failure this run has otherwise avoided.
+
+What remained was the gap the note named as candidate (3). **T-007 (cycle 46) is the one
+user-facing BREAKING change this run shipped** — it folded 37 tags to 12 and thereby retired
+26 tag names that used to work. Every gate pointed at that change so far reads the corpus
+module, the README, or a test fixture. **Nothing had ever spawned `bin/aphorism.js` and asked
+what a user typing `--tag testing` actually gets.** It needed no agent, which is what makes it
+reachable at a measured zero allowance.
+
+### what was measured
+
+`.swarm/runs/cycle-049-gate.mjs` — every cell spawns the real binary as a child process. No
+module is `require()`d for behaviour, only to DERIVE EXPECTATIONS, which is the point: the
+expectation comes from the data, the observation comes from the process.
+
+- **Arm A, 12 live tags × 4 cells.** Not "it printed something": the printed text+author pair
+  must be an entry that genuinely carries that tag (A2), and `--tag X --list` must reproduce
+  the exact membership, count, **corpus order** and documented `<text> — <author>` format (A3).
+- **Arm B, 26 retired names × 3 cells** against the SPEC Domain rule — exit 1, **zero bytes**
+  on stdout, human-readable stderr.
+- **Arm C, 6 rule cells** — whole-tag prefix/suffix (`--tag desi` vs `design`, the SPEC's own
+  worked example), the AND intersection with author pairs derived from the live corpus, and
+  the `--help` discovery recipe.
+- The 26 retired names are parsed out of `cycle-046-retag.mjs`'s `FOLD` table rather than
+  hand-copied — a hand-copy is a place for a gate to agree with itself about a list it never
+  checked.
+
+### VERIFICATION EVIDENCE
+
+```
+  invariant  3/3
+  live       48/48
+  retired    78/78
+  rule       6/6
+
+135/135 cells green
+```
+
+```
+PASS  A2:design    --tag design prints an entry that actually carries design   [matched a real design entry by Martin Fowler]
+PASS  A3:design    --tag design --list is the exact 14-entry set in corpus order   [14/14 lines identical, in order]
+PASS  B1:testing   --tag testing (retired -> debugging) exits 1   [exit=1]
+PASS  B2:testing   --tag testing writes ZERO BYTES to stdout   [stdoutBytes=0]
+PASS  C1           --tag desi does not match design (whole-tag, prefix)   [exit=1 stdoutBytes=0]
+PASS  C4           --tag design --author "Donald Knuth" is AND, not OR   [exit=1 stdoutBytes=0]
+PASS  C5           --tag zzzznotatag behaves identically to a retired name   [identical=true]
+PASS  C6           --help's documented recipe yields the live vocabulary   [records=50 distinctTags=12]
+```
+
+Full suite, run by the conductor: `ℹ tests 80 · pass 80 · fail 0` (1478 ms).
+
+The `--help` recipe additionally executed literally, as a user would:
+`aphorism --list --json | jq -r '.tags[]' | sort -u` → 12 names, matching the live vocabulary.
+
+### the green is not the evidence — the mutation arm is
+
+**135/135 on the first run is when a gate is least trustworthy.** An all-green instrument that
+has never been shown to fail is indistinguishable from one that *cannot* fail.
+`cycle-049-negative-control.mjs` plants 13 defects in throwaway copies and requires that the
+cells which redden are the cells that should detect **that** defect — a kill by an unrelated
+cell is scored a MISS, because attributing the kill is the evidence.
+
+```
+P0   unmutated copy                                    expect 0 red   got 0 red     PASS
+M1   corpus revives the retired tag 'testing'          red=[B1/B2/B3:testing]       PASS
+M3   no-match exits 0 — empty success not an error     red=[all 26 B1]              PASS
+M7   --list right set, WRONG (reversed) order          red=[all 12 A3]              PASS
+M9   default output ignores --tag, --list still honours it   red=[11 of 12 A2]      PASS
+M11  one name dropped from the fold map (26 -> 25)     red=[S2]                     PASS
+M13  --list --json emits an array, breaking the recipe red=[C6]                     PASS
+14/14 mutation checks passed
+```
+
+### the arm's own defect, corrected — and what it would have libelled
+
+**M6 (tag filter disabled entirely) scored a MISS against `A2:philosophy` on the first run.**
+Investigated before touching anything, because the cheap reading is "weak cell". It is not:
+`pick(corpus, 7)` returns the Alan Kay entry whose only tag is `philosophy`, so with the filter
+gone `--tag philosophy --seed 7` *still* prints a genuine `philosophy` entry. **The mutation is
+invisible at that cell**, and demanding the cell redden would be demanding it detect a change
+that did not occur there. The expectation was over-broad — the same derivation M9 already
+needed. Corrected in the **arm**, not the gate; had it been "fixed" the other way it would have
+recorded a sound cell as weak.
+
+### finding: none. Stated as a confirmation, not a repair.
+
+The retag landed cleanly at the user-facing surface. Nothing a CLI user can observe changed
+this cycle, and the honest headline is that nothing needed to. That is a weaker result than a
+fix and is reported as such.
+
+One consequence was **measured and handed to the human** rather than acted on: cell C5 shows a
+retired name and a never-existing name (`zzzznotatag`) are **byte-identical** in exit code,
+stdout and stderr. The product cannot distinguish "you used the old name" from "you made that
+up", so a user whose `--tag testing` worked before cycle 46 is never told it became
+`debugging`. This is exactly what the SPEC Domain rule requires — **not a defect** — but a
+"did you mean" hint would be a FEATURE, fenced by this run's non-goals. Appended to **T-040**,
+which already exists to carry retag consequences an owner must ratify. Recorded, not taken.
+
+### not run, reported as not-run
+
+design-panel, build-wave, review-fix, `qa-verify.js` (all modes), collision-scan (N/A — CLI, no
+browser surface). `bin/swarm-budget.sh` refused for the **48th** consecutive cycle (KI-5),
+attempted rather than skipped per the standing cycle-14 rule; refused before the command
+started, so `probe_failures` stays 0. `state.json.qa.last_full_qa_cycle` deliberately **left at
+13**: that field means the `qa-verify.js` workflow, and recording conductor-inline work in it
+would misreport which instrument produced the evidence. A new field records this one.
+
+### budget
+
+`runs/allocator.json` (08:12Z tick) is a REAL reading for the second consecutive cycle:
+`ok:true, source:probe, allow_overall_pct 0, reserve 21.66, weekly 96.0 / opus 97 / elapsed
+87.62`. **Tenth real reading.** `weekly_heat` 96.0/87.62 = **1.0956** (up from 1.0870);
+`opus_heat` 1.1071, still under the 1.2 `promote_blocked` threshold as all run. Gear pinned at
+1 by the **allowance**, measured 0 — not by the ceiling, which has never been binding under
+guest (reachable gears 1–3).
+
+### wave autotune / churn
+
+**autotune:** NOT applied — zero agents dispatched, nothing measured about code capacity.
+`k_current` 5, `wave_streak` 0.
+**churn:** `consecutive_no_value` stays 0. Seventeenth consecutive verified-value cycle, and
+the first since cycle 41 where a board item landed — with the caveat, disclosed rather than
+smoothed over, that T-041 was filed this same cycle rather than drawn from the standing board.
+
+### filed this cycle
+
+- **T-041** — filed and closed (kind `qa`, the gate above).
+- **T-040** — extended with the C5 measurement for the human.
+- No other backlog change. Board: 43 done, 6 todo, 2 blocked, 4 dropped.
+
+```runfile-mirror
+{"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":23,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","posture":"trickle (allowance measured 0 by a REAL probe at cycle 49 — ok:true/source:probe, second consecutive real reading)","promote":false,"demote":true,"probe_failures":0,"allow_overall_pct":0,"reserve_overall_pct":21.66,"weekly":{"ok":true,"weekly_used_pct":96.0,"opus_used_pct":97,"week_elapsed_pct":87.62,"weekly_heat":1.0956,"opus_heat":1.1071,"ceiling":3,"promote_blocked":false,"governor_note":"cycle 49: TENTH real reading, second consecutive non-blind one. weekly_heat 96.0/87.62 = 1.0956, up from cycle 48's 1.0870. The ceiling has never been binding: guest clamps reachable gears to 1-3 and the gear is pinned at 1 by the ALLOWANCE, measured 0 again this cycle."}},"heartbeat":{"ts":1786868700,"pid":855991,"limp":false},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"caffeinate_pid":0,"wrap_up_complete":false}
+```
