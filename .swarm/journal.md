@@ -5244,3 +5244,31 @@ before writing a regex.
 ```runfile-mirror
 {"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":12,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","promote":false,"demote":true,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":92.0,"opus_used_pct":97,"week_elapsed_pct":83.4,"weekly_heat":1.1031,"opus_heat":1.1631,"ceiling":3,"promote_blocked":false}},"watchdog":{"mode":"normal","plist_loaded":true},"caffeinate_pid":0,"wrap_up_complete":false}
 ```
+
+### addendum — dashboard render (step 8), and a tool defect the guard caught
+
+Render aborted on its FIRST attempt and that is the good news. The cycle-35 timeline anchor rule —
+*the anchor must occur exactly once, else throw* — fired: the anchor occurs **three** times.
+Diagnosed rather than worked around: **two of the three copies sit INSIDE HTML comment regions**
+(byte 4875, before `</style>`, and byte 100896, inside the per-tick legend), leaked there by an
+earlier render. The standing containment check asserts only that a substitution lands *after*
+`</style>` — but every commented-out legend in this template also lives after `</style>`, so the
+check is blind to a comment breach.
+
+**Nothing a viewer ever saw was wrong** — comments do not render — and the page has been correct
+throughout. What the leak corrupts is anchor uniqueness, and it cost exactly one render, in the
+SAFE direction: the guard aborted instead of silently no-opping, or of splicing tonight's tick into
+a comment where no one would ever have seen it. Filed as **KI-11** (low: the page is right and the
+failure is loud).
+
+Repaired in this cycle's own render script only — `SWARM/runs/cycle-038-render.js` classifies each
+occurrence by comment membership, requires exactly one LIVE site, and splices **positionally**
+rather than by `String.replace`, which would have taken the first match: a comment copy. The two
+stale comment copies and the containment convention itself are **not** touched — `templates/` is
+under the hard-rule-5 read-only fence — so they go to the morning report and the wrap-up
+distillation, not to a live edit.
+
+Render result: 9 substitutions, **0 no-ops**, `data-expected` parses and MATCHES `next_wakeup_at`
+(no dead staleness banner), 25 timeline ticks. Artifact publish skipped silently — no Artifact tool
+in a headless VPS session, which is not a publish failure; `publish_failures` stays 0. Phase
+unchanged (POLISH), no stall, so no phase-change or stall push was due.

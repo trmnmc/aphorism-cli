@@ -481,6 +481,18 @@
         "KI-9",
         "T-024"
       ]
+    },
+    {
+      "id": "KI-11",
+      "severity": "low",
+      "cycle_found": 38,
+      "status": "open",
+      "desc": "SWARM/runs/dashboard.html carries THREE copies of the cycle-37 timeline tick; two of them sit INSIDE HTML comment regions. An earlier render leaked them there. The standing containment check in every render script since cycle ~34 asserts only that a substitution lands AFTER </style> -- but every commented-out template legend in this file also lives after </style>, so the check cannot see a comment breach. Comments do not render, so the PAGE was never visually wrong and no viewer ever saw stale or duplicated content; what the leak corrupts is ANCHOR UNIQUENESS.",
+      "why_it_matters": "It cost a render this cycle -- and it cost it in the SAFE direction, which is the part worth recording. The cycle-35 uniqueness guard ('the anchor must occur exactly once, else throw') fired and ABORTED rather than silently no-opping or, worse, splicing the new tick into a comment where nobody would ever see it. That is the guard working exactly as designed: it turned an invisible corruption into a loud stop. Left at LOW severity because the rendered page is correct and the failure mode is loud, not silent.",
+      "remedy": "Cycle 38's render script (SWARM/runs/cycle-038-render.js) already carries the repair and it should be carried forward rather than rediscovered: classify each anchor occurrence by whether the nearest preceding '<!--' is later than the nearest preceding '-->', count only LIVE occurrences, require exactly one, and splice POSITIONALLY at that offset instead of String.replace -- replace would take the FIRST match, which here is a comment copy at byte 4875, before </style>. NOT FIXED AT THE SOURCE THIS RUN: the two stale comment-region copies are still in dashboard.html, and templates/dashboard.template.html plus the containment convention live under the hard-rule-5 read-only fence. Candidate for the wrap-up distillation: a render's containment rule must exclude comment regions, not just the style block.",
+      "related": [
+        "KI-5"
+      ]
     }
   ],
   "qa": {
