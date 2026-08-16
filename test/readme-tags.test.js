@@ -229,6 +229,70 @@ test('README must list all single-entry tags', () => {
 //     already tracks (the marker list is a finite enumeration); T-035 does
 //     not fix T-034 and this note is that measurement, made explicit rather
 //     than silently absorbed into "no regression."
+//
+// ===========================================================================
+// FAMILY BOUNDARY (cycle 39, re-measured, deliberately NOT closed).
+//
+// Four residuals of this guard -- T-034, T-036, T-037, T-038 -- are recorded
+// here as a documented limit rather than patched, and the reason is a
+// measurement about the INSTRUMENT, not about any one of them.
+//
+// The T-031 block further down this file (collectMarkerBindings) wrote the
+// prediction at cycle 35: "every previous narrowing bought exactly one new
+// false rejection." The two narrowings that followed it both confirmed it,
+// on this guard specifically:
+//   - T-033 (cycle 37) scoped the search to the section and widened three
+//     substrings to nine markers. Bought: the outside-decoy kill (P3).
+//     Cost: renaming the section heading now fires the guard on a document
+//     in which every claim is still true (cell D3 -> T-036).
+//   - T-035 (cycle 38) added the same-sentence tag-word + entry-word
+//     requirement. Bought: the in-section "Each tag name is exactly one
+//     word." decoy (M1). Cost: an honest two-sentence split of the
+//     distribution paragraph now fires (cell E3 -> T-038). And the silent
+//     hole it aimed at survived in narrower form: a decoy carrying BOTH
+//     domain nouns still satisfies the guard (cells D4a/D4b -> T-037).
+// Three consecutive narrowings, three kills, two new false rejections, and
+// the silent direction still open. That is the cost curve, and it is why a
+// fourth narrowing is not being written.
+//
+// All six cells below were RE-MEASURED at cycle 39 against this code, each
+// run in isolation via --test-name-pattern on this test's own name so that
+// the neighbouring count guards can neither supply nor mask the verdict
+// (they fire on several of these READMEs for their own, unrelated reasons --
+// that confounder is what made the cycle-38 readings hard to interpret).
+// Harness and full output: .swarm/runs/cycle-039-ackguard-probe.js and
+// .swarm/runs/cycle-039-verify-ackguard.txt.
+//
+//   C0  baseline  pristine README                              SILENT  (correct)
+//   D1  T-034     both acknowledgement sentences reworded
+//                 outside the 9 markers, numbers unchanged     FIRES   (false rejection)
+//   D3  T-036     "## Tag vocabulary" renamed "## Tags"        FIRES   (false rejection)
+//   D4a T-037     acknowledgement stripped, in-section decoy
+//                 "Tags are listed in alphabetical order,
+//                  one entry per line."                        SILENT  (missed)
+//   D4b T-037     acknowledgement stripped, in-section decoy
+//                 "A tag name is a single-entry token with
+//                  no spaces."                                 SILENT  (missed)
+//   E3  T-038     honest two-sentence split of the
+//                 distribution facts, numbers unchanged        FIRES   (false rejection)
+//
+// The SILENT pair (D4a/D4b) is the heavy half of this call and is named as
+// such rather than folded in with the rest: this guard can be satisfied by a
+// README that does NOT acknowledge the limitation, so long as some sentence
+// in the section pairs "tag" and "entry" with one of the nine markers. That
+// is a real gap being left open on the record for the second time on this
+// guard. It is tracked as a known issue, not retired by this note.
+//
+// What this boundary does NOT say is that the guard is unfixable. The
+// recorded right answer is the structural re-shape (T-024): stop deriving
+// the verdict from marker phrases positioned inside an English sentence and
+// read what the section structurally asserts instead. That is M-effort work
+// and did not fit this run's window; it is on the backlog, not lost.
+//
+// If you are about to narrow this guard a fourth time: the four cells above
+// are your regression set, the two FIRES cells are correct READMEs you must
+// not break, and the prediction in the T-031 block is now measured twice.
+// ===========================================================================
 test('README should acknowledge single-entry tag limitation', () => {
   const readmePath = path.join(__dirname, '..', 'README.md');
   const readmeContent = fs.readFileSync(readmePath, 'utf8');

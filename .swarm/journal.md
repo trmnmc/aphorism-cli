@@ -5272,3 +5272,121 @@ Render result: 9 substitutions, **0 no-ops**, `data-expected` parses and MATCHES
 (no dead staleness banner), 25 timeline ticks. Artifact publish skipped silently — no Artifact tool
 in a headless VPS session, which is not a publish failure; `publish_failures` stays 0. Phase
 unchanged (POLISH), no stall, so no phase-change or stall push was due.
+
+## cycle 39 — 2026-08-16T01:33:35Z → 01:52Z — README guard family closed as a documented BOUNDARY; allocator went HALTED [4 verified]
+
+**Gear 1, guest, dial 0.3. Zero agents dispatched.** ~9.8 h to `stop_at`.
+
+### the event: allocator posture trickle → HALTED
+
+`runs/allocator.json` flipped this cycle: `posture: "halted"`, `allow_overall_pct 0`,
+`allow_premium_pct 0`. Cause read directly from `bin/swarm-allocator.sh:105` — `halted` means
+`trickle_used_pct >= trickle_pct`, and `swarm_used_pct` is 4 against a `trickle_pct` cap of 4.
+**The swarm's weekly trickle allowance is spent.**
+
+It does NOT formally stop this run, and I checked rather than assumed: the `skip "posture=$POSTURE"`
+at `bin/swarm-pacer.sh:104` sits in the AUTO-KICKOFF path — it decides whether to start a *new*
+run — and the pacer log shows `allocator-refreshed posture=halted` followed immediately by
+`decision=spawned`, which is this cycle. So halted governs kickoff, not in-flight cycling.
+
+Neither SKILL.md nor cycle.md says what a conductor should do here. Filed as **KI-13** rather than
+guessed around. Early WRAP_UP was considered and **rejected as overreach** — cycle.md's triggers are
+the clock, all-targets-stalled, or a control `stop`, and none fired; scaling a run down on an
+undefined signal is the user's call. The conservative reading the silence permits, recorded as a
+decision: **keep cycling, dispatch zero agents, do conductor-only work** (planning, backlog hygiene,
+docs, test triage — all gear-1 sanctioned work types). Cycle 39 ran that way end to end.
+
+Budget probe: `bin/swarm-budget.sh` refused for the **38th** consecutive cycle (KI-5), attempted in
+both path forms per cycle 27; relative `bin/swarm-notify.sh poll` ran clean from the same cwd, the
+per-script/per-path-form split reproducing a fifth time. Gear re-derived by hand: `weekly_heat`
+93/83.67 = **1.1115**, governor engaged at ceiling 3 for a third cycle (margin widened back out from
+1.1031); `opus_heat` 1.1593, `promote_blocked` false. Both inert — guest clamps 1–3 and the posture
+pins gear 1. Week resets 1786942799, after `stop_at` 1786879464.
+
+Control channel: poll clean, no pending commands, no injections.
+
+### the work: the guard family, decided rather than narrowed a fourth time
+
+Cycle 38 handed forward an explicit instruction — *weigh whether a fourth narrowing is the right
+instrument at all, before writing a regex.* Taking it seriously is the whole cycle.
+
+The answer was already written in this repo, at cycle 35, in the `collectMarkerBindings` T-031
+block: *"every previous narrowing bought exactly one new false rejection."* That was a prediction.
+The two cycles after it are the test, and **both confirmed it**:
+
+| narrowing | bought | cost |
+|---|---|---|
+| T-033 (c37) scope to section + 9 markers | outside-decoy kill (P3) | heading rename now fires on a true README (D3 → T-036) |
+| T-035 (c38) same-sentence tag+entry rule | in-section "exactly one word" decoy (M1) | honest two-sentence split now fires (E3 → T-038); silent hole survived narrower (D4a/D4b → T-037) |
+
+Three narrowings, three kills, two new false rejections, silent direction still open. That is a
+measured cost curve, and it is the argument for stopping.
+
+**I re-measured all six cells myself against current HEAD** rather than trusting the prior cycles'
+files — and isolated each one with `--test-name-pattern` on the ack test's own name, which is what
+made the cycle-38 readings hard to interpret (neighbouring count guards fire on several of these
+mutated READMEs for their own unrelated reasons and were supplying failures that looked like the
+ack test's). Harness: `.swarm/runs/cycle-039-ackguard-probe.js`; it restores README.md from git
+after every cell and asserts byte-identity with the pristine read.
+
+**VERIFICATION EVIDENCE** — `.swarm/runs/cycle-039-verify-ackguard.txt`:
+
+```
+C0   (baseline) ack=SILENT   pass=1 fail=0    AS RECORDED
+D1   T-034    ack=FIRES    pass=0 fail=1    AS RECORDED
+D3   T-036    ack=FIRES    pass=0 fail=1    AS RECORDED
+D4a  T-037    ack=SILENT   pass=1 fail=0    AS RECORDED
+D4b  T-037    ack=SILENT   pass=1 fail=0    AS RECORDED
+E3   T-038    ack=FIRES    pass=0 fail=1    AS RECORDED
+
+cells run: 6 | as recorded: 6 | diverged: 0
+README restored byte-identical to the pristine read: yes
+```
+
+On that measurement, **T-034, T-036, T-037 and T-038 are closed as a documented FAMILY BOUNDARY** —
+each of the four had BOUNDARY explicitly authorised in its own acceptance per SPEC I-2, each
+required a comment at the assertion site carrying the measured argument, and that comment is now in
+`test/readme-tags.test.js` above the ack test: the cost-curve table, all six re-measured cells, the
+regression set for anyone tempted to narrow a fourth time, and T-024 named as the recorded right
+answer.
+
+**T-024, T-024b, T-026 and T-032 stay OPEN and un-boundaried.** The cycle-39 measurement covers the
+acknowledgement guard only; extending a verdict to an extraction it never measured is precisely the
+dishonesty this decision exists to prevent. Each carries a note recording the family decision so a
+later cycle doesn't reach for a regex by default.
+
+**VERIFICATION EVIDENCE** — gate authored at verification time, run by the conductor:
+
+```
+ℹ tests 80   ℹ pass 80   ℹ fail 0            (unchanged from the pre-edit baseline)
+non-comment added lines: 0
+added lines total:      64
+removed lines:           0
+git diff --stat README.md: (no output — byte-identical to HEAD)
+```
+
+### the honest headline
+
+**Nothing was fixed.** Four items reached `done`; four defects were *documented*. Two false
+rejections and one silent hole are still true of the shipped guard — the silent one (a README that
+does not acknowledge the limitation can satisfy the guard) is carried forward as **KI-12**, not
+retired by the note. What was verified is a decision about the instrument, backed by six isolated
+re-measurements, not a repair. A reader scanning the `[4 verified]` tag alone would infer more than
+happened, so the caveat travels with it.
+
+What is real: the run stopped a treadmill that its own cycle-35 note predicted would keep costing
+more than it bought, and stopped it on measurement rather than on fatigue.
+
+### filed this cycle
+
+- **KI-12** (medium, open) — ack guard's silent direction: in-section decoys pairing a tag-word and
+  an entry-word with any of the nine markers satisfy it with no acknowledgement present.
+- **KI-13** (low, open) — SWARM tool gap: `posture: halted` has no defined conductor semantics for
+  an in-flight run. Morning report, not a live edit (hard rule 5).
+
+Wave autotune NOT applied (no wave dispatched, no agent ran — a cycle that dispatched nothing
+measures nothing about code capacity). `consecutive_no_value` stays 0.
+
+```runfile-mirror
+{"run_label":"improvement-aphorism-cli-2026-08-15","run_kind":"improvement","stop_at":"2026-08-16T11:24:24+00:00","usage_reset_at":"2026-08-15T16:24:32+00:00","model_policy":"value-routing","auth_mode":"subscription","pacing":{"mode":"guest","dial":0.3},"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"cycles_since_recycle":13,"budget":{"gear":1,"k_cap":1,"mode":"guest","source":"allocator","posture":"halted","promote":false,"demote":true,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":93.0,"opus_used_pct":97,"week_elapsed_pct":83.67,"weekly_heat":1.1115,"opus_heat":1.1593,"ceiling":3,"promote_blocked":false}},"watchdog":{"mode":"normal","plist_loaded":true},"caffeinate_pid":0,"wrap_up_complete":false}
+```
