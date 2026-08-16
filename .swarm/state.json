@@ -347,6 +347,11 @@
       "cycle": 34,
       "what": "The sealed prediction was NOT refuted, and the one place it was understated is recorded rather than smoothed over: it predicted the new false rejection would hit C2, and the measurement shows it hits C1 as well (2 failures, not 1).",
       "why": "The seal named its own refutation conditions and none were met -- the fix closed all three silent cells, the false rejection appeared as predicted, F_LAST turned the mirror green as predicted, and nothing outside C1/C2 moved. But \"3 HIGH entries\" carries BOTH marker tokens, so it binds spuriously against corpus.length as well, which I did not see coming. Recording an understatement in a seal that otherwise held is the whole point of sealing it: the seal exists to measure the conductor, and a seal only ever reported as vindicated is not being read honestly. Cycle 33 is the precedent in the strong direction -- there the sealed prediction was flatly refuted and the conductor's verdict reversed."
+    },
+    {
+      "cycle": 35,
+      "what": "T-031 is CLOSED as BOUNDARY and its defect is LEFT OPEN as KI-10, on a measurement the conductor made rather than on the builder's account of its own rejected work. Both natural widenings of collectMarkerBindings were rebuilt from the shipped helper: both close the silent hole, and both buy a new false rejection on entirely true prose.",
+      "why": "The BOUNDARY verdict rests on exactly one claim -- that no widening closes this hole without buying a worse one -- and that claim is unreviewable by reading, because every candidate fix looks reasonable in a diff. So the gate rebuilt V1 (unconditional previous-clause digit fallback) and V2 (that fallback gated on the previous clause holding no marker of its own) from the shipped code and ran 11 README mutations against 4 arms. G1 goes RED on both candidates, so both really do close the hole; CA and CB go RED on both while GREEN on HEAD, so both really do break true prose. That is the trade measured, in the same direction the cycle-25 standing finding predicted, and it is what makes BOUNDARY earned rather than conceded -- accepting the builder's word would have produced the identical entry with none of the warrant. The decision recorded here is deliberately TWO decisions: the item closes, and the defect stays open and visible. A closed item with an open defect is only honest if both halves are written down, so the distinction is repeated in the backlog entry, KI-10, and the evidence file. The real remedy is not a third narrowing but KI-9 option 2 -- give the counts real structure in the README so the guard stops reading English -- which is a README change, out of this run's builder file scope, and a human's call."
     }
   ],
   "known_issues": [
@@ -472,6 +477,6 @@
     "cycle": 35,
     "work": "T-031 (dash-boundary SILENT hole) closed BOUNDARY + step-3 hygiene repaired a lost cycle-34 finding (T-032)",
     "outcome": "1 verified (a DECISION, not a repair -- the hole stays open as KI-10)",
-    "commit": "pending"
+    "commit": "8990242"
   }
 }
