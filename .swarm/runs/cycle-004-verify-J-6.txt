@@ -1,0 +1,83 @@
+=== J-6 CONDUCTOR GATE — pre-dispatch arm e06852b ===
+
+[OK ] P0    PRE       expect=GREEN                        actual=100/0 (tests 100)
+        unmutated arm suite is green
+
+[OK ] P0    MERGED    expect=GREEN                        actual=101/0 (tests 101)
+        unmutated arm suite is green
+
+[OK ] G1    PRE       expect=GREEN                        actual=GREEN 100/0
+        --tag "" empty-candidate rule under mutation (if (tag) {)
+        witness_real: true
+        witness_clean: "exit 1 stdout=\"\""
+        witness_mutant: "exit 0 stdout=\"C makes it easy to shoot yourself in the foot; C++ makes it \""
+        killed_by: []
+
+[OK ] G1    MERGED    expect=RED                          actual=RED 100/1
+        --tag "" empty-candidate rule under mutation (if (tag) {)
+        witness_real: true
+        witness_clean: "exit 1 stdout=\"\""
+        witness_mutant: "exit 0 stdout=\"Clear is better than clever.\\n    — Rob Pike\\n\""
+        killed_by: []
+
+[OK ] G1b   PRE       expect=GREEN                        actual=GREEN 100/0
+        --tag "" empty-candidate rule under mutation (entry.tags.some((t) => needle === '' || )
+        witness_real: true
+        witness_clean: "exit 1 stdout=\"\""
+        witness_mutant: "exit 0 stdout=\"Errors are values.\\n    — Rob Pike\\n\""
+        killed_by: []
+
+[OK ] G1b   MERGED    expect=RED                          actual=RED 100/1
+        --tag "" empty-candidate rule under mutation (entry.tags.some((t) => needle === '' || )
+        witness_real: true
+        witness_clean: "exit 1 stdout=\"\""
+        witness_mutant: "exit 0 stdout=\"Talk is cheap. Show me the code.\\n    — Linus Torvalds\\n\""
+        killed_by: []
+
+[BAD] G2    MERGED    expect=IDENTICAL witnesses + suite GREEN actual=DIFFERENT / 101/0
+        --author "" mutation is a behavioural NO-OP, so correctly earns no test
+        witness_clean: "exit 0 stdout=\"It's easier to ask forgiveness than it is to get p\""
+        witness_mutant: "exit 0 stdout=\"Premature optimization is the root of all evil.\\n  \""
+
+[OK ] G3    MERGED    expect=no pad probe fires           actual={"case1 help-precedence pinned":false,"case2 -0 vs 0 pinned":false,"case3 duplicate-flag pinned":false}
+        no test added for an out-of-rule case (no padding)
+        new_test_calls: 1
+        args_test_numstat: "(untouched)"
+
+[OK ] G4a   MERGED    expect=exit 2 both                  actual=exit 2 / 2
+        case1: usage error wins over --help in BOTH argv orders
+        stderr: "\"aphorism: flag --seed requires a numeric value\""
+
+[OK ] G4b   MERGED    expect=different stdout             actual=DIFFERENT
+        case2: --seed -0 and --seed 0 select DIFFERENT entries (the live fork)
+        seed0: "\"The most effective debugging tool is still careful thou\""
+        seedneg0: "\"Perfection is achieved, not when there is nothing more \""
+
+[OK ] G4c   MERGED    expect=exit 0, matches on Y         actual=exit 0
+        case3: duplicate --author is last-wins (implementation, not rule)
+        stdout: "\"It's not a bug, it's an undocumented feature.\\n    — Anonymous\""
+
+[OK ] G5    REAL TREE expect=fail 0                       actual=101/0 (tests 101)
+        test_cmd on the actual repo (may carry J-4 concurrent edits)
+        failing: []
+
+GATE 11/12
+=== J-6 gate cell G2, RE-AUTHORED (arm e06852b) ===
+
+[OK ] G2a expect=IDENTICAL    actual=IDENTICAL
+      --list --author "" is byte-identical across the mutation (deterministic: corpus order, no random pick)
+      clean exit=0 lines=50 | mut exit=0 lines=50
+
+[OK ] G2b expect=IDENTICAL    actual=IDENTICAL
+      --seed 12345 --author "" is identical across the mutation (deterministic single pick)
+      clean="Adding manpower to a late software project makes it lat" mut="Adding manpower to a late software project makes it lat"
+
+[OK ] G2c expect=GREEN        actual=101/0 (tests 101)
+      the suite stays GREEN under the author mutation — nothing to catch, so no test is owed
+      []
+
+[OK ] G2d expect=DIFFERENT    actual=DIFFERENT
+      FAILABILITY: the same --list instrument DOES show a difference for the tag half (a real hole)
+      clean exit=1 lines=0 | mut exit=0 lines=50
+
+G2 4/4

@@ -508,3 +508,34 @@ test('--list with a filter that matches nothing is STILL exit 1, stderr only, st
   assert.ok(rJson.stderr.trim().length > 0);
   assert.match(rJson.stderr, /^aphorism: /);
 });
+
+// --- J-6 (cycle 004): one of four compound cases J-3 set aside as "not clearly a
+// rule violation." Domain rule (Filtering): "--tag matches a whole tag,
+// case-insensitively, for membership in the aphorism's tags array." That is a
+// statement about matching the literal value supplied, with no carve-out for the
+// empty string — so `--tag ""` must be tested for whole-tag membership against the
+// literal value "", which no corpus entry has, and therefore fall through to the
+// Domain rule's "empty candidate set" clause (exit 1, stderr only, zero stdout).
+//
+// Measured SURVIVOR: in src/select.js's filter(), changing the tag-filter guard
+// from `if (tag !== undefined && tag !== null)` to the more casual-looking
+// `if (tag)` treats an empty-string --tag as "no filter supplied" and silently
+// returns the WHOLE corpus instead of nothing. Witnessed directly on the shipped
+// binary in a throwaway copy: `--tag ""` went from exit 1 / empty stdout /
+// "aphorism: no aphorism matches those filters" on stderr (clean copy) to exit 0
+// with a randomly picked aphorism printed to stdout (mutated copy). The
+// pre-existing 100-test suite (all four test/*.test.js files) stayed fully green
+// against that mutant — nothing in args.test.js, cli.test.js or select.test.js
+// ever passes an empty string as a bare --tag value.
+//
+// NOTE on scope: --author "" was measured too and is NOT a hole. Substring
+// containment of "" is true for every string by JS's own String.prototype.includes
+// semantics, so --author "" matches the whole corpus whether or not the guard
+// mutation is applied — the mutation is a silent no-op on that path, not a
+// violation, so no test is added for it.
+test('--tag "" (bare empty-string value) matches nothing: whole-tag equality against the literal "" is not a filter no-op', () => {
+  const r = run(['--tag', '']);
+  assert.strictEqual(r.status, 1);
+  assert.strictEqual(r.stdout, '');
+  assert.match(r.stderr, /^aphorism: /);
+});

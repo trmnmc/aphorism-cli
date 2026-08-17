@@ -6,9 +6,25 @@ A zero-dependency Node CLI that prints one attributed programming aphorism from 
 _No screenshot: a CLI has no rendered surface. The live-look QA stage is reported as
 not-applicable, never as passed._
 
+> **Document status (added 2026-08-17, run #2 cycle 4, item J-4).** The body below and the
+> "Closing addendum" section were both written by Improvement run #1's conductor and frozen at
+> that run's WRAP_UP (cycle 56, 2026-08-16T11:24 UTC, commit `ef4fa6d`). Every cycle number,
+> "in flight" phrase and count between here and the closing addendum describes run #1's state
+> at the moment it was written, not the repo today — none of that text was rewritten to update
+> it. A second improvement run (#2) began 2026-08-17 and is at cycle 4 as this note is added.
+> **§ Improvement run #2 status**, appended at the very end of this document, gives fresh,
+> sourced numbers for everything the tables below no longer get right, and lists every claim
+> that was corrected or flagged stale. Numbers drawn from `src/corpus.js` and
+> `docs/corpus-attribution-triage.md` (corpus size, tag counts, author counts, the triage risk
+> bands) are unaffected by any of this — the corpus has not changed since run #1, and every
+> such number below is still independently true today.
+
 ## What this report covers
 
-This repo has been through **two** SWARM runs, and this report covers both:
+This repo has been through **three** SWARM runs. This report's body and closing addendum
+cover the first two (Build, then Improvement run #1) in full; a status section appended at the
+end covers the third (Improvement run #2, in flight at cycle 4) — see
+**§ Improvement run #2 status**.
 
 | Run | When | Kind | Outcome |
 |---|---|---|---|
@@ -37,7 +53,7 @@ cd /opt/targets/aphorism-cli
 node bin/aphorism.js                                  # one random attributed aphorism
 node bin/aphorism.js --author dijkstra --json --seed 1
 node bin/aphorism.js --tag simplicity --list
-node --test test/*.test.js                            # 80 tests
+node --test test/*.test.js                            # 100 tests as of run #2 cycle 4
 ```
 
 No install step, no `package.json`, no dependencies — Node and the repo are the whole
@@ -191,6 +207,18 @@ still open (KI-7, KI-8), 2 resolved (KI-3, KI-4). Grouped below by who can settl
 resolved ones included, against a smaller list. Corrected at cycle 47, which also filed
 KI-16.)
 
+_Correction carried by this reconciliation (run #2, cycle 4)._ The paragraph above is a run
+#1 cycle-47 snapshot and undercounts today's `.swarm/state.json`, which now records **19**
+known issues (KI-2, then KI-5 through KI-22 — KI-1/KI-3/KI-4 were already fully resolved and
+retired from the array before run #1 ended, which is why the ids are not contiguous): **13
+open**, **2 mitigated with the root cause open** (KI-7, KI-8, unchanged), **1 partially
+resolved** (KI-5 — the playbook cap is fixed, the allowlist gap is handed to a human), **2
+resolved this run** (KI-9, KI-10 — the README Attribution guards stopped reading English
+prose), and **1 accepted trade, not pursued further** (KI-21). **KI-2 is unchanged: still
+OPEN, still HIGH.** The individual entries below (KI-3 through KI-16) are run #1's own text
+and are left as written — read them as history, not as today's status. Source:
+`.swarm/state.json` → `known_issues[]`, counted directly.
+
 ### About the product — a human must settle these
 
 - **KI-2 (high, open)** — **the single largest correctness risk.** The 50 corpus
@@ -299,6 +327,12 @@ Recorded here rather than fixed, because hard rule 5 fences SWARM's own code dur
 | **T-006** human audit of corpus attributions | Confirming an attribution needs sources this run cannot reach — network is a product non-goal and web tools are outside the conductor's allowed surface | Read `docs/corpus-attribution-triage.md`, settle the 8 HIGH rows against primary sources | human |
 | **T-024a** re-shape the Attribution count extraction | Hit the attempts cap at 2. Both attempts measured: attempt 1 scored a perfect 2/4 ↔ 2/4 mirror; attempt 2 scored 5/9 against HEAD's 7/9, buying one repair with three new false rejections | Not a third attempt of the same shape — KI-9 remedy option 2 (structure the README's counts) | human decision, then any run |
 
+_Correction carried by this reconciliation (run #2, cycle 4)._ **T-024a is no longer
+blocked.** It closed **done** in run #2 cycle 2 as part of J-2a, by removal — the option this
+row's own "What would settle it" column names, and not by a third attempt of the narrowing
+shape that was capped. **T-006 is unchanged: still blocked on a human.** Source:
+`.swarm/backlog.json` → `items[]` where `id` is `T-024a` / `T-006`.
+
 ## Unfinished work — the six open items, and what each is actually waiting on
 
 The stats row below says "6 todo". That number invites a wrong inference — that a bigger
@@ -330,6 +364,20 @@ worker.
 | **T-032** two count-markers in one true sentence manufacture a spurious claim | **Not the gear — a standing decision.** Same as T-024b | Same as T-024b | Any run |
 | **T-039** heading-to-table stop rule relocates mis-attachment | **Not the gear — its own filing terms.** S-effort; filed explicitly as a member of the T-024 umbrella so it does not become a seventh narrowing | T-024 landing, or an argued BOUNDARY | Any run |
 | **T-040** ratify the two judgment calls inside the T-007 retag | **A human.** Filed by the conductor against its own change; nothing blocks on it | Read the fold map in `.swarm/runs/cycle-046-retag.mjs` and either ratify or reverse — reversal is cheap | human |
+
+_Correction carried by this reconciliation (run #2, cycle 4)._ **Five of the six rows above
+have since changed status; only T-040 is still todo.** Re-derived from the live
+`.swarm/backlog.json`, not from this table: **T-008** is now **dropped** — excluded as a
+non-goal for run #2, on the recorded ground that widening an unaudited 50-entry corpus before
+a human has worked the KI-2 queue would enlarge the run's worst open problem, not shrink it.
+**T-024** (the umbrella), **T-024b** and **T-039** are **done**, closed run #2 cycle 3 as part
+of J-2b, by giving the band headings real markdown structure and deleting the prose-anchored
+extraction, not by a seventh narrowing. **T-032** is **done**, closed run #2 cycle 2 as part
+of J-2a. **T-040 is unchanged: still todo**, still waiting on a human to ratify or reverse the
+T-007 retag's two judgment calls. The paragraphs below this table are run #1's own account of
+*why* these items were stuck and what would unstick them; left as written because they explain
+a decision rather than assert a current count, and because the outcome they predicted — a
+structural re-shape rather than an eighth narrowing — is what actually happened.
 
 **Why the three S-effort items are fenced rather than simply unfinished.** Every README
 guard this run built extracts a number by anchoring to a position or a literal inside an
@@ -398,6 +446,13 @@ Four notifications were sent (`auto-kickoff`, `goodnight`, and two `posture` pus
 | Notifications sent | 4 (`auto-kickoff`, `goodnight`, two `posture`); 29 further log lines are control-channel polls, not sends |
 | Reverted merges | 0 (gear 1 dispatches a single builder into the tree; two items were rejected at the gate and their changes reverted by hand, cycles 31 and 32) |
 | Pace | mode **guest**, dial 0.3, gear pinned at **1** for the entire run. The weekly window resets 2026-08-17 05:00 UTC, *after* `stop_at`, so gear 1 was structurally fixed from kickoff. Window utilization: **not measured** — `bin/swarm-budget.sh` was refused by the allowlist on every cycle that attempted it (46 attempts through cycle 47, KI-5), so every burn figure in the runfile is a placeholder. Voluntary idle cycles: 0 |
+
+_Correction carried by this reconciliation (run #2, cycle 4)._ The table above is a run #1
+cycle-47 snapshot; several rows are now superseded, most visibly **Cycles run** (46
+completed/47 in flight — run #1 actually finished at cycle 56, and a second run is now at
+cycle 4) and **Tests** (80 pass/0 fail — currently **100 pass / 0 fail**). Rather than edit
+cells that were true when written, fresh sourced numbers for every one of them are in
+**§ Improvement run #2 status** at the end of this document.
 
 ### Why the run stopped dispatching agents at cycle 39
 
@@ -504,6 +559,16 @@ named as not-run below rather than rendered as passed.
    `playbook/HANDOFF-cap-2026-08-15.md` has the computed drop-list and the reason the swarm
    declined to apply it; the allowlist fix must use **absolute** paths — see KI-5 above for
    why relative entries close neither failure mode).
+
+   _Correction carried by this reconciliation (run #2, cycle 4)._ **The KI-5 cap half of
+   this item is done and no longer needs your hand.** Run #2 cycle 1 (J-1a) brought
+   `playbook/learnings.md` from 36 lessons back within its 20-lesson cap, losslessly, with
+   all 15 `[apply:]` directives intact (gate 9/9 with negative controls). **What is still
+   owed is only the allowlist half**, and the exact patch is now at
+   `playbook/HANDOFF-allowlist-2026-08-17.md` (J-1b) rather than the cap handoff named
+   above. KI-14 and KI-16 are unchanged: still open, still high, still a human's call.
+   Source: `.swarm/state.json` → `known_issues[]` → `KI-5.status`, which currently reads
+   "partially resolved cycle 1 of run #2".
 6. **Push the tag:** `git push origin v0.1-overnight`.
 
 ---
@@ -603,6 +668,17 @@ Full drafting rationale, dedupe notes and the losslessness ledger for the cycle-
 4. **KI-16 (HIGH, open)** — the allocator measured a **zero** premium allowance by real probe
    for six consecutive cycles, pinning the run at gear 1 throughout. Recorded not fixed.
 
+_Correction carried by this reconciliation (run #2, cycle 4)._ **Item 1 is done.** Run #2
+cycle 1 (J-1a) cut `learnings.md` from 36 lessons to 20, losslessly, with all 15 `[apply:]`
+directives intact — the archive and rationale are `DROP-RATIONALE-2026-08-17.md` in the
+playbook directory, superseding the cap handoff this addendum names. **Item 2 (the
+allowlist) is unchanged and still owed** — it was attempted at run #2 kickoff and the write
+was denied to a `-p` session, confirming rather than resolving the gap; the exact patch is
+now at `playbook/HANDOFF-allowlist-2026-08-17.md`. **Items 3 and 4 are unchanged**: KI-2 is
+still open and high, and no attribution was checked against a primary source; KI-16 is still
+open and high. Source: `.swarm/state.json` → `known_issues[].KI-5.status` /
+`.KI-2` / `.KI-16`.
+
 ## Verified vs claimed — final
 
 **Machine-checked:** the full suite, run by the conductor at every gate, green at the final
@@ -615,3 +691,106 @@ matrix, cycle 19); and the boundary-classified claims deliberately left unguarde
 its reason recorded rather than silently skipped.
 
 Cycles run: **56.** Generated by the cycle-56 conductor at WRAP_UP.
+
+---
+
+# Improvement run #2 status — added by J-4 reconciliation, cycle 4
+
+Everything above this line is run #1's report, frozen at its WRAP_UP (cycle 56,
+2026-08-16T11:24 UTC). This section was added 2026-08-17 by item **J-4** (kind: docs,
+"Reconcile README.md, REPORT.md and the triage doc against the verified state") of
+**Improvement run #2**, which began 2026-08-17 and is at **cycle 4** as this is written. Its
+job is narrow: re-derive every count claim in this document, README.md and
+`docs/corpus-attribution-triage.md` from an actual source of truth, correct or flag whatever
+does not hold up, and leave a reviewable list of what changed. It does not re-litigate run
+#1's findings, does not touch `src/`, `bin/` or `test/`, and does not change the corpus or
+any triage risk band.
+
+## Fresh derivation table
+
+Every number below was re-derived just now, live, by the command shown — not copied from
+any earlier report.
+
+| Claim | Value | Source / command |
+|---|---|---|
+| Corpus entries | 50 | `node -e "console.log(require('./src/corpus.js').corpus.length)"` |
+| Distinct authors | 24 | same script, `new Set(corpus.map(e=>e.author)).size` |
+| Distinct tags | 12 | same script, tag-count map keys |
+| Tag pool range | min 3 (`philosophy`), max 14 (`design`) | same script, min/max of tag-count map |
+| Entries hedged to "Anonymous" | 1 | same script, count of `author === 'Anonymous'` |
+| Triage table rows | 50 | `grep -c '^| [0-9]' docs/corpus-attribution-triage.md` |
+| Triage risk bands | HIGH 8 / MEDIUM 16 / LOW 26 | `grep -oP '\| (HIGH\|MEDIUM\|LOW) \|' docs/corpus-attribution-triage.md \| sort \| uniq -c` |
+| Suite result | **100 pass / 0 fail** | `node --test test/*.test.js`, run from repo root just now |
+| Commits, total | 121 | `git log --oneline \| wc -l` |
+| Commits, run #1 (Build + Improvement #1, through WRAP_UP) | 116 | `git log --oneline ef4fa6d \| wc -l` |
+| Commits, run #2 so far (cycles 0–4) | 5 | `git log --oneline ef4fa6d..HEAD \| wc -l` |
+| Backlog items tracked live | 17 (11 done, 4 todo, 1 blocked, 1 dropped) | `.swarm/backlog.json` → `items[]`, counted by `status` |
+| Known issues tracked live | 19 (13 open, 2 mitigated/root-cause-open, 1 partially resolved, 2 resolved this run, 1 accepted-trade) | `.swarm/state.json` → `known_issues[]`, counted by `status` |
+| KI-2 (corpus attributions) | **OPEN, severity HIGH** — unchanged | `.swarm/state.json` → `known_issues[]` where `id == "KI-2"` |
+| Current cycle | 4 (in flight; `state.json.cycle` = 3 is the last fully recorded cycle) | `.swarm/state.json` → `.cycle`; HEAD commit message "cycle 4 pre-dispatch: sha256 commitment for the J-4 sealed truth table" |
+
+Note on the backlog count: `.swarm/backlog.json` deliberately does not restate the 48 done and
+4 dropped items run #1 finished — its own `_provenance` field says they are carried forward
+in `backlog.json.pre-run2-1786955683` and in git history instead. The 17-item live count above
+is run #2's own items plus the handful of open/blocked items run #1 left behind (T-006,
+T-008, T-024 and its children, T-040), not a repo-wide total.
+
+## Claims corrected or flagged in this document (the reviewable diff)
+
+All edits below are inline, italic, "_Correction carried by this reconciliation..._" notes
+placed immediately after the claim they correct, in this document's own established house
+style (matching the existing "_Correction carried by this refresh._" note near the top). No
+existing sentence was deleted or silently reworded; each correction sits next to what it
+corrects so a reader can compare both.
+
+1. **"This repo has been through two SWARM runs"** → corrected in place to **three**, since a
+   second improvement run now exists. (§ What this report covers)
+2. **`node --test test/*.test.js  # 80 tests`** in the Run it section → corrected in place to
+   **`# 100 tests as of run #2 cycle 4`**, since that comment is a live instruction a reader
+   would run today, not a historical snapshot. (§ Run it)
+3. **"Fifteen recorded... 11 open, 2 mitigated..., 2 resolved"** (Known issues summary) →
+   flagged stale; current count is **19** (13 open / 2 mitigated / 1 partially resolved / 2
+   resolved this run / 1 accepted-trade). Original left as written; correction note added
+   directly below it. (§ Known issues)
+4. **T-024a listed as "blocked" in the Blocked items table** → corrected: T-024a is **done**,
+   closed run #2 cycle 2 as part of J-2a, by removal — the exact remedy the row's own "what
+   would settle it" column named. T-006 is unchanged, still blocked. (§ Blocked items)
+5. **T-008, T-024, T-024b, T-032, T-039 listed as open/unfinished in the "six open items"
+   table** → corrected: **T-008 dropped** (excluded as a non-goal — widening an unaudited
+   corpus ahead of a human attribution pass would enlarge KI-2); **T-024, T-024b, T-039
+   done** (run #2 cycle 3, J-2b); **T-032 done** (run #2 cycle 2, J-2a). Only **T-040** is
+   still todo. (§ Unfinished work)
+6. **Stats table "Cycles run: 46 completed, 47 in flight" and "Tests: 80 pass / 0 fail"** →
+   flagged stale; a pointer note was added directly below the table to this section's fresh
+   derivation table above (cycles: run #1 finished at 56, run #2 is now at cycle 4; tests: 100
+   pass / 0 fail). Table cells left as written rather than edited piecemeal. (§ Stats)
+7. **"KI-5 (the playbook is inert until someone culls it to the cap...)"** in the "Only a
+   human can finish these" list → corrected: the cap half is **done** (run #2 cycle 1, J-1a —
+   36 lessons to 20, losslessly, all 15 `[apply:]` directives intact); only the allowlist half
+   is still owed, now handed off at `playbook/HANDOFF-allowlist-2026-08-17.md`. (§ Honest
+   hand-off)
+8. **"1. Resolve the playbook cap..."** in the closing addendum's "What a human must do —
+   ranked" list → corrected: **done**, same fact as item 7, with the same superseding handoff
+   file. Items 2–4 in that list (allowlist, KI-2, KI-16) are unchanged. (§ What a human must
+   do — ranked)
+
+## What did not need correcting
+
+Every count claim citing the corpus or the triage table — in this document, in README.md, and
+within `docs/corpus-attribution-triage.md` itself — was re-derived against `src/corpus.js` and
+the triage table's own rows (see the derivation table above) and found **true, unchanged,
+zero edits needed**: 50 entries, 24 authors, 12 distinct tags (pool range 3–14), 1 entry
+hedged to Anonymous, 50 triage rows split 8 HIGH / 16 MEDIUM / 26 LOW. Neither README.md nor
+`docs/corpus-attribution-triage.md` required any edit: their own numbers already match the
+source of truth exactly, and neither file describes the corpus attributions as audited,
+verified, confirmed or vouched for anywhere — both consistently use "triage, not an audit" /
+"unverified" / "unaudited" language, and KI-2 stays open and high throughout. A repo-wide
+search for the audit/verified-attribution word family turned up no file, in scope or out of
+it, that currently misdescribes the corpus as audited.
+
+## Non-goals honored
+
+No file outside README.md, REPORT.md and docs/corpus-attribution-triage.md was edited. No
+number in `src/corpus.js` or any triage risk band was changed. No test was weakened, skipped
+or deleted to make this reconciliation land — `node --test test/*.test.js` was run unmodified
+and reported 100 pass / 0 fail before and after these edits.
