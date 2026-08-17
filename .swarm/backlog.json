@@ -6,7 +6,7 @@
       "id": "J-1a",
       "title": "Bring playbook learnings.md within its documented 20-lesson cap, losslessly",
       "kind": "fix",
-      "status": "todo",
+      "status": "done",
       "priority": 1,
       "effort": "S",
       "model": "sonnet",
@@ -18,13 +18,15 @@
       "packages": [],
       "acceptance": "learnings.md holds <= 20 lessons with zero duplicate ids; a byte-exact archive of the pre-repair 35-lesson file exists; every dropped lesson is named in a written rationale that states which overflow rule selected it and why that is arguable; next_id is >= its pre-repair value so no dropped id can be re-minted; every surviving lesson body is byte-identical to its pre-repair form.",
       "attempts": 0,
-      "notes": "The file's documented overflow rule (playbook/README.md) sheds the OLDEST NON-HIGH-CONFIDENCE pre-existing lesson first, oldest overall only if all are high. The prior run declined to apply it 11 times in one pass because doing so would delete 5 [apply:]-bearing lessons; that objection is now larger, not smaller, at 35. The drop set is a judgment call and must be written so a human can disagree with it line by line."
+      "notes": "The file's documented overflow rule (playbook/README.md) sheds the OLDEST NON-HIGH-CONFIDENCE pre-existing lesson first, oldest overall only if all are high. The prior run declined to apply it 11 times in one pass because doing so would delete 5 [apply:]-bearing lessons; that objection is now larger, not smaller, at 35. The drop set is a judgment call and must be written so a human can disagree with it line by line.",
+      "verified_cycle": 1,
+      "verification": "Gate 9/9 with 3/3 negative controls behaving as expected (.swarm/runs/cycle-001-verify-J-1a.txt). 36 lessons -> 20; live+archive is the pre-repair multiset byte for byte; all 20 survivors byte-identical to their pre-repair form; all 15 [apply:] directives survived; zero archived lessons carried a directive; next_id held at 42."
     },
     {
       "id": "J-1b",
       "title": "Hand off the settings allowlist gap with an exact patch and an honest never-executed note",
       "kind": "docs",
-      "status": "todo",
+      "status": "done",
       "priority": 2,
       "effort": "S",
       "model": "sonnet",
@@ -35,7 +37,9 @@
       "packages": [],
       "acceptance": "A handoff doc exists carrying: the exact JSON lines to add to SWARM/.claude/settings.json; the single command a human runs to confirm the fix; the reproduction of the denial captured at this kickoff; and an explicit statement that the prior run's central claim (cmd_parse exits 2, so every run applies zero lessons) was established by CODE READING and has NEVER been executed, by that run or this one.",
       "attempts": 0,
-      "notes": "Cannot be closed by fixing settings.json: a -p session cannot write it. The conductor attempted the write at kickoff step 5 and it was DENIED. This item's deliverable is the handoff, not the fix."
+      "notes": "Cannot be closed by fixing settings.json: a -p session cannot write it. The conductor attempted the write at kickoff step 5 and it was DENIED. This item's deliverable is the handoff, not the fix.",
+      "verified_cycle": 1,
+      "verification": "Gate 11/11 against a 1/11 negative control (the 2026-08-15 handoff scored on the same arms) -- .swarm/runs/cycle-001-verify-J-1b.txt. Arm I initially FAILED on the gate's own over-literal substring match ('not an execution' vs the source's 'it is **not** an execution'); the CHECK was corrected to be emphasis-tolerant, the claim was not weakened and the document was not edited to suit the check. settings.json confirmed still unpatched, so the handoff is genuinely still owed."
     },
     {
       "id": "J-2",

@@ -3,8 +3,8 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-17T08:34:43Z",
   "run_label": "improvement-aphorism-cli-2026-08-17",
-  "phase": "PLAN",
-  "cycle": 0,
+  "phase": "BUILD",
+  "cycle": 1,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -44,6 +44,18 @@
       "kind": "taste",
       "what": "Taste judge verdict recorded at kickoff.",
       "why": "use-twice 7, product-not-demo 8, scope-fits-night 8, one-memorable-thing 6. Verdict: worth the night as scoped, hinging on J-1's executed-evidence requirement -- which this run then had to downgrade to a handoff (see the capability decision above). The judge's load-bearing axis is therefore the one the run cannot fully satisfy, and the report must say so."
+    },
+    {
+      "cycle": 1,
+      "kind": "method",
+      "what": "J-1a and J-1b were executed INLINE by the conductor, with zero agents dispatched.",
+      "why": "Both items edit files under SWARM/playbook/. Hard rule 5 permits the conductor to write there during a run, but also states that workflow agents receive target paths only, never SWARM paths. Dispatching a builder would have required handing it a SWARM path, so the only rule-conforming way to do this work is inline. Recorded because a zero-agent cycle can otherwise look like a cycle that did nothing."
+    },
+    {
+      "cycle": 1,
+      "kind": "method",
+      "what": "The cap was cut from the ADVICE-ONLY pool, deviating from the letter of the documented overflow rule.",
+      "why": "The documented rule (oldest non-high-confidence first, oldest overall if all high) is written for ONE drop per append. Extrapolated to 16 drops it selects L-003, L-008, L-011, L-016 and L-020 -- five [apply:]-bearing lessons that account for most of applied.log. That is satisfying a count by deleting the machinery the count exists to protect. The rule was instead applied verbatim WITHIN the advice-only pool: all 15 directives survive, 16 advice-only lessons are archived losslessly. The deviation is written up in DROP-RATIONALE-2026-08-17.md so a human can reject it and re-cut from the byte-exact backup."
     }
   ],
   "known_issues": [
@@ -61,7 +73,9 @@
       "severity": "medium",
       "cycle_found": 2,
       "note_cycle_12": "PARTIALLY REPAIRED, and the remainder is deliberately a handoff. Dedupe landed and is lossless: 31 lessons in, 31 out, bodies an identical multiset, the only changed bytes being 3 ID tokens + the next_id header (17/17 harness checks, 4 negative controls). The cap breach was NOT culled, for a reason worth recording: the README overflow rule is written for dropping ONE lesson on append, and extrapolating it to shed 11 at once would delete 5 of the file's [apply:]-bearing lessons including L-008, applied by 4 of the 4 runs in the ledger. Deleting cross-run memory on an extrapolated rule with no validator available is not a call the conductor should make unsupervised. NEW FINDING this cycle, and the most important one: the cap breach makes the playbook INERT, not merely untidy -- cmd_parse exits 2 on any validate output, so every future kickoff falls back to defaults and applies ZERO lessons until the count reaches 20. Established by READING bin/swarm-playbook.sh lines 125 and 140-142; the script was never executed -- that is the allowlist gap itself. Handoff note: playbook/HANDOFF-cap-2026-08-15.md, archive: playbook/learnings.md.pre-I5-1786803951.",
-      "note_cycle_43": "ROOT CAUSE MEASURED, not inferred. For 42 cycles the allowlist gap was a black-box observation ('the script is refused'); this cycle READ the permission source of truth, /opt/swarm/.claude/settings.json. permissions.allow contains exactly TWO SWARM-script entries: 'Bash(/Users/truman/Projects/SWARM/bin/swarm-notify.sh:*)' -- a macOS path that does not exist on this host -- and 'Bash(bin/swarm-notify.sh:*)', the relative form that works. There is NO entry for swarm-budget.sh or swarm-playbook.sh in ANY path form, and none for the VPS prefix /opt/swarm/bin. The underlying cause of the whole KI-5 family is that settings.json was never migrated from macOS to the VPS. Established by a 16-check gate (.swarm/runs/cycle-043-gate-ki5.js, output cycle-043-verify-ki5.txt): the allowlist contents PREDICTED 7/7 measured cells including two negative controls (awk absent -> denied; pgrep present -> clean) and two cells no prior cycle had measured. The discriminator is cell 3 vs cell 4: identical script AND arguments (swarm-notify.sh poll), varying ONLY the path form, giving OPPOSITE outcomes -- absolute DENIED, relative CLEAN. A 'the script isn't allowlisted' theory predicts those two alike; the allowlist predicts them opposite, which is the observation a wrong theory could not have produced. TWO OPERATIONAL CONSEQUENCES, derived from the allowlist rather than executed: (S8) WRAP_UP's 'bin/swarm-playbook.sh append' WILL be refused -- the manual fallback is confirmed necessary, and was pre-drafted this cycle to /opt/swarm/runs/wrapup-candidates.md rather than left to the WRAP_UP clock; (S9) 'bin/swarm-notify.sh send wrap-up ...' relative from cwd=/opt/swarm WILL be permitted, so the wrap-up push can go out -- previously unknown and assumed dead. ALSO FOUND: permissions.additionalDirectories is EMPTY, so the target is reachable only via the pacer's --add-dir flag. NOTE the compounding with note_cycle_12: the playbook is inert for TWO independent reasons -- the cap breach (cmd_parse exits 2 at >20 lessons) AND this allowlist gap. Fixing either alone leaves it inert. NOT FIXED HERE, deliberately: hard rule 5 makes settings.json read-only until WRAP_UP completes, so tool bugs found mid-run go to the journal and the morning report, never to a live edit. The repair is two added lines."
+      "note_cycle_43": "ROOT CAUSE MEASURED, not inferred. For 42 cycles the allowlist gap was a black-box observation ('the script is refused'); this cycle READ the permission source of truth, /opt/swarm/.claude/settings.json. permissions.allow contains exactly TWO SWARM-script entries: 'Bash(/Users/truman/Projects/SWARM/bin/swarm-notify.sh:*)' -- a macOS path that does not exist on this host -- and 'Bash(bin/swarm-notify.sh:*)', the relative form that works. There is NO entry for swarm-budget.sh or swarm-playbook.sh in ANY path form, and none for the VPS prefix /opt/swarm/bin. The underlying cause of the whole KI-5 family is that settings.json was never migrated from macOS to the VPS. Established by a 16-check gate (.swarm/runs/cycle-043-gate-ki5.js, output cycle-043-verify-ki5.txt): the allowlist contents PREDICTED 7/7 measured cells including two negative controls (awk absent -> denied; pgrep present -> clean) and two cells no prior cycle had measured. The discriminator is cell 3 vs cell 4: identical script AND arguments (swarm-notify.sh poll), varying ONLY the path form, giving OPPOSITE outcomes -- absolute DENIED, relative CLEAN. A 'the script isn't allowlisted' theory predicts those two alike; the allowlist predicts them opposite, which is the observation a wrong theory could not have produced. TWO OPERATIONAL CONSEQUENCES, derived from the allowlist rather than executed: (S8) WRAP_UP's 'bin/swarm-playbook.sh append' WILL be refused -- the manual fallback is confirmed necessary, and was pre-drafted this cycle to /opt/swarm/runs/wrapup-candidates.md rather than left to the WRAP_UP clock; (S9) 'bin/swarm-notify.sh send wrap-up ...' relative from cwd=/opt/swarm WILL be permitted, so the wrap-up push can go out -- previously unknown and assumed dead. ALSO FOUND: permissions.additionalDirectories is EMPTY, so the target is reachable only via the pacer's --add-dir flag. NOTE the compounding with note_cycle_12: the playbook is inert for TWO independent reasons -- the cap breach (cmd_parse exits 2 at >20 lessons) AND this allowlist gap. Fixing either alone leaves it inert. NOT FIXED HERE, deliberately: hard rule 5 makes settings.json read-only until WRAP_UP completes, so tool bugs found mid-run go to the journal and the morning report, never to a live edit. The repair is two added lines.",
+      "status": "partially resolved cycle 1 of run #2",
+      "note_2026_08_17": "The CAP half is repaired: learnings.md is at 20 with all 15 [apply:] directives intact, verified 9/9 with negative controls. The ALLOWLIST half is NOT fixed and cannot be from inside a run -- the settings.json write is denied to a -p session. Handed off with an exact patch in playbook/HANDOFF-allowlist-2026-08-17.md. KI-5 stays OPEN until a human runs `bin/swarm-playbook.sh validate` and sees exit 0: the claim that the file now parses is CODE-READ, never executed."
     },
     {
       "id": "KI-6",
@@ -226,9 +240,9 @@
     "k_current_note": "Reset to the default 3 for this run rather than inheriting run #1's 5. The playbook is inert (no wave_k directive reachable -- see J-1b), so the step-4 default applies. Gear 3 caps the effective wave at 3 regardless."
   },
   "last_cycle": {
-    "n": 0,
-    "work": "kickoff",
-    "outcome": "scaffolded",
+    "n": 1,
+    "work": "inline (conductor) — J-1a playbook cap repair + J-1b allowlist handoff",
+    "outcome": "2 verified",
     "commit": ""
   }
 }
