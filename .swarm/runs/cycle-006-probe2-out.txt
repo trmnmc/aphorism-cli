@@ -1,0 +1,6 @@
+=== cycle-6 probe v2 — word-form gap, de-confounded ===
+[D3b] inserted: "Nine tags sit in the robust-pool band."  (digits present: false)
+      GREEN (102/0) — the builder's disclosed word-form case, NO digit anywhere in it
+[D3c] inserted: "9 tags sit in the robust-pool band."  (digits present: true)
+      RED (101/1) — failability control — same sentence, same position, digit form
+      caught by: README Tag vocabulary section must contain no unrecognised count-claim digits (J-5) | README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)

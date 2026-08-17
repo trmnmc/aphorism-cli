@@ -9464,3 +9464,124 @@ runfile-mirror:
 ```json
 {"version":1,"run_label":"improvement-aphorism-cli-2026-08-17","targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":"2026-08-18T08:34:37+00:00","usage_reset_at":"2026-08-17T16:00:00+00:00","model_policy":"value-routing","auth_mode":"subscription","heartbeat":{"ts":1786966873,"next_wakeup_at":1786966963,"pid":1527338,"limp":false,"degraded_tiers":[],"wakeup_note":"cycle 5 CLOSED. J-4 VERIFIED — that was the LAST OPEN MUST-HAVE, so every box in SPEC.md \"This run's must-haves\" (J-1a, J-1b, J-2, J-3, J-4) is now closed and conductor-verified. Phase moved BUILD -> VALUE_LOOP, with a recorded decision for skipping the review-fix/QA/TASTE triple: `git diff ef4fa6d..HEAD -- src bin` is EMPTY, so run #2 shipped zero product code and those passes would measure run #1's product, not this run's work. NEXT PICK: J-5, now priority 1 and THE ONLY DISPATCHABLE ITEM ON THE BOARD — T-006 is blocked on a human, and T-040, J-7 and J-8 are all explicitly human rulings. J-5 is S-effort sonnet, unblocked now that J-4 has stopped editing README.md (they collided semantically despite disjoint file scopes). AFTER J-5 THE BOARD HAS NOTHING A RUN CAN ACTION: that is the DONE condition in the churn breaker, not a stall, and the next conductor should read it that way rather than letting the target churn toward a false stalled. GATE WARNING FOR WHOEVER RUNS NEXT: my J-4 gate needed three authorings (9/17 -> 15/21 -> 22/22) and every one of the 14 raw failures was the instrument, not the builder — twice over, from encoding the PREVIOUS attempt's fix SHAPE as the required method. Check the fact, not the shape."},"pacing":{"mode":"guest","dial":0.33,"dial_note":"Hints supplied dial 0.33; guest mode forces the effective dial to 1.0 per the Gear pacing table. Both recorded: 0.33 is what the allocator asked for, 1.0 is what the mechanism uses. Guest clamps reachable gears to 1-3 and never upshifts."},"budget":{"source":"probe","gear":3,"gear_target":3,"ratio":0,"mode":"guest","k_cap":3,"promote":false,"demote":false,"window_tokens":8469453,"window_cost_usd":6.77,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":26014763,"projected_depletion_at":0,"last_probe_ts":1786966873,"last_real_probe_ts":1786966873,"probe_failures":0,"gear_evidence":"REAL probe via `npx ccusage blocks --active --json` (bin/swarm-budget.sh STILL DENIED by the allowlist — J-1b, unchanged and still owed a human; this cycle a THIRD script in the same family was refused live, `bin/swarm-notify.sh poll`, so the control-channel poll ran on the file only). FRESH 5h block 2026-08-17T11:00Z->16:00Z, read at 11:19Z, 19 min in: 8,469,453 tokens and $6.77. Cache reads are 8.30M of the 8.47M and output is 58,465 — the long-context conductor shape again, not runaway generation. ccusage burn 433,579 tok/min ($20.79/hr), projecting $103.78 / 129.9M for the full block. The previous block closed near its 70.6M reading, and this is a genuinely new denominator-free numerator: ccusage still reports NO limit, so rho remains not computable and ratio 0.0 means \"not computed\", never \"zero burn\". The evidence rule lands a missing-limit probe at CRUISE and guest mode independently clamps the ceiling to 3; the two agree at gear 3, as they have every cycle this run.","weekly":{"ok":true,"weekly_used_pct":4,"opus_used_pct":0,"week_elapsed_pct":3.754,"weekly_heat":1.066,"opus_heat":0,"ceiling":null,"promote_blocked":true,"note":"Governor has data (runs/allocator.json ok:true, source:probe). THE WEEK CROSSED INTO HOT THIS CYCLE: weekly_used 4.0% against week_elapsed 3.754% is heat 1.07, up from 0.88 at cycle 4 and 0.66 at cycle 2 — a monotonic climb, and this is the first cycle where the run is spending faster than the week is elapsing. No ceiling is computed and nothing is clamped, so this changes no mechanism today; it is recorded because the trend is the signal, not the level. opus_used still 0 despite J-4 running on opus this cycle (the escalation was one M-effort docs item). promote stays blocked by guest mode pinning the ceiling at 3, not by the governor. Posture trickle, allow_overall_pct 6 — down again from 7 at cycle 4, 8 at cycle 3, 9 at cycle 2, tightening every single cycle — which keeps work TYPE at housekeeping. This cycle complies: one docs reconciliation, zero product change, zero new dependency, and the suite untouched at 101."}},"playbook":{"mode":"auto","applied":[],"vetoed":[],"parse_source":"NOT PARSED, AND NOTHING APPLIED. bin/swarm-playbook.sh parse was DENIED at this kickoff -- reproduced live, not inferred: the allowlist carries no path form of the script a headless session resolves. SKILL.md step 3 routes a parse failure to 'proceed with defaults', so this run applies ZERO lessons by the book. learnings.md was read directly for DIAGNOSIS ONLY (36 lessons against a documented cap of 20 -- the kickoff note said 35, which was a miscount off a truncated grep; the parser counted 36 at cycle 1 and 36 is correct) because repairing that file is this run's J-1a; its directives were deliberately NOT hand-staged into prompt_lines the way run #1 did, so that the cost of the inert playbook is visible in this run's outcome instead of being papered over by the conductor. record-applied cannot be written for the same reason.","directives":{"wave_k":null,"routing_recs":[],"prompt_lines":{}}},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0,"note":"Linux/VPS: swarm-watchdog.timer verified ACTIVE via systemctl list-timers (next fire 2026-08-17T09:05:09Z, 25min period). swarm-pacer.timer is the firing mechanism for cycles and is also active."},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":5,"artifact":{"file":"/opt/swarm/runs/dashboard.html","publish_failures":0}}
 ```
+
+---
+
+## cycle 6 — 2026-08-17T12:22:47Z
+
+target: /opt/targets/aphorism-cli | phase VALUE_LOOP | gear 3 (cruise, guest ceiling) | k_eff 1 of 3
+
+budget: gear 3, rho NOT COMPUTABLE (ccusage reports no limit), window 25,389,306 tok / $20.62
+  at 82 min into the 11:00Z-16:00Z block, burn 513,098 tok/min ($25.00/hr), projecting $124.78.
+  Cache reads 24.81M of 25.39M; output 188,775. Weekly heat 0.99 (down from 1.07, because the
+  week elapsed, not because spend fell). Posture trickle, allow_overall_pct HELD at 6 after four
+  straight cycles of tightening. bin/swarm-budget.sh DENIED again — J-1b, four cycles running.
+control: control.json pending[] empty, inject[] absent. swarm-notify.sh poll DENIED (same
+  allowlist family as J-1b), so the channel was read from the file only — journaled, non-fatal.
+craft: swarm-craft.mjs clean, zero degraded entries. Pack NOT passed to the builder: J-5 is a
+  test-file item with no UI surface in files_hint or title, so the craft:"ui" flag rule does not
+  fire and shipping a UI pack would have been noise.
+
+work: build-wave, 1 item, direct-Agent dispatch (Workflow is review-gated in a -p session), sonnet.
+  J-5 — close the unrecognised-count-claim hole in the README Tag vocabulary section.
+  Builder took Route 1 (close it) over Route 2 (retire as a documented boundary), +197/-0 lines in
+  test/readme-tags.test.js, zero deletions, no existing test touched.
+
+VERIFICATION EVIDENCE:
+  SEAL — the gate was authored, VALIDATED and hash-committed BEFORE dispatch, and lives outside
+  the target so the builder (which receives target paths only) could not read it:
+    commit d22201a, .swarm/runs/cycle-006-gate-commitment.txt
+    sha256(.c6-gate.mjs) = a8de030c18987ea56c405c9d3624e26bb8d9b3d5f063768a3682501d60bf74cf
+    re-checked after the run, and again after publishing to .swarm/runs/cycle-006-gate.mjs
+      -> IDENTICAL both times. The gate that judged J-5 is the gate that was sealed.
+    PRE-DISPATCH READING: 11/14 already held; the only three that did not were N1/N2/N3, which
+      ARE the item. Recorded before dispatch so "it already held" cannot be claimed after.
+  GATE (.swarm/runs/cycle-006-verify-J-5.txt) — 14/14 scored cells hold, 2 informational:
+    PRECONDITION README.md unchanged since pre-dispatch: YES  (a "fix" that edited the document
+      under the guard would have voided every cell; checked first, before anything else)
+    arm A suite: GREEN 101/0      arm B suite: GREEN 102/0
+    THE HOLE, three independent shapes and positions:
+      N1  A=GREEN(101/0) -> B=RED(101/1)   the cycle-3 example, after the opening paragraph
+      N2  A=GREEN(101/0) -> B=RED(101/1)   same claim RELOCATED before the closing sentence
+      N3  A=GREEN(101/0) -> B=RED(101/1)   "Only 5 tags appear on more than 10 entries." (truth 2)
+      all three attributed BY NAME to "README Tag vocabulary section must contain no unrecognised
+      count-claim digits (J-5)". N3 is load-bearing: this item's own notes carry the literal
+      cycle-3 string, so a guard keyed to that string would have passed N1 and failed the point.
+    COVERAGE NOT LOST — 8 cells falsify a count the OLD suite already read; all 8 stay RED on the
+      merged tree, still attributed to the SAME pre-existing tests (nothing was swallowed):
+      C1 first-match-stealing claim | F1 multi-entry 12->9 | F2 single-entry 0->3 | F3 total 12->13
+      F4 table cell design 14->15   | F5 row `philosophy` deleted | B1 band boundary 5+ -> 6+
+    NO NEW FALSE REJECTIONS — 3 controls, English reworded, every number left true:
+      R1 "Robust pool"->"Deep pool" | R2 opening sentence reworded | R3 second band heading
+      all GREEN in BOTH arms (101/0 and 102/0).
+  test_cmd, run by me in the live tree: node --test test/*.test.js
+    exit status 0 | tests 102 | pass 102 | fail 0 | duration 4636ms
+    new test present and passing: "README Tag vocabulary ... unrecognised count-claim digits (J-5)"
+  SCOPE, checked not trusted: git diff --stat -> test/readme-tags.test.js only, 197 insertions,
+    0 deletions. git diff --name-only -- README.md src bin docs REPORT.md -> EMPTY.
+  J-5 -> done. Wave CLEAN: 0 reverts, 0 failed verifies -> wave_streak 1 -> 2 -> k_current 3 -> 4,
+    streak reset to 0. Gear 3 caps the effective wave at 3 regardless, so this changes nothing now.
+
+FOLLOW-UP PROBES — two gate readings that had to be settled by measurement, not inference:
+  (a) Cell I1 showed a claim wearing a RECOGNISED shape sits in the section unread. If the new
+      rule allowlists by SHAPE, a FALSE claim of a recognised shape would slip. It does
+      (.swarm/runs/cycle-006-probe-out.txt), each inserted AFTER the real opening sentence so it
+      cannot displace the first match:
+        D1 "9 tags appear on 2 or more entries."       FALSE (corpus 12) -> GREEN 102/0
+        D2 "The corpus contains 13 distinct tags."     FALSE (corpus 12) -> GREEN 102/0
+        D4 "In fact 4 tags sit on exactly one entry."  FALSE (corpus 0)  -> GREEN 102/0
+      PRE-EXISTENCE PROVED, not assumed (cycle-006-probe3-out.txt): all three re-run on arm A at
+      0e5d917 are GREEN there too -> UNCHANGED by J-5. Filed as J-9, explicitly NOT charged
+      against J-5, whose acceptance names UNRECOGNISED claims and which closed those 14/14.
+  (b) The builder DISCLOSED, unprompted and before any gate looked, that English number words
+      escape its `\d+` scan. A disclosure is a claim like any other, so it was verified — and my
+      first cell was CONFOUNDED: it used "Nine tags have a robust pool (5+ entries)." which carries
+      the digit 5, so its RED was produced by the digit, not the word. Re-authored digit-free with
+      a same-sentence failability control (cycle-006-probe2-out.txt):
+        D3b "Nine tags sit in the robust-pool band."  no digits -> GREEN 102/0  (gap CONFIRMED)
+        D3c "9 tags sit in the robust-pool band."     digits    -> RED  101/1  (control fires)
+      Disclosure verified TRUE and honest. Recorded as KI-24, an ACCEPTED documented boundary
+      mirroring the same gap the C7 block already documents for the Attribution section.
+  The builder's second disclosure — that an honest future edit of "holds three aphorisms" to
+  "holds 3 aphorisms" would now be rejected — is exactly my informational cell I2 (B=RED 101/1).
+  It was classified INFORMATIONAL before dispatch, so it does not score against the item; it is a
+  disclosed, argued trade (covering that phrase without a correctness guard would reopen a hole of
+  this item's own shape) rather than a defect found after the fact.
+
+INSTRUMENT FAILURE, MINE, disclosed rather than quietly repaired: the gate's FIRST authoring
+  scored 7/14 and read EVERY arm as RED — including the unmutated P0 control. It parsed the suite
+  output for TAP (`# pass`, `not ok`) while `node --test test/*.test.js` emits node's SPEC
+  reporter. The P0 control is the only reason this was caught before it judged a builder. The
+  repair takes the verdict from the process EXIT STATUS (the fact) and parses both reporter
+  formats for the counts only. Third cycle running that a control cell caught the conductor's own
+  harness: cycle 3 a missing shell glob, cycle 4 a cell reading a random draw as signal, cycle 6
+  a reporter-format assumption. None was found by inspection.
+
+HARD RULE 5 BREACH — FOR THE MORNING REPORT, journaled and NOT fixed live (the fence forbids
+  touching SWARM tooling mid-run): the builder created a scratch clone at
+  /opt/swarm/scratch-aphorism-clone — inside SWARM, outside the permitted runs/ and playbook/.
+  It removed the directory itself and nothing under SWARM was modified, so no damage; but the
+  fence held by the agent's good behaviour rather than by any mechanism. Root cause is
+  structural, not a bad prompt: my dispatch told it to work under /tmp, the sandbox DENIED /tmp,
+  and the session's additionalDirectories necessarily contains the SWARM root, so SWARM was the
+  only writable scratch space available to it. Any builder told to build a throwaway copy will
+  rediscover this. A human should decide whether targets get an explicit scratch dir or whether
+  /tmp joins the allowlist.
+
+items: J-5 done (verified). J-9 filed (todo, p6, S, sonnet). KI-24 opened (low, accepted boundary).
+  Board now: 5 open — T-006 blocked (human), T-040 / J-7 / J-8 human rulings, J-9 the only
+  dispatchable item. counters.consecutive_no_value reset to 0 (verified value this cycle).
+
+decisions recorded: (1) pass J-5 while filing J-9 rather than folding J-9 in and failing it —
+  J-9 lies outside J-5's acceptance and was proven pre-existing, and moving a gate after the fact
+  is the mirror image of weakening it. (2) J-9 filed at p6 with an explicit STOPPING RULE for the
+  README-prose family: if its gate surfaces a further prose hole, stop and report, do not file
+  J-10. The cycle-0 stress test named this family the toy-version trap; a run that generates its
+  own next item from its own last gate can look productive forever while the product stands still.
+
+commit: {COMMIT}
+next wakeup: 1786969457 (+90s, base — verified-value cycle; the pacer's 5-min tick is the real floor)
+runfile-mirror:
+```json
+{"version":1,"run_label":"improvement-aphorism-cli-2026-08-17","targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":"2026-08-18T08:34:37+00:00","usage_reset_at":"2026-08-17T16:00:00+00:00","model_policy":"value-routing","auth_mode":"subscription","heartbeat":{"ts":1786969367,"next_wakeup_at":1786969457,"pid":1536255,"limp":false,"degraded_tiers":[],"wakeup_note":"cycle 6 CLOSED. J-5 VERIFIED DONE on a 14/14 gate that was authored, VALIDATED and sha256-SEALED INTO A COMMIT (d22201a) BEFORE the builder was dispatched — the builder could not have coded to it, and the seal is re-checkable: sha256 of .swarm/runs/cycle-006-gate.mjs is a8de030c…, matching the commitment file. Suite 101 -> 102, test_cmd run by me, 102/0 exit 0.\n\nTHE BOARD IS AT A REAL DECISION POINT AND THE PREVIOUS WAKEUP NOTE IS NOW WRONG — read this before picking. Cycle 5 predicted \"after J-5 the board has nothing a run can action, that is the DONE condition\". That is no longer true: my own follow-up probe found J-9, a MEASURED, pre-existing, dispatchable S-effort hole (a FALSE duplicate of a RECOGNISED count claim shape is unread — D1/D2/D4 all GREEN, and proven GREEN on the pre-dispatch tree too, so J-5 neither caused nor widened it). The other four open items (T-006, T-040, J-7, J-8) remain human rulings and no run can action them.\n\nSO THE NEXT PICK IS A JUDGMENT CALL, NOT A LOOKUP, and I have deliberately NOT pre-empted it: J-9 is filed at priority 6, BELOW the human-ruling items, because the cycle-0 stress-test decision reshaped this run AWAY from the README-prose test family and named going deeper into it the toy-version trap. J-9 was produced by the fix for J-5, which is the shape of an infinite regress. MY RECOMMENDATION: take J-9 once — it is measured, in-thesis, S-effort, and the duplicated-label rule the file already documents for the Attribution TABLE is the obvious starting point for the same defect at the PROSE level. Then apply the stopping rule recorded as a decision in state.json: if J-9's own gate surfaces a further prose hole, STOP the family and report it — do not file J-10. Declaring the target DONE now is also defensible; what is NOT defensible is drifting into a third and fourth prose item without deciding.\n\nGATE WARNING, third cycle running and the same shape every time: my instrument was broken on first authoring and my own P0 CONTROL is what caught it (it parsed TAP while `node --test` emits the SPEC reporter, so every arm INCLUDING the unmutated control read RED, 7/14). Separately, probe cell D3 was CONFOUNDED — it asked whether an English number word escapes the guard but used a sentence carrying the digit \"5\", so its RED proved nothing and had to be re-authored digit-free with a failability control. Author the control cell first and never trust a verdict a second mechanism could have produced.\n\nHARD-RULE-5 BREACH TO REPORT TO THE HUMAN (journaled, not fixed live): the builder created a scratch clone at /opt/swarm/scratch-aphorism-clone — inside SWARM, outside runs/ and playbook/. It cleaned up after itself and nothing under SWARM was modified, but the fence held by luck rather than by mechanism. Root cause is structural: my prompt told it to use /tmp, the sandbox denied /tmp, and the session's additionalDirectories necessarily includes the SWARM root, so SWARM was the only writable scratch space it could find."},"pacing":{"mode":"guest","dial":0.33,"dial_note":"Hints supplied dial 0.33; guest mode forces the effective dial to 1.0 per the Gear pacing table. Both recorded: 0.33 is what the allocator asked for, 1.0 is what the mechanism uses. Guest clamps reachable gears to 1-3 and never upshifts."},"budget":{"source":"probe","gear":3,"gear_target":3,"ratio":0,"mode":"guest","k_cap":3,"promote":false,"demote":false,"window_tokens":25389306,"window_cost_usd":20.62,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":30785883,"projected_depletion_at":0,"last_probe_ts":1786969367,"last_real_probe_ts":1786969367,"probe_failures":0,"gear_evidence":"REAL probe via `npx ccusage blocks --active --json`. bin/swarm-budget.sh was DENIED AGAIN this cycle — the J-1b allowlist gap, now reproduced live in four consecutive cycles and still owed a human; the exact patch that fixes it has been sitting in the cycle-1 hand-off since 08:52Z. Same 5h block as cycle 5 (2026-08-17T11:00Z->16:00Z), read at 12:22Z, 82 min in: 25,389,306 tokens and $20.62, up from 8,469,453 / $6.77 at 11:19Z. Cache reads are 24.81M of the 25.39M and output is 188,775 — the long-context conductor shape, unchanged: this cycle's real spend is re-reading a 1,978-line test file and a 74 KB REPORT.md across several gate authorings, not generating text. ccusage burn 513,098 tok/min ($25.00/hr), projecting $124.78 for the full block against $103.78 projected an hour ago — the projection is climbing because this cycle ran four separate multi-arm mutation harnesses, each of which copies and re-tests the whole repo. ccusage still reports NO limit, so rho remains NOT COMPUTABLE and ratio 0.0 continues to mean \"not computed\", never \"zero burn\". The evidence rule lands a missing-limit probe at CRUISE and guest mode independently clamps the ceiling to 3; the two agree at gear 3, as they have every cycle this run.","weekly":{"ok":true,"weekly_used_pct":4.0,"opus_used_pct":0,"week_elapsed_pct":4.057,"weekly_heat":0.986,"opus_heat":0,"ceiling":null,"promote_blocked":true,"note":"Governor has data (runs/allocator.json ok:true, source:probe). HEAT FELL BACK BELOW 1.0: weekly_used 4.0% against week_elapsed 4.057% is heat 0.99, down from 1.07 at cycle 5. Read this honestly — the numerator did not fall, the denominator grew: weekly_used is still 4.0% and the week simply elapsed past it. The cycle-5 note called a monotonic climb (0.66 -> 0.88 -> 1.07) and one cycle later that is no longer the trend, which is itself worth recording: at 1% weekly resolution, heat computed from a 4% numerator moves as much from rounding and clock drift as from spend, and single-cycle deltas in it should not be read as signal. No ceiling is computed and nothing is clamped either way. opus_used still 0 — this cycle ran entirely on sonnet (one builder) plus the conductor. promote stays blocked by guest mode pinning the ceiling at 3, not by the governor. Posture trickle, allow_overall_pct 6 — HELD at 6 for the first time this run after tightening every single cycle (9 -> 8 -> 7 -> 6 -> 6). Work type stayed housekeeping and compliant: one S-effort test item, zero product code, zero new dependency, +197 test lines and +1 test."}},"playbook":{"mode":"auto","applied":[],"vetoed":[],"parse_source":"NOT PARSED, AND NOTHING APPLIED. bin/swarm-playbook.sh parse was DENIED at this kickoff -- reproduced live, not inferred: the allowlist carries no path form of the script a headless session resolves. SKILL.md step 3 routes a parse failure to 'proceed with defaults', so this run applies ZERO lessons by the book. learnings.md was read directly for DIAGNOSIS ONLY (36 lessons against a documented cap of 20 -- the kickoff note said 35, which was a miscount off a truncated grep; the parser counted 36 at cycle 1 and 36 is correct) because repairing that file is this run's J-1a; its directives were deliberately NOT hand-staged into prompt_lines the way run #1 did, so that the cost of the inert playbook is visible in this run's outcome instead of being papered over by the conductor. record-applied cannot be written for the same reason.","directives":{"wave_k":null,"routing_recs":[],"prompt_lines":{}}},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0,"note":"Linux/VPS: swarm-watchdog.timer verified ACTIVE via systemctl list-timers (next fire 2026-08-17T09:05:09Z, 25min period). swarm-pacer.timer is the firing mechanism for cycles and is also active."},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":6,"artifact":{"url":"","file":"/opt/swarm/runs/dashboard.html","publish_failures":0}}
+```

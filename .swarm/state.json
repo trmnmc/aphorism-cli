@@ -4,7 +4,7 @@
   "created_at": "2026-08-17T08:34:43Z",
   "run_label": "improvement-aphorism-cli-2026-08-17",
   "phase": "VALUE_LOOP",
-  "cycle": 5,
+  "cycle": 6,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -74,6 +74,18 @@
       "kind": "scope",
       "what": "Move to VALUE_LOOP without running the review-fix / QA / TASTE triple that step 4 normally gates on.",
       "why": "MEASURED, not assumed: `git diff --name-only ef4fa6d..HEAD -- src bin` is EMPTY — improvement run #2 has shipped zero product code change across all five cycles, by design (the brief is housekeeping and \"no new features\" is a non-goal). A QA pass or a taste pass would therefore be measuring run #1's shipped product, not this run's work, and would spend a trickle-posture allowance (allocator allow_overall_pct 6) on re-measuring something no cycle this run touched. The run's own verification instrument has been the per-cycle mutation gate, which is stronger evidence for THIS run's output than a taste pass would be. Recorded as a decision rather than a silent skip, because the phase gates are the authority and this departs from them."
+    },
+    {
+      "cycle": 6,
+      "kind": "verification",
+      "what": "Pass J-5 on a 14/14 gate while simultaneously filing J-9, a hole that same gate's follow-up probe found — rather than folding J-9 into J-5 and failing it.",
+      "why": "J-5's acceptance names UNRECOGNISED count claims, and three independent shapes of that (N1/N2/N3, one of which the builder never saw) go GREEN->RED attributed by name. J-9 is a FALSE DUPLICATE of a RECOGNISED shape, which is a different defect, and it was MEASURED pre-existing on the pre-dispatch tree 0e5d917 before it was filed. Failing an item for a hole that predates it and lies outside its acceptance would be moving the gate after the fact — the mirror image of weakening it. Both outcomes are recorded in full instead."
+    },
+    {
+      "cycle": 6,
+      "kind": "scope",
+      "what": "Filed J-9 at priority 6 — below the human-ruling items — with an explicit STOPPING RULE for the README-prose test family, instead of ranking it as the obvious next pick.",
+      "why": "The cycle-0 stress-test decision reshaped this run's spec AWAY from the README-prose test file and named a deeper descent into it the toy-version trap. J-5 was defensible against that because it was an open finding carried in from cycle 3. J-9 was produced by the fix for J-5, which is the exact shape of an infinite regress, and a run that keeps generating its own next item from its own last gate can look productive forever while the product does not move. The rule is written down so it is checkable rather than a matter of taste: if J-9's gate surfaces a further prose hole, stop the family and report it; do not file J-10. Recorded as a decision rather than enacted silently, because it constrains cycles that have not run yet."
     }
   ],
   "known_issues": [
@@ -286,6 +298,14 @@
       "related": [
         "KI-18"
       ]
+    },
+    {
+      "id": "KI-24",
+      "severity": "low",
+      "cycle_found": 6,
+      "status": "open",
+      "desc": "English number WORDS are invisible to the J-5 guard, which scans for `\\d+`. Measured de-confounded at cycle 6: the paragraph \"Nine tags sit in the robust-pool band.\" (no digit anywhere in it, real count 7) leaves the suite GREEN at 102/0, while the identical sentence in digit form (\"9 tags sit in the robust-pool band.\") goes RED 101/1 — same sentence, same position, so the word form is the only variable. Evidence: .swarm/runs/cycle-006-probe2-out.txt.",
+      "why_it_matters": "It is an ACCEPTED, documented boundary rather than an oversight, and it is recorded so it cannot later be mistaken for coverage. The builder disclosed it unprompted before any gate looked, and the disclosure was verified true rather than taken on trust. It mirrors the same accepted gap the C7 comment block already documents for the Attribution section. Closing it means deciding whether this section's own honest prose may spell a small number in words — the closing sentence currently does exactly that (\"holds three aphorisms\") — so the fix is a judgment call about the document, not a test-only change."
     }
   ],
   "qa": {
@@ -301,26 +321,26 @@
     "suite_coverage_note_cycle_002_run2": "First measurement of this run against the PRODUCT-adjacent suite rather than the swarm's own files. Instrument unchanged from cycles 50-54 of run #1 (full throwaway copy, mutate one thing, run the project's own test_cmd) but pointed at a README-guard family rather than at src/. 35 cells over two arms. Headline: silent holes 1 -> 0 on the shared cells, coverage regressions 0, loudness 6/6, and the false-rejection ledger UNCHANGED in size at 4 (its membership moved; see J-2a). Suite 91 -> 92.",
     "suite_coverage_note_cycle_003_run2": "Two independent instruments this cycle, both the standing cycle-50 method (full throwaway copy, mutate one thing, run the project's own test_cmd), pointed at different halves of the repo.\n\nBAND GUARDS (J-2b), 13 cells + a 2-arm pre-dispatch probe + a 3-arm regression probe. The gate was authored BEFORE dispatch and it earned its keep twice before a builder returned: its P0 control caught that my own harness was broken (`node --test test/` silently does not do what `node --test test/*.test.js` does — the glob needs a shell), and its attribution check caught a false clearance in my own cell A2, which went RED via an unrelated tag-name census while every band guard passed. Re-aimed as A2b/A2c, it measured a REAL silent hole open pre-dispatch (92/0 green in both document positions). Final: 12/13 on the shipped tree.\n\nPRODUCT SURFACE (J-3), 4 mutants x 2 arms. 3 real holes in bin/aphorism.js and src/args.js closed, 1 already-covered mutant correctly given no test. Every mutant authored by the conductor from the source, not copied from the builder's harness; every witness re-run at the user-facing surface.\n\nSuite 92 -> 100. A THING TO NOT REPEAT: my first full-suite reading was 98, taken after a tree-stability wait that fired while a builder was still writing. Gate v2 then ran at 99. Both were re-run against the final 100-test tree before any verdict was recorded — a gate that did not test the shipped bytes is not evidence — but the stability heuristic (non-empty + byte-stable for 100s) is too weak, and the agent completion notification is the only real signal.",
     "suite_coverage_note_cycle_004_run2": "Two instruments this cycle, and the notable thing is that ONE OF THEM CAUGHT MY OWN GATE rather than the builder s work.\n\nJ-6 (product surface): the standing cycle-50 method — mutate one thing in a throwaway copy, run the project s own test_cmd — but with the arms built by `git archive` at the pre-dispatch commit and only test/cli.test.js overlaid on the merged arm. That isolation was necessary rather than tidy: J-4 was concurrently rewriting REPORT.md, and readme-tags.test.js reads README.md, so copying the live tree would have moved cells under both arms. 12 cells + a 4-cell re-authored G2. TWO INDEPENDENT MUTATION MECHANISMS for the same rule (guard route and predicate route) both GREEN pre-dispatch and both RED merged, which is what distinguishes \"the new test kills the rule violation\" from \"the new test kills one code path\".\n\nJ-4 (docs): a SEALED pre-dispatch truth table, hash-committed before dispatch, used to check every integer in the three documents independently of the builder s own derivation table. It found three real defects the builder s sweep missed and it also produced FOUR FALSE ALARMS OF MY OWN — benign integers, entry indices, a quoted old claim, and negative sentences about the word \"audited\". The corrections are written up in the addendum rather than re-run clean, because a gate that silently repairs its own failing cells is not evidence.\n\nA THING WORTH CARRYING FORWARD: my J-6 cell G2 was mis-authored in a way that would have passed unnoticed if it had happened to agree with me. It compared UNSEEDED draws across two arms and read the (random) difference as evidence of a behavioural change. The re-authored version uses --list and a fixed seed, and carries a failability control proving the instrument can still show a difference when one exists. Any cell whose observable is a random draw is not a cell.",
-    "suite_coverage_note_cycle_005_run2": "No new instrument this cycle: J-4 is a docs item and the gate is a claim-occurrence sweep rather than a mutation arm. The finding worth carrying is about the GATE, not the product. My v1 gate scored 9/17 and every failure was its own false alarm; v2 scored 15/21, same story. Both failures had the same root cause — I encoded the PREVIOUS attempt's correction style (a note within +/-2 lines) as if it were the required method, so a better method (one correction block covering a whole passage) read as a defect. The general lesson: when a gate checks whether a fix was applied, it must check the FACT, not the SHAPE of the fix. v3 does that by requiring a correction block to textually NAME the claim it covers, and proves the rule still bites with two controls (X1: a token no block names is not exempted; X2: the ledger exemption is bounded to lines computed from section headings, and ordinary prose stays chargeable). The suite is untouched at 101/0 — this cycle added no test, and should not have."
+    "suite_coverage_note_cycle_005_run2": "No new instrument this cycle: J-4 is a docs item and the gate is a claim-occurrence sweep rather than a mutation arm. The finding worth carrying is about the GATE, not the product. My v1 gate scored 9/17 and every failure was its own false alarm; v2 scored 15/21, same story. Both failures had the same root cause — I encoded the PREVIOUS attempt's correction style (a note within +/-2 lines) as if it were the required method, so a better method (one correction block covering a whole passage) read as a defect. The general lesson: when a gate checks whether a fix was applied, it must check the FACT, not the SHAPE of the fix. v3 does that by requiring a correction block to textually NAME the claim it covers, and proves the rule still bites with two controls (X1: a token no block names is not exempted; X2: the ledger exemption is bounded to lines computed from section headings, and ordinary prose stays chargeable). The suite is untouched at 101/0 — this cycle added no test, and should not have.",
+    "suite_coverage_note_cycle_006_run2": "The standing instrument (mutate one thing in a throwaway copy, run the project's own test_cmd) pointed at the README-guard family again, 14 scored cells + 2 informational over two arms, and this time the gate was authored AND VALIDATED pre-dispatch, then hash-sealed into a commit before the builder was dispatched. Suite 101 -> 102, silent holes closed 3/3 in the shape under test, coverage regressions 0/8, false rejections introduced 0/3.\n\nTHE INSTRUMENT CAUGHT ITSELF AGAIN, third cycle running. The first authoring scored 7/14 and read EVERY arm as RED including the unmutated P0 control: it parsed the suite output for TAP (`# pass`, `not ok`) while `node --test` emits the SPEC reporter. The P0 control is the only reason that was caught before it judged a builder. The repair takes the verdict from the process EXIT STATUS — the fact — and parses both reporter formats for the counts only, so a future reporter change degrades the report's numbers and never its verdicts. Cycle 3 caught a missing shell glob, cycle 4 caught a cell reading a random draw as signal, cycle 6 caught a reporter-format assumption. Every one was found by a control cell, never by inspection.\n\nAND A CELL OF MINE WAS CONFOUNDED, disclosed rather than quietly re-run. Probe cell D3 asked whether an English number WORD escapes the new guard, but the sentence it used carried the digit \"5\" inside \"(5+ entries)\" — so its RED verdict was produced by the digit, not the word, and told me nothing about the question. Re-authored as D3b/D3c with a digit-free sentence plus a same-sentence digit-form failability control, which is what actually established KI-24. The cycle-4 rule generalises: a cell whose observable can be produced by anything other than the thing under test is not a cell."
   },
   "counters": {
     "consecutive_no_value": 0,
     "consecutive_failures": 0,
-    "k_current": 3,
-    "wave_streak": 1,
+    "k_current": 4,
+    "wave_streak": 0,
     "window_tokens_attributed": 0,
-    "k_current_note": "Unchanged at 3, by the CLEAN branch of Wave autotune this time: zero reverted merges (headless direct-Agent dispatch works the one tree, so there were no branches to revert) and ZERO failed verifies — J-4 attempt 2 passed. wave_streak 0 -> 1; it takes 2 to raise k. Gear 3 caps the effective wave at 3 regardless, and there is only one dispatchable item left on the board, so k is not the binding constraint.",
+    "k_current_note": "3 -> 4 by the CLEAN branch of Wave autotune: zero reverts (direct-Agent dispatch works the one tree, so there are no branches to revert) and zero failed verifies. wave_streak was 1 from cycle 5, reached 2 this cycle, so k rises and the streak resets — the rule applied as written. It changes nothing in practice: gear 3 caps the effective wave at 3, and the board's only unblocked item is a single S-effort test item, so k has not been the binding constraint for four cycles running.",
     "verified_this_cycle": 1
   },
   "last_cycle": {
-    "cycle": 4,
-    "ts": 1786963469,
-    "work": "build-wave (2 items, direct-Agent dispatch): J-4 docs reconciliation + J-6 CLI compound-case sweep",
-    "outcome": "1 verified (J-6), 1 failed the gate (J-4 -> attempts 1, escalated to opus); 3 real doc defects found, KI-23 filed, J-7 filed",
-    "agents": 2,
-    "models": [
-      "sonnet (J-4, FAILED gate)",
-      "sonnet (J-6, verified)"
-    ]
+    "cycle": 6,
+    "ts": 1786969251,
+    "work": "build-wave (1 item, direct-Agent dispatch, sonnet): J-5 — close the unrecognised-count-claim hole in the README Tag vocabulary section",
+    "outcome": "1 verified (J-5 done, gate 14/14, suite 101 -> 102). 1 new item filed (J-9) + 1 known issue (KI-24), both from the conductor's own follow-up probes, both measured pre-existing.",
+    "verified": [
+      "J-5"
+    ],
+    "failed": []
   }
 }

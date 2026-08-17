@@ -1131,6 +1131,203 @@ test('README opening sentence must state correct multi-entry and single-entry ta
 });
 
 // ---------------------------------------------------------------------------
+// J-5 — an unrecognised tag-count claim can sit unread in this section.
+//
+// MEASURED (this item): every guard above reads a *specific* claim shape --
+// "<N> distinct tags", "<N> tags ... or more", "<N> ... exactly one/once",
+// a `| Tag | Count |` table row, a `#### ` band heading's own "N+"/"N-M"
+// token. None of them read the section as a whole, so a NEW sentence making
+// an unrelated tag-count claim is checked by nothing. Reproduced live: a
+// paragraph reading "9 tags sit in the robust-pool band." (real count: 7
+// rows in that table) inserted after "#### Robust pool (5+ entries)" left
+// `node --test test/*.test.js` at 101 pass / 0 fail, unchanged. Confirmed
+// pre-existing on the untouched suite before this test was added (see the
+// PROOF note below for the exact command).
+//
+// WHY NOT C7's blanket "no digit runs outside the table" rule (the guard
+// this mirrors, over in the Attribution section). Measured directly: this
+// section's own opening and closing sentences carry LEGITIMATE prose counts
+// -- "12 distinct tags", "12 tags appear on 2 or more entries", "0 tags
+// appear exactly once" -- and three guards above already derive and check
+// each of them against the corpus at test time. A blanket ban would reject
+// today's real, entirely correct README (proof below), which is exactly the
+// failure mode this whole guard family exists to avoid. Unlike the
+// Attribution section (which had no legitimate prose counts to protect and
+// so could move everything into a table, see the C7 comment block further
+// down this file), moving these counts out of prose would be a README
+// content change, out of scope for a test-file-only item.
+//
+// THE FIX: the same invariant C7 enforces, with an ALLOWLIST instead of a
+// blanket ban. A digit run in this section's prose is either part of one of
+// three RECOGNISED claim shapes -- each one the exact phrase pattern an
+// existing guard above already derives and verifies against the corpus, not
+// a new pattern invented for this test -- or it is a loud, named failure.
+// `| Tag | Count |` table rows and a real `#### ` heading's own "N+"/"N-M"
+// boundary token are excluded structurally (both are independently verified
+// by extractBandTablesFromReadme and its callers above), not by pattern
+// allowlist, so this guard cannot be satisfied by widening the allowlist to
+// swallow a table or heading defect some OTHER guard exists to catch.
+//
+// CLAUSE SPLITTING, MEASURED NECESSARY. An early version of this guard
+// matched each recognised pattern once against the whole section with a
+// greedy `[^.;\n]*` (the same style the "or more" / "exactly one" guards
+// above use, scoped to a full sentence). MEASURED FAILURE: the real
+// closing half of the opening sentence is one long comma-joined clause with
+// no period until its end ("... 0 tags appear exactly once, which is to say
+// 0 tags sit on exactly one entry, so `--tag` never ..."). A decoy inserted
+// mid-sentence with a comma on each side -- "0 tags appear exactly once,
+// and secretly 9 tags matter here, which is to say 0 tags sit on exactly
+// one entry" -- was SILENTLY SWALLOWED: the greedy match for the *second*
+// "exactly one" reached backward across the decoy clause, past the comma,
+// and covered the "9" along with it. Splitting the prose into clauses on
+// '.', ',', ';' and newline BEFORE matching closes this: each recognised
+// phrase in the real README sits wholly inside one comma-delimited clause
+// (verified below), so a match can never reach into a neighbouring clause
+// to launder a decoy digit through it.
+//
+// PROOF (both directions), run against a throwaway clone under
+// /opt/swarm/scratch-aphorism-clone while sizing this fix, `node --test
+// test/*.test.js` each time:
+//   - real README, untouched: 101 pass / 0 fail (this test included; no
+//     false rejection).
+//   - "9 tags sit in the robust-pool band." inserted after the "#### Robust
+//     pool (5+ entries)" heading (real count: 7 rows): this test fails,
+//     naming "9" and the sentence it sits in.
+//   - the same claim worded as "Only 9 tags are in the robust pool of
+//     design-related work.", placed elsewhere in the section (immediately
+//     before the closing sentence): also fails -- this guard is not keyed to
+//     the literal wording or position of the cycle-3 example.
+//   - a decoy count glued INTO a real heading -- "#### Robust pool (5+
+//     entries, 9 tags total)" -- also fails: only the "5+" boundary token is
+//     excluded, the rest of the heading line is scanned like any other
+//     prose.
+//   - the clause-splitting adversarial case above ("...exactly once, and
+//     secretly 9 tags matter here, which is...") also fails post-fix (it
+//     passed silently pre-fix, see CLAUSE SPLITTING above).
+//
+// KNOWN BOUNDARY, NOT CLOSED (measured, disclosed rather than patched):
+//
+//   1. English number WORDS are invisible to a `\d+` scan. "Nine tags sit in
+//      the robust-pool band." (word, not digit) reproduces the ORIGINAL
+//      cycle-3 hole exactly and this guard does not catch it -- measured
+//      live alongside the digit-form case above. This is the same class of
+//      gap the C7 comment block documents for the Attribution section (see
+//      "two spellings slip under it" there) and it is left open for the same
+//      reason: this section's own true prose could legitimately use a
+//      spelled-out small number, and no measurement here has sized a rule
+//      that closes the word form without a new false-rejection risk to
+//      weigh against it.
+//   2. The three recognised patterns are phrase shapes, not a general
+//      "explain yourself" mechanism. An honest future rewording of a
+//      recognised claim that inserts a comma where none exists today (e.g.
+//      "12 tags, in total, appear on 2 or more entries") would split across
+//      clauses and trip this guard even though the OTHER, more tolerant
+//      guard for the same claim (above) would still accept it correctly.
+//      Not reproduced against today's README (no such rewording exists), so
+//      not a live false rejection -- named here as a standing risk of the
+//      clause-splitting fix.
+//   3. The closing sentence's "The smallest pool holds three aphorisms" is
+//      spelled out in words today and is not, and was never, checked by any
+//      guard in this file for correctness (it states an aphorism count, not
+//      a tag count -- a different claim shape than the three this item
+//      closes). Left uncovered by the allowlist on purpose: adding a
+//      "N aphorisms" pattern here with no corresponding correctness check
+//      would silently reopen a hole of exactly this item's shape, just
+//      spelled differently. Consequence, measured: an HONEST future edit of
+//      that word to a digit ("holds 3 aphorisms") would newly fail this
+//      guard, loudly, naming "3" -- a false rejection of a true, unrelated
+//      claim, traded on purpose against reopening a silent hole. If this
+//      claim needs covering, it needs its own correctness guard (deriving
+//      the true minimum band size from the corpus) added alongside a fourth
+//      allowlist entry, not a bare allowlist entry on its own.
+// ---------------------------------------------------------------------------
+
+// The complete set of tag-count claim SHAPES this file verifies elsewhere --
+// mirrors RECOGNISED_ATTRIBUTION_COUNT_LABELS's role below: every digit run
+// in the section's prose must fall inside a match of one of these, or the
+// digit is unrecognised and this guard fails loud. Each pattern is the exact
+// phrase shape an existing test above already derives its number from and
+// checks against the corpus -- adding a new recognised prose count here
+// without also adding the guard that verifies it would reopen this item's
+// own hole; see boundary note 3 above.
+const RECOGNISED_TAG_COUNT_CLAIM_PATTERNS = [
+  /\d+\s+distinct tags/i, // "README must state total unique tags correctly"
+  /\d+\s+tags?\b[^,.;\n]*\bor more\b/i, // multi-entry count, opening-sentence test above
+  /\d+\b[^,.;\n]*\bexactly (?:one|once)\b/i, // single-entry count, both phrasings, opening-sentence test + T-D above
+];
+
+// Helper: every digit run in the Tag vocabulary section's prose that is not
+// accounted for by a `| Tag | Count |` table row, a real `#### ` heading's
+// own boundary token, or one of the RECOGNISED_TAG_COUNT_CLAIM_PATTERNS
+// above. Returns an array of { text, context } so the caller can name every
+// offending number and where it sits, not just report a boolean.
+function findUnrecognisedTagCountDigits(sectionText) {
+  // Fenced code blocks are illustrative, not claims -- same rule the band
+  // table extractor above applies, for the same reason (T-024b's fenced
+  // "old format" example).
+  const withoutFences = sectionText.replace(/```[\s\S]*?```/g, '');
+  const lines = withoutFences.split('\n');
+
+  const residualLines = lines.map((line) => {
+    // Table rows (header, separator or data) are independently verified by
+    // the band-table guards above; a stray table this file's band detection
+    // doesn't recognise is independently caught by the structural-table-
+    // count guard above too. Either way, not this guard's job.
+    if (/^\s*\|.*\|\s*$/.test(line)) return '';
+
+    // A real band heading: only its own boundary token ("N+" or "N-M",
+    // whichever this line actually carries) is excluded -- it is what
+    // extractBandTablesFromReadme parses and what the set-equality band
+    // guard above verifies. Anything else on the same line, including a
+    // decoy count glued into an otherwise-real heading, stays exposed.
+    if (isBandHeadingLine(line)) {
+      const openEnded = line.match(/\d+\s*\+/);
+      const rangePair = line.match(/\d+\s*[-‐‑‒–—―]\s*\d+/);
+      const token = openEnded ? openEnded[0] : rangePair ? rangePair[0] : null;
+      return token ? line.replace(token, '') : line;
+    }
+
+    return line;
+  });
+
+  // Clauses, not lines or the whole section -- see CLAUSE SPLITTING above
+  // for why a wider scope silently swallows a decoy digit.
+  const clauses = residualLines.join('\n').split(/[.,;\n]/);
+
+  const violations = [];
+  for (const clause of clauses) {
+    const digitPattern = /\d+/g;
+    let digitMatch;
+    while ((digitMatch = digitPattern.exec(clause)) !== null) {
+      const recognised = RECOGNISED_TAG_COUNT_CLAIM_PATTERNS.some((pattern) => pattern.test(clause));
+      if (!recognised) {
+        violations.push({ text: digitMatch[0], context: clause.trim().replace(/\s+/g, ' ') });
+      }
+    }
+  }
+  return violations;
+}
+
+test('README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)', () => {
+  const readmePath = path.join(__dirname, '..', 'README.md');
+  const readmeContent = fs.readFileSync(readmePath, 'utf8');
+  const tagVocabSection = getTagVocabSection(readmeContent);
+
+  const violations = findUnrecognisedTagCountDigits(tagVocabSection);
+
+  const message =
+    'README Tag vocabulary section states number(s) that no guard in this file checks: ' +
+    violations.map((v) => '"' + v.text + '" (near "' + v.context + '")').join('; ') +
+    '. Every count in this section must be either a `| Tag | Count |` table row, a band heading\'s own ' +
+    'boundary token, or one of the recognised phrase shapes in RECOGNISED_TAG_COUNT_CLAIM_PATTERNS ' +
+    '(test/readme-tags.test.js) -- each backed by a guard that derives its true value from the corpus. ' +
+    'If this is a genuinely new, true count, add a recognised pattern here AND the guard that verifies it; ' +
+    'otherwise remove the stray number.';
+
+  assert.equal(violations.length, 0, message);
+});
+
+// ---------------------------------------------------------------------------
 // Guard the README's cross-file and on-disk claims (T-016).
 //
 // Three claims live outside the Tag vocabulary section entirely and were

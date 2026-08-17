@@ -1,0 +1,58 @@
+=== cycle-6 J-5 gate ===
+base commit: 0e5d917
+PRECONDITION README.md unchanged since pre-dispatch: YES
+arm A suite: {"verdict":"GREEN","pass":101,"fail":0}
+arm B suite: {"verdict":"GREEN","pass":102,"fail":0}
+
+[HOLD] P0  A=GREEN(101/0) B=GREEN(102/0)  expected A=GREEN B=GREEN
+        no mutation — the shipped README
+[HOLD] N1  A=GREEN(101/0) B=RED(101/1)  expected A=GREEN B=RED
+        stray FALSE prose claim "9 tags have a robust pool (5+ entries):" after the opening paragraph, table holds 7 rows
+        B failing tests: README Tag vocabulary section must contain no unrecognised count-claim digits (J-5) | README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)
+[HOLD] N2  A=GREEN(101/0) B=RED(101/1)  expected A=GREEN B=RED
+        same FALSE claim, different position — immediately before the closing "smallest pool" sentence
+        B failing tests: README Tag vocabulary section must contain no unrecognised count-claim digits (J-5) | README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)
+[HOLD] N3  A=GREEN(101/0) B=RED(101/1)  expected A=GREEN B=RED
+        a DIFFERENTLY-SHAPED false unrecognised claim: "Only 5 tags appear on more than 10 entries." (truth: 2)
+        B failing tests: README Tag vocabulary section must contain no unrecognised count-claim digits (J-5) | README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)
+[HOLD] C1  A=RED(100/1) B=RED(101/1)  expected A=RED B=RED
+        a false "N tags ... or more" claim inserted BEFORE the opening sentence (steals first-match)
+        B failing tests: README opening sentence must state correct multi-entry and single-entry tag counts | README opening sentence must state correct multi-entry and single-entry tag counts
+        A failing tests: README opening sentence must state correct multi-entry and single-entry tag counts | README opening sentence must state correct multi-entry and single-entry tag counts
+[HOLD] F1  A=RED(100/1) B=RED(101/1)  expected A=RED B=RED
+        falsify the opening sentence multi-entry count 12 -> 9
+        B failing tests: README opening sentence must state correct multi-entry and single-entry tag counts | README opening sentence must state correct multi-entry and single-entry tag counts
+        A failing tests: README opening sentence must state correct multi-entry and single-entry tag counts | README opening sentence must state correct multi-entry and single-entry tag counts
+[HOLD] F2  A=RED(99/2) B=RED(100/2)  expected A=RED B=RED
+        falsify the single-entry count 0 -> 3 ("exactly once")
+        B failing tests: README must correctly describe single-entry tag count | README opening sentence must state correct multi-entry and single-entry tag counts | README must correctly describe single-entry tag count | README opening sentence must state correct multi-entry and single-entry tag counts
+        A failing tests: README must correctly describe single-entry tag count | README opening sentence must state correct multi-entry and single-entry tag counts | README must correctly describe single-entry tag count | README opening sentence must state correct multi-entry and single-entry tag counts
+[HOLD] F3  A=RED(100/1) B=RED(101/1)  expected A=RED B=RED
+        falsify the distinct-tag total 12 -> 13
+        B failing tests: README must state total unique tags correctly | README must state total unique tags correctly
+        A failing tests: README must state total unique tags correctly | README must state total unique tags correctly
+[HOLD] F4  A=RED(100/1) B=RED(101/1)  expected A=RED B=RED
+        falsify a band table cell: `design` 14 -> 15
+        B failing tests: README tag counts must match corpus | README tag counts must match corpus
+        A failing tests: README tag counts must match corpus | README tag counts must match corpus
+[HOLD] F5  A=RED(99/2) B=RED(100/2)  expected A=RED B=RED
+        delete a band table row entirely (`philosophy`)
+        B failing tests: every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band | every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted whol | every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band | every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted whol
+        A failing tests: every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band | every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted whol | every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band | every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted whol
+[HOLD] B1  A=RED(100/1) B=RED(101/1)  expected A=RED B=RED
+        falsify a band heading boundary: "Robust pool (5+ entries)" -> "(6+ entries)"
+        B failing tests: every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band | every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+        A failing tests: every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band | every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+[HOLD] R1  A=GREEN(101/0) B=GREEN(102/0)  expected A=GREEN B=GREEN
+        reword band heading English only, digits intact: "Robust pool" -> "Deep pool"
+[HOLD] R2  A=GREEN(101/0) B=GREEN(102/0)  expected A=GREEN B=GREEN
+        reword the opening sentence English only, every number unchanged and still true
+[HOLD] R3  A=GREEN(101/0) B=GREEN(102/0)  expected A=GREEN B=GREEN
+        a TRUE reworded band table heading elsewhere: "Appears 3–4 times" -> "Appears 3–4 times each"
+[INFO] I1  A=GREEN(101/0) B=GREEN(102/0)
+        a TRUE but unrecognised claim: "2 tags appear on 10 or more entries." after the opening paragraph
+[INFO] I2  A=GREEN(101/0) B=RED(101/1)
+        an honest prose count in digits rather than words: "holds three aphorisms" -> "holds 3 aphorisms"
+        B failing tests: README Tag vocabulary section must contain no unrecognised count-claim digits (J-5) | README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)
+
+SCORE 14/14 scored cells hold (2 informational)
