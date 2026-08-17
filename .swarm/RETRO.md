@@ -106,6 +106,16 @@ left against `stop_at` 2026-08-18T08:34:37Z — not a stall, not a usage limit, 
   (10:03:25→10:36:53, cycle 3) are simply long cycles working. Two pushes, both wrong, both
   during healthy work. Evidence: `runs/notify.log` "send fail ok" ×2 against `runs/pacer.log`.
   (cycles 1–3)
+- **The watchdog was inert for the entire run and nobody noticed until the disarm step**
+  (KI-26, high) — why: its DONE-guard is `wrap_up_complete` OR `<target>/REPORT.md` existing,
+  and an improvement run's target already carries a REPORT.md from the previous run, so the
+  guard is true at the first firing and can never come false. `runs/watchdog.log` shows
+  `all-done detail=reports-present` at **ten consecutive firings, 09:05:10Z → 13:35:47Z**,
+  spanning the whole live run. No harm materialised (the pacer, not the watchdog, fires cycles
+  on the VPS) — but the crash-recovery path was silently absent all night. It was found only
+  because WRAP_UP's `systemctl disable` was refused for lack of privilege and I checked whether
+  that mattered. **The two infra findings pair up: the alarm that fired was wrong twice, and the
+  mechanism that should have been watching slept.** (cycle 9)
 - **My instrument stopped catching itself at cycle 8, and that is not a win** — why: the gate
   ran correctly on first authoring because I copied cycle 6's harness wholesale instead of
   writing a new one, which removed most of the surface the previous five defects lived on.

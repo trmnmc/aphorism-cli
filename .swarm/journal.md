@@ -10061,3 +10061,93 @@ runfile-mirror:
 
 ---
 
+## cycle 9 addendum — 2026-08-17T13:57:41Z — **KI-26 (high): the watchdog was inert for the entire run**
+
+Found while disarming, which is the only reason it was found at all. WRAP_UP step 7's disarm
+(`systemctl disable --now swarm-watchdog.timer`) **FAILED** — *"Interactive authentication
+required"*; a headless `-p` session has no privilege to stop the unit. **Reported as not-run,
+not as done.** Checking whether that mattered is what turned up the real finding.
+
+`reference/cycle.md` WRAP_UP step 6 defines the watchdog DONE-guard as *`wrap_up_complete` OR
+`<target>/REPORT.md` existing in every target*, with the file check described as the safety net
+for a lost flag write, "checked WITHOUT regard to target statuses". On an **improvement run**,
+the target already carries a REPORT.md from the previous run. So the net is true at the first
+firing and **can never come false**. `runs/watchdog.log`, the whole live run:
+
+```
+2026-08-17T08:35:09+0000 decision=no-run     detail=runfile-missing (kickoff in flight)
+2026-08-17T09:05:10+0000 decision=all-done   detail=reports-present
+2026-08-17T09:35:10+0000 decision=all-done   detail=reports-present
+2026-08-17T10:05:11+0000 decision=all-done   detail=reports-present
+2026-08-17T10:35:11+0000 decision=all-done   detail=reports-present
+2026-08-17T11:05:11+0000 decision=all-done   detail=reports-present
+2026-08-17T11:35:12+0000 decision=all-done   detail=reports-present
+2026-08-17T12:05:12+0000 decision=all-done   detail=reports-present
+2026-08-17T12:35:13+0000 decision=all-done   detail=reports-present
+2026-08-17T13:05:13+0000 decision=all-done   detail=reports-present
+2026-08-17T13:35:47+0000 decision=all-done   detail=reports-present
+```
+
+**Ten consecutive firings, from 31 minutes after kickoff to wrap-up, every one deciding the run
+was already finished while it was demonstrably running.** Had the conductor died mid-cycle, no
+relaunch would ever have been attempted.
+
+**No harm materialised, and saying so is part of the finding.** On the VPS `bin/swarm-pacer.sh`
+is the firing mechanism and it spawned all 8 cycles normally (`runs/pacer.log`). The watchdog is
+the *recovery* path — and recovery is exactly the thing whose absence is invisible until it is
+needed. That is why this is filed high while KI-25, which actually paged a human, is medium.
+
+The pair is the story: **the alarm that fired was wrong twice (KI-25), and the mechanism that
+should have been watching was asleep the whole night (KI-26).** One is loud and harmless; the
+other is silent and load-bearing.
+
+Candidate fix, for a human with write access to `bin/`: the file half of the DONE-guard should
+require a REPORT.md **newer than the run start**, or one carrying this run's `run_label` — not
+merely present. As written, the guard is correct for a fresh build target and permanently
+false-positive for every improvement run, which is the shape most of this repo's runs now take.
+
+Not fixed here: hard rule 5 fences `bin/` for the whole run, and a wrap-up is still the run.
+
+**Timer status at close, stated plainly:** `swarm-watchdog.timer` and `swarm-pacer.timer` are
+both still **active** — the disarm was refused, not skipped. Neither will start a cycle:
+`swarm-pacer.sh:182` and `swarm-watchdog.sh:270` both key on `wrap_up_complete`, which is now
+`true` in the runfile and its `.bak`, so each firing logs `run-complete` and exits. Verified by
+reading both guards, not assumed. If you want the units genuinely stopped, one command does it:
+`systemctl disable --now swarm-watchdog.timer`.
+
+
+---
+
+## cycle 9 addendum 2 — 2026-08-17T13:58:45Z — a second defect in my own instrument, same cycle
+
+Filing KI-26 meant re-rendering the dashboard, and the re-render exposed a defect in the render
+script I wrote this cycle: `spliceToken('timeline', ...)` replaces the `<ul class='timeline'>`
+token with *itself plus the new entries*, so it is **not idempotent** — running it twice
+inserted the whole cycle-9 timeline twice. Verified by counting occurrences rather than lines
+(`grep -c` counts LINES and reported 1, which is exactly the kind of reassuring wrong answer
+this run kept finding):
+
+```
+grep -o "cycle 9 · WRAP_UP" dashboard.html | wc -l   ->  2      (after two renders)
+```
+
+Repaired the honest way: restored `dashboard.html` from the pre-render backup
+(`dashboard.html.c008bak`, taken before the first final render) and rendered exactly once.
+Re-verified after: 1 cycle-9 entry, 3 surviving cycle-8 references, 1 RUN COMPLETE banner, all
+8 regions `live=1`. Not repaired by hand-deleting the duplicate — a render that only produces
+the right file when someone tidies up after it is not a render.
+
+This is the second instrument defect of this wrap-up (the first: a `'CLOSED' in status.upper()`
+substring test that read "open, **disclosed**" as CLOSED). Both were found by checking output
+against the source rather than reading the script, which is the same way all five earlier ones
+were found, and it is the strongest single data point in this run's retro: **eight cycles, seven
+conductor instruments, and the defect rate never went to zero.** The one cycle that looked clean
+(cycle 8) was clean because the harness was copied, not written. That is worth more to the next
+conductor than any of the four lessons distilled tonight.
+
+KI-19's complaint — hand-written per-cycle render/audit scripts have no completeness check —
+is the standing form of exactly this, and it stays open with one more data point on it.
+
+
+---
+

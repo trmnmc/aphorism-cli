@@ -355,6 +355,13 @@
       "severity": "medium",
       "status": "open",
       "cycle_found": 9
+    },
+    {
+      "id": "KI-26",
+      "desc": "SWARM TOOL GAP, HIGH because it silently removes the run's crash-recovery net (morning report, not a live edit -- hard rule 5 fences bin/). THE WATCHDOG WAS INERT FOR THIS ENTIRE RUN. reference/cycle.md WRAP_UP step 6 specifies the DONE-guard as \"wrap_up_complete OR <target>/REPORT.md existing in every target\", with the file check as a safety net for a lost flag write. On an IMPROVEMENT run the target already carries a REPORT.md from the previous run, so that safety net is true from the first firing and the guard can never come false. MEASURED, not inferred: runs/watchdog.log shows decision=all-done detail=reports-present at EVERY firing from 09:05:10Z (30 min after the 08:34 kickoff) through 13:35:47Z -- ten consecutive firings across the whole live run. Had the conductor died mid-cycle, no relaunch would ever have been attempted. NO HARM MATERIALISED this run: on the VPS bin/swarm-pacer.sh is the firing mechanism and it spawned every cycle normally; the watchdog is the recovery path, and it is the recovery path that was missing. Composes badly with KI-25: the dead-man switch cried wolf twice during healthy work while the actual watchdog slept through the entire run. Candidate fix: the file half of the DONE-guard should require a REPORT.md newer than the runfile's run start (or carrying this run_label), not merely present.",
+      "severity": "high",
+      "status": "open",
+      "cycle_found": 9
     }
   ],
   "qa": {

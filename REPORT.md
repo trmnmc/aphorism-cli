@@ -1073,15 +1073,16 @@ column is why the run's report says two and not three.
 
 ## Known issues
 
-22 tracked, **3 resolved this run** (KI-9, KI-10 at cycle 2 — both by the structural re-shape;
+23 tracked, **3 resolved this run** (KI-9, KI-10 at cycle 2 — both by the structural re-shape;
 KI-23 at cycle 7, by re-derivation), **1 partially resolved** (KI-5: the cap breach is fixed, the
-allowlist half is J-1b and is owed a human), and **1 filed at wrap-up** (KI-25, below). Of the 18
-that remain open, the split matters more than the count:
+allowlist half is J-1b and is owed a human), and **2 filed at wrap-up** (KI-25 and KI-26, both
+found while compiling this report). Of the 19 that remain open, the split matters more than the
+count:
 
 | Class | Ids | Note |
 |---|---|---|
 | **Human-only** | KI-2 (high) | The 50 corpus attributions are unaudited. Machine-verified *shape*, unverifiable *provenance*. This is T-006 and it is the repo's highest-severity open issue. |
-| **SWARM tool gaps** (hard rule 5 fences `bin/` — reported, never live-edited) | KI-13, KI-14 (high), KI-15, KI-16 (high), **KI-25** (medium, filed at wrap-up) | KI-14 disables a spend governor; KI-16 **fails open on a spend authorisation**; both predate this run. **KI-25 is this run's own**: `bin/swarm-health.sh` sent two false "pacer silent" pushes during healthy work (see hand-off item 4). All need a human with write access to `bin/`. |
+| **SWARM tool gaps** (hard rule 5 fences `bin/` — reported, never live-edited) | KI-13, KI-14 (high), KI-15, KI-16 (high), **KI-25** (medium), **KI-26** (high) | KI-14 disables a spend governor; KI-16 **fails open on a spend authorisation**; both predate this run. **KI-25 and KI-26 are this run's own, and they are a matched pair**: the health dead-man switch paged a human twice during healthy work, while **the watchdog itself slept through the entire run** (both written up in *§ Honest hand-off*, item 4). All need a human with write access to `bin/`. |
 | **Conductor-instrument defects** | KI-11, KI-17, KI-19 | Hand-written per-cycle render/audit scripts have no completeness check. KI-19's own `desc` field is **empty in state.json** — found at wrap-up, and left as filed rather than back-written from memory. |
 | **Documented boundaries** (open by decision, not neglect) | KI-12, KI-18, KI-20, KI-21, KI-24 | Each carries the measurement that justifies leaving it. KI-24 (English number *words* are invisible to a `\d+` guard) is the boundary J-9's retirement now sits beside. |
 | **Mitigated, root cause open** | KI-6, KI-7, KI-8 (high) | KI-8 is the sharp one: the sealed pre-dispatch baseline is written under `<target>/.swarm/runs/`, which the builder can read. Mitigated all run by commit-reveal — hash the plaintext, commit the hash, delete the plaintext for the dispatch window, restore and re-verify after. It worked (cycle 8's restore hashed byte-identical), but the mitigation is discipline, not a mechanism. |
@@ -1155,11 +1156,36 @@ survive; that the playbook file is within cap with unique ids and intact `[apply
    book, and every burn figure above came from `npx ccusage` invoked directly. The exact two-line
    patch and its confirming command are in `playbook/HANDOFF-allowlist-2026-08-17.md`. It cannot
    be fixed from inside a run.
-4. **`bin/swarm-health.sh` sent two false alarms** (09:35Z, 10:35Z, "pacer silent"). Its
-   `HEALTH_STALE_MIN` is 30 min, shorter than several healthy cycles this run, and its
+4. **The recovery net was not there, and the alarm that was there cried wolf.** Two findings,
+   filed at wrap-up, that belong together.
+
+   **KI-26 (high) — the watchdog was inert for the whole run.** `reference/cycle.md` defines the
+   watchdog's DONE-guard as *`wrap_up_complete` OR `<target>/REPORT.md` existing in every target*,
+   with the file check as a safety net for a lost flag write. On an **improvement** run the target
+   already carries a REPORT.md from the previous run — so the net is true from the first firing and
+   the guard can never come false. Measured, not inferred: `runs/watchdog.log` reads
+   `decision=all-done detail=reports-present` at **every firing from 09:05:10Z through 13:35:47Z**,
+   ten consecutive firings spanning the entire live run. Had the conductor died mid-cycle, no
+   relaunch would ever have been attempted. **No harm materialised** — on the VPS the pacer is the
+   firing mechanism and it spawned every cycle normally — but the crash-recovery path was silently
+   absent all night, and a silently absent safety net is worth more attention than a loud one that
+   misfires. Candidate fix: require a REPORT.md newer than the run's start (or carrying this
+   `run_label`), not merely present.
+
+   **KI-25 (medium) — two false "pacer silent" pushes** at 09:35Z and 10:35Z. `bin/swarm-health.sh`
+   fires when `pacer.log` is untouched for `HEALTH_STALE_MIN` (30 min), and this run had genuine
+   gaps of 59 min and 33 min that were simply long cycles working; its
    `systemctl is-active swarm-pacer.service` suppression did not hold for cycles the pacer had
-   already spawned — `runs/pacer.log` gaps of 59 min and 33 min were simply work in progress.
-   Hard rule 5 fences `bin/`, so it is reported, not patched. Two pushes, both wrong.
+   already spawned. Two pushes, both wrong.
+
+   Hard rule 5 fences `bin/`, so both are reported, not patched.
+
+   Related, and honest about a step that did not run: **WRAP_UP's watchdog disarm failed.**
+   `systemctl disable --now swarm-watchdog.timer` returned *"Interactive authentication required"* —
+   a headless session has no privilege to stop the unit. The timer is still active. It is
+   nonetheless harmless: both the watchdog's and the pacer's DONE-guards key on
+   `wrap_up_complete`, which is now `true` in the runfile, so each firing will log `run-complete`
+   and exit. **Reported as not-run rather than as done.** A human can run that one command.
 5. **Two CLI behaviours are unspecified (J-7)** and one taxonomy judgment call wants confirming
    (T-040). Both are listed above with the measurements attached; each needs a ruling written
    into SPEC.md, not a code change.
@@ -1178,8 +1204,10 @@ survive; that the playbook file is within cap with unique ids and intact `[apply
    two of the three open items.
 3. Confirm or reverse the `L-033` promotion (med → high, `[apply:]` added) recorded in
    `playbook/DROP-RATIONALE-2026-08-17.md` § *WRAP-UP drop*.
-4. Fix `swarm-health.sh` (raise `HEALTH_STALE_MIN`, or key the suppression off the spawned
-   session rather than the service unit).
+4. Fix the watchdog DONE-guard (**KI-26**) so an improvement run keeps its crash-recovery net —
+   this is the highest-value SWARM fix on the list, because it removes a safety mechanism
+   silently. Then `swarm-health.sh` (**KI-25**), and run
+   `systemctl disable --now swarm-watchdog.timer` if you want the timer actually stopped.
 5. Start the KI-2 attribution audit at the 8 HIGH-risk rows, or decide out loud that the corpus
    ships unaudited and say so in the README.
 6. If you want the product to improve rather than the repo: authorise no-repeat rotation.
