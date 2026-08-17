@@ -1186,6 +1186,13 @@ survive; that the playbook file is within cap with unique ids and intact `[apply
    nonetheless harmless: both the watchdog's and the pacer's DONE-guards key on
    `wrap_up_complete`, which is now `true` in the runfile, so each firing will log `run-complete`
    and exit. **Reported as not-run rather than as done.** A human can run that one command.
+
+   One more not-run: **the SWARM repo's own `git push` fails** (`git@github.com:trmnmc/SWARM.git`
+   — "Please make sure you have the correct access rights"; the branch is 5 commits ahead,
+   so this predates tonight). This repo — `aphorism-cli` — pushed cleanly at every cycle
+   including both wrap-up commits; it is only SWARM's own history that is sitting local. The
+   playbook changes distilled tonight are committed and durable on disk, but they are not on
+   GitHub until someone with the key pushes them.
 5. **Two CLI behaviours are unspecified (J-7)** and one taxonomy judgment call wants confirming
    (T-040). Both are listed above with the measurements attached; each needs a ruling written
    into SPEC.md, not a code change.
