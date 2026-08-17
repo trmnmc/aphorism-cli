@@ -1,0 +1,30 @@
+cycle 6 — PRE-DISPATCH COMMITMENT for the J-5 verification gate
+==============================================================
+
+The gate that will judge J-5 was authored and VALIDATED before the builder was
+dispatched, from README.md and the item's acceptance only. It lives outside the
+target repo (/opt/swarm/runs/.c6-gate.mjs) because agents receive target paths
+only, so the builder cannot read it. This file records its hash at dispatch time
+so the ordering is provable after the fact rather than asserted.
+
+  sha256(.c6-gate.mjs) = a8de030c18987ea56c405c9d3624e26bb8d9b3d5f063768a3682501d60bf74cf
+  base commit          = 0e5d917
+  cells                = 14 scored + 2 informational, two arms each
+
+PRE-DISPATCH READING, taken before dispatch and recorded here so a post-hoc
+re-authoring cannot quietly change what "already held": 11/14 hold. The three
+that do not are N1, N2 and N3 — the three shapes of the hole J-5 exists to
+close — and they read A=GREEN B=GREEN because arm B is still arm A. Every other
+cell already holds, which is the measurement that matters: the gate is proving
+existing coverage is INTACT before it is used to judge new coverage.
+
+A NOTE ON THE INSTRUMENT, recorded rather than repaired silently. The first
+authoring scored 7/14 and read every arm as RED, INCLUDING the unmutated P0
+control. The cause was in the gate, not the tree: it parsed the suite's output
+for TAP (`# pass`, `not ok`) while `node --test test/*.test.js` emits node's
+SPEC reporter. The P0 control is what caught it. The fix takes the verdict from
+the process exit status — the fact — and parses both reporter formats for the
+counts only, so a future reporter change degrades the numbers in the report and
+never the verdict. This is the third cycle running in which the conductor's own
+control cell caught the conductor's own harness (cycle 3: a missing shell glob;
+cycle 4: cell G2 reading a random draw as a signal; cycle 6: this).
