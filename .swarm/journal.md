@@ -8515,3 +8515,336 @@ the suite confirms it.
 12 open → **10 open** (8 todo, 2 blocked), 2 done. KI-5 moved to *partially resolved* with
 the unverified half named. Next: **J-2** — resolve the five README-prose test items, the
 item the kickoff stress-test reshaped the run around.
+
+
+---
+
+## cycle 2 — 2026-08-17T09:52Z — J-2a: the guard stopped reading English, and the ledger did not shrink
+
+**Work:** build-wave, 1 item, 2 agents (sonnet attempt 1 REJECTED at the gate, opus attempt 2
+VERIFIED). **Outcome: 1 verified.** Suite **91 -> 92, 0 failures**, run by the conductor on the
+real working tree. Board 10 open -> 8 open. **KI-9 and KI-10 both RESOLVED.**
+
+### what was picked, and why this and not something else
+
+Phase gates put this cycle in BUILD with three must-have items todo (J-2, J-3, J-4). J-2 was
+the kickoff stress-test's reshape and the run's central must-have, so it was the pick. The
+allocator brief is trickle posture — housekeeping only, haiku-priced work types — and a
+test-hardening item complies with that on work TYPE, which is the axis the brief constrains;
+the gear number stays 3 for its own reasons (below).
+
+J-2 asked for five items to reach terminal status. It got **split**, and the split is the first
+finding of the cycle: those five live at TWO independent code sites in one file — the
+Attribution count extraction and the band-heading count/detection — which cannot be given
+disjoint file scopes and therefore cannot be built in one wave. One item spanning both also
+cannot carry an honest `attempts` counter. Split into **J-2a** (Attribution half, closed this
+cycle) and **J-2b** (band half, open), on the precedent of the previous run splitting T-024
+into T-024a/T-024b for exactly the same reason.
+
+### the design decision, and whose it was
+
+Six cycles of the previous run tried to make the prose reader correct by narrowing its rule.
+KI-9 records the twice-measured conclusion: **no rule that reads an English sentence to decide
+WHICH NUMBER a claim means can avoid falsely rejecting some naturally-written, entirely true
+README** — only the membership of the falsely-rejected set moves. KI-9 named three options for
+a human and leaned toward option (2), *change the document, not the parser*, noting it was the
+only one that satisfies T-024's remedy and that it was out of that run's builder file scope.
+
+This run's J-4 puts README.md in scope, so option (2) became reachable. The conductor made that
+call and specified the design; the builders implemented it. That division is deliberate: the
+judgment about whether prose-parsing is retirable is exactly what the accumulated measurement
+already answered, and the gate stayed with the conductor so no agent both wrote the fix and
+authored its check.
+
+**What shipped:** the two counts left the Attribution paragraph for an
+`| Attribution triage | Count |` table — the same shape as the Tag vocabulary section's
+`| Tag | Count |` tables, which this suite has always read structurally and has never once had
+to narrow a rule for, because a table cell has no grammar to misparse. `collectMarkerBindings`
+and `formatBindingMismatch` are **deleted**, with the 47-line KNOWN BOUNDARY comment that
+documented KI-10. C1 asserts the "Entries ranked" row against both `corpus.length` and the
+triage doc's data-row count; C2 asserts "Rated HIGH risk" against the triage doc's HIGH-row
+count. A new **C7** asserts the section carries no digit run anywhere outside that table.
+
+C7 is the load-bearing part and not a flourish: without it, deleting the prose reader would
+trade a false-rejecting instrument for a blind spot, because C1/C2 only ever look inside the
+table. J-2's acceptance demanded the removal be *proven* not to drop coverage, and C7 is what
+makes that provable rather than arguable.
+
+### attempt 1 was rejected, and every defect was a silent hole
+
+Attempt 1 (sonnet) came back green at 92/92 with its own failability demonstrations, and it was
+**rejected**. The gate found three defects, each a README stating a FALSE count and accepted
+green, and — this is the part worth keeping — **all three sat exactly on judgement calls the
+builder had made on its own initiative and disclosed in its report.** It was not hiding them.
+It did not see them as holes.
+
+1. C7 stripped fenced code blocks before scanning, so a false count inside a fence passed.
+   **The deleted code caught that** — a real coverage regression, and the one clause of J-2's
+   acceptance that is not negotiable.
+2. The locator built a `Map` and called `.set()` per row, so a duplicated label silently
+   overwrote: with the wrong row first the suite stayed green, with it second the suite caught
+   it. A verdict decided by document order — the exact defect class this item exists to remove,
+   one level up from where it was removed.
+3. A row under any label C1/C2 do not read was checked by nothing, and C7 excises the whole
+   table, so a wrong count parked under a novel label passed.
+
+Gate score 14/20. Per the ladder, `attempts` 1 escalates sonnet -> opus, and attempt 2 went out
+at opus with the three defects named and the reason for the fence decision spelled out.
+
+Attempt 2 closed all three and **found a fourth unprompted**: a *second* counts table in the
+section was silently ignored, because the locator took the first header match. Same order-decides
+-the-verdict shape as defect 2. It also disclosed two residual holes before the gate looked.
+
+### the fence fix is a trade, bought deliberately
+
+Making C7 scan fenced blocks costs a false rejection: a true, useful snippet carrying a digit
+(`grep -c "| HIGH |" ... # 8`) is now red. Bought on this repo's own standing precedent,
+recorded at cycle 30 of the previous run — *loud-and-wrong beats silent-and-wrong when those are
+the only two measured options*. Both directions were measured here, so it is a choice between
+two knowns rather than a guess. Filed as KI-21 so it reads as a decision and not a surprise.
+
+### THE RESULT THAT IS NOT THE ONE I WANTED, STATED FIRST
+
+**The false-rejection ledger did not shrink. It is 4 cells at HEAD and 4 cells on the fix.**
+Only its membership moved — which is precisely the result the previous run measured twice and
+wrote KI-9 around. Anyone reading this cycle as "the false rejections are gone" is reading it
+wrong, and the gate output says so in a column.
+
+What genuinely changed is the **character** of every member, and that is worth the cycle:
+
+- At HEAD, a true sentence is misparsed and the failure **names the wrong number**, leaving a
+  maintainer with no correct action — the README is already true.
+- On the fix, the same sentence violates one stateable style rule and the message **names the
+  action**: move the number into the table.
+
+That reverses the cycle-25 standing worry, which was that the cheapest escape from a false
+rejection is **deleting the guard**. The cheapest escape is now moving the number into the
+table, which *strengthens* it. That is the strategic win, and it is a different claim from
+"fewer false rejections".
+
+### VERIFICATION EVIDENCE — the gate, 35 cells over two arms
+
+Two arms: HEAD (the prose reader) and FIX (the working tree). Cells are edit **intents**
+realised on whichever document shape each arm actually ships — comparing one literal string
+across two document designs would measure spelling, not guards.
+
+```
+FULL SUITE HEAD  tests=91 pass=91 fail=0
+FULL SUITE FIX   tests=92 pass=92 fail=0
+
+BLOCK 1 — the attempt-1 gate cells, re-run unchanged
+cell                                      want  HEAD          FIX
+T3 counts in prose, subject-first, TRUE   GREEN RED WRONG     RED WRONG
+T4 true comparative on HIGH               GREEN RED WRONG     RED WRONG
+T5 true comparative on entries            GREEN RED WRONG     RED WRONG
+T6 counts absent from prose entirely      GREEN RED WRONG     GREEN ok
+T7 TRUE digit inside a fenced block       GREEN GREEN ok      RED WRONG
+F3 FALSE claim across an em dash (KI-10)  RED   GREEN WRONG   RED ok
+F5 FALSE count inside a fenced block      RED   RED ok        RED ok
+F6 duplicate table row, WRONG first       RED   n/a           RED ok
+F8 extra table row, FALSE, unread label   RED   n/a           RED ok
+L1..L4 loudness cells                     RED   n/a           RED ok  (4/4)
+SCORE HEAD 7/12   SCORE FIX 16/20
+
+BLOCK 2 — 15 cells authored AFTER attempt 2 returned (FIX arm only)
+N1 three copies of one label      RED ok     N9  false count in a TILDE fence   RED ok
+N2 duplicate label, same value    RED ok     N10 false count in an HTML comment RED ok
+N3 label case changed             RED ok     N11 false count in LINK TEXT       RED ok
+N4 label padded, TRUE             GREEN ok   N12 digit in LINK TARGET, TRUE     GREEN ok
+N5 false count in the HEADING     RED ok     N13 false count, indented block    RED ok
+N6 false count as a number WORD   GREEN WRONG N14 header, no data rows          RED ok
+N7 false count, FULLWIDTH digit   GREEN WRONG N15 recognised label, value 0     RED ok
+SCORE FIX 13/15
+
+LIKE-FOR-LIKE (the 12 block-1 cells expressible on BOTH arms):  HEAD 7/12   FIX 8/12
+
+SILENT HOLES (a FALSE README accepted GREEN — the direction this run exists to remove):
+  HEAD, block 1 : F3 FALSE claim across an em dash (KI-10)
+  FIX,  block 1 : none
+  FIX,  block 2 : N6 number WORD | N7 FULLWIDTH digit
+FALSE REJECTIONS (a TRUE README rejected RED):
+  HEAD : T3 | T4 | T5 | T6          FIX : T3 | T4 | T5 | T7
+```
+
+**13/13 on the discriminators the builder never saw.** The only two block-2 cells that fail are
+exactly the two it had already volunteered — which is the cheapest possible evidence that its
+disclosure was complete rather than selective.
+
+### VERIFICATION EVIDENCE — the two residual holes are PRE-EXISTING, measured not assumed
+
+The builder claimed both were pre-existing. A claim is not a measurement, so both cells were run
+on the HEAD arm too. Full output: `.swarm/runs/cycle-002-gate-closing-out.txt`.
+
+```
+N6 English number word : "Nine of those entries are rated HIGH."
+    HEAD=GREEN (hole)   FIX=GREEN (hole)
+N7 fullwidth digit U+FF19: "９ entries are rated HIGH."
+    HEAD=GREEN (hole)   FIX=GREEN (hole)
+
+=== test_cmd on the REAL working tree ===
+ℹ tests 92
+ℹ pass 92
+ℹ fail 0
+ℹ duration_ms 3941.276797
+```
+
+So: **zero coverage regressions.** Every wrong-README cell HEAD catches, the fix also catches.
+The two holes were never covered by anything and are now written down (KI-20), with the comment
+in the test file weakened from "EVERY number" to "EVERY number written in digits" — an invariant
+stated wider than it holds is worse than a narrower true one.
+
+Not closing them is a decision with an argument: banning English number words here means banning
+"two".."twenty" while sparing "one", because the section's own true sentence ends *"...says what
+would settle each one."* A rule with a carve-out is the "no numbers, except..." shape this design
+exists to avoid. The fullwidth half is cheap and was deliberately **not** bundled, because
+closing half a boundary and reporting the boundary closed is the failure mode this repo keeps
+catching itself on.
+
+### VERIFICATION EVIDENCE — derive-never-hardcode
+
+The standing repo rule is that no test compares a README number against a digit literal in the
+test file. Scanned the Attribution guard region with comments and string literals stripped; the
+scan deliberately over-ran into neighbouring tests, which is the safe direction.
+
+```
+bare numeric literals found in code positions — each judged:
+  [0]  if (headerIndices.length === 0) return null;      <- index
+  [1]  const separatorLine = lines[headerIdx + 1];       <- index
+  [2]  let end = headerIdx + 2;                          <- index
+  [1]  table.headerCount === 1,                          <- arity
+  [1]  values.length === 1,                              <- arity
+  [10] return parseInt(raw, 10);                         <- radix
+  [0,30] const contextStart = Math.max(0, digitMatch.index - 30);  <- message width
+no literal equal to any corpus/triage figure (50, 8, 12, ...) appears anywhere
+truths: corpus.length L1354 L1365 L1366 | riskRows.length L1373 L1380 L1382 L1399
+```
+
+And both truths fire when their SOURCE is mutated, not just when the README is: flipping a
+MEDIUM row to HIGH in the triage doc fires C2, removing an entry from `src/corpus.js` fires C1.
+
+### KI-8 discipline this cycle
+
+The pre-dispatch baseline and both gates were written to `SWARM/runs/`, **outside** the target
+tree, and copied into `<target>/.swarm/runs/` only at commit time — KI-8's own remedy option (1),
+which the previous run recorded as untried. The deciding discriminators (block 2) were authored
+only after attempt 2 returned, which is remedy option (2). Neither builder could have coded to
+the check.
+
+### board and burn
+
+Board 10 open -> 8 open (7 todo, 1 blocked), 5 done. **T-024a moves blocked -> done, resolved by
+removal rather than by a third attempt; T-032 -> done on its titled mechanism with the residual
+false rejection recorded.** T-024's umbrella halves. New: J-2a (done), J-2b (todo), KI-20 and
+KI-21 (both low).
+
+Budget: real probe, 21.9M tokens / $18.96 in the 06:00-11:00Z block, burn 134k tok/min, 21.3M of
+that cache reads. Still **a numerator with no denominator** — ccusage reports no limit for the
+5h window, so ρ is not computable and `ratio: 0.0` means *not computed*, never *zero burn*. The
+evidence rule lands a missing-limit probe at cruise; guest mode independently clamps to 3; the
+two agree at gear 3. The **weekly governor has data again** (allocator `ok:true`): 1.0% used
+against 2.376% elapsed, heat 0.42, running cool, nothing clamped. Wave autotune: `k_current`
+stays 3 on the third branch — one failed verify is neither the ">=2 failed verifies or a revert"
+demotion nor a clean wave.
+
+`bin/swarm-budget.sh` and `bin/swarm-playbook.sh` are **still denied** by the allowlist. J-1b's
+handoff is still owed a human; nothing this cycle changed that.
+
+### runfile-mirror
+
+```runfile-mirror
+{
+  "version": 1,
+  "run_label": "improvement-aphorism-cli-2026-08-17",
+  "targets": [
+    {
+      "path": "/opt/targets/aphorism-cli",
+      "status": "active",
+      "weight": 1
+    }
+  ],
+  "rotation_cursor": 0,
+  "rotation_schedule": [
+    0
+  ],
+  "stop_at": "2026-08-18T08:34:37+00:00",
+  "usage_reset_at": "2026-08-17T11:00:00+00:00",
+  "model_policy": "value-routing",
+  "auth_mode": "subscription",
+  "heartbeat": {
+    "ts": 1786960361,
+    "next_wakeup_at": 1786961214,
+    "pid": 1360849,
+    "limp": false,
+    "degraded_tiers": [],
+    "wakeup_note": "cycle 2, work picked: J-2 Attribution half as a ONE-BUILDER build wave (direct Agent call, not Workflow \u2014 Workflow is review-gated in a -p session). Budget re-touched to build-wave 2700s at dispatch so a long wave is not read as stale. PID 1360849."
+  },
+  "pacing": {
+    "mode": "guest",
+    "dial": 0.33,
+    "dial_note": "Hints supplied dial 0.33; guest mode forces the effective dial to 1.0 per the Gear pacing table. Both recorded: 0.33 is what the allocator asked for, 1.0 is what the mechanism uses. Guest clamps reachable gears to 1-3 and never upshifts."
+  },
+  "budget": {
+    "source": "probe",
+    "gear": 3,
+    "gear_target": 3,
+    "ratio": 0.0,
+    "mode": "guest",
+    "k_cap": 3,
+    "promote": false,
+    "demote": false,
+    "window_tokens": 21895347,
+    "window_cost_usd": 18.96,
+    "api_cap_usd": null,
+    "api_spend_usd": 0.0,
+    "tokens_per_hour": 8038144,
+    "projected_depletion_at": 0,
+    "last_probe_ts": 1786957176,
+    "last_real_probe_ts": 1786957176,
+    "probe_failures": 0,
+    "gear_evidence": "REAL probe via `npx ccusage blocks --active --json` (bin/swarm-budget.sh is still DENIED by the allowlist \u2014 J-1b, unchanged and still owed a human). Active 5h block 2026-08-17T06:00Z -> 11:00Z at 09:00Z: 21,895,347 tokens and $18.96, burn 133,969 tok/min ($6.96/hr), 119 min left, projecting $32.77 / 37.8M for the block. Cache reads are 21.3M of the 21.9M, which is what a long-context conductor session looks like rather than runaway spend. STILL A NUMERATOR WITH NO DENOMINATOR for the 5h window: ccusage reports no limit, so rho is not computable and ratio 0.0 means \"not computed\", never \"zero burn\". The evidence rule lands a missing-limit probe at CRUISE, and guest mode independently clamps the ceiling to 3, so the two agree at gear 3.",
+    "weekly": {
+      "ok": true,
+      "weekly_used_pct": 1.0,
+      "opus_used_pct": 0,
+      "week_elapsed_pct": 2.376,
+      "weekly_heat": 0.42,
+      "opus_heat": 0.0,
+      "ceiling": null,
+      "promote_blocked": true,
+      "note": "THE GOVERNOR HAS DATA AGAIN, which is a change from cycle 1 and is why this block is rewritten rather than carried forward. runs/allocator.json now reads ok:true / source:probe: weekly_used 1.0% against week_elapsed 2.376%, so weekly heat is 0.42 and the week is running COOL \u2014 no ceiling computed, nothing clamped. opus_used is 0. The week reset at the 2026-08-17T05:00Z boundary that ended run #1 on the cap at 100%, and this is a genuinely fresh weekly window. promote stays blocked because guest mode pins the reachable ceiling at 3 regardless of surplus, not because of the governor. Posture is still trickle (allow_overall_pct 9), which constrains work TYPE at step 4 \u2014 housekeeping only \u2014 and this cycle complied: a test/docs hardening item, no new feature."
+    }
+  },
+  "playbook": {
+    "mode": "auto",
+    "applied": [],
+    "vetoed": [],
+    "parse_source": "NOT PARSED, AND NOTHING APPLIED. bin/swarm-playbook.sh parse was DENIED at this kickoff -- reproduced live, not inferred: the allowlist carries no path form of the script a headless session resolves. SKILL.md step 3 routes a parse failure to 'proceed with defaults', so this run applies ZERO lessons by the book. learnings.md was read directly for DIAGNOSIS ONLY (36 lessons against a documented cap of 20 -- the kickoff note said 35, which was a miscount off a truncated grep; the parser counted 36 at cycle 1 and 36 is correct) because repairing that file is this run's J-1a; its directives were deliberately NOT hand-staged into prompt_lines the way run #1 did, so that the cost of the inert playbook is visible in this run's outcome instead of being papered over by the conductor. record-applied cannot be written for the same reason.",
+    "directives": {
+      "wave_k": null,
+      "routing_recs": [],
+      "prompt_lines": {}
+    }
+  },
+  "watchdog": {
+    "mode": "normal",
+    "plist_loaded": true,
+    "lockfile": "/opt/swarm/runs/watchdog.lock",
+    "relaunch_attempts": 0,
+    "note": "Linux/VPS: swarm-watchdog.timer verified ACTIVE via systemctl list-timers (next fire 2026-08-17T09:05:09Z, 25min period). swarm-pacer.timer is the firing mechanism for cycles and is also active."
+  },
+  "caffeinate_pid": 0,
+  "wrap_up_complete": false,
+  "cycles_since_recycle": 2,
+  "artifact": {
+    "url": "",
+    "file": "/opt/swarm/runs/dashboard.html",
+    "publish_failures": 0
+  }
+}
+```
+
+**Next:** J-2b — the band half. J-2a's lesson transfers directly and is written onto the item:
+every silent hole this cycle came either from a surface EXCLUDED from a scan or from a
+first-match choice that let document order decide a verdict, and both shapes are present in the
+band code by inspection (`extractBandTablesFromReadme` takes the first match, `lineHasBandToken`
+decides membership by digit shape). Author those gate cells before dispatching, not after.

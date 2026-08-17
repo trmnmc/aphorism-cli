@@ -116,9 +116,14 @@ leaves `out.txt` empty rather than writing a diagnostic into your pipeline.
 
 The author printed with each aphorism is who the line is **commonly credited to**, not an
 author checked against a primary source. Programming aphorisms are widely misattributed.
-[`docs/corpus-attribution-triage.md`](docs/corpus-attribution-triage.md) ranks all 50
-entries by how likely the attribution is to be wrong — 8 are rated HIGH — and says what
-would settle each one. Nothing in that list has been resolved yet.
+[`docs/corpus-attribution-triage.md`](docs/corpus-attribution-triage.md) ranks every entry
+by how likely the attribution is to be wrong and says what would settle each one. Nothing
+in that list has been resolved yet.
+
+| Attribution triage | Count |
+|---|---|
+| Entries ranked | 50 |
+| Rated HIGH risk | 8 |
 
 ## Layout
 

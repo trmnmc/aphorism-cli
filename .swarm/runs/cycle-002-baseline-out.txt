@@ -1,0 +1,37 @@
+=== cycle 2 PRE-DISPATCH BASELINE at HEAD — J-2 Attribution half ===
+target : /opt/targets/aphorism-cli
+rev    : b335fa92802a56e77e1c2fdd2175904ae73a637b
+
+FULL SUITE FLOOR (node --test test/*.test.js equivalent): tests=91 pass=91 fail=0
+
+P0  pristine, untouched                               GREEN  21/21/0  | want: TRUE  (control: must be GREEN)
+FR1 TRUE prose, subject-first partitive                RED    21/20/1  | want: TRUE  (a correct README: GREEN is right)
+        failing: README Attribution section HIGH-risk count must match the triage doc table (C2)
+        failing: failing tests:
+        failing: README Attribution section HIGH-risk count must match the triage doc table (C2)
+        names  : README Attribution section states the HIGH-risk count claim as 50 (in "...## Attribution The author printed with each aphorism is who the line is **commonly credited to**, not an author checked agains
+FR2 TRUE prose, "Fewer than 9 are rated HIGH."         RED    21/20/1  | want: TRUE  (8 < 9: GREEN is right)
+        failing: README Attribution section HIGH-risk count must match the triage doc table (C2)
+        failing: failing tests:
+        failing: README Attribution section HIGH-risk count must match the triage doc table (C2)
+        names  : README Attribution section states the HIGH-risk count claim as 8 in one place, but ALSO states it as 9 (in "...and says what would settle each one. Nothing in that list has been resolved yet. Fewer th
+FR3 TRUE prose, "Fewer than 51 entries are listed."    RED    21/20/1  | want: TRUE  (50 < 51: GREEN is right)
+        failing: README Attribution section corpus-size claim must match corpus.length (C1)
+        failing: failing tests:
+        failing: README Attribution section corpus-size claim must match corpus.length (C1)
+        names  : README Attribution section states the corpus-size ("entries") claim as 50 in one place, but ALSO states it as 51 (in "...and says what would settle each one. Nothing in that list has been resolved yet
+SH1 FALSE claim, digit across an em dash from marker   GREEN  21/21/0  | want: FALSE (a wrong README: RED is right)
+XH1 FALSE, shipped shape, HIGH count 8 -> 9            RED    21/20/1  | want: FALSE (a wrong README: RED is right)
+        failing: README Attribution section HIGH-risk count must match the triage doc table (C2)
+        failing: failing tests:
+        failing: README Attribution section HIGH-risk count must match the triage doc table (C2)
+        names  : README Attribution section states the HIGH-risk count claim as 9 (in "...9 are rated HIGH...") -- NONE of these match the true value: the HIGH-risk count claim is 8
+XE1 FALSE, shipped shape, entries 50 -> 51             RED    21/20/1  | want: FALSE (a wrong README: RED is right)
+        failing: README Attribution section corpus-size claim must match corpus.length (C1)
+        failing: failing tests:
+        failing: README Attribution section corpus-size claim must match corpus.length (C1)
+        names  : README Attribution section states the corpus-size ("entries") claim as 51 (in "...## Attribution The author printed with each aphorism is who the line is **commonly credited to**, not an author checke
+
+=== the two facts this baseline is here to fix in place at HEAD ===
+FALSE REJECTIONS (a correct README rejected): expect FR-cells RED at HEAD
+SILENT HOLE (a wrong README accepted):        expect SH1 GREEN at HEAD (KI-10)

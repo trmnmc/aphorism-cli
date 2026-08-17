@@ -947,159 +947,366 @@ function getLayoutSection(readmeContent) {
   return readmeContent.substring(start, end);
 }
 
-// Helper: within a block of text, split on em/en dashes (the punctuation
-// this README actually uses to set off parenthetical asides -- see the
-// Attribution section's "... to be wrong -- 8 are rated HIGH -- and says
-// ..." construction) and return the digit binding for EVERY occurrence of
-// `marker` anywhere in the text -- not just the first clause that contains
-// one, and not just the first (or last) occurrence within a clause.
+// ---------------------------------------------------------------------------
+// Attribution section counts: read from STRUCTURE, not from an English
+// sentence.
 //
-// Why "every occurrence", not "first" or "last": a README that states a
-// count once correctly and once incorrectly is self-contradictory, and a
-// reader trusts whichever occurrence they happen to read. Binding to only
-// one position (first OR last) makes the guard's behaviour depend on which
-// of two contradictory claims happens to appear earlier in the prose --
-// that is a hole, not a fix, no matter which position wins. Collecting
-// every occurrence and later requiring ALL of them to agree with the truth
-// (see the two C1/C2 tests below) is symmetric in document order: it does
-// not matter whether the true claim or the false one comes first.
+// This replaces collectMarkerBindings/formatBindingMismatch, which used to
+// live here (T-016 through T-032; see backlog.json items T-024, T-024a,
+// T-032 and state.json known issues KI-9, KI-10 for the full record). That
+// approach read the Attribution section's PROSE, splitting it on em/en
+// dashes and binding each marker word ("entries", "HIGH") to the nearest
+// preceding digit run in its own clause. Six cycles tried to make that
+// reading correct by narrowing the rule, and the measured conclusion,
+// reached twice from independently-designed fixes -- a subject-first/
+// subject-last binding swap at cycle 31, then a closed-template rewrite at
+// cycle 32 that traded three new false rejections for one genuine repair --
+// is that no rule which reads an English sentence to decide WHICH NUMBER a
+// claim means can avoid falsely rejecting some naturally-written, entirely-
+// true README. Only the membership of the falsely-rejected set moves. The
+// mirror defect was also measured (T-031): a contradictory count separated
+// from its marker by a dash lands in the ADJACENT clause and binds nothing,
+// so a self-contradicting README passed silently. Two failure directions,
+// from the same instrument, on the same guard.
 //
-// Digit-window scoping, decided deliberately: each occurrence's bound digit
-// is the nearest preceding digit run WITHIN THAT OCCURRENCE'S OWN CLAUSE,
-// searched only up to that occurrence's own position (not the whole
-// clause). Two things this rules out:
-//   - Scoping to the whole SECTION (not the clause) would let an unrelated
-//     number from a different parenthetical aside bind to this marker.
-//   - Scoping each occurrence to "nearest digit anywhere in the clause"
-//     (rather than "nearest digit before THIS occurrence") would make two
-//     occurrences of the same marker within one clause re-bind the SAME
-//     digit run instead of two different ones -- e.g. "8 are rated HIGH
-//     and 9 are rated HIGH" must yield bindings [8, 9], not [8, 8] (which
-//     would hide the fact that the clause states two different numbers).
-//     Advancing the window to "up to this occurrence's own index" is what
-//     keeps the second HIGH from grabbing the first HIGH's digit.
+// The fix is not a seventh narrowing of that rule. It removes the sentence
+// from the loop. The two counts the Attribution section makes -- how many
+// corpus entries the triage doc ranks, how many of those are rated HIGH --
+// now live in a `| Attribution triage | Count |` table: the same shape
+// (header row, `|---|---|` separator row, data rows) the Tag vocabulary
+// section's `| Tag | Count |` tables already use, and that this file has
+// never had to narrow a reading rule for, because a table cell has no
+// grammar to misparse. parseAttributionCountsTable below locates that table
+// the same way extractBandTablesFromReadme locates a band table: by its
+// header row's literal text plus the separator row immediately below it,
+// never by scanning prose for a marker word.
 //
-// Keyed to the marker word/token that carries the claim's actual meaning
-// ("entries", "HIGH"), never to the verb or descriptive prose around it, so
-// rewording "ranks all 50 entries" to "catalogs all 50 entries" or "8 are
-// rated HIGH" to "8 fall into the HIGH tier" leaves the extraction
-// unaffected.
+//   C1 -- the table's "Entries ranked" row must equal corpus.length AND the
+//         number of data rows parseTriageRiskRows finds in the triage doc.
+//         Both truths are derived at test time; neither is a digit literal
+//         written into this file.
+//   C2 -- the table's "Rated HIGH risk" row must equal the count of HIGH
+//         rows parseTriageRiskRows returns. Also derived, never hardcoded.
+//   C7 -- the guard that is what makes deleting the prose reader safe
+//         rather than a silent regression. Moving the counts into a table
+//         does not, on its own, stop a maintainer from ALSO leaving (or
+//         re-introducing) a number in the surrounding prose -- e.g.
+//         hand-editing the lead sentence back to "ranks all 51 entries"
+//         while the table still correctly says 50. C1/C2 only ever look at
+//         the table, so neither would catch that; without a third guard,
+//         deleting collectMarkerBindings would trade a false-rejecting
+//         instrument for a blind spot, not for nothing. C7 closes it by
+//         asserting that ALL of the section's text EXCEPT the counts
+//         table's own header, separator and data rows -- prose, headings,
+//         list items, and fenced code alike -- carries NO digit runs at
+//         all. That is a deliberate, narrow style rule
+//         scoped to this ONE section, not a general ban on numbers in the
+//         README: it is safe to enforce exactly because C1/C2 already
+//         guarantee the table itself is complete and correct, so any prose
+//         number left outside it can only ever be redundant with the table
+//         (pointless) or in conflict with it (wrong) -- and banning both
+//         outright is cheaper and louder than parsing and cross-checking a
+//         prose number, which is the exact instrument this section just got
+//         rid of. A red C7 means: move the number into the table. It does
+//         not mean delete this guard -- doing that would reopen the hole it
+//         exists to close.
 //
-// Returns an array of { value, context } bindings -- context is the
-// trimmed, whitespace-collapsed clause the binding came from, kept so a
-// mismatch assertion can tell a reader WHICH sentence in their README holds
-// which number, not merely that two numbers disagree. A marker occurrence
-// with no preceding digit in its own clause contributes no binding (it is
-// not evidence either way -- mirrors the previous null-return for an
-// unparseable clause). An empty return means the marker never occurred
-// anywhere with a bindable digit, which callers must treat as a loud parse
-// failure, never a silent pass.
+// Table well-formedness, asserted by all three guards (C1, C2 and C7 each
+// call assertAttributionCountsTableWellFormed before reading anything out
+// of the table): two rules that between them close the last two ways a
+// wrong number could sit in this section checked by nothing. Both were
+// measured as silent holes in the first cut of this design -- a README
+// stating a FALSE count that the suite accepted green -- so neither is
+// decoration.
 //
-// KNOWN BOUNDARY (T-031, measured, deliberately NOT closed): clause-scoping
-// means a marker occurrence with no digit in ITS OWN clause "contributes no
-// binding" (previous paragraph) even when a digit sits just across the dash,
-// in the ADJACENT clause -- e.g. "A later note records 9 -- HIGH entries --
-// in total." splits into ["...records 9 ", " HIGH entries ", " in total."];
-// neither "HIGH" nor "entries" has a preceding digit in its own clause, so
-// this contradictory, entirely fabricated claim binds NOTHING and is
-// silently skipped rather than caught -- confirmed still true as of this
-// writing (README stays green with that sentence appended). The same
-// sentence written with ASCII "--" instead of em/en dashes IS caught,
-// because "--" is not a clause boundary here and the whole sentence stays in
-// one clause with its digit.
+//   - A DUPLICATED row label fails loud, naming the label and EVERY value
+//     found under it. The locator below used to build its Map with one
+//     .set() per data row, so a repeated label silently overwrote and the
+//     LAST occurrence won: `| Rated HIGH risk | 9 |` placed above
+//     `| Rated HIGH risk | 8 |` passed, while the same two rows in the
+//     other order failed. A guard whose verdict depends on document order
+//     is the exact defect class this whole item exists to remove, and
+//     "which occurrence wins" is the wrong question anyway: a table that
+//     states one figure twice, differently, is broken whichever value
+//     happens to be correct. The remedy named in the message is to delete
+//     the wrong row, not to pick a winner -- which is also why the locator
+//     no longer keeps a single value per label at all (see below).
 //
-// This was investigated as a possible fix, not just accepted on faith: two
-// candidate widenings were built and run against the corpus of README
-// mutations below, and BOTH were rejected because both broke true prose:
-//   1. Unconditionally fall back to the previous clause's trailing digit
-//      when the current clause has none. Catches the hole above, but also
-//      turns "Some entries -- flagged HIGH by the triage doc -- are still
-//      under review" into a false C1 failure: "entries" (no count stated at
-//      all) grabs the unrelated "8" that belongs to the HIGH clause next to
-//      it, and the assertion reports a fabricated contradiction that isn't
-//      in the text.
-//   2. Same, but only fall back if the previous clause has no marker
-//      occurrence of its own (so a digit already "spoken for" by its own
-//      clause's claim can't also be borrowed by a neighbor). Still catches
-//      the hole, but still breaks true prose: "The triage doc was rewritten
-//      in 2019 -- HIGH standards apply to every entry reviewed since -- and
-//      remains in force today" turns the unrelated year 2019 into a false
-//      C2 failure, because 2019's own clause has no marker in it either, so
-//      heuristic (2) waves it through as a legitimate cross-clause donor.
-// Both failures are the exact hazard the "digit-window scoping" paragraph
-// above was already written to prevent (an unrelated number from a
-// different parenthetical aside binding to this marker) -- crossing the
-// clause boundary to catch the far-side-of-the-dash contradiction and
-// avoiding that hazard turned out to be the same request. No fix was found
-// that catches the T-031 shape without also rejecting correct READMEs, so
-// none is applied here. If you are tempted to narrow this further, first
-// write down the true-prose case your narrowing would newly reject -- this
-// guard family's history (see repo history around T-016 through T-030) is
-// that every previous narrowing bought exactly one new false rejection, and
-// eventually the accumulated false-rejection cost is what gets a guard like
-// this deleted outright. A silent miss on a self-contradictory README is a
-// real gap, not a non-issue -- it is being left open, on the record, as a
-// documented limit of a dash/digit-proximity heuristic rather than patched
-// into a new false positive.
-function collectMarkerBindings(text, markerPattern) {
-  const clauses = text.split(/[–—]/); // en dash, em dash
-  const globalMarker = new RegExp(
-    markerPattern.source,
-    markerPattern.flags.includes('g') ? markerPattern.flags : markerPattern.flags + 'g'
+//   - An UNRECOGNISED row label fails loud, naming it and listing the
+//     labels that are recognised (RECOGNISED_ATTRIBUTION_COUNT_LABELS
+//     below). C1 reads "Entries ranked", C2 reads "Rated HIGH risk", and
+//     C7 excises the whole table from its digit scan -- so before this rule
+//     a row under any other label (measured: `| HIGH rows in the doc | 9 |`)
+//     was checked by nothing whatsoever. It sat inside the table, so C7
+//     skipped it; no guard asked for that label, so no guard read it. This
+//     rule is the exact mirror of C7: C7 says no number may sit OUTSIDE the
+//     table, this says no row may sit INSIDE it that no guard reads.
+//     Together they complete the invariant that is the whole reason the old
+//     prose reader could be deleted without dropping coverage --
+//
+//         EVERY number written in digits, anywhere in the Attribution
+//         section, is either a table row that a named guard verifies
+//         against a truth derived at test time, or a loud failure.
+//
+//     -- and it is that invariant, not the table shape on its own, that
+//     replaced collectMarkerBindings. A consequence, intended rather than
+//     tolerated: adding a genuinely new count to this section requires
+//     editing THIS file -- add its label to
+//     RECOGNISED_ATTRIBUTION_COUNT_LABELS and write the guard that derives
+//     and checks it. A new number in this section must not be able to
+//     appear without a guard being written for it, and the assertion
+//     message says so, so the next maintainer's path is not a puzzle.
+//
+// C7 scans FENCED CODE BLOCKS, and that is a deliberate trade of a loud
+// false rejection for a silent acceptance. Stripping fences before the
+// digit scan (as the first cut of this design did, mirroring the
+// fenced-code stripping the Tag vocabulary tests above do) left a measured
+// hole: a fenced block appended to this section reading "9 entries are
+// rated HIGH." stated a false count -- there are 8 -- and the suite stayed
+// green, a case the deleted prose reader had caught. Scanning fences costs
+// something real, and it should be met as a decision rather than as a
+// surprise: a maintainer pasting a genuinely useful and entirely TRUE
+// snippet that happens to carry a digit, e.g.
+//
+//     grep -c "| HIGH |" docs/corpus-attribution-triage.md   # 8
+//
+// now goes red for stating a true thing. This repo's standing precedent
+// settles which way to take that: a false rejection that is loud and has a
+// named remedy is preferred to a silent acceptance of a wrong claim. What
+// it buys is a rule statable in one line -- this section contains no
+// numbers outside the counts table -- and one-line rules survive
+// maintenance in a way that "no numbers, except in fences, except ..."
+// does not, because every exception is somewhere for the next wrong number
+// to be parked. If you need that grep line in the README, it belongs in a
+// section this guard does not police.
+//
+// Markdown LINK TARGETS are still excluded from the scan. A link target is
+// an address, not a claim a maintainer is asserting a fact in, and no
+// measurement has found a hole there. This section's one target
+// (`docs/corpus-attribution-triage.md`) carries no digits today, but a
+// future doc filename or URL that did would otherwise trip C7 for a reason
+// unrelated to an unchecked claim. Everything else is scanned: prose,
+// headings, list items, inline code spans, indented and tilde-fenced
+// blocks, and HTML comments were each measured firing C7.
+//
+// KNOWN BOUNDARY (measured, deliberately NOT closed): the invariant above
+// is over ASCII digits, and two spellings slip under it. An English number
+// WORD does: "Nine of those entries are rated HIGH." appended to this
+// section states a false count -- there are 8 -- and the suite stays green.
+// So does "9 entries are rated HIGH." with U+FF19 FULLWIDTH DIGIT NINE in
+// place of the ASCII 9, because JS \d without the /u flag is ASCII-only.
+// Both are recorded here rather than patched, and for a measured reason
+// rather than squeamishness: closing the word case means banning English
+// number words in this section, and this section's own current, entirely
+// TRUE sentence ends "... says what would settle each one." A rule that
+// rejects the live README on the word "one" is not a candidate. A rule
+// banning "two".."twenty" but sparing "one" is the "no numbers, except ..."
+// shape this whole design was chosen to avoid, and it buys back only the
+// spellings a maintainer is least likely to reach for. The residual exposure
+// is narrow because of where the counts now live: a wrong count has to be
+// deliberately written out in words, which no ordinary edit does now that
+// the figures sit in a table and a table cell takes digits. If you do close
+// this, write down the true sentence your rule newly rejects BEFORE you add
+// it -- that discipline is what this guard family's history (T-016 through
+// T-032) is a record of.
+//
+// One more scope note, shared with every section-scoped guard in this file
+// rather than special to C7: getAttributionSection stops at the next
+// top-level "## " heading, so a claim moved below a NEW heading is outside
+// this section and outside these guards by construction. That is the
+// intended meaning of "in the Attribution section", not a leak -- but it is
+// also the cheapest way to move a number out from under C7, so a review
+// that sees a new "## " heading appear next to this one should ask what
+// went under it.
+// ---------------------------------------------------------------------------
+
+// The complete set of row labels the guards in this file check, and
+// therefore -- by the invariant above -- the only labels the counts table
+// is permitted to carry. This is a set of label strings, not a count, so
+// writing it down here is not a "derive, never hardcode" violation: no
+// number in the README is ever compared against a literal in this file.
+const RECOGNISED_ATTRIBUTION_COUNT_LABELS = ['Entries ranked', 'Rated HIGH risk'];
+
+// Helper: locate the Attribution section's counts table structurally -- by
+// its header row (`| Attribution triage | Count |`) plus the `|---|---|`
+// separator row immediately below it, the same two-anchor rule
+// extractBandTablesFromReadme above uses for the Tag vocabulary section's
+// `| Tag | Count |` tables. Returns { rows, headerIdx, tableEnd,
+// headerCount } where `rows` is a Map from each data row's label cell
+// (e.g. "Entries ranked") to the ARRAY of RAW (unparsed) value cell texts
+// found under that label, in document order; `headerIdx` is the header row's
+// line index and `tableEnd` is one past the last data row's line index --
+// both kept so callers (see attributionTextOutsideTable below) can excise
+// exactly the table's own lines and nothing else.
+//
+// `headerCount` is how many header rows the section contains, reported
+// rather than resolved. Taking the first and ignoring the rest would be the
+// same document-order-dependent verdict as the duplicated-label defect, one
+// level up: a second counts table would be read by nothing, and would leak
+// entirely if its cells held no digits for C7 to catch (measured: a second
+// table with `| Rated HIGH risk | nine |` passed). The section is specified
+// to hold exactly one counts table, so more than one is a loud failure --
+// see assertAttributionCountsTableWellFormed.
+//
+// An array per label, not a value per label, is the point rather than
+// bookkeeping: keeping one value would mean choosing between the first and
+// the last occurrence of a duplicated label, and that choice is what made
+// a self-contradicting table pass in one row order and fail in the other
+// (see the duplicated-label rule in the comment block above). With every
+// occurrence retained, no caller can accidentally read a single number out
+// of a label that carries two, and the duplicate is a loud failure instead
+// of a coin toss.
+//
+// Values are left unparsed here on purpose: a value that fails to parse as
+// an integer is still a real row, and it is the CALLER's job
+// (readAttributionCount below) to name that row and its bad value in a loud
+// assertion, not this locator's job to quietly drop it.
+//
+// Returns null -- never an empty Map -- if the header row or the separator
+// row cannot be found, so a caller can distinguish "the table is missing or
+// malformed" from "the table exists and is (implausibly) empty" and fail
+// loud on the former rather than reading a clean pass out of nothing.
+function parseAttributionCountsTable(sectionText) {
+  const lines = sectionText.split('\n');
+  const headerRowPattern = /^\|\s*Attribution triage\s*\|\s*Count\s*\|\s*$/;
+  const rowPattern = /^\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*$/;
+
+  const headerIndices = lines.reduce(
+    (acc, line, idx) => (headerRowPattern.test(line.trim()) ? acc.concat(idx) : acc),
+    []
   );
-  const bindings = [];
+  if (headerIndices.length === 0) return null;
+  const headerIdx = headerIndices[0];
 
-  for (const clause of clauses) {
-    globalMarker.lastIndex = 0;
-    let match;
-    while ((match = globalMarker.exec(clause)) !== null) {
-      const before = clause.slice(0, match.index);
-      const digitMatches = before.match(/\d+/g);
-      if (digitMatches && digitMatches.length > 0) {
-        bindings.push({
-          value: parseInt(digitMatches[digitMatches.length - 1], 10),
-          context: clause.trim().replace(/\s+/g, ' '),
-        });
-      }
-      // Defensive only: markerPattern here is always \b-anchored, so
-      // matches are never zero-width, but guard against an infinite loop
-      // regardless.
-      if (globalMarker.lastIndex === match.index) globalMarker.lastIndex++;
-    }
+  const separatorLine = lines[headerIdx + 1];
+  if (!separatorLine || !/^\|[-\s|]+\|$/.test(separatorLine.trim())) return null;
+
+  const rows = new Map();
+  let end = headerIdx + 2;
+  while (end < lines.length) {
+    const trimmed = lines[end].trim();
+    const rowMatch = trimmed.match(rowPattern);
+    if (!rowMatch) break;
+    const [, label, value] = rowMatch;
+    if (!rows.has(label)) rows.set(label, []);
+    rows.get(label).push(value);
+    end++;
   }
+  if (rows.size === 0) return null;
 
-  return bindings;
+  return { rows, headerIdx, tableEnd: end, headerCount: headerIndices.length };
 }
 
-// Helper: turn a set of bindings (from collectMarkerBindings) and the
-// independently-derived true value into an assertion message that NAMES the
-// wrong number(s), rather than just reporting "mismatch". Handles both
-// shapes a reader can hit:
-//   - one binding is right, another is wrong -- names the wrong one(s) and
-//     says they contradict the true value.
-//   - EVERY binding is wrong (including the case where two bindings
-//     disagree with each other and neither happens to equal the truth) --
-//     says plainly that none of the stated figures match, and lists all of
-//     them, so a reader is not told "matches nothing" without being told
-//     what the nothing was.
-function formatBindingMismatch(bindings, truth, subjectLabel) {
-  const wrongBindings = bindings.filter((b) => b.value !== truth);
-  const correctCount = bindings.length - wrongBindings.length;
-  const wrongList = wrongBindings
-    .map((b) => b.value + ' (in "...' + b.context + '...")')
-    .join(', and also as ');
-
-  if (correctCount > 0) {
-    return (
-      'README Attribution section states ' + subjectLabel + ' as ' + truth +
-      ' in one place, but ALSO states it as ' + wrongList + ' elsewhere -- these contradict ' +
-      'each other; the true value is ' + truth
-    );
-  }
-  return (
-    'README Attribution section states ' + subjectLabel + ' as ' + wrongList +
-    ' -- NONE of these match the true value: ' + subjectLabel + ' is ' + truth
+// Helper: assert the two whole-table rules described in the comment block
+// above -- no duplicated row label, and no row label outside
+// RECOGNISED_ATTRIBUTION_COUNT_LABELS -- plus the table's existence. Every
+// guard that touches this table calls this FIRST, before reading any
+// individual row, because both rules are about the table as a whole: a
+// guard that only ever asked for its own label would never see a duplicated
+// or unread row at all, which is precisely how both of these were silent.
+//
+// Duplicates are reported before unrecognised labels only so that a
+// duplicated unrecognised label reads as the more specific of the two
+// problems; neither ordering can let a table through.
+function assertAttributionCountsTableWellFormed(table) {
+  assert(
+    table !== null,
+    'could not find the "| Attribution triage | Count |" table in the README Attribution section -- ' +
+      'this claim must fail loud, not pass silently, when it cannot be parsed'
   );
+
+  assert(
+    table.headerCount === 1,
+    'the README Attribution section contains ' + table.headerCount +
+      ' "| Attribution triage | Count |" header rows -- there must be exactly one counts table. Only the ' +
+      'first would be read, so every row of the others would be verified by nothing; delete the extra table.'
+  );
+
+  const duplicated = Array.from(table.rows.entries()).filter(([, values]) => values.length > 1);
+  assert(
+    duplicated.length === 0,
+    'the README Attribution counts table states the same row label more than once: ' +
+      duplicated
+        .map(
+          ([label, values]) =>
+            '"' + label + '" appears ' + values.length + ' times, with values ' +
+            values.map((v) => '"' + v + '"').join(' then ')
+        )
+        .join('; ') +
+      ' -- a table that states one figure twice, differently, is broken whichever value happens to be ' +
+      'correct, and no reading order may be allowed to decide it. Delete the wrong row.'
+  );
+
+  const unrecognised = Array.from(table.rows.keys()).filter(
+    (label) => !RECOGNISED_ATTRIBUTION_COUNT_LABELS.includes(label)
+  );
+  assert(
+    unrecognised.length === 0,
+    'the README Attribution counts table has row label(s) that no guard in this file checks: ' +
+      unrecognised.map((label) => '"' + label + '"').join(', ') +
+      ' -- the recognised labels are ' +
+      RECOGNISED_ATTRIBUTION_COUNT_LABELS.map((label) => '"' + label + '"').join(', ') +
+      '. Every number in this section must be either a table row a guard verifies or a loud failure, ' +
+      'and a row under an unread label is neither: C7 excises the table from its digit scan, so nothing ' +
+      'would check it. If this is a genuinely new count, that is fine but it takes a test change -- add ' +
+      'the label to RECOGNISED_ATTRIBUTION_COUNT_LABELS in test/readme-tags.test.js and write the guard ' +
+      'that derives its true value at test time. If it is not a new count, rename the row to a recognised ' +
+      'label or delete it.'
+  );
+}
+
+// Helper: fetch one labelled row's value out of a parseAttributionCountsTable
+// result as an integer, asserting loudly at every point this can fail --
+// table missing entirely, row missing from the table, the label carrying
+// more than one row, or the row's cell not being a bare integer -- so a
+// caller can go straight to comparing numbers without re-deriving any of
+// these checks itself. The table-missing and duplicate-label assertions
+// duplicate assertAttributionCountsTableWellFormed on purpose: this helper
+// must be safe to call on its own, so that a guard added later which forgets
+// the well-formedness call still cannot read a single number out of a
+// contradictory or absent table.
+function readAttributionCount(table, label) {
+  assert(
+    table !== null,
+    'could not find the "| Attribution triage | Count |" table in the README Attribution section -- ' +
+      'this claim must fail loud, not pass silently, when it cannot be parsed'
+  );
+  assert(
+    table.rows.has(label),
+    'the Attribution counts table has no "' + label + '" row -- rows found: ' +
+      Array.from(table.rows.keys()).map((k) => '"' + k + '"').join(', ')
+  );
+  const values = table.rows.get(label);
+  assert(
+    values.length === 1,
+    'the Attribution counts table has ' + values.length + ' rows labelled "' + label + '", with values ' +
+      values.map((v) => '"' + v + '"').join(' then ') +
+      ' -- this figure must be stated exactly once; delete the wrong row rather than letting row order pick one'
+  );
+  const raw = values[0];
+  assert(
+    /^\d+$/.test(raw),
+    'the Attribution counts table\'s "' + label + '" row has value "' + raw + '", which is not a plain integer'
+  );
+  return parseInt(raw, 10);
+}
+
+// Helper: the Attribution section's text with the counts table's own lines
+// (header, separator, every data row parseAttributionCountsTable walked)
+// removed, and markdown link targets neutralised -- see the C7 discussion
+// in the comment block above for what remains and why link targets are the
+// ONLY exclusion. Fenced code blocks are deliberately NOT stripped: a false
+// count inside a fence is still a false count in the README, and the loud
+// false rejection that scanning them costs (a true snippet carrying a
+// digit) is the trade this repo's precedent prefers.
+//
+// `table` must be a non-null parseAttributionCountsTable result; C7 (the
+// only caller) asserts that itself before calling this.
+function attributionTextOutsideTable(sectionText, table) {
+  const lines = sectionText.split('\n');
+  const withoutTable = lines.filter((_, idx) => idx < table.headerIdx || idx >= table.tableEnd);
+  const prose = withoutTable.join('\n');
+  return prose.replace(/\]\([^)]*\)/g, ']()'); // markdown link targets
 }
 
 // Helper: parse the triage doc's "| # | Aphorism | Author | Risk | Signal |
@@ -1144,39 +1351,19 @@ function extractLayoutPaths(layoutSection) {
   return paths;
 }
 
-test('README Attribution section corpus-size claim must match corpus.length (C1)', () => {
+test('README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1)', () => {
   const readmePath = path.join(__dirname, '..', 'README.md');
   const readmeContent = fs.readFileSync(readmePath, 'utf8');
   const attributionSection = getAttributionSection(readmeContent);
+  const table = parseAttributionCountsTable(attributionSection);
+  assertAttributionCountsTableWellFormed(table);
 
-  const bindings = collectMarkerBindings(attributionSection, /\bentries\b/);
-  assert(
-    bindings.length > 0,
-    'could not find a "<N> entries" claim in the Attribution section -- ' +
-      'this claim must fail loud, not pass silently, when it cannot be parsed'
-  );
+  const statedEntries = readAttributionCount(table, 'Entries ranked');
 
-  // ALL occurrences of the claim must agree with corpus.length -- not just
-  // whichever one appears first or last in the section (see
-  // collectMarkerBindings above for why picking a position is disqualified).
-  const wrongBindings = bindings.filter((b) => b.value !== corpus.length);
   assert.equal(
-    wrongBindings.length,
-    0,
-    formatBindingMismatch(bindings, corpus.length, 'the corpus-size ("entries") claim')
-  );
-});
-
-test('README Attribution section HIGH-risk count must match the triage doc table (C2)', () => {
-  const readmePath = path.join(__dirname, '..', 'README.md');
-  const readmeContent = fs.readFileSync(readmePath, 'utf8');
-  const attributionSection = getAttributionSection(readmeContent);
-
-  const bindings = collectMarkerBindings(attributionSection, /\bHIGH\b/);
-  assert(
-    bindings.length > 0,
-    'could not find a "<N> are rated HIGH" claim in the Attribution section -- ' +
-      'this claim must fail loud, not pass silently, when it cannot be parsed'
+    statedEntries,
+    corpus.length,
+    'Attribution table "Entries ranked" row says ' + statedEntries + ' but corpus.length is ' + corpus.length
   );
 
   const triagePath = path.join(__dirname, '..', 'docs', 'corpus-attribution-triage.md');
@@ -1187,18 +1374,73 @@ test('README Attribution section HIGH-risk count must match the triage doc table
     'could not parse any rows out of the docs/corpus-attribution-triage.md Risk table -- ' +
       'the table shape may have changed; this claim must fail loud, not pass silently, when it cannot be parsed'
   );
-  const actualHigh = riskRows.filter(risk => risk === 'HIGH').length;
 
-  // ALL occurrences of the claim must agree with the triage doc's actual
-  // HIGH count -- not just whichever one appears first or last in the
-  // section (see collectMarkerBindings above for why picking a position is
-  // disqualified).
-  const wrongBindings = bindings.filter((b) => b.value !== actualHigh);
   assert.equal(
-    wrongBindings.length,
-    0,
-    formatBindingMismatch(bindings, actualHigh, 'the HIGH-risk count claim')
+    statedEntries,
+    riskRows.length,
+    'Attribution table "Entries ranked" row says ' + statedEntries + ' but docs/corpus-attribution-triage.md has ' +
+      riskRows.length + ' data rows'
   );
+});
+
+test('README Attribution table "Rated HIGH risk" count must match the triage doc table (C2)', () => {
+  const readmePath = path.join(__dirname, '..', 'README.md');
+  const readmeContent = fs.readFileSync(readmePath, 'utf8');
+  const attributionSection = getAttributionSection(readmeContent);
+  const table = parseAttributionCountsTable(attributionSection);
+  assertAttributionCountsTableWellFormed(table);
+
+  const statedHigh = readAttributionCount(table, 'Rated HIGH risk');
+
+  const triagePath = path.join(__dirname, '..', 'docs', 'corpus-attribution-triage.md');
+  const triageContent = fs.readFileSync(triagePath, 'utf8');
+  const riskRows = parseTriageRiskRows(triageContent);
+  assert(
+    riskRows.length > 0,
+    'could not parse any rows out of the docs/corpus-attribution-triage.md Risk table -- ' +
+      'the table shape may have changed; this claim must fail loud, not pass silently, when it cannot be parsed'
+  );
+  const actualHigh = riskRows.filter((risk) => risk === 'HIGH').length;
+
+  assert.equal(
+    statedHigh,
+    actualHigh,
+    'Attribution table "Rated HIGH risk" row says ' + statedHigh + ' but docs/corpus-attribution-triage.md has ' +
+      actualHigh + ' HIGH rows'
+  );
+});
+
+// C7 -- see the comment block above parseAttributionCountsTable for why this
+// guard exists: it is what makes deleting the old prose reader safe rather
+// than a silent regression. C1/C2 only ever look inside the counts table;
+// without this, a number left (or reintroduced) anywhere else in the section
+// -- including inside a fenced code block, which is where a false count was
+// measured hiding when fences were excluded -- would be unchecked by
+// anything in this file.
+test('README Attribution section must contain no digit runs outside the counts table (C7)', () => {
+  const readmePath = path.join(__dirname, '..', 'README.md');
+  const readmeContent = fs.readFileSync(readmePath, 'utf8');
+  const attributionSection = getAttributionSection(readmeContent);
+  const table = parseAttributionCountsTable(attributionSection);
+  assertAttributionCountsTableWellFormed(table);
+
+  const outsideTable = attributionTextOutsideTable(attributionSection, table);
+  const digitMatch = outsideTable.match(/\d+/);
+
+  let message = '';
+  if (digitMatch) {
+    const contextStart = Math.max(0, digitMatch.index - 30);
+    const contextEnd = digitMatch.index + digitMatch[0].length + 30;
+    const context = outsideTable.slice(contextStart, contextEnd).trim().replace(/\s+/g, ' ');
+    message =
+      'README Attribution section contains the number "' + digitMatch[0] +
+      '" outside the counts table (near "...' + context + '..."). Every number in this section ' +
+      'belongs in the Attribution triage table, where a guard verifies it -- prose, headings and ' +
+      'fenced code blocks are all scanned, deliberately, because a false count inside a fence is ' +
+      'still a false count. Move the number into the table (adding a guard for it if it is a new ' +
+      'count) rather than deleting this guard.';
+  }
+  assert(digitMatch === null, message);
 });
 
 test('README Layout section paths must exist on disk (C6)', () => {

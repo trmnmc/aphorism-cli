@@ -1,0 +1,58 @@
+=== (a) are the two remaining holes REGRESSIONS or PRE-EXISTING? ===
+Both cells state a FALSE count (the true HIGH count is 8). RED is the correct
+verdict. If HEAD is also GREEN, the hole predates this change and is not a
+regression — it is a boundary this change failed to close, which is a different
+and much smaller claim.
+
+N6 English number word : "Nine of those entries are rated HIGH."
+    HEAD=GREEN (hole)   FIX=GREEN (hole)
+N7 fullwidth digit U+FF19: "９ entries are rated HIGH."
+    HEAD=GREEN (hole)   FIX=GREEN (hole)
+
+=== (b) test_cmd on the REAL working tree ===
+ℹ tests 92
+ℹ pass 92
+ℹ fail 0
+ℹ duration_ms 3941.276797
+
+=== (c) derive-never-hardcode: digit literals in the new Attribution guard code ===
+bare numeric literals found in code positions — each judged below:
+  [0]  if (headerIndices.length === 0) return null;
+  [0]  const headerIdx = headerIndices[0];
+  [1]  const separatorLine = lines[headerIdx + 1];
+  [2]  let end = headerIdx + 2;
+  [0]  if (rows.size === 0) return null;
+  [1]  table.headerCount === 1,
+  [1]  const duplicated = Array.from(table.rows.entries()).filter(([, values]) => values.length > 1);
+  [0]  duplicated.length === 0,
+  [0]  unrecognised.length === 0,
+  [1]  values.length === 1,
+  [0]  const raw = values[0];
+  [10]  return parseInt(raw, 10);
+  [0]  riskRows.length > 0,
+  [0]  riskRows.length > 0,
+  [0,30]  const contextStart = Math.max(0, digitMatch.index - 30);
+  [0,30]  const contextEnd = digitMatch.index + digitMatch[0].length + 30;
+  [0]  'README Attribution section contains the number "' + digitMatch[0] +
+  [0]  layoutPaths.length > 0,
+  [9,9]  const hasListToken = /(^|[^A-Za-z0-9-])--list(?![A-Za-z0-9-])/.test(normalized);
+  [1]  if (headingNamesListBehaviourSection(match[1])) {
+  [0]  candidates.push({ index: match.index, headingLine: match[0].trim() });
+  [0]  candidates.length > 0,
+  [1]  1,
+  [0]  const start = candidates[0].index;
+  [1]  const nextH3 = readmeContent.indexOf('\n### ', start + 1);
+  [1]  const nextH2 = readmeContent.indexOf('\n## ', start + 1);
+  [1]  const boundaries = [nextH3, nextH2].filter((i) => i > -1);
+  [0]  const end = boundaries.length > 0 ? Math.min(...boundaries) : readmeContent.length;
+  [1]  return literalMatch[1];
+  [021]  test('getListBehaviourSection still fails on a SEPARATOR MISMATCH (not a heading-parse error) when a reformatt
+  [017]  test('README `--list` format literal matches the shipped binary\'s actual --list output (T-017)', () => {
+  [0]  for (let i = 0; i < expectedLines.length; i++) {
+  [1]  'line ' + (i + 1) + ' of `node bin/aphorism.js --list` does not match the README\'s `--list` format ' +
+
+the three truths these guards compare against, and where each comes from:
+  corpus.length       L1354 L1365 L1366
+  riskRows.length     L1373 L1380 L1382 L1399
+  risk === 'HIGH'     L1327 L1403
+  parseTriageRiskRows(L1317 L1371 L1397

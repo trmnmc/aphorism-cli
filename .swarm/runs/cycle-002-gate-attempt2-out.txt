@@ -1,0 +1,119 @@
+=== cycle 2 RE-GATE — J-2 Attribution half, attempt 2 ===
+HEAD arm : b335fa9   FIX arm : working tree
+
+FULL SUITE HEAD  tests=91 pass=91 fail=0
+FULL SUITE FIX   tests=92 pass=92 fail=0
+
+BLOCK 1 — the attempt-1 gate cells, re-run unchanged
+cell                                      want  HEAD          FIX           
+T0 pristine (control)                     GREEN GREEN ok      GREEN ok      
+T1 verb reworded, all claims true         GREEN GREEN ok      GREEN ok      
+T2 true no-digit sentence added           GREEN GREEN ok      GREEN ok      
+T3 counts in prose, subject-first, TRUE   GREEN RED WRONG     RED WRONG     
+T4 true comparative on HIGH               GREEN RED WRONG     RED WRONG     
+T5 true comparative on entries            GREEN RED WRONG     RED WRONG     
+T6 counts absent from prose entirely      GREEN RED WRONG     GREEN ok      
+T7 TRUE digit inside a fenced block       GREEN GREEN ok      RED WRONG     
+F1 HIGH count wrong (8 -> 9)              RED   RED ok        RED ok        
+F2 entries count wrong (50 -> 51)         RED   RED ok        RED ok        
+F3 FALSE claim across an em dash (KI-10)  RED   GREEN WRONG   RED ok        
+F4 FALSE count in prose, table correct    RED   n/a           RED ok        
+F5 FALSE count inside a fenced block      RED   RED ok        RED ok        
+F6 duplicate table row, WRONG first       RED   n/a           RED ok        
+F7 duplicate table row, WRONG second      RED   n/a           RED ok        
+F8 extra table row, FALSE, unread label   RED   n/a           RED ok        
+L1 counts table deleted outright          RED   n/a           RED ok        
+L2 "Entries ranked" row relabelled        RED   n/a           RED ok        
+L3 count cell is not an integer           RED   n/a           RED ok        
+L4 separator row removed                  RED   n/a           RED ok        
+
+SCORE HEAD 7/12  (verdict matches whether the README is actually TRUE)
+SCORE FIX  16/20  (verdict matches whether the README is actually TRUE)
+
+BLOCK 2 — NEW cells, authored after attempt 2 returned (FIX arm only)
+cell                                      want  FIX           
+N1  three copies of one label, all wrong  RED   RED ok        
+N2  duplicate label, SAME value both timesRED   RED ok        
+N3  label case changed to lower case      RED   RED ok        
+N4  label padded with extra spaces, TRUE  GREEN GREEN ok      
+N5  FALSE count in the section HEADING    RED   RED ok        
+N6  FALSE count as an English number WORD RED   GREEN WRONG   
+N7  FALSE count in FULLWIDTH digits (U+FF19)RED   GREEN WRONG   
+N8  a SECOND counts table, FALSE row      RED   RED ok        
+N9  FALSE count inside a TILDE fence      RED   RED ok        
+N10 FALSE count inside an HTML comment    RED   RED ok        
+N11 FALSE count in markdown LINK TEXT     RED   RED ok        
+N12 digit in the LINK TARGET only, TRUE   GREEN GREEN ok      
+N13 FALSE count in an indented code block RED   RED ok        
+N14 both rows deleted, table header kept  RED   RED ok        
+N15 recognised label, value 0             RED   RED ok        
+
+SCORE FIX  13/15  (verdict matches whether the README is actually TRUE)
+
+LIKE-FOR-LIKE (only the 12 block-1 cells expressible on BOTH arms):  HEAD 7/12   FIX 8/12
+
+SILENT HOLES (a FALSE README accepted GREEN — the direction this run exists to remove):
+  HEAD, block 1      : F3 FALSE claim across an em dash (KI-10)
+  FIX,  block 1      : none
+  FIX,  block 2      : N6  FALSE count as an English number WORD | N7  FALSE count in FULLWIDTH digits (U+FF19)
+
+FALSE REJECTIONS (a TRUE README rejected RED — loud, and each must have a named remedy):
+  HEAD, block 1      : T3 counts in prose, subject-first, TRUE | T4 true comparative on HIGH | T5 true comparative on entries | T6 counts absent from prose entirely
+  FIX,  block 1      : T3 counts in prose, subject-first, TRUE | T4 true comparative on HIGH | T5 true comparative on entries | T7 TRUE digit inside a fenced block
+  FIX,  block 2      : none
+
+=== assertion messages on the FIX arm (a guard must NAME the problem and the remedy) ===
+--- T3 counts in prose, subject-first, TRUE   [README Attribution section must contain no digit runs outside the counts table (C7)]
+    README Attribution section contains the number "8" outside the counts table (near "...t list has been resolved yet. 8 of the 50 entries are rated H..."). Every number in this section belongs in the Attribution triage table, where a guard verifies it -- prose, 
+--- T4 true comparative on HIGH   [README Attribution section must contain no digit runs outside the counts table (C7)]
+    README Attribution section contains the number "9" outside the counts table (near "...been resolved yet. Fewer than 9 are rated HIGH...."). Every number in this section belongs in the Attribution triage table, where a guard verifies it -- prose, headings and f
+--- T5 true comparative on entries   [README Attribution section must contain no digit runs outside the counts table (C7)]
+    README Attribution section contains the number "51" outside the counts table (near "...been resolved yet. Fewer than 51 entries are listed...."). Every number in this section belongs in the Attribution triage table, where a guard verifies it -- prose, headings
+--- T7 TRUE digit inside a fenced block   [README Attribution section must contain no digit runs outside the counts table (C7)]
+    README Attribution section contains the number "8" outside the counts table (near "...pus-attribution-triage.md # 8 ```..."). Every number in this section belongs in the Attribution triage table, where a guard verifies it -- prose, headings and fenced code blo
+--- F1 HIGH count wrong (8 -> 9)   [README Attribution table "Rated HIGH risk" count must match the triage doc table (C2)]
+    Attribution table "Rated HIGH risk" row says 9 but docs/corpus-attribution-triage.md has 8 HIGH rows
+--- F2 entries count wrong (50 -> 51)   [README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1)]
+    Attribution table "Entries ranked" row says 51 but corpus.length is 50
+--- F3 FALSE claim across an em dash (KI-10)   [README Attribution section must contain no digit runs outside the counts table (C7)]
+    README Attribution section contains the number "9" outside the counts table (near "...t. A later audit note records 9 — HIGH entries — in total...."). Every number in this section belongs in the Attribution triage table, where a guard verifies it -- prose, hea
+--- F4 FALSE count in prose, table correct   [README Attribution section must contain no digit runs outside the counts table (C7)]
+    README Attribution section contains the number "51" outside the counts table (near "...yet. The triage doc ranks all 51 entries...."). Every number in this section belongs in the Attribution triage table, where a guard verifies it -- prose, headings and fenced
+--- F5 FALSE count inside a fenced block   [README Attribution section must contain no digit runs outside the counts table (C7)]
+    README Attribution section contains the number "9" outside the counts table (near "...has been resolved yet. ``` 9 entries are rated HIGH. ```..."). Every number in this section belongs in the Attribution triage table, where a guard verifies it -- prose, headi
+--- F6 duplicate table row, WRONG first   [README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1); README Attribution table "Rated HIGH risk" count must match the triage doc table (C2); README Attribution section must contain no digit runs outside the counts table (C7)]
+    the README Attribution counts table states the same row label more than once: "Rated HIGH risk" appears 2 times, with values "9" then "8" -- a table that states one figure twice, differently, is broken whichever value happens to be correct, and no reading orde
+--- F7 duplicate table row, WRONG second   [README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1); README Attribution table "Rated HIGH risk" count must match the triage doc table (C2); README Attribution section must contain no digit runs outside the counts table (C7)]
+    the README Attribution counts table states the same row label more than once: "Rated HIGH risk" appears 2 times, with values "8" then "9" -- a table that states one figure twice, differently, is broken whichever value happens to be correct, and no reading orde
+--- F8 extra table row, FALSE, unread label   [README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1); README Attribution table "Rated HIGH risk" count must match the triage doc table (C2); README Attribution section must contain no digit runs outside the counts table (C7)]
+    the README Attribution counts table has row label(s) that no guard in this file checks: "HIGH rows in the doc" -- the recognised labels are "Entries ranked", "Rated HIGH risk". Every number in this section must be either a table row a guard verifies or a loud 
+--- L1 counts table deleted outright   [README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1); README Attribution table "Rated HIGH risk" count must match the triage doc table (C2); README Attribution section must contain no digit runs outside the counts table (C7)]
+    could not find the "| Attribution triage | Count |" table in the README Attribution section -- this claim must fail loud, not pass silently, when it cannot be parsed
+--- L2 "Entries ranked" row relabelled   [README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1); README Attribution table "Rated HIGH risk" count must match the triage doc table (C2); README Attribution section must contain no digit runs outside the counts table (C7)]
+    the README Attribution counts table has row label(s) that no guard in this file checks: "Entries catalogued" -- the recognised labels are "Entries ranked", "Rated HIGH risk". Every number in this section must be either a table row a guard verifies or a loud fa
+--- L3 count cell is not an integer   [README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1)]
+    the Attribution counts table
+--- L4 separator row removed   [README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1); README Attribution table "Rated HIGH risk" count must match the triage doc table (C2); README Attribution section must contain no digit runs outside the counts table (C7)]
+    could not find the "| Attribution triage | Count |" table in the README Attribution section -- this claim must fail loud, not pass silently, when it cannot be parsed
+--- N1  three copies of one label, all wrong   [README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1); README Attribution table "Rated HIGH risk" count must match the triage doc table (C2); README Attribution section must contain no digit runs outside the counts table (C7)]
+    the README Attribution counts table states the same row label more than once: "Rated HIGH risk" appears 3 times, with values "9" then "7" then "6" -- a table that states one figure twice, differently, is broken whichever value happens to be correct, and no rea
+--- N2  duplicate label, SAME value both times   [README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1); README Attribution table "Rated HIGH risk" count must match the triage doc table (C2); README Attribution section must contain no digit runs outside the counts table (C7)]
+    the README Attribution counts table states the same row label more than once: "Rated HIGH risk" appears 2 times, with values "8" then "8" -- a table that states one figure twice, differently, is broken whichever value happens to be correct, and no reading orde
+--- N3  label case changed to lower case   [README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1); README Attribution table "Rated HIGH risk" count must match the triage doc table (C2); README Attribution section must contain no digit runs outside the counts table (C7)]
+    the README Attribution counts table has row label(s) that no guard in this file checks: "entries ranked" -- the recognised labels are "Entries ranked", "Rated HIGH risk". Every number in this section must be either a table row a guard verifies or a loud failur
+--- N5  FALSE count in the section HEADING   [README Attribution section must contain no digit runs outside the counts table (C7)]
+    README Attribution section contains the number "9" outside the counts table (near "...## Attribution of 9 HIGH-risk entries The author..."). Every number in this section belongs in the Attribution triage table, where a guard verifies it -- prose, headings and 
+--- N8  a SECOND counts table, FALSE row   [README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1); README Attribution table "Rated HIGH risk" count must match the triage doc table (C2); README Attribution section must contain no digit runs outside the counts table (C7)]
+    the README Attribution section contains 2 "| Attribution triage | Count |" header rows -- there must be exactly one counts table. Only the first would be read, so every row of the others would be verified by nothing; delete the extra table.
+--- N9  FALSE count inside a TILDE fence   [README Attribution section must contain no digit runs outside the counts table (C7)]
+    README Attribution section contains the number "9" outside the counts table (near "...has been resolved yet. ~~~ 9 entries are rated HIGH. ~~~..."). Every number in this section belongs in the Attribution triage table, where a guard verifies it -- prose, headi
+--- N10 FALSE count inside an HTML comment   [README Attribution section must contain no digit runs outside the counts table (C7)]
+    README Attribution section contains the number "9" outside the counts table (near "...en resolved yet. <!-- note: 9 entries are rated HIGH -->..."). Every number in this section belongs in the Attribution triage table, where a guard verifies it -- prose, headi
+--- N11 FALSE count in markdown LINK TEXT   [README Attribution section must contain no digit runs outside the counts table (C7)]
+    README Attribution section contains the number "9" outside the counts table (near "...t has been resolved yet. See [9 HIGH entries]()...."). Every number in this section belongs in the Attribution triage table, where a guard verifies it -- prose, headings and 
+--- N13 FALSE count in an indented code block   [README Attribution section must contain no digit runs outside the counts table (C7)]
+    README Attribution section contains the number "9" outside the counts table (near "...has been resolved yet. 9 entries are rated HIGH...."). Every number in this section belongs in the Attribution triage table, where a guard verifies it -- prose, headings and 
+--- N14 both rows deleted, table header kept   [README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1); README Attribution table "Rated HIGH risk" count must match the triage doc table (C2); README Attribution section must contain no digit runs outside the counts table (C7)]
+    could not find the "| Attribution triage | Count |" table in the README Attribution section -- this claim must fail loud, not pass silently, when it cannot be parsed
+--- N15 recognised label, value 0   [README Attribution table "Rated HIGH risk" count must match the triage doc table (C2)]
+    Attribution table "Rated HIGH risk" row says 0 but docs/corpus-attribution-triage.md has 8 HIGH rows
