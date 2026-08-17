@@ -593,7 +593,10 @@ named as not-run below rather than rendered as passed.
    rows before this goes anywhere public. Note the triage's own honest caveat — it rests on
    recall, not sources, and the conductor's independent pass **disagreed with it on four
    entries** (#38 Wheeler, #39 Hopper, #45 Stroustrup, #48 Kay). That two independent passes
-   disagree about a primary source is itself the finding.
+   disagree about a primary source is itself the finding. _(This four-entry tally is a
+   different comparison from the "four notes" in the triage document's own Conductor
+   addendum, which cover #45, #25, #6, and #4/#8/#9 — the two lists overlap only on #45; see
+   that addendum for the separate count.)_
 2. **Decide the README-guard question (KI-9 / KI-10 / KI-12).** Give the README's counts
    real structure so the guards stop parsing English. One decision retires six open items.
    The alternative — another narrowing — has been measured twice and does not pay.

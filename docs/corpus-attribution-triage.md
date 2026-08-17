@@ -100,7 +100,9 @@ than by its author. The ranking above was produced independently of a risk list 
 reviewer had committed to disk beforehand; the two agreed on most of the top of the queue,
 and the four notes below are the places where they did NOT agree. They are recorded as
 disagreements between two unverified opinions, not as corrections — neither party had
-access to a single source.
+access to a single source. (These four notes — on #45, #25, #6, and #4/#8/#9 — are a
+separate tally from the "four entries" figure in REPORT.md's KI-2 item, which lists #38,
+#39, #45, and #48 from a different comparison; the two counts overlap only on #45.)
 
 1. **#45 (Stroustrup, "shoot yourself in the foot") — check this one first, and check the
    claim about it as well as the quote.** This row is different in kind from every other

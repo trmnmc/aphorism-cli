@@ -347,7 +347,7 @@
       "kind": "docs",
       "effort": "S",
       "model": "sonnet",
-      "status": "todo",
+      "status": "done",
       "priority": 8,
       "attempts": 0,
       "files_hint": [
@@ -355,7 +355,8 @@
         "docs/corpus-attribution-triage.md"
       ],
       "acceptance": "Either the two statements are disambiguated in place so a reader cannot read them as contradicting, or the item is retired with the argument that both are already clear in context. Neither statement may be made false in the process.",
-      "notes": "FILED BY THE CONDUCTOR AT CYCLE 5 from J-4 attempt 2's disclosed UNCERTAIN #5, and NOT charged against J-4. REPORT.md says the conductor's independent pass \"disagreed with it on four entries (#38, #39, #45, #48)\", backed by .swarm/runs/cycle-010-verify-I-4b.txt (\"HIGH entries the conductor did NOT pre-commit: {38,39,45,48}\"). The triage doc's own Conductor addendum separately describes \"four notes ... where they did NOT agree\", concerning #45, #25, #6 and #4/#8/#9 — a DIFFERENT four. Both statements are separately TRUE of different comparisons, so neither is a false claim and J-4's acceptance does not reach them. The builder declined to harmonise them on the ground that doing so means rewriting a run #1 finding rather than reconciling a count, and the conductor agrees with that call. Recorded so it is not silently lost. Likely a human ruling rather than a swarm task, in the T-040 / J-7 family."
+      "notes": "FILED BY THE CONDUCTOR AT CYCLE 5 from J-4 attempt 2's disclosed UNCERTAIN #5, and NOT charged against J-4. REPORT.md says the conductor's independent pass \"disagreed with it on four entries (#38, #39, #45, #48)\", backed by .swarm/runs/cycle-010-verify-I-4b.txt (\"HIGH entries the conductor did NOT pre-commit: {38,39,45,48}\"). The triage doc's own Conductor addendum separately describes \"four notes ... where they did NOT agree\", concerning #45, #25, #6 and #4/#8/#9 — a DIFFERENT four. Both statements are separately TRUE of different comparisons, so neither is a false claim and J-4's acceptance does not reach them. The builder declined to harmonise them on the ground that doing so means rewriting a run #1 finding rather than reconciling a count, and the conductor agrees with that call. Recorded so it is not silently lost. Likely a human ruling rather than a swarm task, in the T-040 / J-7 family.\n\n|| CLOSED AT CYCLE 7 by the DISAMBIGUATE route, not the retire route. Cycle 6's wakeup note asserted that T-006, T-040, J-7 and J-8 \"remain human rulings and no run can action them\"; that was correct for the first three and OVERSTATED for this one — J-8's own acceptance offers a swarm-actionable branch (\"disambiguated in place\"), and the notes' hedge was \"LIKELY a human ruling\", not a finding. Both statements now carry a cross-reference naming the OTHER comparison's membership and stating the true overlap (#45 only). Gate 14/14 with 4/4 live negative controls, .swarm/runs/cycle-007-verify-J-8.txt. The decisive cells were not the presence of the cross-references but their TRUTH: the addendum's four-note membership {4,6,8,9,25,45} was re-derived from the document itself rather than taken from the builder, and the overlap was computed rather than read. Neither original sentence lost a single word-token (multiset check, both files).",
+      "closed_cycle": 7
     },
     {
       "id": "J-9",

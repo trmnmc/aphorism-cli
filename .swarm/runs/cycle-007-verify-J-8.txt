@@ -1,0 +1,90 @@
+=== CYCLE 7 VERIFICATION EVIDENCE — J-8 ===
+run at: 2026-08-17T12:39:52.311Z
+
+--- J-8 gate (authored AFTER the builder returned; hard rule 2 / KI-8 remedy 2) ---
+=== J-8 GATE (authored after builder return) ===
+
+FAIL  S1  ONLY the two permitted files changed
+        changed=["EPORT.md","docs/corpus-attribution-triage.md"]
+PASS  S2  SWARM root carries no agent debris (hard rule 5)
+        swarm=""
+PASS  S3  scratch dir removed (KI-7 standing control)
+        checked .swarm/scratch-c007-j8
+PASS  A1  REPORT.md original sentence survives verbatim
+        whitespace-normalised substring
+PASS  A2  triage original sentence survives verbatim
+        whitespace-normalised substring
+PASS  A3  REPORT.md lost no word-token (purely additive)
+        lost=[]
+PASS  A4  triage lost no word-token (purely additive)
+        lost=[]
+PASS  F1  the addendum has exactly FOUR notes (its own "four notes" claim)
+        notes=4: 1,2,3,4
+PASS  F2  addendum set derived independently = {45,25,6,4,8,9}
+        derived=[4,6,8,9,25,45]
+PASS  F3  TRUE overlap of the two sets is exactly {45}
+        overlap=[45]
+PASS  F4  REPORT.md asserts the overlap, and the assertion is TRUE
+        asserted=true
+PASS  F5  triage asserts the overlap, and the assertion is TRUE
+        asserted=true
+PASS  F6  REPORT.md's cross-ref states the addendum's membership correctly
+        stated=[4,6,8,9,25,45]
+PASS  F7  triage's cross-ref states REPORT's membership correctly (38,39,45,48)
+        stated=[38,39,45,48]
+
+--- NEGATIVE CONTROLS (must be LIVE) ---
+LIVE  X1  CONTROL: overlap {38} would be REJECTED by the F3 rule
+LIVE  X2  CONTROL: A3 detects a deleted sentence when one exists
+LIVE  X3  CONTROL: F2 rejects a wrong addendum set
+
+SCORE 13/14; controls live 3/3
+
+--- DISCLOSED INSTRUMENT CORRECTION: cell S1 (my parser bug, not the builder) ---
+raw porcelain lines (quoted to show leading columns):
+  " M REPORT.md"
+  " M docs/corpus-attribution-triage.md"
+parsed paths: ["REPORT.md","docs/corpus-attribution-triage.md"]
+PASS  S1(corrected)  ONLY the two permitted files changed
+LIVE  X4  CONTROL: the corrected rule rejects an out-of-scope path (src/corpus.js)
+
+--- FULL test_cmd, run by the conductor ---
+✔ pick: single-element candidates always returns that element regardless of seed (0.18674ms)
+ℹ tests 102
+ℹ suites 0
+ℹ pass 102
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4832.373545
+
+--- vintaged-claim gate (KI-23 / docs-must-have re-derivation) ---
+=== VINTAGED-CLAIM GATE: REPORT.md derivation table vs its own commit dbc1939 ===
+
+PASS  A1  test/args.test.js lines @ref
+        claimed=217  measured=217
+PASS  A2  test/cli.test.js lines @ref
+        claimed=541  measured=541
+PASS  A3  test/readme-tags.test.js lines @ref
+        claimed=1978  measured=1978
+PASS  A4  test/select.test.js lines @ref
+        claimed=298  measured=298
+PASS  A5  Test lines TOTAL @ref (row 789)
+        claimed=3034  measured=3034
+PASS  A6  README-guard share numerator @ref (row 790)
+        claimed=1978  measured=1978
+PASS  B1  Shipped source lines @ref (row 788)
+        claimed=549  measured=549
+PASS  C1  Suite tests @ref (row 787 says 101)
+        claimed=101  measured=101
+PASS  C2  Suite fail @ref (row 787 says 0)
+        claimed=0  measured=0
+
+--- CONTROLS (must be LIVE, else the gate proves nothing) ---
+LIVE  X1  CONTROL: readme-tags @HEAD differs from @ref (proves instrument is live)
+        @ref=1978  @HEAD=2175
+LIVE  X2  CONTROL: test total @HEAD differs from @ref
+        @ref=3034  @HEAD=3231
+
+SCORE 9/9 cells hold at dbc1939; controls live: 2/2
