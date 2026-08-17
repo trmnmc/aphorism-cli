@@ -52,7 +52,7 @@ entry in the filtered set, in corpus order.
 
 ## Tag vocabulary
 
-The corpus contains 12 distinct tags. The distribution is uneven, but every tag is a real pool: 12 tags appear on 2 or more entries. On the other side of that count, 0 tags appear exactly once and 0 tags sit on exactly one entry, so `--tag` never returns a foregone conclusion.
+The corpus contains 12 distinct tags. The distribution is uneven, but every tag is a real pool: 12 tags appear on 2 or more entries. On the other side of that count, 0 tags appear exactly once, which is to say 0 tags sit on exactly one entry, so `--tag` never returns a foregone conclusion.
 
 #### Robust pool (5+ entries)
 | Tag | Count |

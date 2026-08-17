@@ -1,0 +1,53 @@
+GATE J-4 attempt 2 — 9/17
+
+PASS S1  sealed ground truth unmoved: git diff over src/ bin/ test/ is EMPTY
+       empty
+
+FAIL D1a  no unmarked "1511" survives anywhere in the three docs
+       REPORT.md:163 run spent cycles 13–40 hardening README guards to 1511 of 2101 test lines while the rule | REPORT.md:176 on* ("1511 of the repo's 2101 test lines") and the *Stats* table ("2101 lines of tests").  | REPORT.md:188 That family is now **1511 of the repo's 2101 test lines** (`test/readme-tags.test.js`),  [9 exempted: REPORT.md:170, REPORT.md:171, REPORT.md:172, REPORT.md:207, REPORT.md:866, REPORT.md:867, REPORT.md:870, REPORT.md:871, REPORT.md:874]
+
+FAIL D1b  no unmarked "2101" survives anywhere in the three docs
+       REPORT.md:163 run spent cycles 13–40 hardening README guards to 1511 of 2101 test lines while the rule | REPORT.md:176 on* ("1511 of the repo's 2101 test lines") and the *Stats* table ("2101 lines of tests").  | REPORT.md:188 That family is now **1511 of the repo's 2101 test lines** (`test/readme-tags.test.js`), | REPORT.md:484 | Source size | 549 lines shipped (`src/` + `bin/`), 2101 lines of tests, zero dependencie  [13 exempted: REPORT.md:170, REPORT.md:172, REPORT.md:207, REPORT.md:510, REPORT.md:511, REPORT.md:838, REPORT.md:866, REPORT.md:867, REPORT.md:870, REPORT.md:871, REPORT.md:872, REPORT.md:874, REPORT.md:896]
+
+PASS D1c  the true total test-line count (3034) appears in the docs
+       present
+
+FAIL D1d  every surviving test-line claim states a measured-true integer
+       REPORT.md:163 run spent cycles 13–40 hardening README guards to 1511 of 2101 test lines while the rule | REPORT.md:176 on* ("1511 of the repo's 2101 test lines") and the *Stats* table ("2101 lines of tests").  | REPORT.md:188 That family is now **1511 of the repo's 2101 test lines** (`test/readme-tags.test.js`), | REPORT.md:484 | Source size | 549 lines shipped (`src/` + `bin/`), 2101 lines of tests, zero dependencie
+
+PASS D1e  CONTROL — the already-correct "549 lines shipped" claim was not collaterally "fixed"
+       6 site(s); measured total 549
+
+FAIL D2a  no doc pins a stale suite size (live = 101 tests)
+       REPORT.md:37 (`git log -1 --format=%ci ef4fa6d`). Its "80 tests" figure was the count when the row was | REPORT.md:163 run spent cycles 13–40 hardening README guards to 1511 of 2101 test lines while the rule | REPORT.md:176 on* ("1511 of the repo's 2101 test lines") and the *Stats* table ("2101 lines of tests").  | REPORT.md:188 That family is now **1511 of the repo's 2101 test lines** (`test/readme-tags.test.js`),  [11 exempted: REPORT.md:31, REPORT.md:32, REPORT.md:170, REPORT.md:174, REPORT.md:207, REPORT.md:817, REPORT.md:818, REPORT.md:857, REPORT.md:866, REPORT.md:870, REPORT.md:871]
+
+PASS D2b  the exact claim attempt 1 introduced ("100 tests as of run #2 cycle 4") is gone or marked
+       zero charged sites  [2 exempted: REPORT.md:818, REPORT.md:857]
+
+FAIL D3a  no unmarked site asserts T-024a is blocked (board: done)
+       REPORT.md:396 | **T-024** structural re-shape of the prose-anchored README guards (umbrella) | **Its own  [10 exempted: REPORT.md:200, REPORT.md:212, REPORT.md:362, REPORT.md:418, REPORT.md:419, REPORT.md:422, REPORT.md:423, REPORT.md:825, REPORT.md:879, REPORT.md:883]
+
+FAIL D3b  GENERALISED — no done item is asserted blocked anywhere in the three docs
+       T-024 @ REPORT.md:396 | T-024a @ REPORT.md:396
+
+FAIL A1  the corpus attributions are never described as audited (negations + the dashboard sense exempt)
+       REPORT.md:361 | **T-006** human audit of corpus attributions | Confirming an attribution needs sources this run ca | REPORT.md:395 | **T-008** deepen the corpus past 50 entries | **Effort _and_ a dependency.** L-effort, and `deps:  | REPORT.md:723 3. **The attribution audit (KI-2, HIGH, open).** 50 corpus attributions, 8 ranked HIGH-risk, | REPORT.md:945 and **KI-2 stays open and high throughout**. A repo-wide search for the audit/verified-attribution
+
+FAIL A2  KI-2 survives open and high (state.json severity: high)
+       REPORT.md:349 this run's `.swarm/state.json`, whose `known_issues` start at KI-2; it was resolved before  [2 exempted: REPORT.md:795, REPORT.md:888]
+
+PASS A3  the cmd_parse claim keeps its CODE-READ / NEVER-EXECUTED status (no verification verb added)
+       2 cmd_parse site(s), none upgraded
+
+PASS A4  the reviewable corrections list still exists and grew past attempt 1's 8 entries
+       11 correction-shaped entries in REPORT.md (attempt 1 left 8)
+
+PASS SC1  the docs item touched ONLY its three files
+       changed: README.md, REPORT.md
+
+PASS SU1  suite green (101 tests, 0 failures)
+       tests 101 pass 101 fail 0
+
+PASS P0  FAILABILITY — the D-1 and D-3 detectors go RED against a planted false claim
+       1511:true 2101:true blocked:true (mutated copy in memory, live tree untouched)
+

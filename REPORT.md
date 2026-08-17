@@ -23,13 +23,21 @@ not-applicable, never as passed._
 
 This repo has been through **three** SWARM runs. This report's body and closing addendum
 cover the first two (Build, then Improvement run #1) in full; a status section appended at the
-end covers the third (Improvement run #2, in flight at cycle 4) — see
+end covers the third (Improvement run #2, still in flight when that section was written) — see
 **§ Improvement run #2 status**.
 
 | Run | When | Kind | Outcome |
 |---|---|---|---|
 | Build | 2026-08-14 05:38 → 05:44 UTC | SMOKE (25-min pipeline validation) | product shipped, 5/5 must-haves, 48 tests |
 | Improvement | 2026-08-15 21:38 UTC → in flight, stops 2026-08-16 11:24 UTC | allocator auto-kickoff, brief *"harden tests, fix playbook items, polish docs — no new features"* | 11/11 improvement must-haves closed, 80 tests |
+
+_Correction carried by this reconciliation (run #2, J-4 attempt 2, measured at commit `dbc1939`)._
+The Improvement row says "in flight" because it was written mid-run. **Run #1 has since ended**,
+at the stop time the row predicted: WRAP_UP at cycle 56, 2026-08-16T11:24 UTC, commit `ef4fa6d`
+(`git log -1 --format=%ci ef4fa6d`). Its "80 tests" figure was the count when the row was
+written, not at WRAP_UP — the closing addendum below records further tests landing at cycles
+51–54. The row is left as written because it is a dated history row; current suite and line
+counts are in **§ Improvement run #2 status**.
 
 **Cycles completed: 46**, cycle 47 in flight (this refresh was written by it). The run has
 not reached WRAP_UP; nothing below is a wrap-up summary, and the counts are live as of
@@ -53,7 +61,7 @@ cd /opt/targets/aphorism-cli
 node bin/aphorism.js                                  # one random attributed aphorism
 node bin/aphorism.js --author dijkstra --json --seed 1
 node bin/aphorism.js --tag simplicity --list
-node --test test/*.test.js                            # 100 tests as of run #2 cycle 4
+node --test test/*.test.js                            # prints its own test/pass/fail totals
 ```
 
 No install step, no `package.json`, no dependencies — Node and the repo are the whole
@@ -158,6 +166,16 @@ sense — a stated rule, violated by a surviving mutant — not a BOUNDARY, and 
 **T-043**. Evidence: `.swarm/runs/cycle-050-gate.mjs`,
 `cycle-050-negative-control.mjs`, `cycle-050-suite-survivors.mjs`.
 
+_Correction carried by this reconciliation (run #2, J-4 attempt 2, measured at commit `dbc1939`)._
+**"1511 of 2101 test lines" is stale.** It was exactly true when run #1's cycle-47 conductor
+wrote it — at commit `fa68c0a`, `test/readme-tags.test.js` was 1511 lines and the four suites
+summed to 2101 (190 args + 220 cli + 1511 readme-tags + 180 select) — and the suites have grown
+since. Measured at `dbc1939`: `wc -l test/*.test.js` → **args 217, cli 541, readme-tags 1978, select 298,
+total 3034**, so the README-guard family is **1978 of 3034 test lines**. The same stale pair
+appears twice more, and each site carries its own note: *§ What the run actually spent itself
+on* ("1511 of the repo's 2101 test lines") and the *Stats* table ("2101 lines of tests"). The
+sentences above are left as run #1 wrote them.
+
 ## What the run actually spent itself on
 
 Worth stating plainly, because the item list above understates it. After the 11 chartered
@@ -184,6 +202,19 @@ through T-039). The honest accounting of where they landed:
 - **Dropped as superseded:** T-005 (feature, out of scope for this brief), T-020, T-023,
   T-030.
 
+_Correction carried by this reconciliation (run #2, J-4 attempt 2, measured at commit `dbc1939`)._
+Two claims in the passage above no longer hold.
+**(1) "1511 of the repo's 2101 test lines"** was true at run #1 cycle 47 (commit `fa68c0a`) and
+is stale now: `wc -l test/*.test.js` → args 217, cli 541, readme-tags 1978, select 298,
+**total 3034**, so the family is **1978 of 3034**. The adjacent "**549 lines of shipped
+source**" is re-measured and **still exactly right** — `wc -l src/*.js bin/aphorism.js` →
+133 + 269 + 91 + 56 = 549 — and is left alone.
+**(2) "Blocked at the attempts cap: T-024a"** is no longer true. **T-024a is `done`**, closed in
+run #2 cycle 2 as part of J-2a, by removal — the remedy the Blocked-items table's own "what
+would settle it" column named, not a third narrowing. Source: `.swarm/backlog.json` → `items[]`
+where `id == "T-024a"` → `status: "done"`. The bullet is left as written because it is run #1's
+own accounting of where its items landed.
+
 At cycle 25 the conductor recorded this as a **standing design finding** rather than as
 five separate bugs: every one of these guards extracts a number by anchoring to a position
 or a literal in English prose, and every fix so far has *narrowed* the anchor rather than
@@ -207,17 +238,20 @@ still open (KI-7, KI-8), 2 resolved (KI-3, KI-4). Grouped below by who can settl
 resolved ones included, against a smaller list. Corrected at cycle 47, which also filed
 KI-16.)
 
-_Correction carried by this reconciliation (run #2, cycle 4)._ The paragraph above is a run
-#1 cycle-47 snapshot and undercounts today's `.swarm/state.json`, which now records **19**
-known issues (KI-2, then KI-5 through KI-22 — KI-1/KI-3/KI-4 were already fully resolved and
-retired from the array before run #1 ended, which is why the ids are not contiguous): **13
-open**, **2 mitigated with the root cause open** (KI-7, KI-8, unchanged), **1 partially
-resolved** (KI-5 — the playbook cap is fixed, the allowlist gap is handed to a human), **2
-resolved this run** (KI-9, KI-10 — the README Attribution guards stopped reading English
-prose), and **1 accepted trade, not pursued further** (KI-21). **KI-2 is unchanged: still
-OPEN, still HIGH.** The individual entries below (KI-3 through KI-16) are run #1's own text
-and are left as written — read them as history, not as today's status. Source:
-`.swarm/state.json` → `known_issues[]`, counted directly.
+_Correction carried by this reconciliation (run #2, J-4 attempt 2, measured at commit `dbc1939`)._
+The paragraph above is a run #1 cycle-47 snapshot and undercounts `.swarm/state.json`, which at
+commit `dbc1939` records **20** known issues (KI-2, then KI-5 through KI-23 — KI-1/KI-3/KI-4
+were already fully resolved and retired from the array before run #1 ended, which is why the ids
+are not contiguous): **14 open**, **2 mitigated** (KI-7, KI-8 — KI-8's root cause still open),
+**1 partially resolved** (KI-5 — the playbook cap is fixed, the allowlist gap is handed to a
+human), **2 resolved during run #2** (KI-9, KI-10 — the README Attribution guards stopped reading
+English prose), and **1 accepted trade, not pursued further** (KI-21). **KI-2 is unchanged: still
+OPEN, still HIGH.** (An earlier pass of this same reconciliation wrote **19 / 13 open** here;
+that was true when written and was overtaken by KI-23 being filed. The counts above are pinned to
+a committed state rather than to "now" so they cannot drift again.) The individual entries below
+(KI-3 through KI-16) are run #1's own text and are left as written — read them as history, not as
+today's status. Source: `git show dbc1939:.swarm/state.json` → `known_issues[]`, counted by
+`status`; entries with no `status` field (KI-2, KI-15) are counted as open.
 
 ### About the product — a human must settle these
 
@@ -379,6 +413,16 @@ T-007 retag's two judgment calls. The paragraphs below this table are run #1's o
 a decision rather than assert a current count, and because the outcome they predicted — a
 structural re-shape rather than an eighth narrowing — is what actually happened.
 
+_Correction carried by this reconciliation (run #2, J-4 attempt 2, measured at commit `dbc1939`)._
+One clause inside the table above was missed by the note directly preceding this one: the
+**T-024** row gives as its binding constraint that "one child (**T-024a**) is blocked at the
+attempts cap". **That is no longer true — T-024a is `done`**, closed run #2 cycle 2 as part of
+J-2a by removal, which is what allowed the T-024 umbrella to close at cycle 3. Source:
+`.swarm/backlog.json` → `items[]` where `id == "T-024a"` → `status: "done"`. This is the third
+and last site in this document that asserts T-024a is blocked; the other two are above — the
+*Blocked items* table's own T-024a row, and the "Blocked at the attempts cap" bullet in
+*§ What the run actually spent itself on* — and each now carries the same correction.
+
 **Why the three S-effort items are fenced rather than simply unfinished.** Every README
 guard this run built extracts a number by anchoring to a position or a literal inside an
 English sentence, and six successive fixes each narrowed the anchor rather than removing
@@ -447,12 +491,26 @@ Four notifications were sent (`auto-kickoff`, `goodnight`, and two `posture` pus
 | Reverted merges | 0 (gear 1 dispatches a single builder into the tree; two items were rejected at the gate and their changes reverted by hand, cycles 31 and 32) |
 | Pace | mode **guest**, dial 0.3, gear pinned at **1** for the entire run. The weekly window resets 2026-08-17 05:00 UTC, *after* `stop_at`, so gear 1 was structurally fixed from kickoff. Window utilization: **not measured** — `bin/swarm-budget.sh` was refused by the allowlist on every cycle that attempted it (46 attempts through cycle 47, KI-5), so every burn figure in the runfile is a placeholder. Voluntary idle cycles: 0 |
 
-_Correction carried by this reconciliation (run #2, cycle 4)._ The table above is a run #1
-cycle-47 snapshot; several rows are now superseded, most visibly **Cycles run** (46
-completed/47 in flight — run #1 actually finished at cycle 56, and a second run is now at
-cycle 4) and **Tests** (80 pass/0 fail — currently **100 pass / 0 fail**). Rather than edit
-cells that were true when written, fresh sourced numbers for every one of them are in
-**§ Improvement run #2 status** at the end of this document.
+_Correction carried by this reconciliation (run #2, J-4 attempt 2, measured at commit `dbc1939`)._
+The table above is a run #1 cycle-47 snapshot; most rows are superseded. Rather than edit cells
+that were true when written, re-derived numbers are in **§ Improvement run #2 status** at the end
+of this document — which covers the Commits, Backlog, Tests, Source size, Corpus, Decisions and
+Verification-artifact rows. The remaining rows (Agents dispatched, Models used, Notifications
+sent, Reverted merges, Pace) describe run #1's dispatch history and are **not restated**; read
+them as history. The three that drift furthest:
+
+- **Cycles run** — "46 completed, 47 in flight". Run #1 finished at cycle 56 (WRAP_UP, commit
+  `ef4fa6d`); improvement run #2 began 2026-08-17 and was still running when this note was
+  written.
+- **Tests** — "80 pass / 0 fail". At commit `dbc1939`, `node --test test/*.test.js` reports
+  **101 pass / 0 fail** (tests 101, fail 0). An earlier pass of this reconciliation wrote
+  "currently 100 pass / 0 fail" here; that was true when written and was overtaken within the
+  same wave by another item adding a test, which is why the figure is now pinned to a commit
+  instead of to "currently".
+- **Source size** — "549 lines shipped (`src/` + `bin/`), 2101 lines of tests". The 549 is
+  re-measured and **still exactly right** (133 + 269 + 91 + 56). The **2101 is stale**:
+  `wc -l test/*.test.js` at `dbc1939` gives args 217, cli 541, readme-tags 1978, select 298,
+  **total 3034**.
 
 ### Why the run stopped dispatching agents at cycle 39
 
@@ -694,13 +752,13 @@ Cycles run: **56.** Generated by the cycle-56 conductor at WRAP_UP.
 
 ---
 
-# Improvement run #2 status — added by J-4 reconciliation, cycle 4
+# Improvement run #2 status — added by J-4 reconciliation
 
 Everything above this line is run #1's report, frozen at its WRAP_UP (cycle 56,
 2026-08-16T11:24 UTC). This section was added 2026-08-17 by item **J-4** (kind: docs,
 "Reconcile README.md, REPORT.md and the triage doc against the verified state") of
-**Improvement run #2**, which began 2026-08-17 and is at **cycle 4** as this is written. Its
-job is narrow: re-derive every count claim in this document, README.md and
+**Improvement run #2**, which began 2026-08-17, and was extended by that item's second attempt.
+Its job is narrow: re-derive every count claim in this document, README.md and
 `docs/corpus-attribution-triage.md` from an actual source of truth, correct or flag whatever
 does not hold up, and leave a reviewable list of what changed. It does not re-litigate run
 #1's findings, does not touch `src/`, `bin/` or `test/`, and does not change the corpus or
@@ -708,30 +766,41 @@ any triage risk band.
 
 ## Fresh derivation table
 
-Every number below was re-derived just now, live, by the command shown — not copied from
-any earlier report.
+**Everything below is measured at commit `dbc1939`** (2026-08-17 11:09:57 UTC), by the command
+shown — not copied from any earlier report. Rows are anchored to that commit rather than to
+"now" on purpose: an earlier pass of this table pinned five live counts to the running cycle,
+and four of them (suite size, total commits, backlog items, known issues) were overtaken by
+other items landing in the same wave before the cycle closed. A count pinned to a commit stays
+checkable; a count pinned to "just now" does not. Anything you want as of today, re-run the
+command without the `dbc1939` ref.
 
-| Claim | Value | Source / command |
+| Claim | Value at `dbc1939` | Source / command |
 |---|---|---|
 | Corpus entries | 50 | `node -e "console.log(require('./src/corpus.js').corpus.length)"` |
 | Distinct authors | 24 | same script, `new Set(corpus.map(e=>e.author)).size` |
 | Distinct tags | 12 | same script, tag-count map keys |
 | Tag pool range | min 3 (`philosophy`), max 14 (`design`) | same script, min/max of tag-count map |
+| Tags used by exactly one entry | 0 | same script, count of tag-count values `=== 1` |
 | Entries hedged to "Anonymous" | 1 | same script, count of `author === 'Anonymous'` |
 | Triage table rows | 50 | `grep -c '^| [0-9]' docs/corpus-attribution-triage.md` |
 | Triage risk bands | HIGH 8 / MEDIUM 16 / LOW 26 | `grep -oP '\| (HIGH\|MEDIUM\|LOW) \|' docs/corpus-attribution-triage.md \| sort \| uniq -c` |
-| Suite result | **100 pass / 0 fail** | `node --test test/*.test.js`, run from repo root just now |
-| Commits, total | 121 | `git log --oneline \| wc -l` |
+| Suite result | **101 pass / 0 fail** (tests 101, fail 0) | `node --test test/*.test.js` from the repo root |
+| Shipped source lines | **549** (args 133 + corpus 269 + select 91 + `bin/aphorism.js` 56) | `wc -l src/*.js bin/aphorism.js` |
+| Test lines | **3034** (args 217 + cli 541 + readme-tags 1978 + select 298) | `wc -l test/*.test.js` |
+| README-guard share of the suite | **1978 of 3034 lines** (`test/readme-tags.test.js`) | same `wc -l` |
+| Commits, total | 122 | `git log --oneline dbc1939 \| wc -l` |
 | Commits, run #1 (Build + Improvement #1, through WRAP_UP) | 116 | `git log --oneline ef4fa6d \| wc -l` |
-| Commits, run #2 so far (cycles 0–4) | 5 | `git log --oneline ef4fa6d..HEAD \| wc -l` |
-| Backlog items tracked live | 17 (11 done, 4 todo, 1 blocked, 1 dropped) | `.swarm/backlog.json` → `items[]`, counted by `status` |
-| Known issues tracked live | 19 (13 open, 2 mitigated/root-cause-open, 1 partially resolved, 2 resolved this run, 1 accepted-trade) | `.swarm/state.json` → `known_issues[]`, counted by `status` |
-| KI-2 (corpus attributions) | **OPEN, severity HIGH** — unchanged | `.swarm/state.json` → `known_issues[]` where `id == "KI-2"` |
-| Current cycle | 4 (in flight; `state.json.cycle` = 3 is the last fully recorded cycle) | `.swarm/state.json` → `.cycle`; HEAD commit message "cycle 4 pre-dispatch: sha256 commitment for the J-4 sealed truth table" |
+| Commits, run #2 through `dbc1939` | 6 | `git log --oneline ef4fa6d..dbc1939 \| wc -l` |
+| Backlog items tracked live | 18 (12 done, 4 todo, 1 blocked, 1 dropped) | `git show dbc1939:.swarm/backlog.json` → `items[]`, counted by `status` |
+| Known issues tracked live | 20 (14 open, 2 mitigated, 1 partially resolved, 2 resolved during run #2, 1 accepted-trade) | `git show dbc1939:.swarm/state.json` → `known_issues[]`, counted by `status`; the two entries with no `status` field (KI-2, KI-15) counted as open |
+| KI-2 (corpus attributions) | **OPEN, severity HIGH** — unchanged | same file, `known_issues[]` where `id == "KI-2"` |
+| Decisions recorded | 8 (run #2's own state file; run #1's 93 are in the pre-run-2 snapshot) | `git show dbc1939:.swarm/state.json` → `decisions[]` |
+| Verification artifacts | 297 committed under `.swarm/runs/`, both runs combined | `git ls-tree --name-only dbc1939 .swarm/runs/ \| wc -l` |
+| Last fully recorded cycle | 4 | `git show dbc1939:.swarm/state.json` → `.cycle` |
 
 Note on the backlog count: `.swarm/backlog.json` deliberately does not restate the 48 done and
 4 dropped items run #1 finished — its own `_provenance` field says they are carried forward
-in `backlog.json.pre-run2-1786955683` and in git history instead. The 17-item live count above
+in `backlog.json.pre-run2-1786955683` and in git history instead. The 18-item live count above
 is run #2's own items plus the handful of open/blocked items run #1 left behind (T-006,
 T-008, T-024 and its children, T-040), not a repo-wide total.
 
@@ -747,14 +816,16 @@ corrects so a reader can compare both.
    second improvement run now exists. (§ What this report covers)
 2. **`node --test test/*.test.js  # 80 tests`** in the Run it section → corrected in place to
    **`# 100 tests as of run #2 cycle 4`**, since that comment is a live instruction a reader
-   would run today, not a historical snapshot. (§ Run it)
+   would run today, not a historical snapshot. (§ Run it) — **superseded by entry 9: that
+   replacement was itself wrong for the cycle it named.**
 3. **"Fifteen recorded... 11 open, 2 mitigated..., 2 resolved"** (Known issues summary) →
    flagged stale; current count is **19** (13 open / 2 mitigated / 1 partially resolved / 2
    resolved this run / 1 accepted-trade). Original left as written; correction note added
-   directly below it. (§ Known issues)
+   directly below it. (§ Known issues) — **superseded by entry 12: 20 / 14 open.**
 4. **T-024a listed as "blocked" in the Blocked items table** → corrected: T-024a is **done**,
    closed run #2 cycle 2 as part of J-2a, by removal — the exact remedy the row's own "what
-   would settle it" column named. T-006 is unchanged, still blocked. (§ Blocked items)
+   would settle it" column named. T-006 is unchanged, still blocked. (§ Blocked items) —
+   **incomplete: two further sites asserted the same thing and were missed. See entry 11.**
 5. **T-008, T-024, T-024b, T-032, T-039 listed as open/unfinished in the "six open items"
    table** → corrected: **T-008 dropped** (excluded as a non-goal — widening an unaudited
    corpus ahead of a human attribution pass would enlarge KI-2); **T-024, T-024b, T-039
@@ -763,7 +834,9 @@ corrects so a reader can compare both.
 6. **Stats table "Cycles run: 46 completed, 47 in flight" and "Tests: 80 pass / 0 fail"** →
    flagged stale; a pointer note was added directly below the table to this section's fresh
    derivation table above (cycles: run #1 finished at 56, run #2 is now at cycle 4; tests: 100
-   pass / 0 fail). Table cells left as written rather than edited piecemeal. (§ Stats)
+   pass / 0 fail). Table cells left as written rather than edited piecemeal. (§ Stats) —
+   **superseded by entry 13: the figure is 101 pass / 0 fail, and the same table's "2101 lines
+   of tests" cell was stale and unflagged.**
 7. **"KI-5 (the playbook is inert until someone culls it to the cap...)"** in the "Only a
    human can finish these" list → corrected: the cap half is **done** (run #2 cycle 1, J-1a —
    36 lessons to 20, losslessly, all 15 `[apply:]` directives intact); only the allowlist half
@@ -774,23 +847,112 @@ corrects so a reader can compare both.
    file. Items 2–4 in that list (allowlist, KI-2, KI-16) are unchanged. (§ What a human must
    do — ranked)
 
+### Entries 9–17 — added by J-4's second attempt
+
+Entries 1–8 above were made by the first attempt at this item. Its three defects all had the
+same shape: **the right correction was applied to the first occurrence of a claim and not to
+the rest.** Entries 9–17 close that, and every one of them names *every* site the claim
+appears at, found by `grep` over all three files rather than by memory.
+
+9. **`# 100 tests as of run #2 cycle 4`** (§ Run it) → replaced with **`# prints its own
+   test/pass/fail totals`**. The integer was wrong for the exact cycle it named: the suite
+   closed that cycle at **101**, because another item added a test in the same wave. The form
+   was the defect, not just the digit — a builder cannot know the end-of-cycle suite count, so
+   **the route chosen here is to state how to obtain the number instead of pinning one**.
+   `node --test` prints `tests`/`pass`/`fail` totals itself, so the comment now points at the
+   command's own output and cannot go stale. (The alternative route — pin to a cycle that has
+   already closed — was rejected for this site because the line is a copy-paste instruction, and
+   a reader running it wants today's number, not a historical one.) Supersedes entry 2.
+10. **"1511 of 2101 test lines"** — **three sites, all stale, none previously marked.**
+    `grep -n "1511\|2101" README.md REPORT.md docs/corpus-attribution-triage.md` returned exactly
+    three lines before this attempt added its notes — no hit in README.md or the triage doc, and
+    three in this file: § *What has actually been run against the shipped binary —
+    cycles 49–50* ("hardening README guards to 1511 of 2101 test lines"), § *What the run
+    actually spent itself on* ("now **1511 of the repo's 2101 test lines**"), and the § *Stats*
+    table ("2101 lines of tests"). A correction note is now appended at each. The pair was
+    **exactly true when written** at run #1 cycle 47 — at commit `fa68c0a`, `wc -l` over the four
+    suites gives 190 + 220 + 1511 + 180 = 2101 — and was overtaken by later test growth, most
+    recently by run #2's own cycles 2–3. Measured at `dbc1939`: `wc -l test/*.test.js` → args
+    217, cli 541, readme-tags 1978, select 298, **total 3034**; the README-guard family is
+    **1978 of 3034**. The adjacent **"549 lines shipped (`src/` + `bin/`)" was re-measured and
+    is exactly right** (133 + 269 + 91 + 56) — it is left untouched at both of its sites.
+11. **T-024a asserted as blocked — three sites, one previously corrected.**
+    `grep -n "T-024a" REPORT.md` returns five lines; three of them are assertions of status
+    (the § *Blocked items* row, already handled by entry 4; the "**Blocked at the attempts
+    cap:** T-024a" bullet in § *What the run actually spent itself on*; and the "one child
+    (T-024a) is blocked at the attempts cap" clause inside the **T-024** row of § *Unfinished
+    work*), and two are references inside correction notes. The two unmarked sites now carry
+    the same dated note the first one did. **T-024a is `done`** — `.swarm/backlog.json` →
+    `items[]` where `id == "T-024a"` → `status: "done"`. Extends entry 4.
+12. **Known-issues count "19 (13 open)"** → corrected in place to **20 (14 open, 2 mitigated, 1
+    partially resolved, 2 resolved during run #2, 1 accepted-trade)**, ids KI-2 plus KI-5
+    through KI-**23**. The 19/13 figure was true when entry 3 was written and was overtaken by
+    KI-23 being filed. Both sites carrying the number were fixed: the § *Known issues* note and
+    the fresh derivation table row. Source: `git show dbc1939:.swarm/state.json`; the two
+    entries with no `status` field (KI-2, KI-15) are counted as open, which is stated at both
+    sites. Supersedes entry 3.
+13. **The § *Stats* pointer note** → rewritten. "Currently **100 pass / 0 fail**" became
+    **101 pass / 0 fail at commit `dbc1939`**, and the note now also names the **Source size**
+    row, whose "2101 lines of tests" it had not flagged (→ **3034**) and whose "549 lines
+    shipped" it confirms as still correct. Supersedes entry 6.
+14. **Run-history table, Improvement row: "→ in flight, stops 2026-08-16 11:24 UTC"** (§ What
+    this report covers). True when written; run #1 has since ended. Handled as a dated history
+    row — the row is **kept verbatim** and a note under the table records the outcome (WRAP_UP
+    at cycle 56, 2026-08-16T11:24 UTC, commit `ef4fa6d`) and marks the row's "80 tests" as a
+    mid-run figure. `grep -n "in flight" README.md REPORT.md` found eight sites before this
+    attempt, none of them in README.md: this row, three handled by entries 13, 15 and 16, one
+    quotation inside this list, and three in run #1's body text about run #1's own cycle 47,
+    already governed by the frozen-document note at the top of this report.
+15. **"(Improvement run #2, in flight at cycle 4)"** (§ What this report covers) and **"is at
+    **cycle 4** as this is written"** (§ Improvement run #2 status) → both de-pinned from a
+    running cycle, for the same reason as entry 9. The section heading's ", cycle 4" was dropped
+    for the same reason.
+16. **The fresh derivation table** → re-anchored. Every row is now measured **at commit
+    `dbc1939`** with the ref in the command, instead of "just now". Six values were re-measured
+    and corrected: suite **100 → 101**, total commits **121 → 122**, run #2 commits **5 → 6**,
+    backlog items **17 → 18** (12 done, not 11), known issues **19 → 20**, and the "Current
+    cycle: 4 (in flight; `state.json.cycle` = 3)" row — whose parenthetical was already false,
+    `.cycle` now reading 4 — rewritten as **"Last fully recorded cycle: 4"**. Six rows were
+    added: shipped source lines (549), test lines (3034), the README-guard share (1978 of 3034),
+    tags used by exactly one entry (0), decisions recorded (8), and verification artifacts (297).
+    The last two were added because the § *Stats* note claimed this table carried "fresh sourced
+    numbers for every one of" that table's rows, and it did not; that sentence is now replaced by
+    one that names exactly which rows are restated here and which are left as run #1 history.
+17. **README.md, § Tag vocabulary** — "0 tags appear exactly once **and 0 tags sit on exactly
+    one entry**" stated one fact twice as though it were two. Both halves are **true** — building
+    the tag-count map from `src/corpus.js` gives zero tags with a count of 1 — so this was
+    redundancy, not error.
+    Reworded so the second half reads as an explicit restatement rather than an independent
+    count. **Both phrasings are deliberately kept**: `test/readme-tags.test.js` guards
+    "`<N>` tags appear exactly once" and "`<N>` ... exactly one" as two separate, independently
+    corpus-checked claims, and `test/` is outside this item's scope, so deleting either half
+    would have broken a passing test to tidy a sentence.
+
 ## What did not need correcting
 
 Every count claim citing the corpus or the triage table — in this document, in README.md, and
 within `docs/corpus-attribution-triage.md` itself — was re-derived against `src/corpus.js` and
 the triage table's own rows (see the derivation table above) and found **true, unchanged,
-zero edits needed**: 50 entries, 24 authors, 12 distinct tags (pool range 3–14), 1 entry
-hedged to Anonymous, 50 triage rows split 8 HIGH / 16 MEDIUM / 26 LOW. Neither README.md nor
-`docs/corpus-attribution-triage.md` required any edit: their own numbers already match the
-source of truth exactly, and neither file describes the corpus attributions as audited,
-verified, confirmed or vouched for anywhere — both consistently use "triage, not an audit" /
-"unverified" / "unaudited" language, and KI-2 stays open and high throughout. A repo-wide
-search for the audit/verified-attribution word family turned up no file, in scope or out of
-it, that currently misdescribes the corpus as audited.
+zero edits needed**: 50 entries, 24 authors, 12 distinct tags (pool range 3–14), 0 tags used by
+exactly one entry, 1 entry hedged to Anonymous, 50 triage rows split 8 HIGH / 16 MEDIUM / 26
+LOW. `docs/corpus-attribution-triage.md` needed **no edit at all**: it states no repo count, its
+remaining integers are entry indices and citation years, and both it and README.md carry numbers
+that already match the source of truth exactly. README.md's only edit is the wording change in
+entry 17 — no number in it changed.
+
+Neither file describes the corpus attributions as audited, verified, confirmed or vouched for
+anywhere — both consistently use "triage, not an audit" / "unverified" / "unaudited" language,
+and **KI-2 stays open and high throughout**. A repo-wide search for the audit/verified-attribution
+word family turned up no file, in scope or out of it, that misdescribes the corpus as audited.
+
+One honest limit is left honest on purpose: `SPEC.md` records that a prior run's `cmd_parse`
+claim was code-read and **never executed**, and this document's single mention of it carries no
+verification verb. It was not upgraded.
 
 ## Non-goals honored
 
-No file outside README.md, REPORT.md and docs/corpus-attribution-triage.md was edited. No
-number in `src/corpus.js` or any triage risk band was changed. No test was weakened, skipped
-or deleted to make this reconciliation land — `node --test test/*.test.js` was run unmodified
-and reported 100 pass / 0 fail before and after these edits.
+No file outside README.md, REPORT.md and docs/corpus-attribution-triage.md was edited —
+`git diff --name-only -- src bin test` is empty. No number in `src/corpus.js` or any triage risk
+band was changed. No test was weakened, skipped or deleted to make this reconciliation land —
+`node --test test/*.test.js` was run unmodified and reported **101 pass / 0 fail** both before
+and after these edits.
