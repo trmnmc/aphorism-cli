@@ -3,8 +3,8 @@
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-17T08:34:43Z",
   "run_label": "improvement-aphorism-cli-2026-08-17",
-  "phase": "WRAP_UP",
-  "cycle": 8,
+  "phase": "DONE",
+  "cycle": 9,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -110,6 +110,21 @@
       "kind": "scope",
       "what": "Took J-9 despite two previous cycles recommending against it — and then declared the target DONE with roughly 19 hours of clock left.",
       "why": "BOTH halves were checked rather than inherited, which is the cycle-7 lesson applied to cycle 7's own advice. On TAKING IT: cycle 7 recommended leaving J-9 filed-but-untaken and wrapping up. Its acceptance, read directly, offers a non-human RETIREMENT branch, and executing that branch is the same treatment must-have J-2 required for the five prose items (\"closed OR formally retired as measured boundaries\") — i.e. inside the run's charter, not a descent beyond it. Leaving the only dispatchable item on the board while wrapping 19 hours early is a weaker artifact than resolving it. Cycle 7 explicitly sanctioned this path (\"if you disagree, take it ONCE and honour the stopping rule\"), and the stopping rule was honoured: no J-10. ON DECLARING DONE: all five must-haves are verified done; J-9 is now terminal; and the three remaining board items each require a human BY THEIR OWN ACCEPTANCE CLAUSE — verified this cycle by reading all three, not by inheriting the claim (T-006 \"confirmed against a primary source\", T-040 \"a human confirms two judgment calls\", J-7 \"a human rules ... written into SPEC.md\"). Every remaining open known issue is either human-owned (KI-2), SWARM tooling fenced read-only by hard rule 5, or a documented boundary in the guard family cycle 0 fenced. Nothing left passes the VALUE_LOOP ratchet because nothing left is actionable by a swarm at all. Continuing to cycle for 19 hours on that board is the \"look productive forever while the product does not move\" failure the cycle-6 decision names. The clock is not a reason to keep going; the absence of work is a reason to stop."
+    },
+    {
+      "cycle": 9,
+      "what": "RETRO.md and REPORT.md were APPENDED to, never overwritten -- run #1 artifacts preserved verbatim.",
+      "why": "RETRO.md carried improvement run #1's retro and REPORT.md carries run #1's frozen body plus this run's J-4 reconciliation section, whose derivation table is deliberately pinned to commit dbc1939. Run #1's own retro records that this exact file once silently carried a PREVIOUS run's retro into a new run, and that was filed as the defect. Overwriting would have repeated it; \"fixing\" the vintaged numbers to match today would have destroyed the defence KI-23 closed on. Run #2's retro sits first with run #1's fenced below it, and the final report is appended with a forward pointer added to the J-4 section so the top-of-file navigation note stays true."
+    },
+    {
+      "cycle": 9,
+      "what": "Distilled 3 lessons, not 5 -- and one of them is a RESTORE from the archive rather than a new id.",
+      "why": "learnings.md sat at exactly its 20-lesson cap, so every append evicts a high-confidence lesson: fewer, better lessons is the correct response to a full cap, not a full quota. L-033 (classify every mutation survivor HOLE vs BOUNDARY before hardening) was ARCHIVED as advice-only at 08:48Z by this run's own cycle 1, then independently RE-LEARNED by this same run at cycles 3, 6 and 8 -- it decided J-9. So it is restored rather than re-minted under a new id, promoted med -> high with an [apply:] directive and [observed: 2]. playbook/README.md says a re-learn whose confidence or [apply:] differs gets FLAGGED rather than silently merged; that flag is written by hand into DROP-RATIONALE-2026-08-17.md and a human should confirm the promotion. The three dropped (L-003, L-006, L-007) were each verified already MECHANIZED in cycle.md / workflows.md before being dropped, and L-008 was kept because it is only partly mechanized."
+    },
+    {
+      "cycle": 9,
+      "what": "Tagged improvement-run-2-2026-08-17; the existing v0.1-overnight tag was left where it is.",
+      "why": "WRAP_UP step 4 says `git tag v0.1-overnight`, and that tag already exists from an earlier run. Moving it would have made a run that changed ZERO product code (`git diff --name-only ef4fa6d..HEAD -- src bin` is empty) look like a release. A dated run tag records this run without rewriting what the version tag means."
     }
   ],
   "known_issues": [
@@ -276,7 +291,8 @@
       "severity": "medium",
       "status": "open (repaired in the rendered artifact; the defective pattern is what remains filed)",
       "what": "The dashboard meta line fields `gen` and `next` are LIVE but were never substituted by ANY render script, and had been stale since cycle 47 - four cycles - when cycle 51 found them.",
-      "detail": "Mechanism is NOT KI-17 s. KI-17 is a render writing into an HTML comment, so the work happens and lands in the wrong copy. Here the substitution never existed at all: c49/c50/c51-dash.mjs each carry anchors for banner, target node, evidence strip and timeline, and nothing for the two header fields the template contract puts at the top of the page. The `gen` timestamp therefore read 07:28 (cycle 47) while the banner read cycle 50, and the `next` blurb still described the cycle-47 REPORT.md refresh and quoted 13 known issues open against an actual 10. A human glancing at the page header would have read a four-cycle-old summary directly above a current banner. Found because the KI-17 repairs prompted an audit of every region rather than only the ones already known broken - the same reason KI-18 surfaced at cycle 50. Repaired in this render (runs/c51-dash.mjs) and the audit extended to assert both fields carry cycle-51 content (runs/c51-dash-audit.mjs, AUDIT PASS). The DEFECT stays open: the durable fix is a template-level render that enumerates every mandated region, so a field cannot be silently omitted by the next hand-written script. This is the third distinct staleness mechanism found on this one page in three cycles (KI-17 wrong copy, KI-18 never rendered, KI-19 never substituted), which is itself the finding: hand-written per-cycle render scripts have no completeness check."
+      "detail": "Mechanism is NOT KI-17 s. KI-17 is a render writing into an HTML comment, so the work happens and lands in the wrong copy. Here the substitution never existed at all: c49/c50/c51-dash.mjs each carry anchors for banner, target node, evidence strip and timeline, and nothing for the two header fields the template contract puts at the top of the page. The `gen` timestamp therefore read 07:28 (cycle 47) while the banner read cycle 50, and the `next` blurb still described the cycle-47 REPORT.md refresh and quoted 13 known issues open against an actual 10. A human glancing at the page header would have read a four-cycle-old summary directly above a current banner. Found because the KI-17 repairs prompted an audit of every region rather than only the ones already known broken - the same reason KI-18 surfaced at cycle 50. Repaired in this render (runs/c51-dash.mjs) and the audit extended to assert both fields carry cycle-51 content (runs/c51-dash-audit.mjs, AUDIT PASS). The DEFECT stays open: the durable fix is a template-level render that enumerates every mandated region, so a field cannot be silently omitted by the next hand-written script. This is the third distinct staleness mechanism found on this one page in three cycles (KI-17 wrong copy, KI-18 never rendered, KI-19 never substituted), which is itself the finding: hand-written per-cycle render scripts have no completeness check.",
+      "note_cycle_9": "AT WRAP_UP: this entry's `desc` field is an EMPTY STRING in state.json and has been for some time. Found while compiling the final report. Deliberately NOT back-written from memory -- reconstructing a finding's text from recollection is exactly the failure the evidence rule exists to prevent, and a wrong reconstruction would be worse than a visible hole. The title/context survive in the cycle-49 journal block of run #1 (hand-written per-cycle render/audit scripts have no completeness check); a human restoring this should copy from there."
     },
     {
       "id": "KI-20",
@@ -332,6 +348,13 @@
       "status": "open",
       "desc": "English number WORDS are invisible to the J-5 guard, which scans for `\\d+`. Measured de-confounded at cycle 6: the paragraph \"Nine tags sit in the robust-pool band.\" (no digit anywhere in it, real count 7) leaves the suite GREEN at 102/0, while the identical sentence in digit form (\"9 tags sit in the robust-pool band.\") goes RED 101/1 — same sentence, same position, so the word form is the only variable. Evidence: .swarm/runs/cycle-006-probe2-out.txt.",
       "why_it_matters": "It is an ACCEPTED, documented boundary rather than an oversight, and it is recorded so it cannot later be mistaken for coverage. The builder disclosed it unprompted before any gate looked, and the disclosure was verified true rather than taken on trust. It mirrors the same accepted gap the C7 comment block already documents for the Attribution section. Closing it means deciding whether this section's own honest prose may spell a small number in words — the closing sentence currently does exactly that (\"holds three aphorisms\") — so the fix is a judgment call about the document, not a test-only change."
+    },
+    {
+      "id": "KI-25",
+      "desc": "SWARM TOOL GAP (morning report, not a live edit -- hard rule 5 fences bin/). bin/swarm-health.sh sent TWO FALSE \"pacer silent\" pushes during healthy work, at 2026-08-17T09:35:11Z and 10:35:11Z (runs/notify.log \"send fail ok\" x2). Its trigger is pacer.log untouched for HEALTH_STALE_MIN=30 min, and runs/pacer.log has genuine gaps of 59 min (08:59:28->09:58:15, cycles 1-2 in one spawned session) and 33 min (10:03:25->10:36:53, cycle 3) that are simply long cycles working. The script has a suppression clause for exactly this -- it exits 0 when `systemctl is-active swarm-pacer.service` reports active -- and that clause did not hold for cycles the pacer had already spawned. Effect is a paged human, never a stalled run. Two candidate fixes: raise HEALTH_STALE_MIN above the longest expected cycle, or key the suppression off the spawned session (heartbeat.ts moving) rather than off the service unit.",
+      "severity": "medium",
+      "status": "open",
+      "cycle_found": 9
     }
   ],
   "qa": {
@@ -359,16 +382,14 @@
     "wave_streak": 0,
     "window_tokens_attributed": 7250836,
     "k_current_note": "Wave autotune CLEAN branch applies for the second consecutive wave (zero reverts, zero failed verifies), so wave_streak reached 2 and k_current rises 4 -> 5, resetting the streak. Recorded faithfully but ACADEMIC in every direction: gear 3 caps the effective wave at 3, the board now holds no dispatchable item at all, and the next cycle is WRAP_UP. Noted so a later reader does not mistake a mechanically-applied rule for a live constraint.",
-    "verified_this_cycle": 1
+    "verified_this_cycle": 0
   },
   "last_cycle": {
-    "cycle": 7,
-    "ts": 1786970463,
-    "work": "build-wave (1 item, direct-Agent dispatch, sonnet): J-8 — disambiguate two true-but-confusable \"four entries\" statements across REPORT.md and the triage doc",
-    "outcome": "1 verified (J-8 done, gate 14/14, 4/4 live controls, suite 102/0 unchanged). KI-23 closed on a separate 9/9 re-derivation gate with 2/2 live controls. Cycle 6's \"all four are human rulings\" premise corrected. 0 new items, 0 new known issues.",
-    "verified": [
-      "J-8"
-    ],
+    "cycle": 9,
+    "ts": 1786974714,
+    "work": "WRAP_UP (no new work): retro, distill, final report, tag, final dashboard, watchdog disarm",
+    "outcome": "Run CLOSED. 5/5 must-haves verified done; 3 open items all human-owned by their own acceptance clauses (T-006, T-040, J-7). Suite re-run by the conductor on the shipped tree at wrap-up: 102 tests / 102 pass / 0 fail. RETRO.md and REPORT.md were APPENDED to, not overwritten — run #1 artifacts preserved verbatim. Playbook: 3 lessons landed by hand (L-033 restored with an [apply:] directive, L-042, L-043) after the script was denied a 7th time; file at exactly 20 with 20 unique ids and next_id 44.",
+    "verified": [],
     "failed": []
   }
 }

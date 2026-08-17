@@ -4,6 +4,195 @@
      here exactly as in the verification gate: every entry cites cycle numbers
      from .swarm/journal.md. No cycle number, no entry — vibes are not evidence. -->
 
+> **This file holds TWO retros, newest first.** Everything down to the horizontal rule is
+> **improvement run #2 (2026-08-17)**. Below it, preserved verbatim and clearly fenced, is
+> **improvement run #1's** retro (2026-08-15/16). Nothing was overwritten: run #1's own
+> provenance note records that this file once silently carried a *previous* run's retro into
+> a new run, and that was filed as the defect. Appending rather than replacing is the repair.
+
+Run: **2026-08-17 improvement run #2** (allocator auto-kickoff, `source=allocator`,
+`mode=guest`, `dial=0.33`, posture *trickle*, brief *"harden tests, fix playbook items,
+polish docs — no new features"*) | cycles run: **9** (cycle 0 kickoff through cycle 8, plus
+this WRAP_UP cycle) | stop reason: **target DONE at cycle 8**, declared with ~19 h of clock
+left against `stop_at` 2026-08-18T08:34:37Z — not a stall, not a usage limit, not a crash.
+
+## What worked
+
+- **Sealing the verification gate BEFORE dispatch, by hash, in the repo.** The gate script
+  (and at cycle 8 its pre-dispatch *output*) was written, validated, and its sha256 committed
+  to the target before any agent ran; the plaintext was withheld for the dispatch window.
+  This turns hard rule 2's "builders never see the check" from a promise into a mechanical
+  fact. Cycle 8 closed the loop: on restore the script hashed byte-identical to its
+  commitment (`c555b7a5…9cf8`) and re-running it reproduced the sealed output byte-identical
+  (`d9d99054…5883`) — 24 cells × 2 arms, 48 suite runs, every verdict unchanged. That is a
+  proof the tree did not move that does not require trusting a clean `git diff`. (cycles 4, 6, 8)
+- **Recording the pre-dispatch READING, not just the seal.** "11/14 already hold; N1/N2/N3
+  are the item" (cycle 6) and "18/24 hold; the 6 hole cells are the item" (cycle 8) were
+  journaled *before* dispatch, so "it already held" could not be claimed afterwards in either
+  direction. (cycles 6, 8)
+- **Control and failability cells inside every gate.** Five consecutive cycles the conductor's
+  own instrument was defective and a control-shaped cell caught it — c3 a missing shell glob,
+  c4 a cell whose observable was an unseeded random draw, c5 a gate checking the *shape* of a
+  fix rather than the *fact*, c6 a reporter-format assumption, c7 a buffer-trim off-by-one
+  that truncated a path to "EPORT.md". **Five for five found by controls, zero by inspection.**
+  Every one would otherwise have been charged to a builder as a defect. (cycles 3–7)
+- **Checking the previous cycle's wakeup-note premise instead of inheriting it.** Cycle 6's
+  note said the remaining board was "all human rulings"; cycle 7 re-read the acceptance
+  clauses, found that true for T-006/T-040/J-7 and *overstated* for J-8, took J-8, and closed
+  it 14/14 with 4/4 live controls. Cycle 8 then applied the same treatment to cycle 7's own
+  advice and found J-9's non-human retirement branch. Two verified outcomes that pure
+  inheritance would have skipped, for the cost of one grep each. (cycles 7, 8)
+- **Rebuilding the builder's decisive claim rather than accepting it.** J-9's verdict *was* a
+  builder measurement, and the builder had deleted its evidence with its own scratch tree, as
+  instructed. The conductor rebuilt the candidate fix from the shipped test file in two
+  variants across four extraction sites and added a **V0 (unfixed) column** the builder never
+  ran — which showed one of its three claimed new false rejections (C6) was already RED on the
+  shipped tree. Conclusion unchanged, ledger corrected. A claim reproduced is worth more than
+  a claim believed, and the reproduction is where the correction lived. (cycle 8)
+- **Retirement as a first-class closing branch, on measurement.** J-2's five README-prose items
+  and J-9 all closed by documented BOUNDARY retirement with the measurement attached, never by
+  quiet deletion or by weakening a test. Cycle 8's trade was explicit: the fix closes the hole
+  6/6 and buys 2 new false rejections on ordinary true prose, so it was rejected and the hole
+  stays on the record with its exact reproduction. (cycles 3, 6, 8)
+- **Small waves with disjoint scope: zero merge damage all run.** 7 dispatching cycles, one
+  2-item wave (cycle 3) and the rest single-item, **0 reverted merges, 0 merge conflicts, 0
+  garbage returns**. `counters.k_current` autotuned 3→4→5 on clean-wave streaks and was never
+  binding — the gear-3 cap and, latterly, a board with one dispatchable item were the real
+  limits. Recorded so the autotune number is not mistaken for a live constraint. (cycles 3–8)
+- **Semantic collision beats file-scope disjointness when composing a wave.** Cycle 4 had room
+  for J-5 (k_eff 3, three pairwise-disjoint `files_hint`) and excluded it anyway, because
+  `test/readme-tags.test.js` *reads* README.md, which J-4 was rewriting. The related decision
+  to build gate arms with `git archive` at the pre-dispatch commit — instead of copying a live
+  tree carrying another builder's half-finished edits — came from the same observation. (cycle 4)
+
+## What thrashed
+
+- **J-4 (docs reconciliation) needed two attempts and three gate authorings** — why: two
+  distinct causes, both mine. (a) The item's unit of work was under-specified: the builder
+  corrected *claims* where the acceptance meant *every occurrence* of each claim, so attempt 1
+  landed 8 ledger entries where 27 were needed. (b) My gate twice encoded the previous
+  attempt's fix *shape* as the required method rather than checking the *fact*, so it failed a
+  correct fix. Raw scores 10/16 (c4, effective 14/16 after four of six BAD cells proved to be
+  my own checks) then 9/17 → 15/21 → 22/22 (c5), where **all 14 raw failures across v1+v2 were
+  the instrument and zero were real defects**. Corrections were written into addenda, never
+  re-run clean. (cycles 4, 5)
+- **A completion heuristic that was not a completion signal** — why: I judged builders done by
+  "diff non-empty and byte-stable for 100 s", and it fired while J-2b was still writing; its
+  diff then grew from 413 to 557 changed lines. No verdict was recorded off the stale reading
+  (both gates were re-run against the final tree, and the P0 controls are what exposed the
+  drift), but my first suite reading was 98, gate v2's first run 99, and the shipped tree 100.
+  The agent completion notification is the only real signal. (cycle 3)
+- **The README-prose guard family consumed 4 of 8 cycles and the false-rejection ledger never
+  shrank** — why: it is a BOUNDARY, not a hole. Cycle 2 moved the ledger's membership (4 cells
+  at HEAD, 4 cells on the fix) while changing only the *character* of the failures — from
+  "names the wrong number, no correct action available" to "names the action: move the number
+  into the table". Cycles 6 and 8 then measured the same trade twice more, and cycle 8's cost
+  probe priced it exactly: 3/3 kills bought for 2 new false rejections on true sentences a
+  maintainer would plainly write. The cycle-0 stress test had already fenced this family as
+  the toy-version trap; the run entered it anyway, three times, each entry individually
+  defensible. That pattern — a fenced area re-entered one defensible step at a time — is the
+  single most useful thing in this retro. (cycles 2, 3, 6, 8)
+- **The playbook was inert for the entire run: zero lessons applied, by the book** — why: J-1b,
+  the allowlist gap. `bin/swarm-playbook.sh parse` was DENIED at kickoff, so SKILL.md step 3
+  routed to "proceed with defaults"; the conductor deliberately did *not* hand-stage the
+  directives (run #1 did), so the cost would be visible rather than papered over. The same
+  denial recurred for `bin/swarm-budget.sh` in **8 of 8 cycles** and for `bin/swarm-notify.sh
+  poll` from cycle 5 on. Every burn number this run came from `npx ccusage` invoked directly.
+  It cannot be fixed from inside a run: a `-p` session cannot write `settings.json`. (cycles 0–8)
+- **Two false "pacer silent" alerts** at 09:35Z and 10:35Z — why: `bin/swarm-health.sh` fires
+  when `pacer.log` is untouched for `HEALTH_STALE_MIN` (30 min), and its suppression clause
+  (`systemctl is-active swarm-pacer.service`) did not hold for cycles the pacer had already
+  spawned. `pacer.log` gaps of 59 min (08:59:28→09:58:15, cycles 1–2) and 33 min
+  (10:03:25→10:36:53, cycle 3) are simply long cycles working. Two pushes, both wrong, both
+  during healthy work. Evidence: `runs/notify.log` "send fail ok" ×2 against `runs/pacer.log`.
+  (cycles 1–3)
+- **My instrument stopped catching itself at cycle 8, and that is not a win** — why: the gate
+  ran correctly on first authoring because I copied cycle 6's harness wholesale instead of
+  writing a new one, which removed most of the surface the previous five defects lived on.
+  Reuse, not skill, and a sample of one either way. Recorded so a later reader does not price
+  it as progress. (cycle 8)
+
+## Pacing honesty
+
+- Governor clamps: **0** cycles (ceilings hit: **none** — `weekly.ceiling` was `null` every
+  cycle); full-mode overrides: **0**; promote-rung promotions: **0** (`promote_blocked: true`
+  all run, from guest mode pinning the ceiling at 3, never from the governor).
+- **Gear 3 in all 8 dispatching cycles**, by two independent routes that agreed every time:
+  guest mode clamps the reachable ceiling to 3, and the evidence rule lands a probe with no
+  limit data at cruise. **ρ was NOT COMPUTABLE for the whole run** — `ccusage` reports no
+  limit, so `ratio: 0.0` in every runfile means *not computed*, never *zero burn*. Any future
+  reader of this run's telemetry should treat the ratio column as absent data.
+- Windows that reset below 90 % utilization: **none — and no in-run reset happened at all.**
+  `usage_reset_at` was 16:00Z; the target went DONE at 13:28Z. There is no window-utilization
+  figure for this run, and it is reported as not-applicable rather than filled with a number.
+- Voluntary idle cycles: **0**. Limp episodes: **0**. Degraded tiers: **none** all run.
+- Weekly heat trend: 0.66 (c2) → 0.88 (c4) → 1.066 (c5, first cycle hotter than elapsed) →
+  1.117 (c7) → 1.071 (c8). The cycle-8 fall came from the *denominator* moving while the
+  numerator held flat at 5 % — a 1 %-resolution rounding artefact, which is why a single-cycle
+  heat delta is not a trend. `opus_used_pct` stayed **0** all run even though J-4 attempt 2
+  ran on opus: one M-effort docs item does not move a weekly bucket.
+- Measured spend, from `runs/pacer.log` `cycle-done cost=` entries for cycles 1–8:
+  20.75 + 15.12 + 15.49 + 14.31 + 10.55 + 6.46 + 13.46 = **$96.14** subscription-equivalent,
+  falling in the second half as the work narrowed to single-item gates.
+
+## Config recommendations
+
+- [qa] Seal the verification gate before dispatch: write and validate it, commit its sha256 (and its pre-dispatch output hash) to the repo, withhold the plaintext for the dispatch window, then re-hash after the builder returns — an identical hash proves the check predates the work and that the tree did not move [apply: prompt all "The conductor seals its verification gate by hash before dispatch; do not attempt to locate, read or infer the check"] [confidence: high] [source: 2026-08-17 aphorism-cli]
+- [qa] Classify every surviving mutant as HOLE or BOUNDARY before hardening anything — a boundary survivor is documented, never tested around; hardening one manufactures false confidence and generates work forever [apply: prompt qa "Classify each surviving mutant as HOLE (a real gap — harden it) or BOUNDARY (behaviour the spec does not decide — document it) BEFORE writing any test"] [confidence: high] [source: 2026-08-17 aphorism-cli]
+- [qa] Never bind an assertion to prose matched by regex — read a structural marker the document owns, or retire the check; a prose guard's failure mode is a false rejection of an honest document, and fixes relocate that risk rather than removing it [apply: prompt qa "Never assert against prose matched by regex — read a structural marker the document owns (a table, an explicit anchor), or retire the check"] [confidence: high] [source: 2026-08-17 aphorism-cli]
+- [qa] Price a detection fix on TRUE inputs before accepting it: run the unfixed arm too, and report closed-cells AND newly-false-rejected cells — a fix that closes 6 holes and false-rejects 2 honest inputs is a trade, not a win [apply: prompt qa "When a fix closes a detection hole, measure it against true-positive controls AND against the unfixed baseline; report both columns"] [confidence: high] [source: 2026-08-17 aphorism-cli]
+- [process] Treat the previous cycle's wakeup-note recommendation as a claim to check, not an instruction to inherit — re-read the acceptance clauses it summarises; two cycles here produced verified value that inheritance would have skipped, at the cost of one grep each [confidence: high] [source: 2026-08-17 aphorism-cli]
+- [process] A completion heuristic based on tree stability (diff non-empty and byte-stable for N seconds) is not a completion signal — the agent completion notification is the only one [confidence: high] [source: 2026-08-17 aphorism-cli]
+- [process] The dead-man staleness threshold must exceed the longest expected cycle, or long healthy cycles page the human — this run sent two false "pacer silent" alerts across 59 min and 33 min log gaps that were simply work in progress [confidence: med] [source: 2026-08-17 aphorism-cli]
+
+## House-rules proposals
+
+- [docs] A number that is only true at a particular commit must name that commit in the same
+  sentence or table header, with the command to re-derive it — REPORT.md's vintaged
+  derivation table survived a later re-check that would otherwise have read as a false claim
+  (cycles 5, 7; KI-23 closed on exactly this).
+- [docs] State a fact once. A sentence that restates the same count in two clauses reads as two
+  independent claims and invites a guard to double-count it (cycle 5, ledger entry 17).
+
+## Applied lessons check
+
+**Zero lessons were applied this run**, so there is nothing to re-observe or contradict —
+`runfile.playbook.applied` is empty and `parse_source` records why (J-1b: the parse was denied,
+and step 3 routes a parse failure to defaults). This is itself the finding: the playbook
+mechanism was inert for a second consecutive run on the same config gap, which is what J-1a
+and J-1b exist to make visible. L-039 in the current playbook ("allowlist helper scripts by
+absolute path for the host they will actually run on", learned 2026-08-16 on *moon*) predicted
+this exact failure and could not be applied, because applying it requires the tool it describes.
+
+## Telemetry (squeeze slice, 2026-08-14)
+
+- Weekly utilization achieved at reset: **not applicable — no usage-window reset occurred
+  during this run** (reset 16:00Z, run ended 13:4xZ). At the last probe: overall 5 %, premium
+  (opus) 0 %, against 4.67 % of the week elapsed.
+- Allocator: posture *trickle* throughout; `allow_overall_pct` tightened 9 → 8 → 7 → 6 → 6 → 5
+  across cycles 2–8, and the run stayed compliant with it (housekeeping only, zero product
+  code, zero new dependencies). Granted-vs-burned cannot be stated as a ratio because the
+  allowance is a percentage posture, not a token grant; burned was $96.14 by `pacer.log`.
+- Auto-kickoffs this run/week: **1** (this run, 08:34:37Z, `mode=guest dial=0.33
+  posture=trickle`); postures at start: trickle; 3-strike queue drops: **0**.
+- Final-hours floor release: **did not fire** — the run ended ~19 h before `stop_at`, so the
+  release window was never entered.
+
+---
+
+# PRIOR RUN — improvement run #1 retro (2026-08-15 → 2026-08-16), preserved verbatim
+
+<!-- Everything below this line is improvement run #1's retro exactly as its WRAP_UP left
+     it at 2026-08-16T11:24Z. It is history, not a description of the repo today: its cycle
+     numbers are run #1's, and its counts were true when written. Improvement run #2's retro
+     is above. Nothing here was edited by run #2. -->
+
+## aphorism-cli — run retro (run #1)
+
+<!-- Written by /swarm WRAP_UP to <target>/.swarm/RETRO.md. Evidence rules apply
+     here exactly as in the verification gate: every entry cites cycle numbers
+     from .swarm/journal.md. No cycle number, no entry — vibes are not evidence. -->
+
 Run: **2026-08-15 improvement run** (allocator auto-kickoff, `source=allocator`,
 brief *"harden tests, fix playbook items, polish docs — no new features"*) |
 cycles run: **47 complete and counting** — PRE-DRAFTED at cycle 42, **refreshed at cycle 48**

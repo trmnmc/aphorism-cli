@@ -9884,3 +9884,180 @@ cycle 8 stamp (appended after the commit landed):
     mechanism and reads this field on its 5-min tick, so the 90s base delay means "next tick".
     wrap_up_complete stays FALSE so the pacer still spawns the wrap-up cycle; the runfile target
     status stays `active` until WRAP_UP step 6 sets it, per the written procedure.
+
+## cycle 9 — 2026-08-17T13:53:22Z — aphorism-cli — **WRAP_UP: run CLOSED**
+
+No new work, by the procedure. Retro, distill, final report, tag, final render, disarm.
+Entered from the cycle-8 DONE declaration, and the DONE reasoning was re-checked here rather
+than inherited, because inheriting it is what the previous two cycles each caught themselves
+almost doing.
+
+### The DONE claim, re-verified before wrapping on it
+
+Three checks, all cheap, all run:
+
+```
+node --test test/*.test.js   ->  tests 102 | pass 102 | fail 0 | duration_ms 5169.9
+node bin/aphorism.js         ->  "Premature optimization is the root of all evil." / Donald Knuth   (exit 0)
+node bin/aphorism.js --seed 7 --tag design
+                             ->  "Simple things should be simple, complex things should be possible." / Alan Kay
+git status --porcelain (target, at orient)  ->  EMPTY
+```
+
+Backlog: 16 done / 2 todo / 1 blocked / 1 dropped. The three open items were re-read at their
+acceptance clauses, for the third consecutive cycle, because that is the check that decides
+whether stopping is honest: **T-006** "confirmed against a primary source"; **T-040** "a human
+confirms two judgment calls"; **J-7** "a human rules ... written into SPEC.md as an explicit
+clause either way". All three name a human as the actor. Nothing on the board is swarm-actionable.
+All five must-haves (J-1a, J-1b, J-2, J-3, J-4) are `done` and each was conductor-gated at the
+cycle recorded in the report. Stopping stands.
+
+### RETRO and REPORT were APPENDED, not overwritten — the one judgment call of this cycle
+
+`RETRO.md` already held improvement run #1's retro; `REPORT.md` holds run #1's frozen body,
+its closing addendum, and this run's J-4 reconciliation section whose derivation table is
+deliberately pinned to commit `dbc1939`. WRAP_UP's wording ("fill the template -> the file")
+reads as a substitution, and a substitution here would have destroyed two things worth more
+than a clean template:
+
+1. Run #1's retro **records that this exact file once silently carried a PREVIOUS run's retro
+   into a new run**, and that was filed as the defect (its cycle-42 provenance note). Replacing
+   it with mine and dropping its text would have repeated the same class of loss in the
+   opposite direction.
+2. The vintaged numbers in REPORT.md's derivation table are *true as stated* precisely because
+   they name their commit — cycle 7 nearly failed the docs must-have on them and then closed
+   KI-23 on the finding that pinning IS the defence.
+
+So: run #2's retro sits first in `RETRO.md`, with run #1's preserved verbatim below a fence
+(its `#` heading demoted to `##` — the only byte changed, 39 KB kept). The final report is
+appended to `REPORT.md` as its own section, and a forward pointer was added to the J-4 section
+so the top-of-file navigation note ("§ Improvement run #2 status, at the very end") stays true
+instead of quietly becoming false. 74,110 -> 95,822 bytes; nothing removed.
+
+### DISTILL — 3 lessons, and the file was at exactly its cap
+
+`bin/swarm-playbook.sh append` was **DENIED for the SEVENTH consecutive time this run**,
+reproduced in both forms rather than assumed from the previous six:
+
+```
+cd /opt/swarm && bin/swarm-playbook.sh append --candidates runs/wrapup-candidates.md ...   -> DENIED
+bash /opt/swarm/bin/swarm-playbook.sh append --candidates /opt/swarm/runs/... -> DENIED
+```
+
+Manual fallback per WRAP_UP step 2b. Candidates drafted to `runs/wrapup-candidates.md` (4),
+landed (3), because **the file sat at exactly 20 of 20 and every append evicts a
+high-confidence lesson** — a full cap is an argument for fewer lessons, not for filling a quota:
+
+- **L-042** [qa, apply] seal the verification gate before dispatch, by hash, and re-hash after.
+- **L-043** [qa, apply] never bind an assertion to prose matched by regex; price any fix to such
+  a guard on TRUE inputs against an unfixed baseline column.
+- **L-033** [qa, apply] **RESTORED from the archive**, not re-minted. This is the finding of the
+  cycle: L-033 (classify every mutation survivor HOLE vs BOUNDARY before hardening) was archived
+  as advice-only by **this run's own cycle 1 at 08:48Z**, and then independently **re-learned by
+  this same run** at cycles 3, 6 and 8 — it is the rule that decided J-9. An advice-only lesson
+  was archived and re-derived from scratch inside five hours, on the same file's other side.
+  That is evidence for cycle 1's thesis that advice-only lessons do not fire, and evidence
+  against archiving as the remedy. It comes back promoted med -> high with an `[apply:]`
+  directive and `[observed: 2]`. `playbook/README.md` says a re-learn whose confidence or
+  `[apply:]` differs is FLAGGED, not silently merged — so the flag is written by hand into
+  `DROP-RATIONALE-2026-08-17.md` § *WRAP-UP drop*, and **a human should confirm the promotion**.
+
+Two re-learns were merged instead of appended (dedupe rule): **L-039** (allowlist by absolute
+path — re-observed 8/8 cycles, and the lesson that predicted this run's whole config problem)
+and **L-034** (refute the central claim — re-observed in a new seat, the conductor applying it to
+the previous cycle's own wakeup note). Both bumped to `[observed: 2]` with sources merged.
+
+Three dropped under the cap rule (all 20 were high confidence, so the rule takes the oldest
+pre-existing): **L-003, L-006, L-007** — and each was verified **already mechanized** before
+being dropped, by reading the procedure files, not by assuming:
+
+```
+L-003 -> reference/workflows.md:215   qa-verify contract already REQUIRES hand-computed
+                                      expectations with the arithmetic shown in `derivation`
+L-006 -> bin/collision-scan.mjs       mandated by reference/cycle.md step 5 and step 6.6
+L-007 -> reference/cycle.md step 5    post-merge look pass is mandatory; live L-018 says it too
+```
+
+`L-008` was next in line and was **KEPT**: it is only partly mechanized — under the headless
+direct-Agent fallback there are no worktrees, and nothing but that prompt line stops a builder
+from committing. Byte-identical copies of all three went to `learnings-archive-2026-08-17.md`
+with the reasoning; a byte-exact whole-file backup is `learnings.md.pre-wrapup2-1786974802`.
+
+### VERIFICATION EVIDENCE — the playbook file, self-checked because the validator is denied
+
+`bin/swarm-playbook.sh validate` is unreachable (same allowlist gap), so the file was checked
+against the grammar in `playbook/README.md` by an independent regex written at wrap-up
+(`runs/.c9-pbcheck.py`):
+
+```
+observed bump: L-034 observed=2 | source: 2026-08-14 moon; 2026-08-17 aphorism-cli
+observed bump: L-039 observed=2 | source: 2026-08-16 moon; 2026-08-17 aphorism-cli
+observed bump: L-033 observed=2 | source: 2026-08-15 moon; 2026-08-17 aphorism-cli
+total lessons: 20 | unique: 20 | cap 20 respected: True
+duplicate ids: none
+next_id header: 44
+apply-directive lessons: 15
+GRAMMAR OK
+```
+
+**That is a self-check, not `validate` exit 0, and the report says so in those words.** The
+15-directive count is a second, independent consistency signal: J-1a left 15, this cut dropped
+three `[apply:]` lessons and added three, so 15 is what must survive, and does.
+
+### A DEFECT IN MY OWN INSTRUMENT, this cycle, found and corrected
+
+My first known-issues classifier read `'CLOSED' in status.upper()` and reported **KI-22 as
+CLOSED**. Its status is `"open, disclosed by the builder pre-gate"` — and *DISCLOSED* contains
+*CLOSED*. A substring test masquerading as a state test, in the wrap-up of a run whose retro is
+about exactly this. Caught by reading the output against the state file rather than trusting the
+tally, corrected before the report's known-issues table was written (17 open, not 16). The
+cycle-8 note that reuse rather than skill produced a clean gate is, on this evidence, the right
+reading: given a fresh instrument, the defect rate resumed immediately.
+
+### NEW KNOWN ISSUE, found at wrap-up: KI-25 (medium) — the dead-man switch cried wolf twice
+
+`bin/swarm-health.sh` sent **two false "pacer silent" pushes** at 09:35:11Z and 10:35:11Z
+(`runs/notify.log`, `send fail ok` x2). It fires when `pacer.log` is untouched for
+`HEALTH_STALE_MIN` (30 min), and `runs/pacer.log` has real gaps of **59 min**
+(08:59:28 -> 09:58:15, cycles 1 and 2 inside one spawned session) and **33 min**
+(10:03:25 -> 10:36:53, cycle 3). Both gaps were healthy work. The script has a suppression
+clause for precisely this case — exit 0 when `systemctl is-active swarm-pacer.service` — and it
+did not hold for cycles the pacer had already spawned. Reported, not patched: hard rule 5 fences
+`bin/`. Two candidate fixes are on the issue. Also recorded: **KI-19's `desc` field is an empty
+string** in state.json, found while compiling the report, and deliberately NOT back-written from
+memory — a reconstructed finding is worse than a visible hole. A `note_cycle_9` points at the
+run-#1 cycle-49 journal block where the text survives.
+
+### Board and burn at close
+
+Board unchanged, deliberately: 16 done / 2 todo / 1 blocked / 1 dropped. Known issues 22 (KI-25
+filed this cycle); 3 resolved this run (KI-9, KI-10 at cycle 2; KI-23 at cycle 7) and KI-5
+partially. No budget probe this cycle — WRAP_UP does not gate on a gear, and `bin/swarm-budget.sh`
+is denied anyway. Measured run spend from `runs/pacer.log` `cycle-done cost=` for cycles 1-8:
+20.75 + 15.12 + 15.49 + 14.31 + 10.55 + 6.46 + 13.46 = **$96.14**.
+
+### What this run owes a human, for the last time
+
+1. `playbook/HANDOFF-allowlist-2026-08-17.md` — two JSON lines. Denials this run: budget probe
+   **8/8 cycles**, playbook script **7 times**, notify poll from cycle 5 on. Consequence: **zero
+   playbook lessons applied all night, by the book.**
+2. Confirm the `L-033` promotion (med -> high, `[apply:]` added).
+3. Rule on **J-7**'s two unspecified CLI behaviours; confirm **T-040**'s two judgment calls.
+4. **KI-2 / T-006** — 50 corpus attributions, unaudited, and the only route is a human with
+   primary sources. It is the repo's highest-severity open issue and no run can close it.
+5. Fix `swarm-health.sh` (KI-25).
+
+The product itself is unchanged and works: `git diff --name-only ef4fa6d..HEAD -- src bin` is
+empty across the whole run. Nothing done here is visible to the CLI's user — that was the deal.
+The one change that would improve the product for a user is still no-repeat rotation, still
+excluded by the brief, still one cursor in `$XDG_STATE_HOME`.
+
+runfile-mirror:
+
+```json
+{"version":1,"run_label":"improvement-aphorism-cli-2026-08-17","targets":[{"path":"/opt/targets/aphorism-cli","status":"done","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":"2026-08-18T08:34:37+00:00","usage_reset_at":"2026-08-17T16:00:00+00:00","model_policy":"value-routing","auth_mode":"subscription","heartbeat":{"ts":1786974802,"next_wakeup_at":0,"pid":1642874,"limp":false,"degraded_tiers":[],"wakeup_note":"RUN COMPLETE. wrap_up_complete=true, target status done, phase DONE. NO further wakeups: the pacer DONE-guard keys on this flag and on REPORT.md existing. Nothing here needs another cycle; everything left is in REPORT.md under \"Ranked, for the human\"."},"pacing":{"mode":"guest","dial":0.33,"dial_note":"Hints supplied dial 0.33; guest mode forces the effective dial to 1.0 per the Gear pacing table. Both recorded: 0.33 is what the allocator asked for, 1.0 is what the mechanism uses. Guest clamps reachable gears to 1-3 and never upshifts."},"budget":{"source":"probe","gear":3,"gear_target":3,"ratio":0,"mode":"guest","k_cap":3,"promote":false,"demote":false,"window_tokens":48240264,"window_cost_usd":37.47,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":25519261,"projected_depletion_at":0,"last_probe_ts":1786973282,"last_real_probe_ts":1786973282,"probe_failures":0,"gear_evidence":"WRAP_UP: no probe this cycle by design (wrap-up gates on no gear, and bin/swarm-budget.sh is denied by the J-1b allowlist gap anyway). Final measured spend for cycles 1-8 from runs/pacer.log cycle-done entries: $96.14. rho was NOT COMPUTABLE for the entire run (ccusage reports no limit), so every ratio 0.0 in this run's history means \"not computed\", never \"zero burn\". Gear was 3 in all 8 dispatching cycles, by two independent routes that agreed every time: the guest-mode ceiling and the evidence rule's cruise-on-missing-data.","weekly":{"ok":true,"weekly_used_pct":5,"opus_used_pct":0,"week_elapsed_pct":4.67,"weekly_heat":1.071,"opus_heat":0,"ceiling":null,"promote_blocked":true,"note":"Governor has data (runs/allocator.json ok:true, source:probe). Heat 1.071, DOWN from 1.117 at cycle 7 — and this time the denominator moved while the numerator held (weekly_used flat at 5.0%, week_elapsed 4.477 -> 4.67). That is the rounding-resolution artefact cycle 6 warned about, now visible in the falling direction, and it is exactly why a single-cycle heat delta should not be read as a trend at 1% resolution. No ceiling computed, nothing clamped. opus_used still 0 across the whole run — every builder this run has been sonnet. promote stays blocked by guest mode pinning the ceiling at 3, not by the governor. Posture trickle, allow_overall_pct steady at 5. Work stayed housekeeping and compliant: one S-effort test item, zero product code, zero test change (the outcome was a retirement), zero new dependency."}},"playbook":{"mode":"auto","applied":[],"vetoed":[],"parse_source":"NOT PARSED, AND NOTHING APPLIED. bin/swarm-playbook.sh parse was DENIED at this kickoff -- reproduced live, not inferred: the allowlist carries no path form of the script a headless session resolves. SKILL.md step 3 routes a parse failure to 'proceed with defaults', so this run applies ZERO lessons by the book. learnings.md was read directly for DIAGNOSIS ONLY (36 lessons against a documented cap of 20 -- the kickoff note said 35, which was a miscount off a truncated grep; the parser counted 36 at cycle 1 and 36 is correct) because repairing that file is this run's J-1a; its directives were deliberately NOT hand-staged into prompt_lines the way run #1 did, so that the cost of the inert playbook is visible in this run's outcome instead of being papered over by the conductor. record-applied cannot be written for the same reason.","directives":{"wave_k":null,"routing_recs":[],"prompt_lines":{}},"distill":{"script_denied":true,"denial_count_this_run":7,"method":"manual fallback per WRAP_UP step 2b, self-checked against playbook/README.md grammar","appended":["L-042","L-043"],"restored_from_archive":["L-033"],"observed_bumps":["L-034","L-039"],"dropped_to_archive":["L-003","L-006","L-007"],"file_state":"exactly 20 lessons, 20 unique ids, next_id 44, 15 [apply:] directives","human_action":"confirm the L-033 promotion (med -> high, [apply:] added) and run bin/swarm-playbook.sh validate after applying HANDOFF-allowlist-2026-08-17.md"}},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0,"note":"Linux/VPS: swarm-watchdog.timer verified ACTIVE via systemctl list-timers (next fire 2026-08-17T09:05:09Z, 25min period). swarm-pacer.timer is the firing mechanism for cycles and is also active."},"caffeinate_pid":0,"wrap_up_complete":true,"cycles_since_recycle":8,"artifact":{"url":"","file":"/opt/swarm/runs/dashboard.html","publish_failures":0}}
+```
+
+
+---
+
