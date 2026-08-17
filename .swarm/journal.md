@@ -8133,3 +8133,238 @@ kickoff correctly never spawned one. Nothing to identity-check, nothing to kill.
 
 **`cycles_since_recycle` stays 25, unreset.** RECYCLE tripped and was deferred every cycle
 since; resetting it at WRAP_UP would erase that it was never actually run. Left visible.
+
+
+---
+
+## cycle 0 — 2026-08-17T08:42Z — KICKOFF, improvement run #2: the brief pointed at the wrong file
+
+**Work:** kickoff (allocator auto-kickoff, `source=allocator`, `mode=guest`, `dial=0.33`,
+posture `trickle`).
+**Outcome:** SCAFFOLDED. Spec rewritten and locked, board rebuilt to 12 open items, two
+config gaps reproduced live rather than inherited as claims.
+
+### the guards, and why 1b did not apply
+
+`runs/current.json` was absent; `current.json.bak` held the moon run with
+`wrap_up_complete: true`, so no live run existed (guard 1a clear). cwd is `/opt/swarm`
+(guard 1c clear). Guard 1b — the empty-target refusal — does NOT apply: the hints `brief`
+is non-empty and the idea text begins with `improve existing target`, which is the
+documented improvement-run carve-out. `/opt/targets/aphorism-cli` was verified a git repo
+and REUSED; no dir creation, no `git init`, no `gh repo create`. The hints file was
+consumed and deleted so it can never steer a later human kickoff.
+
+### STRESS-TEST — verdict RESHAPE, confidence 8
+
+The brief says "harden tests". Attacked, that phrase does not survive contact with the
+board. **Five of the six open backlog items** — T-024, T-024a, T-024b, T-032, T-039 — live
+inside ONE 74 KB test file, `test/readme-tags.test.js`, whose job is to parse README prose
+and assert that counts in it match the corpus. That is 74 KB of test against 8.5 KB of
+corpus and 3 KB of source. T-024a is already **blocked at attempts 2**, and KI-9 and KI-10
+record a *measured* finding — not a suspicion — that a count cannot be bound to its marker
+by any rule that does not also false-reject some honest, entirely-true README.
+
+That is the toy-version trap in lens 3 of the stress pack: self-referential work that
+generates more of itself and protects nothing a user will ever meet. Steelmanned before
+the verdict — the file did find real silent holes earlier in run #1, so it was not waste —
+but a blocked item plus two known issues recording provable impossibility is a signal to
+**stop**, not to continue. Reshaped: retire that thread as a documented boundary (J-2),
+aim new tests at `src/` and the shipped binary (J-3), and promote the playbook repair from
+a side errand to the run's primary must-have.
+
+### PRIOR-ART SCOUT — 5 searches, stance BUILD
+
+`stryker-mutator/stryker-js` (Apache-2.0, 3,017 stars, pushed 2026-08-15) automates exactly
+the mutation-measurement method run #1 hand-rolled under L-029/L-031. Not adopted: it is an
+npm toolchain addition to a repo whose taste is zero-dependency, and adding a toolchain is a
+scope change, not housekeeping. **Honestly labelled:** fit was NOT grep-verified past repo
+metadata — the scout budget went elsewhere, and the scout method says to say so rather than
+assert fit. Two product-space searches for prior art on the CLI itself returned nothing.
+Recorded for a human to weigh, not acted on.
+
+### TASTE JUDGE — 7 / 8 / 8 / 6
+
+use-twice 7, product-not-demo 8, scope-fits-night 8, one-memorable-thing 6. Verdict:
+*"worth the night as scoped — the call hinges on J-1's executed-evidence requirement,
+because a playbook repair that is only code-read would repeat the exact failure mode this
+run exists to close."* **That axis is the one this run then discovered it cannot satisfy**
+(below), which is recorded here rather than quietly dropped.
+
+### the two config gaps, both REPRODUCED and neither inherited
+
+**1. `bin/swarm-playbook.sh` is unrunnable.** Kickoff step 3 invoked it; the call was
+**DENIED**. `SWARM/.claude/settings.json` carries `Bash(bin/swarm-notify.sh:*)` and a
+macOS-absolute notify path, and no path form of `swarm-playbook.sh` at all — so
+`validate`/`parse`/`append`/`record-applied` are all unreachable from a headless session
+whose cwd is not what the relative entry assumes. This is L-039's own lesson, unapplied to
+itself. Same gap denies `bin/swarm-budget.sh`.
+
+**2. The fix is not available from inside a run.** Kickoff step 5 attempted the settings
+edit — the sanctioned one — and the **write was DENIED**: a `-p` session cannot write
+`settings.json`. Confirmed by probe that `runs/` and `playbook/` ARE writable, so this is
+hard rule 5's fence being enforced by the harness, not a broken session.
+
+Consequence, stated plainly: run #1's central claim — that `cmd_parse` exits 2 on any
+validator output, so **every future run applies zero lessons** — was established by
+*reading* the script and **has never been executed**, by that run or by this one. J-1 was
+therefore split. **J-1a** repairs the 35-vs-20 cap breach losslessly, which removes the
+condition. **J-1b** hands off the allowlist gap with an exact JSON patch and the
+never-executed caveat in writing. J-1a does not verify the claim; it makes it moot. Any
+report that conflates the two is wrong.
+
+### the playbook was deliberately NOT hand-staged
+
+Run #1 responded to the same denial by reading `learnings.md` directly and hand-staging its
+directives into `prompt_lines`. This run does not. SKILL.md step 3 routes a parse failure to
+"proceed with defaults", so **zero lessons are applied**, `playbook.applied` is empty, and
+`prompt_lines` is `{}`. The file was read for DIAGNOSIS only, because repairing it is J-1a.
+Reason: hand-staging papers over the cost of the inert playbook with conductor effort, and
+this run's whole value proposition is that the cost should be visible in the outcome.
+
+### budget — a numerator with no denominator
+
+`bin/swarm-budget.sh` being denied, the probe was taken directly via
+`npx ccusage blocks --active --json`. Active 5h block 06:00Z→11:00Z: **12,468,825 tokens /
+$11.12 spent**, burn 87,310 tok/min ($4.67/hr), 140 min left, projecting $22.03 for the
+block. But `runs/allocator.json` reads `ok:false` / `source:"none"` with every usage field
+zeroed **while still emitting `allow_premium_pct: 10`** — that is **KI-16 failing open on a
+spend authorisation, firing live at this kickoff**. No limit means ρ cannot be computed. The
+evidence rule lands a missing-limit probe at **cruise, gear 3** — never overdrive, never
+crawl — and guest mode independently clamps the ceiling to 3, so the two agree. `ratio: 0.0`
+in the runfile means *not computed*, not *zero burn*. The trickle brief constrains work TYPE
+at step 4; it is not folded into the gear number.
+
+### board
+
+state.json and backlog.json were archived byte-exact (`*.pre-run2-1786955683`, 205 KB and
+210 KB) before being replaced with lean successors. 60 backlog items → 8 carried (open and
+blocked only; 48 done + 4 dropped live in git history), plus 5 new J-items = **12 open, 1
+newly dropped**. 18 known issues → **16 carried**; KI-3 and KI-4 were already resolved and
+are archived rather than restated.
+
+**T-008 (corpus 50 → 120) was marked `dropped` WITH its reason on the item, not silently
+omitted.** It is the one open item a user would actually notice — a corpus repeat is met by
+roughly the ninth invocation, and the run-#1 taste judge scored use-twice 4/10 and named
+this as the cause. It is excluded because the brief bars new features AND because KI-2 (the
+50 existing attributions are UNAUDITED, high severity) means more than doubling an
+unvouched-for corpus enlarges the worst open problem. Reversible on a word from the user.
+
+### VERIFICATION EVIDENCE — the inherited floor, re-measured before touching anything
+
+```
+$ node --test test/*.test.js   (in /opt/targets/aphorism-cli, before any change)
+ℹ tests 91
+ℹ suites 0
+ℹ pass 91
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4212.481151
+```
+
+```
+$ /opt/swarm/bin/swarm-playbook.sh validate      -> DENIED (not on the Bash allowlist)
+$ Write /opt/swarm/.claude/settings.json          -> DENIED (-p session cannot write settings)
+$ Write /opt/swarm/runs/.write-probe-c0.txt       -> OK      (hard rule 5 fence: runs/ writable)
+$ Write /opt/swarm/playbook/.write-probe-c0.txt   -> OK      (hard rule 5 fence: playbook/ writable)
+$ grep -c lessons in playbook/learnings.md        -> 35 lessons, documented cap 20, next_id 42
+```
+
+The 91/0 line is the floor: it is what the repo did BEFORE this run touched it, so any later
+green is measured against a number that was recorded before there was an incentive to like it.
+
+### runfile-mirror
+
+```json
+{
+  "version": 1,
+  "run_label": "improvement-aphorism-cli-2026-08-17",
+  "targets": [
+    {
+      "path": "/opt/targets/aphorism-cli",
+      "status": "active",
+      "weight": 1
+    }
+  ],
+  "rotation_cursor": 0,
+  "rotation_schedule": [
+    0
+  ],
+  "stop_at": "2026-08-18T08:34:37+00:00",
+  "usage_reset_at": "2026-08-17T11:00:00+00:00",
+  "model_policy": "value-routing",
+  "auth_mode": "subscription",
+  "heartbeat": {
+    "ts": 1786956162,
+    "next_wakeup_at": 1786958862,
+    "pid": 1357745,
+    "limp": false,
+    "degraded_tiers": []
+  },
+  "pacing": {
+    "mode": "guest",
+    "dial": 0.33,
+    "dial_note": "Hints supplied dial 0.33; guest mode forces the effective dial to 1.0 per the Gear pacing table. Both recorded: 0.33 is what the allocator asked for, 1.0 is what the mechanism uses. Guest clamps reachable gears to 1-3 and never upshifts."
+  },
+  "budget": {
+    "source": "probe",
+    "gear": 3,
+    "gear_target": 3,
+    "ratio": 0.0,
+    "mode": "guest",
+    "k_cap": 3,
+    "promote": false,
+    "demote": false,
+    "window_tokens": 12468825,
+    "window_cost_usd": 11.12,
+    "api_cap_usd": null,
+    "api_spend_usd": 0.0,
+    "tokens_per_hour": 5238614,
+    "projected_depletion_at": 0,
+    "last_probe_ts": 1786956162,
+    "last_real_probe_ts": 1786956162,
+    "probe_failures": 0,
+    "gear_evidence": "REAL probe, but taken directly via `npx ccusage blocks --active --json` because bin/swarm-budget.sh is DENIED by the settings allowlist (the same gap tracked as J-1b). Active 5h block 2026-08-17T06:00Z -> 11:00Z: 12,468,825 tokens and $11.12 spent, burn 87,310 tok/min ($4.67/hr), 140 min left at probe time, projecting $22.03 for the block. That is a numerator with NO DENOMINATOR: the allocator emits ok:false / source:none with every usage field zeroed, so no limit is available and rho cannot be computed. The evidence rule (Gear pacing) lands a missing-limit probe at CRUISE, never overdrive and never crawl -- hence gear 3, ratio recorded as 0.0 meaning 'not computed', not 'zero burn'. Guest mode independently clamps the ceiling to 3, so the two agree. The allocator brief ('TRICKLE POSTURE: housekeeping only, haiku-priced work types') constrains WORK TYPE at step 4 regardless of gear; it is not folded into the gear number.",
+    "weekly": {
+      "ok": false,
+      "weekly_used_pct": 0,
+      "opus_used_pct": 0,
+      "week_elapsed_pct": 0,
+      "weekly_heat": 0,
+      "opus_heat": 0,
+      "ceiling": null,
+      "promote_blocked": true,
+      "note": "No weekly data. runs/allocator.json reads ok:false / source:none with every usage field zeroed, yet still emits allow_premium_pct:10 -- that is KI-16 (fails open on a spend authorisation) firing live at this kickoff, not a fresh defect. The governor is therefore DISENGAGED: no ceiling was computed, and promote is blocked on the absence of evidence rather than on a measured ceiling. Run #1 ended 2026-08-17T05:00Z on the weekly cap at 100%; the week reset at that boundary, so this run starts in a fresh weekly window whose size is unmeasured."
+    }
+  },
+  "playbook": {
+    "mode": "auto",
+    "applied": [],
+    "vetoed": [],
+    "parse_source": "NOT PARSED, AND NOTHING APPLIED. bin/swarm-playbook.sh parse was DENIED at this kickoff -- reproduced live, not inferred: the allowlist carries no path form of the script a headless session resolves. SKILL.md step 3 routes a parse failure to 'proceed with defaults', so this run applies ZERO lessons by the book. learnings.md was read directly for DIAGNOSIS ONLY (35 lessons against a documented cap of 20) because repairing that file is this run's J-1a; its directives were deliberately NOT hand-staged into prompt_lines the way run #1 did, so that the cost of the inert playbook is visible in this run's outcome instead of being papered over by the conductor. record-applied cannot be written for the same reason.",
+    "directives": {
+      "wave_k": null,
+      "routing_recs": [],
+      "prompt_lines": {}
+    }
+  },
+  "watchdog": {
+    "mode": "normal",
+    "plist_loaded": true,
+    "lockfile": "/opt/swarm/runs/watchdog.lock",
+    "relaunch_attempts": 0,
+    "note": "Linux/VPS: swarm-watchdog.timer verified ACTIVE via systemctl list-timers (next fire 2026-08-17T09:05:09Z, 25min period). swarm-pacer.timer is the firing mechanism for cycles and is also active."
+  },
+  "caffeinate_pid": 0,
+  "wrap_up_complete": false,
+  "cycles_since_recycle": 0,
+  "artifact": {
+    "url": "",
+    "file": "/opt/swarm/runs/dashboard.html",
+    "publish_failures": 0
+  }
+}
+```
+
+**Next:** cycle 1 — J-1a, the playbook cap repair, as the highest-value reachable item.
