@@ -1,0 +1,49 @@
+=== cycle-8 (run #2) J-9 independent cost reproduction ===
+base commit: cb4b1c2
+patch V0: identity (control)
+patch V1: applied, 4/4 anchors
+patch V2: applied, 4/4 anchors
+
+cell  kind     V0            V1            V2            sentence
+P0    control  GREEN(102/0)  GREEN(102/0)  GREEN(102/0)  (none)
+               no README mutation — the shipped document
+K1    kill     GREEN(102/0)  RED(101/1)    RED(101/1)    "9 tags appear on 2 or more entries."
+               FALSE shape-2 duplicate (true: 12)
+               V1 failing: README opening sentence must state correct multi-entry and single-entry tag counts | README opening sentence must state correct multi-entry and single-entry tag counts
+               V2 failing: README opening sentence must state correct multi-entry and single-entry tag counts | README opening sentence must state correct multi-entry and single-entry tag counts
+K2    kill     GREEN(102/0)  RED(101/1)    RED(101/1)    "The corpus contains 13 distinct tags."
+               FALSE shape-1 duplicate (true: 12)
+               V1 failing: README must state total unique tags correctly | README must state total unique tags correctly
+               V2 failing: README must state total unique tags correctly | README must state total unique tags correctly
+K3    kill     GREEN(102/0)  RED(101/1)    RED(101/1)    "In fact 4 tags sit on exactly one entry."
+               FALSE shape-3 duplicate (true: 0)
+               V1 failing: README opening sentence must state correct multi-entry and single-entry tag counts | README opening sentence must state correct multi-entry and single-entry tag counts
+               V2 failing: README opening sentence must state correct multi-entry and single-entry tag counts | README opening sentence must state correct multi-entry and single-entry tag counts
+C1    cost     GREEN(102/0)  GREEN(102/0)  GREEN(102/0)  "All 12 distinct tags are listed below."
+               TRUE, shape 1, same number (my sealed cell X1)
+C2    cost     GREEN(102/0)  RED(101/1)    GREEN(102/0)  "7 tags appear on 5 or more entries."
+               TRUE, shape 2, different threshold — measured 7 (my sealed cell X2)
+               V1 failing: README opening sentence must state correct multi-entry and single-entry tag counts | README opening sentence must state correct multi-entry and single-entry tag counts
+C3    cost     GREEN(102/0)  RED(101/1)    GREEN(102/0)  "2 tags appear on 10 or more entries."
+               TRUE, shape 2, another threshold — measured 2 (my sealed cell X3)
+               V1 failing: README opening sentence must state correct multi-entry and single-entry tag counts | README opening sentence must state correct multi-entry and single-entry tag counts
+C4    cost     GREEN(102/0)  GREEN(102/0)  GREEN(102/0)  "Put another way, 12 tags appear on 2 or more entries."
+               TRUE, shape 2, same number and threshold (my sealed cell X4)
+C5    cost*    GREEN(102/0)  RED(101/1)    RED(101/1)    "Of these, 7 distinct tags carry 5 or more entries each."
+               BUILDER-CLAIMED — TRUE; "distinct tags" meaning "different tags", not vocabulary size
+               V1 failing: README must state total unique tags correctly | README must state total unique tags correctly
+               V2 failing: README must state total unique tags correctly | README must state total unique tags correctly
+C6    cost*    RED(101/1)    RED(100/2)    RED(100/2)    "With 50 entries in the corpus, exactly one aphorism is chosen per run."
+               BUILDER-CLAIMED — TRUE; "exactly one" about selection, nothing to do with tag counts
+               V1 failing: README opening sentence must state correct multi-entry and single-entry tag counts | README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)
+               V2 failing: README opening sentence must state correct multi-entry and single-entry tag counts | README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)
+C7    cost*    GREEN(102/0)  RED(101/1)    RED(101/1)    "7 tags appear on five or more entries."
+               BUILDER-CLAIMED — TRUE; word-form threshold, digit-form subject
+               V1 failing: README opening sentence must state correct multi-entry and single-entry tag counts | README opening sentence must state correct multi-entry and single-entry tag counts
+               V2 failing: README opening sentence must state correct multi-entry and single-entry tag counts | README opening sentence must state correct multi-entry and single-entry tag counts
+
+V0: control GREEN (sound) · kills 0/3 · FALSE REJECTIONS 1/7 [C6]
+V1: control GREEN (sound) · kills 3/3 · FALSE REJECTIONS 5/7 [C2, C3, C5, C6, C7]
+V2: control GREEN (sound) · kills 3/3 · FALSE REJECTIONS 3/7 [C5, C6, C7]
+
+BUILDER CLAIM REPRODUCTION (against V2, the design it reported building): 3/3 of its reported false rejections reproduce [C5, C6, C7]

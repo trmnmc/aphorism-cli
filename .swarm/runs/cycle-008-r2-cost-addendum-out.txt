@@ -1,0 +1,23 @@
+=== cycle-8 (run #2) J-9 cost addendum — sealed hole cells J4/J5/J6 against V2 ===
+base commit: cb4b1c2
+V2 patch: applied, 4/4 anchors
+
+[HOLD] P0  V2=GREEN(102/0)  want GREEN
+        no README mutation (soundness control)
+[HOLD] J4  V2=RED(101/1)  want RED
+        FALSE at the END of the section — position independence (true: 12)  "Overall 9 tags appear on 2 or more entries."
+        failing: README opening sentence must state correct multi-entry and single-entry tag counts | README opening sentence must state correct multi-entry and single-entry tag counts
+[HOLD] J5  V2=RED(101/1)  want RED
+        FALSE, shape 1, different sentence frame (true: 12)  "Note that 30 distinct tags remain after the fold."
+        failing: README must state total unique tags correctly | README must state total unique tags correctly
+[HOLD] J6  V2=RED(101/1)  want RED
+        FALSE, shape 3, "exactly once" phrasing (true: 0)  "Even so, 6 tags appear exactly once today."
+        failing: README must correctly describe single-entry tag count | README must correctly describe single-entry tag count
+[HOLD] J4t  V2=GREEN(102/0)  want GREEN
+        CONTROL — J4 made TRUE (12)  "Overall 12 tags appear on 2 or more entries."
+[HOLD] J5t  V2=GREEN(102/0)  want GREEN
+        CONTROL — J5 made TRUE (12)  "Note that 12 distinct tags remain after the fold."
+[HOLD] J6t  V2=GREEN(102/0)  want GREEN
+        CONTROL — J6 made TRUE (0)  "Even so, 0 tags appear exactly once today."
+
+SCORE 7/7 cells hold

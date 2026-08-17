@@ -9711,3 +9711,154 @@ cycle 7 stamp (appended after the commit landed):
     check — now demonstrated on the AUDIT rather than on the render.
   next_wakeup_at rewritten to 1786970808 after scheduling (the VPS pacer is the firing mechanism;
     bin/swarm-pacer.sh reads this field on its 5-min tick, so the 90s base delay means "next tick").
+
+## cycle 8 — 2026-08-17T13:28Z — aphorism-cli — VALUE_LOOP → **target DONE, next cycle is WRAP_UP**
+
+gear 3 (cruise) · guest mode, dial 1.0 effective · rho NOT COMPUTABLE (ccusage reports no limit)
+  · window 48,240,264 tok / $37.47 at 113 min into the 11:00Z-16:00Z block · burn 425,321 tok/min
+  ($19.82/hr) · block projection $98.92, DOWN from $99.73 — second consecutive fall · weekly heat
+  1.071 (used 5.0% vs elapsed 4.67%), DOWN from 1.117 because the DENOMINATOR moved and the
+  numerator held — the rounding artefact cycle 6 warned about, now seen falling · posture trickle,
+  allow_overall_pct steady at 5 · bin/swarm-budget.sh DENIED for the SIXTH consecutive cycle
+  (J-1b allowlist gap; the exact patch has been sitting in playbook/HANDOFF-allowlist-2026-08-17.md
+  since 08:52Z and is still owed a human).
+
+work: build-wave, 1 item, direct-Agent dispatch (Workflow is review-gated in a -p session), sonnet.
+  J-9 — a FALSE duplicate of a RECOGNISED count-claim shape is unread in the Tag vocabulary section.
+  OUTCOME: **DONE via route (b), the retirement branch its own acceptance offers.** Nothing shipped.
+
+### Why I took the item two cycles in a row recommended against
+
+Cycle 6 filed J-9 at p6 with a stopping rule and cycle 7 recommended leaving it untaken and
+wrapping up. I checked that advice instead of inheriting it — which is precisely the lesson cycle 7
+itself wrote, now applied to cycle 7. J-9's acceptance, read directly, offers a NON-HUMAN branch:
+"or the item is retired with a measured argument that the fix costs more false rejections than the
+hole is worth." Executing that branch is the same treatment must-have J-2 required for the five
+prose items ("closed OR formally retired as measured boundaries") — inside the charter, not a
+descent past it. Wrapping up 19 hours early while the only dispatchable item sat open is the weaker
+artifact. Cycle 7 explicitly sanctioned this route ("take it ONCE and honour the stopping rule"),
+and the stopping rule was honoured: no J-10 filed.
+
+### VERIFICATION EVIDENCE — the sealed gate, authored and validated BEFORE dispatch
+
+Gate .swarm/runs/cycle-008-r2-gate-J-9.mjs, 24 scored cells x 2 arms. sha256 of the script AND of
+its pre-dispatch output committed to the target at bdacc00 before any agent ran; both plaintexts
+deleted for the dispatch window (KI-8 commit-reveal). Pre-dispatch reading:
+
+```
+arm A suite: {"verdict":"GREEN","pass":102,"fail":0}
+SCORE 18/24 cells hold; attribution 0/3
+  control: 1/1     hole: 0/6     cost: 4/4     regression: 13/13
+```
+
+The six BREAKs are the item: all 6 hole cells GREEN, i.e. the hole reproduces. Three of them
+(J4/J5/J6) were authored this cycle and no builder has ever seen them — J4 puts the falsehood at
+the END of the section, proving the hole is position-independent rather than an artefact of the
+published probe's insertion point; J5 and J6 use different sentence frames.
+
+### The builder reverted — and the re-run proved it byte for byte
+
+The builder took route (b) itself: built the fix, measured that it introduces false rejections on
+true prose, reverted, reported. On restore the gate script hashed byte-identical to its commitment
+(c555b7a5...9cf8), and re-running it AFTER dispatch reproduced the output file byte-identical to
+the sealed hash (d9d99054...5883) — 24 cells x 2 arms, 48 suite runs, every verdict the same. That
+is a mechanical proof the tree did not move, independent of trusting a clean `git diff`.
+
+### The claim that decided the item was reproduced, not accepted — and it was partly wrong
+
+The builder's cost measurement IS J-9's verdict, and it arrived as a claim whose evidence the
+builder had deleted with its own scratch tree (as instructed). So I rebuilt the candidate fix from
+the SHIPPED test file — never from its diff, which no longer existed — in two variants across the
+four extraction sites: V1 naive first-match -> matchAll, V2 the same plus threshold extraction for
+the "or more" shape. Full output .swarm/runs/cycle-008-r2-cost-probe-out.txt:
+
+```
+cell  kind     V0            V1            V2            sentence
+K1    kill     GREEN(102/0)  RED(101/1)    RED(101/1)    "9 tags appear on 2 or more entries."
+K2    kill     GREEN(102/0)  RED(101/1)    RED(101/1)    "The corpus contains 13 distinct tags."
+K3    kill     GREEN(102/0)  RED(101/1)    RED(101/1)    "In fact 4 tags sit on exactly one entry."
+C2    cost     GREEN(102/0)  RED(101/1)    GREEN(102/0)  "7 tags appear on 5 or more entries."
+C3    cost     GREEN(102/0)  RED(101/1)    GREEN(102/0)  "2 tags appear on 10 or more entries."
+C5    cost*    GREEN(102/0)  RED(101/1)    RED(101/1)    "Of these, 7 distinct tags carry 5 or more entries each."
+C6    cost*    RED(101/1)    RED(100/2)    RED(100/2)    "With 50 entries in the corpus, exactly one aphorism is chosen per run."
+C7    cost*    GREEN(102/0)  RED(101/1)    RED(101/1)    "7 tags appear on five or more entries."
+
+V0: control GREEN (sound) · kills 0/3 · FALSE REJECTIONS 1/7 [C6]
+V1: control GREEN (sound) · kills 3/3 · FALSE REJECTIONS 5/7 [C2, C3, C5, C6, C7]
+V2: control GREEN (sound) · kills 3/3 · FALSE REJECTIONS 3/7 [C5, C6, C7]
+```
+
+**A CORRECTION TO THE BUILDER, found by the V0 column.** It reported THREE new false rejections.
+Only TWO are new. C6 is RED on V0 as well — rejected by the SHIPPED tree before any fix, by the J-5
+unrecognised-digit guard doing exactly what its own failure message documents. The builder's
+sentence "under the original guards, none of cases 3-5 would ever fail" is false for that case. Its
+CONCLUSION is untouched — two new false rejections is still decisive — but the ledger should be
+right, and without a V0 column the over-count would have entered the record uncorrected.
+
+And the sealed cells against V2, with failability controls
+(.swarm/runs/cycle-008-r2-cost-addendum-out.txt):
+
+```
+[HOLD] J4   V2=RED(101/1)    want RED     "Overall 9 tags appear on 2 or more entries."
+[HOLD] J5   V2=RED(101/1)    want RED     "Note that 30 distinct tags remain after the fold."
+[HOLD] J6   V2=RED(101/1)    want RED     "Even so, 6 tags appear exactly once today."
+[HOLD] J4t  V2=GREEN(102/0)  want GREEN   CONTROL — same sentence made TRUE (12)
+[HOLD] J5t  V2=GREEN(102/0)  want GREEN   CONTROL — same sentence made TRUE (12)
+[HOLD] J6t  V2=GREEN(102/0)  want GREEN   CONTROL — same sentence made TRUE (0)
+SCORE 7/7 cells hold
+```
+
+The controls matter: without them three REDs could mean "the fix catches these falsehoods" or "the
+fix rejects these sentences whatever they say", and those are different findings.
+
+### The ruling
+
+A fix closes the hole on 6/6 cells and costs 2 new false rejections on entirely TRUE, ordinary
+prose (V1 costs 4). C5 is rejected because "distinct tags" is ambiguous between "the vocabulary
+total" and "different tags" — a property of the English phrase, not of the implementation. C7 is
+rejected because the threshold is spelled as a word. Both are sentences a maintainer would plainly
+write. This is the identical trade cycles 31, 32 and 35 each measured and each reverted, and the
+cycle-39 family decision forbids buying kills with false rejections. **Retired.** The hole stays on
+the record with its exact reproduction rather than being closed at that price.
+
+Conductor-run test_cmd on the real tree, unchanged as a retirement cycle should leave it:
+
+```
+i tests 102   i pass 102   i fail 0   duration_ms 4582.9
+```
+
+### MY INSTRUMENT DID NOT CATCH ITSELF — first time in six cycles, and that is not a win
+
+Cycles 3-7 each found a defect in my own gate via a control cell (missing shell glob; a cell
+reading a random draw as signal; a gate checking the SHAPE of a fix rather than the FACT; a
+reporter-format assumption; a buffer-trim off-by-one). Five for five, all found by controls, none
+by inspection. This cycle's gate ran correctly on first authoring. The honest reason is not that
+the authoring problem is solved — it is that I copied cycle 6's harness wholesale instead of
+writing a new one, which removed most of the surface those five defects lived on. Reuse, not skill,
+and a sample of one either way.
+
+### THE TARGET IS DONE — declared with ~19 hours of clock left, deliberately
+
+All five must-haves are verified done. J-9 was the last dispatchable item and is now terminal. The
+three items left on the board each require a human BY THEIR OWN ACCEPTANCE CLAUSE, verified this
+cycle by reading all three rather than inheriting the claim: T-006 "confirmed against a primary
+source"; T-040 "a human confirms two judgment calls"; J-7 "a human rules ... written into SPEC.md
+as an explicit clause either way". Every remaining open known issue is human-owned (KI-2), SWARM
+tooling fenced read-only by hard rule 5, or a documented boundary inside the guard family cycle 0
+fenced off. Nothing left passes the VALUE_LOOP ratchet, because nothing left is actionable by a
+swarm at all.
+
+Cycling for another 19 hours on that board is the "look productive forever while the product does
+not move" failure the cycle-6 decision names. The clock is not a reason to keep going. Phase set to
+WRAP_UP; the runfile target status stays `active` until WRAP_UP step 6 sets it, per the written
+procedure, and `wrap_up_complete` stays false so the pacer still spawns the wrap-up cycle.
+
+KI-7 scratch control PASSES a second consecutive cycle for run #2: the dispatch prompt named the
+exact in-target path .swarm/scratch-c008-r2-j9/ and required removing THAT directory; the builder
+did, and `git -C /opt/swarm status --porcelain` was empty at orient AND at commit.
+
+runfile-mirror:
+
+```json
+{"version":1,"run_label":"improvement-aphorism-cli-2026-08-17","targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":"2026-08-18T08:34:37+00:00","usage_reset_at":"2026-08-17T16:00:00+00:00","model_policy":"value-routing","auth_mode":"subscription","heartbeat":{"ts":1786973282,"next_wakeup_at":1786973914,"pid":1642874,"limp":false,"degraded_tiers":[],"wakeup_note":"cycle 7 CLOSED. J-8 VERIFIED DONE (gate 14/14, 4/4 live negative controls); KI-23 CLOSED on a separate 9/9 re-derivation gate with 2/2 live controls. Suite 102/0, test_cmd run by me, unchanged — correct for a docs-only cycle.\n\nREAD THIS BEFORE PICKING: I CORRECTED THE PREVIOUS WAKEUP NOTE'S PREMISE. Cycle 6 said the board's other four items \"remain human rulings and no run can action them\" and recommended J-9 as the only dispatchable item. That was TRUE for T-006, T-040 and J-7 — each acceptance literally requires a human to rule — and OVERSTATED for J-8, whose acceptance offered \"disambiguated in place\" as an ordinary docs branch. I took J-8 instead of J-9 and it closed cleanly. Check a premise like that before inheriting it; it was one grep of the acceptance clauses.\n\nTHE BOARD IS NOW GENUINELY AT THE DONE JUDGMENT, and this time the claim is checkable rather than predictive. All five must-haves are done. Remaining: T-006 (blocked, human audit), T-040, J-7 (both human rulings by their own acceptance) — and J-9, the ONLY dispatchable item left. J-9 is a real, measured, pre-existing S-effort hole in the README-prose test family. The cycle-0 stress test fenced that family as the toy-version trap; the cycle-6 stopping rule says a human should weigh a further descent into it. MY RECOMMENDATION: do NOT take J-9. Declare the target DONE and let WRAP_UP report J-9 as a measured, filed, deliberately-not-taken finding with its evidence — that is a better morning artifact than a third prose-guard cycle. If you disagree and take it, take it ONCE and honour the stopping rule: if its gate surfaces a further prose hole, stop and report, do not file J-10.\n\nWORTH KNOWING: the docs must-have nearly failed and then didn't, for an instructive reason. REPORT.md's derivation table states a suite size and line counts that are all WRONG against the working tree today (101 vs 102 tests, 3034 vs 3231 lines). They are TRUE AS STATED because the table is explicitly vintaged to commit dbc1939 in its preamble, its column header, and a reader instruction to re-run without the ref. Verified 9/9 at that commit with live controls. Do not \"fix\" those numbers — pinning them to a commit is the defence, not the defect.\n\nGATE WARNING, fifth consecutive cycle, same shape: my instrument was wrong on first authoring and a control-shaped cell caught it. Cell S1 read FAIL with a truncated path \"EPORT.md\" — I had called .trim() on the whole git-status-porcelain buffer, stripping the first line's leading space so slice(3) ate a character. Builder scope was never wrong. Corrected in a separate disclosed script with its own failability control rather than re-run clean. Tally: c3 shell glob, c4 random-draw cell, c5 shape-not-fact, c6 reporter format, c7 buffer trim. Five for five found by controls, zero by inspection.\n\nSTILL OWED A HUMAN, unchanged and now FIVE consecutive cycles: bin/swarm-budget.sh is DENIED by the allowlist gap (J-1b). The exact patch has been sitting in playbook/HANDOFF-allowlist-2026-08-17.md since 08:52Z. Real burn probes continue via npx ccusage directly."},"pacing":{"mode":"guest","dial":0.33,"dial_note":"Hints supplied dial 0.33; guest mode forces the effective dial to 1.0 per the Gear pacing table. Both recorded: 0.33 is what the allocator asked for, 1.0 is what the mechanism uses. Guest clamps reachable gears to 1-3 and never upshifts."},"budget":{"source":"probe","gear":3,"gear_target":3,"ratio":0,"mode":"guest","k_cap":3,"promote":false,"demote":false,"window_tokens":48240264,"window_cost_usd":37.47,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":25519261,"projected_depletion_at":0,"last_probe_ts":1786973282,"last_real_probe_ts":1786973282,"probe_failures":0,"gear_evidence":"REAL probe via `npx ccusage blocks --active --json`. bin/swarm-budget.sh DENIED for the SIXTH consecutive cycle — the J-1b allowlist gap, still owed a human, exact patch in playbook/HANDOFF-allowlist-2026-08-17.md. Same 5h block (11:00Z-16:00Z), read at 12:53Z, 113 min in: 48,240,264 tokens and $37.47, up from 40,989,428 / $30.62 at 12:32Z — +7.25M in 21 minutes, credited to cycle 7. Cache reads are 46.92M of the 48.24M against 384,743 output, the long-context conductor shape, unchanged all run. Burn 425,321 tok/min ($19.82/hr), block projection $98.92, DOWN again from $99.73 — the second consecutive falling projection. ccusage still reports NO limit, so rho is NOT COMPUTABLE and ratio 0.0 means \"not computed\", never \"zero burn\". The evidence rule lands a missing-limit probe at CRUISE and guest mode independently clamps the ceiling to 3; the two agree at gear 3, as they have every cycle this run. THIS cycle ran one sonnet builder and four pure-Node instruments (a 24-cell x 2-arm gate run TWICE, a 3-variant x 11-cell cost probe, and a 7-cell addendum) — roughly 130 full suite executions, all local CPU and no model spend.","weekly":{"ok":true,"weekly_used_pct":5,"opus_used_pct":0,"week_elapsed_pct":4.67,"weekly_heat":1.071,"opus_heat":0,"ceiling":null,"promote_blocked":true,"note":"Governor has data (runs/allocator.json ok:true, source:probe). Heat 1.071, DOWN from 1.117 at cycle 7 — and this time the denominator moved while the numerator held (weekly_used flat at 5.0%, week_elapsed 4.477 -> 4.67). That is the rounding-resolution artefact cycle 6 warned about, now visible in the falling direction, and it is exactly why a single-cycle heat delta should not be read as a trend at 1% resolution. No ceiling computed, nothing clamped. opus_used still 0 across the whole run — every builder this run has been sonnet. promote stays blocked by guest mode pinning the ceiling at 3, not by the governor. Posture trickle, allow_overall_pct steady at 5. Work stayed housekeeping and compliant: one S-effort test item, zero product code, zero test change (the outcome was a retirement), zero new dependency."}},"playbook":{"mode":"auto","applied":[],"vetoed":[],"parse_source":"NOT PARSED, AND NOTHING APPLIED. bin/swarm-playbook.sh parse was DENIED at this kickoff -- reproduced live, not inferred: the allowlist carries no path form of the script a headless session resolves. SKILL.md step 3 routes a parse failure to 'proceed with defaults', so this run applies ZERO lessons by the book. learnings.md was read directly for DIAGNOSIS ONLY (36 lessons against a documented cap of 20 -- the kickoff note said 35, which was a miscount off a truncated grep; the parser counted 36 at cycle 1 and 36 is correct) because repairing that file is this run's J-1a; its directives were deliberately NOT hand-staged into prompt_lines the way run #1 did, so that the cost of the inert playbook is visible in this run's outcome instead of being papered over by the conductor. record-applied cannot be written for the same reason.","directives":{"wave_k":null,"routing_recs":[],"prompt_lines":{}}},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0,"note":"Linux/VPS: swarm-watchdog.timer verified ACTIVE via systemctl list-timers (next fire 2026-08-17T09:05:09Z, 25min period). swarm-pacer.timer is the firing mechanism for cycles and is also active."},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":7,"artifact":{"url":"","file":"/opt/swarm/runs/dashboard.html","publish_failures":0}}
+```
