@@ -4,7 +4,7 @@
   "created_at": "2026-08-17T08:34:43Z",
   "run_label": "improvement-aphorism-cli-2026-08-17",
   "phase": "BUILD",
-  "cycle": 2,
+  "cycle": 3,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "preview": {
@@ -246,6 +246,14 @@
         "J-2a",
         "KI-20"
       ]
+    },
+    {
+      "id": "KI-22",
+      "severity": "low",
+      "cycle_found": 3,
+      "status": "open, disclosed by the builder pre-gate",
+      "desc": "Two narrownesses in J-2b's structural fix, both disclosed by the builder in its return before any gate measured them. (1) findAllTagCountTableHeaders assumes every `| Tag | Count |`-shaped table in the Tag vocabulary section is meant to be a band table; a legitimate future non-band use of that shape would need the guard updated. (2) The heading anchor is exactly /^####\\s+\\S/, so `###` or irregular spacing would not qualify.",
+      "why_it_matters": "Neither is a currently reachable false rejection — the README has no such table and no such heading — so this is filed as a note, not a defect. It is recorded because the T-021 precedent this fix follows was narrow in exactly the same deliberate way, and a future maintainer changing the section's markdown conventions is the person who will meet it."
     }
   ],
   "qa": {
@@ -258,25 +266,26 @@
     "suite_coverage_note_cycle_51": "T-043 CLOSED: the hole cycle 50 measured is closed. The shipped suite now protects the unseeded uniformity Domain rule. Both cycle-50 survivors are killed and attributable (gate 7/7, .swarm/runs/cycle-051-verify-T-043.txt); 80 -> 82 tests, 1.46s. The measurement cycle 50 introduced - plant a mutant in a full throwaway copy and run the project s own test_cmd - is now the standing way this run asks what the PERMANENT suite protects, as distinct from what a cycle gate protects.",
     "suite_coverage_note_cycle_52": "FULL-SPEC coverage map, generalising the cycle-50/51 instrument from one surface to every Domain rule. 29 clauses, one mutant each, planted in a full throwaway copy and run past the project's own test_cmd. Before this cycle's fix: 25 KILLED / 4 SURVIVED (L5, L7, J3, J3b). After T-044: 27 KILLED / 2 SURVIVED (L5, L7 — filed as T-045/T-046). Every mutant carries its own behavioural WITNESS proving the rule is actually violated at the user-facing surface, so a SURVIVED verdict cannot come from a no-op mutation; P0 control 29/29 witnesses hold, suite green. Evidence: .swarm/runs/cycle-052-rule-coverage-out.txt.",
     "suite_coverage_note_cycle_54": "COVERAGE MAP COMPLETE: 29/29 Domain-rule clauses protected. T-046 closed the last hole cycle 52 measured (L7: the opts.error guard narrowed so --list swallows every usage error). Six tests added to test/cli.test.js covering --list crossed with a non-numeric seed, an empty seed value, a whitespace-only seed value, and an unknown flag, each in both flag orders, each asserting all three halves of the observable (exit 2, zero-byte stdout, the aphorism: prefix on stderr). Suite 85 -> 91. Gate 10/10, .swarm/runs/cycle-054-verify-T-046.txt.",
-    "suite_coverage_note_cycle_002_run2": "First measurement of this run against the PRODUCT-adjacent suite rather than the swarm's own files. Instrument unchanged from cycles 50-54 of run #1 (full throwaway copy, mutate one thing, run the project's own test_cmd) but pointed at a README-guard family rather than at src/. 35 cells over two arms. Headline: silent holes 1 -> 0 on the shared cells, coverage regressions 0, loudness 6/6, and the false-rejection ledger UNCHANGED in size at 4 (its membership moved; see J-2a). Suite 91 -> 92."
+    "suite_coverage_note_cycle_002_run2": "First measurement of this run against the PRODUCT-adjacent suite rather than the swarm's own files. Instrument unchanged from cycles 50-54 of run #1 (full throwaway copy, mutate one thing, run the project's own test_cmd) but pointed at a README-guard family rather than at src/. 35 cells over two arms. Headline: silent holes 1 -> 0 on the shared cells, coverage regressions 0, loudness 6/6, and the false-rejection ledger UNCHANGED in size at 4 (its membership moved; see J-2a). Suite 91 -> 92.",
+    "suite_coverage_note_cycle_003_run2": "Two independent instruments this cycle, both the standing cycle-50 method (full throwaway copy, mutate one thing, run the project's own test_cmd), pointed at different halves of the repo.\n\nBAND GUARDS (J-2b), 13 cells + a 2-arm pre-dispatch probe + a 3-arm regression probe. The gate was authored BEFORE dispatch and it earned its keep twice before a builder returned: its P0 control caught that my own harness was broken (`node --test test/` silently does not do what `node --test test/*.test.js` does — the glob needs a shell), and its attribution check caught a false clearance in my own cell A2, which went RED via an unrelated tag-name census while every band guard passed. Re-aimed as A2b/A2c, it measured a REAL silent hole open pre-dispatch (92/0 green in both document positions). Final: 12/13 on the shipped tree.\n\nPRODUCT SURFACE (J-3), 4 mutants x 2 arms. 3 real holes in bin/aphorism.js and src/args.js closed, 1 already-covered mutant correctly given no test. Every mutant authored by the conductor from the source, not copied from the builder's harness; every witness re-run at the user-facing surface.\n\nSuite 92 -> 100. A THING TO NOT REPEAT: my first full-suite reading was 98, taken after a tree-stability wait that fired while a builder was still writing. Gate v2 then ran at 99. Both were re-run against the final 100-test tree before any verdict was recorded — a gate that did not test the shipped bytes is not evidence — but the stability heuristic (non-empty + byte-stable for 100s) is too weak, and the agent completion notification is the only real signal."
   },
   "counters": {
     "consecutive_no_value": 0,
     "consecutive_failures": 0,
     "k_current": 3,
-    "wave_streak": 0,
+    "wave_streak": 1,
     "window_tokens_attributed": 0,
-    "k_current_note": "Unchanged at 3 by the Wave autotune third branch. The wave was NOT clean (attempt 1 failed the gate, so one failed verify) and NOT demotable (a demotion needs >=2 failed verifies or a reverted merge; there were neither). Gear 3 caps the effective wave at 3 regardless."
+    "k_current_note": "Unchanged at 3. The wave was CLEAN by the Wave autotune definition — zero reverts, zero failed verifies, both items verified — so wave_streak goes 0 -> 1. Promotion to k=4 needs TWO consecutive clean waves, and gear 3 caps the effective wave at 3 regardless."
   },
   "last_cycle": {
-    "cycle": 2,
-    "ts": 1786960361,
-    "work": "build-wave (1 item, 2 attempts): J-2a Attribution half",
-    "outcome": "1 verified",
+    "cycle": 3,
+    "ts": 1786962717,
+    "work": "build-wave (2 items, 1 attempt each): J-2b band half + J-3 product-surface mutation sweep",
+    "outcome": "2 verified, must-have J-2 closed",
     "agents": 2,
     "models": [
-      "sonnet (attempt 1, rejected)",
-      "opus (attempt 2, verified)"
+      "sonnet (J-2b, verified)",
+      "sonnet (J-3, verified)"
     ]
   }
 }

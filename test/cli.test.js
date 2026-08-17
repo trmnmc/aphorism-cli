@@ -420,3 +420,91 @@ test('--nosuchflag --list (unknown flag BEFORE --list) is still a usage error, e
   assert.match(r.stderr, /^aphorism: /);
   assert.match(r.stderr, /nosuchflag/);
 });
+
+// --- J-3 (cycle 003): a layer deeper than the cycle-50..54 one-mutant-per-clause
+// map (.swarm/state.json qa.suite_coverage_note_cycle_52 / _cycle_54, all 29
+// clauses KILLED). These three are MEASURED survivors from a fresh mutation
+// sweep aimed at compound rule interactions, boundary values the earlier seed
+// mutants never tried, and the seam between bin/aphorism.js and src/. Instrument:
+// full-repo copy, one mutant, `node --test` in the copy (per-item scoped to
+// test/select.test.js test/args.test.js test/cli.test.js — see the harness
+// comment for why). Evidence: .swarm/runs/cycle-003-j3-mutation-sweep.mjs and
+// its -out.txt transcript. A fourth candidate mutant (seed 0 treated as falsy)
+// was already KILLED by the pre-existing '--json composes with --seed' test and
+// needed no new test.
+
+const { pick } = require('../src/select.js');
+
+test('plain single-pick output is TWO lines: text, newline, four-space indent, EM DASH, space, author', () => {
+  // README.md "## Usage" documents this exact worked example. Every pre-existing
+  // assertion on plain output (e.g. 'bare invocation prints one attributed
+  // aphorism...') only checks that stdout is non-empty and contains an em dash
+  // SOMEWHERE, which a mutant collapsing the two-line form onto --list's own
+  // single-line `<text> — <author>` shape still satisfies.
+  //
+  // Measured SURVIVOR: mutant D1-FMT. bin/aphorism.js's format() lost its
+  // `\n    ` before the em dash; all 70 pre-existing in-scope tests stayed
+  // green.
+  //
+  // The expected string is derived from src/select.js's own pick(), not from a
+  // literal: with no --author/--tag, the CLI's candidate set is the full
+  // corpus, so pick(corpus, 1) is exactly the entry `--seed 1` must select.
+  const expectedEntry = pick(corpus, 1);
+  const r = run(['--seed', '1']);
+  assert.strictEqual(r.status, 0);
+  assert.strictEqual(r.stderr, '');
+  assert.strictEqual(r.stdout, `${expectedEntry.text}\n    — ${expectedEntry.author}\n`);
+});
+
+test('--seed Infinity and --seed -Infinity (typed as CLI strings) are accepted and deterministic', () => {
+  // Domain rule: "--seed accepts any value that Number() parses to a non-NaN
+  // number, including negative numbers, non-integers, and Infinity / -Infinity;
+  // all are deterministic." The pre-existing Infinity/-Infinity coverage
+  // (test/select.test.js) calls pick(candidates, Infinity) with the JS value
+  // Infinity already parsed — it never sends the STRING "Infinity" through
+  // parseArgs and the shipped binary, so a bug at that seam (args.js rejecting
+  // non-finite Number() results) was invisible to the suite.
+  //
+  // Measured SURVIVOR: mutant D3-SEEDINF-STR. Adding `|| !Number.isFinite(n)`
+  // to src/args.js's parseSeedValue turns `--seed Infinity` into a usage error;
+  // all 70 pre-existing in-scope tests stayed green.
+  for (const seedArg of ['Infinity', '-Infinity']) {
+    const a = run(['--seed', seedArg]);
+    const b = run(['--seed', seedArg]);
+    assert.strictEqual(
+      a.status,
+      0,
+      `--seed ${seedArg} should be accepted (exit 0), got ${a.status}: ${a.stderr}`
+    );
+    assert.strictEqual(a.stderr, '');
+    assert.ok(a.stdout.length > 0);
+    assert.strictEqual(a.stdout, b.stdout, `--seed ${seedArg} must be deterministic across processes`);
+  }
+});
+
+test('--list with a filter that matches nothing is STILL exit 1, stderr only, stdout empty', () => {
+  // Domain rule: "Empty candidate set after filtering is an error, not an empty
+  // success: exit code 1, a human-readable message on stderr, and zero bytes on
+  // stdout." This is a COMPOUND of two rules each already protected on its own:
+  // every pre-existing --list test uses a filter that matches something, and
+  // every pre-existing empty-set test (E1/E2/E3, cycle 52) omits --list. Neither
+  // side of that cross product was covered.
+  //
+  // Measured SURVIVOR: mutant D4-EMPTY-LIST. Moving bin/aphorism.js's
+  // `if (candidates.length === 0)` check to AFTER the `if (opts.list)` branch
+  // makes `--list --author <nothing>` print an empty line and exit 0; all 70
+  // pre-existing in-scope tests stayed green.
+  const r = run(['--list', '--author', 'zzzznobody-said-this-ever']);
+  assert.strictEqual(r.status, 1);
+  assert.strictEqual(r.stdout, '');
+  assert.ok(r.stderr.trim().length > 0);
+  assert.match(r.stderr, /^aphorism: /);
+
+  // Same check, same code path, under NDJSON --list --json — covered here
+  // rather than left as a second undiscovered hole in the same branch.
+  const rJson = run(['--list', '--json', '--author', 'zzzznobody-said-this-ever']);
+  assert.strictEqual(rJson.status, 1);
+  assert.strictEqual(rJson.stdout, '');
+  assert.ok(rJson.stderr.trim().length > 0);
+  assert.match(rJson.stderr, /^aphorism: /);
+});

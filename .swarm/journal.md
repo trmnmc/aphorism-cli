@@ -8848,3 +8848,266 @@ every silent hole this cycle came either from a surface EXCLUDED from a scan or 
 first-match choice that let document order decide a verdict, and both shapes are present in the
 band code by inspection (`extractBandTablesFromReadme` takes the first match, `lineHasBandToken`
 decides membership by digit shape). Author those gate cells before dispatching, not after.
+
+---
+
+## cycle 3 — 2026-08-17T10:31Z — aphorism-cli — BUILD — build-wave (2 items): J-2b band half + J-3 product-surface sweep — **2 verified, must-have J-2 CLOSED**
+
+Gear 3 cruise (guest clamp), k_current 3, effective wave 2. Two builders, both sonnet, both
+first attempt, both verified. Suite **92 → 100**, green three consecutive runs.
+
+### the wave
+
+First 2-item wave of the run. Workflow is review-gated in a `-p` session, so this was two
+direct Agent calls — the documented headless fallback. No worktrees: hard rule 5 forbids
+handing a builder a SWARM path, and `/opt/targets` outside the target dir is not in scope,
+so the isolation available was strictly disjoint file scopes (J-2b: README.md +
+readme-tags.test.js; J-3: select/args/cli.test.js) plus an instruction to each builder to
+run ONLY its own test files. Neither builder ran the full glob, so neither ever saw the
+merged state — **I was the first to run it, which is the conductor's job anyway.**
+
+### J-2b — the band half, closed by removal
+
+The structural route, and the same route J-2a took at cycle 2: change the DOCUMENT, delete
+the reader. Both band lead-ins became real markdown headings (`#### Robust pool (5+
+entries)`), the "N tags" prose count was deleted outright, and `lineHasBandToken` — true for
+any digit-shaped line — was replaced by `isBandHeadingLine`, `/^####\s+\S/`. The band count
+is now the table's own row count. The item's own note predicted this ("it may not need to be
+stated in prose at all") and the cycle-39 family decision against further narrowing was
+honoured: no regex was widened, and a sixth narrowing was not written.
+
+T-024b, T-039 and the T-024 umbrella all reach terminal status, which closes **J-2, a
+must-have** — all five README-prose items resolved, four by re-shape or removal, none needing
+the BOUNDARY retirement the acceptance allowed as a fallback.
+
+### the gate earned its keep twice before a builder returned
+
+Authored before dispatch and outside the target tree (KI-8 remedy 1), per the item's own
+instruction to write the cells for the two J-2a failure shapes first.
+
+**Its P0 control caught that my own harness was broken.** First run: every cell RED including
+pristine, 0/1. `node --test test/` silently does not do what `node --test test/*.test.js`
+does — the glob needs a shell. Without a sound control I would have read 11 confident RED
+verdicts off a dead instrument.
+
+**Its attribution check caught a false clearance in my own cell.** Cell A2 went RED and
+looked like coverage. The test that fired was `README tag counts must match corpus` — an
+unrelated tag-name census reacting to a tag name my mutation had invented — while every band
+guard passed. Scored on exit code alone it reads "shape A already covered". Re-aimed as A2b
+(existing tag names, true counts, wrong band) and A2c (same table placed first), both came
+back **92/0 GREEN**: a real silent hole, and the A2c arm proves it an unread-surface defect
+rather than a document-order artifact. RED is not attribution.
+
+That hole is now closed — cell N2 is RED, fired by the builder's new
+`findAllTagCountTableHeaders` cross-check. I named the defect class in the dispatch; it
+authored the guard.
+
+### VERIFICATION EVIDENCE — J-2b gate v2, shipped tree (`runs/j2b-gate-v2-utpfKD`)
+
+```
+P0  expect=GREEN  actual=GREEN   100/0  OK
+F1  expect=GREEN  actual=GREEN   100/0  OK   decoy "N tags" phrase in the heading
+F2  expect=GREEN  actual=GREEN   100/0  OK   T-039 "Node 18+" phantom band
+A1  expect=GREEN  actual=GREEN   100/0  OK   fenced example block
+T1  expect=RED    actual=RED      98/2  OK   fired: band table contains exactly the corpus tags...
+T2  expect=RED    actual=RED      99/1  OK   fired: band table contains exactly the corpus tags...
+T3  expect=RED    actual=RED      99/1  OK   fired: no band table may be deleted wholesale
+T5  expect=RED    actual=RED      99/1  OK   fired: opening sentence must state correct counts
+T6  expect=RED    actual=RED      99/1  OK   fired: README tag counts must match corpus
+N1  expect=RED    actual=GREEN   100/0  GATE-FAIL
+N2  expect=RED    actual=RED      99/1  OK   fired: every table ... is a recognised band table
+N3  expect=RED    actual=RED      99/1  OK   fired: band table contains exactly the corpus tags...
+B1  expect=RED    actual=RED      99/1  OK   fired: band table contains exactly the corpus tags...
+--- SCORE --- 12/13
+```
+
+### the one GATE-FAIL, and why it is not charged to J-2b
+
+N1: re-add the count as prose and get it wrong — "9 tags have a robust pool (5+ entries):"
+with 7 rows in the table — and nothing reads it. J-2b's acceptance forbids dropping coverage
+of a wrong-README behaviour a mutation can still reach, so the verdict turned on whether the
+OLD suite caught this. **Settled by measurement, not by argument** (`c066-probe-N1.mjs`,
+`runs/n1probe-At7gQB`), three arms on the pre-dispatch commit caa3292:
+
+```
+OLD-P0: 92/0 GREEN                      sound control
+OLD-A : 91/1 RED    fired: README band table headings must state the correct count of tags in their band
+OLD-B : 92/0 GREEN
+```
+
+OLD-A falsifies the real heading's own count: the old suite did catch that, but that claim no
+longer exists to be falsified — no digit is left to corrupt, which is the point of the item.
+OLD-B is the honest analogue, the stray extra prose line, and it was **already blind**. So
+J-2b removed a claim that had a reader without removing a catch. Filed as **J-5**, not as a
+regression, with the note that it is not a one-line copy of J-2a's fix: the Attribution
+section could take a blanket "no digits outside the table" rule because it had none, while
+this section's opening sentence legitimately states four counts that guards do read.
+
+### J-3 — product surface, three real holes
+
+A layer deeper than the cycles-50..54 one-mutant-per-clause map: compound interactions, the
+seed=0 falsy boundary, the args.js↔select.js CLI-string seam. Every mutant below was authored
+by me from the source, not copied from the builder's harness, and run in TWO arms, because
+"this test closes a hole" is two claims — the hole was open, and it is now shut.
+
+### VERIFICATION EVIDENCE — J-3 gate, both arms (`runs/j3-gate-oKdwAu`)
+
+```
+P0-MERGED   GREEN 100/0        P0-PRE      GREEN 92/0
+
+D1-FMT       MERGED expect=RED   actual=RED   99/1 OK witness=REAL
+                    killed-by: plain single-pick output is TWO lines: text, newline, four-space indent...
+D1-FMT       PRE    expect=GREEN actual=GREEN 92/0 OK witness=REAL
+D2-SEED0     MERGED expect=RED   actual=RED   99/1 OK witness=REAL
+                    killed-by: --json composes with --seed: the seeded JSON pick is reproducible...
+D2-SEED0     PRE    expect=RED   actual=RED   91/1 OK witness=REAL
+D3-SEEDINF   MERGED expect=RED   actual=RED   98/2 OK witness=REAL
+                    killed-by: --seed Infinity / --seed -Infinity parse to numbers, not a usage error
+D3-SEEDINF   PRE    expect=GREEN actual=GREEN 92/0 OK witness=REAL
+D4-EMPTYLIST MERGED expect=RED   actual=RED   99/1 OK witness=REAL
+                    killed-by: --list with a filter that matches nothing is STILL exit 1, stderr only...
+D4-EMPTYLIST PRE    expect=GREEN actual=GREEN 92/0 OK witness=REAL
+
+D1 HOLE WAS REAL, NOW CLOSED    D2 ALREADY COVERED PRE-DISPATCH
+D3 HOLE WAS REAL, NOW CLOSED    D4 HOLE WAS REAL, NOW CLOSED
+```
+
+**D2 is the interesting one.** The falsy-zero trap was RED in both arms — already killed by
+the pre-existing "`--json` composes with `--seed`" test, which happens to sweep seed 0 — and
+the builder added **no test for it**. That is the don't-pad rule honoured on the builder's own
+initiative, and the two-arm gate is what let me confirm it independently rather than take its
+word. Every witness was re-run by me at the user-facing surface, so no SURVIVED verdict rests
+on a possibly-no-op mutation.
+
+Scope held: `git diff --name-only -- src bin` is empty. Neither builder touched the product.
+
+### a thing I got wrong, and how it was caught
+
+My first full-suite reading was **98**. Gate v2 first ran at **99**. The shipped tree is
+**100**. The tree-stability heuristic I used to decide the builders were done — non-empty and
+byte-stable for 100 s — fired while J-2b was still writing; its `readme-tags.test.js` diff
+grew from 413 to 557 changed lines afterwards. No verdict was recorded off the stale numbers:
+both gates were re-run against the final tree before anything was scored, and the P0 controls
+are what made the drift visible at all. But the heuristic is too weak and I should not reuse
+it — the agent completion notification is the only real signal that a builder is done.
+
+### board and burn
+
+Board 4 todo / 11 done / 1 blocked / 17 total. Closed: J-2b, T-024b, T-039, T-024, **J-2
+(must-have)**, J-3. New: J-5 (the N1 boundary), J-6 (J-3's four disclosed unmeasured cases).
+KI-22 filed low for J-2b's two self-disclosed narrownesses — both builders disclosed residual
+holes before any gate measured them, which is the norm this run is trying to reward.
+
+Budget: real probe, 48.2M tokens / $38.70 in the 06:00–11:00Z block, 56 min left, projecting
+$48.24 / 60M. Roughly double cycle 2's figure for the same block. Still **a numerator with no
+denominator** — ccusage reports no limit, so ρ is not computable and `ratio: 0.0` means *not
+computed*, never *zero burn*. Evidence rule lands a missing-limit probe at cruise; guest mode
+independently clamps to 3. Weekly governor has data and is cool: 2.0% used against 3.01%
+elapsed, heat 0.66, nothing clamped. Posture still trickle (allow_overall_pct 8, down from 9)
+— both items this cycle were test hardening, no new feature.
+
+Wave autotune: CLEAN wave (zero reverts, zero failed verifies), so `wave_streak` 0 → 1.
+`k_current` stays 3; promotion needs two consecutive clean waves.
+
+`bin/swarm-budget.sh`, `bin/swarm-playbook.sh` and `bin/swarm-notify.sh poll` are all **still
+denied** by the allowlist — J-1b's handoff is still owed a human, and the control channel was
+read from `runs/control.json` directly instead (pending empty, no injections).
+
+**Next:** J-4, the last must-have — reconcile README.md, REPORT.md and the triage doc against
+the verified state. It is the natural follow-on: this cycle changed README.md's Tag vocabulary
+section, so the doc-reconciliation item now has a fresh delta to check, and J-4 is the item
+that puts REPORT.md's claims under the same evidence rule everything else here gets.
+
+### runfile-mirror
+
+```runfile-mirror
+{
+  "version": 1,
+  "run_label": "improvement-aphorism-cli-2026-08-17",
+  "targets": [
+    {
+      "path": "/opt/targets/aphorism-cli",
+      "status": "active",
+      "weight": 1
+    }
+  ],
+  "rotation_cursor": 0,
+  "rotation_schedule": [
+    0
+  ],
+  "stop_at": "2026-08-18T08:34:37+00:00",
+  "usage_reset_at": "2026-08-17T11:00:00+00:00",
+  "model_policy": "value-routing",
+  "auth_mode": "subscription",
+  "heartbeat": {
+    "ts": 1786962807,
+    "next_wakeup_at": 1786962897,
+    "pid": 1444752,
+    "limp": false,
+    "degraded_tiers": [],
+    "wakeup_note": "cycle 3 CLOSED, 2 verified, must-have J-2 closed. Base 90s per cycle.md step 9 — a verified-value cycle, and gears never touch the delay. swarm-pacer.timer ticks every 5 min and is the real floor, so the effective next spawn is the first tick at or after that. Next pick: J-4, the last must-have (reconcile README/REPORT/triage doc against verified state) — this cycle changed README.md, so it has a fresh delta to check."
+  },
+  "pacing": {
+    "mode": "guest",
+    "dial": 0.33,
+    "dial_note": "Hints supplied dial 0.33; guest mode forces the effective dial to 1.0 per the Gear pacing table. Both recorded: 0.33 is what the allocator asked for, 1.0 is what the mechanism uses. Guest clamps reachable gears to 1-3 and never upshifts."
+  },
+  "budget": {
+    "source": "probe",
+    "gear": 3,
+    "gear_target": 3,
+    "ratio": 0,
+    "mode": "guest",
+    "k_cap": 3,
+    "promote": false,
+    "demote": false,
+    "window_tokens": 48206103,
+    "window_cost_usd": 38.7,
+    "api_cap_usd": null,
+    "api_spend_usd": 0,
+    "tokens_per_hour": 12727219,
+    "projected_depletion_at": 0,
+    "last_probe_ts": 1786961014,
+    "last_real_probe_ts": 1786961014,
+    "probe_failures": 0,
+    "gear_evidence": "REAL probe via `npx ccusage blocks --active --json` (bin/swarm-budget.sh STILL DENIED by the allowlist — J-1b, unchanged and still owed a human). Active 5h block 2026-08-17T06:00Z->11:00Z read at 10:04Z: 48,206,103 tokens and $38.70, burn 212,120 tok/min ($10.22/hr), 56 min left, projecting $48.24 / 60.1M for the block. That is roughly double cycle 2 s figure for the same block, and cache reads are 46.9M of the 48.2M — the shape of a long-context conductor session rather than runaway spend. STILL A NUMERATOR WITH NO DENOMINATOR for the 5h window: ccusage reports no limit, so rho is not computable and ratio 0.0 means \"not computed\", never \"zero burn\". The evidence rule lands a missing-limit probe at CRUISE, and guest mode independently clamps the ceiling to 3, so the two agree at gear 3.",
+    "weekly": {
+      "ok": true,
+      "weekly_used_pct": 2,
+      "opus_used_pct": 0,
+      "week_elapsed_pct": 3.01,
+      "weekly_heat": 0.66,
+      "opus_heat": 0,
+      "ceiling": null,
+      "promote_blocked": true,
+      "note": "Governor has data (runs/allocator.json ok:true, source:probe): weekly_used 2.0% against week_elapsed 3.01%, heat 0.66, week running COOL, no ceiling computed, nothing clamped. opus_used 0. promote stays blocked because guest mode pins the reachable ceiling at 3 regardless of surplus, not because of the governor. Posture is trickle (allow_overall_pct 8, down from 9 at cycle 2), which constrains work TYPE at step 4 to housekeeping — this cycle complied: two test-hardening items, no new feature, no new dependency."
+    }
+  },
+  "playbook": {
+    "mode": "auto",
+    "applied": [],
+    "vetoed": [],
+    "parse_source": "NOT PARSED, AND NOTHING APPLIED. bin/swarm-playbook.sh parse was DENIED at this kickoff -- reproduced live, not inferred: the allowlist carries no path form of the script a headless session resolves. SKILL.md step 3 routes a parse failure to 'proceed with defaults', so this run applies ZERO lessons by the book. learnings.md was read directly for DIAGNOSIS ONLY (36 lessons against a documented cap of 20 -- the kickoff note said 35, which was a miscount off a truncated grep; the parser counted 36 at cycle 1 and 36 is correct) because repairing that file is this run's J-1a; its directives were deliberately NOT hand-staged into prompt_lines the way run #1 did, so that the cost of the inert playbook is visible in this run's outcome instead of being papered over by the conductor. record-applied cannot be written for the same reason.",
+    "directives": {
+      "wave_k": null,
+      "routing_recs": [],
+      "prompt_lines": {}
+    }
+  },
+  "watchdog": {
+    "mode": "normal",
+    "plist_loaded": true,
+    "lockfile": "/opt/swarm/runs/watchdog.lock",
+    "relaunch_attempts": 0,
+    "note": "Linux/VPS: swarm-watchdog.timer verified ACTIVE via systemctl list-timers (next fire 2026-08-17T09:05:09Z, 25min period). swarm-pacer.timer is the firing mechanism for cycles and is also active."
+  },
+  "caffeinate_pid": 0,
+  "wrap_up_complete": false,
+  "cycles_since_recycle": 3,
+  "artifact": {
+    "url": "",
+    "file": "/opt/swarm/runs/dashboard.html",
+    "publish_failures": 0
+  }
+}
+```

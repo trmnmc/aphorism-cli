@@ -188,3 +188,30 @@ test('HELP fits comfortably on one 24-line terminal screen', () => {
   const lines = HELP.split('\n');
   assert.ok(lines.length <= 24, `HELP has ${lines.length} lines, expected <= 24`);
 });
+
+// --- J-3 (cycle 003) ---------------------------------------------------------
+//
+// Unit-level companion to the end-to-end 'cli.test.js' D3-SEEDINF-STR test: this
+// pins the seam DIRECTLY at parseSeedValue (src/args.js), the exact function the
+// measured mutant touched, rather than only through the shipped binary.
+test('--seed Infinity / --seed -Infinity parse to numbers, not a usage error', () => {
+  // Domain rule: "--seed accepts any value that Number() parses to a non-NaN
+  // number, including ... Infinity / -Infinity; all are deterministic." Every
+  // pre-existing --seed test here uses a finite numeric string ('42', '7',
+  // '-5', 'banana'); none exercise the non-finite branch of Number()'s parse at
+  // this seam. Measured SURVIVOR: mutant D3-SEEDINF-STR
+  // (.swarm/runs/cycle-003-j3-mutation-sweep.mjs) adds a
+  // `|| !Number.isFinite(n)` guard to parseSeedValue, which this test catches
+  // directly and which the pre-existing suite did not.
+  const inf = parseArgs(['--seed', 'Infinity']);
+  assert.equal(inf.error, undefined);
+  assert.equal(inf.seed, Infinity);
+
+  const negInf = parseArgs(['--seed', '-Infinity']);
+  assert.equal(negInf.error, undefined);
+  assert.equal(negInf.seed, -Infinity);
+
+  const eqForm = parseArgs(['--seed=Infinity']);
+  assert.equal(eqForm.error, undefined);
+  assert.equal(eqForm.seed, Infinity);
+});

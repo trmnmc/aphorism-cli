@@ -1,0 +1,162 @@
+[
+  {
+    "id": "P0",
+    "expect": "GREEN",
+    "verdict": "GREEN",
+    "pass": 100,
+    "fail": 0,
+    "scored": "OK",
+    "note": "",
+    "fired": [],
+    "why": "Pristine merged tree. Sound control; without it no cell means anything."
+  },
+  {
+    "id": "F1",
+    "expect": "GREEN",
+    "verdict": "GREEN",
+    "pass": 100,
+    "fail": 0,
+    "scored": "OK",
+    "note": "",
+    "fired": [],
+    "why": "v1/F1, re-aimed. A decoy \"N tags\" phrase — every number in it TRUE — sits in the band heading line itself. Under the old first-match count scan this was RED on a correct README (T-024b). With the count no longer parsed from prose it must be GREEN."
+  },
+  {
+    "id": "F2",
+    "expect": "GREEN",
+    "verdict": "GREEN",
+    "pass": 100,
+    "fail": 0,
+    "scored": "OK",
+    "note": "",
+    "fired": [],
+    "why": "v1/F2, unchanged in intent (T-039). An ordinary prose sentence carrying a coincidental band-shaped token between a heading and its table. Nothing false. Old code made it a phantom band that stole the real band's rows."
+  },
+  {
+    "id": "A1",
+    "expect": "GREEN",
+    "verdict": "GREEN",
+    "pass": 100,
+    "fail": 0,
+    "scored": "OK",
+    "note": "",
+    "fired": [],
+    "why": "v1/A1 (found by the gate pre-dispatch, not previously on the board). A fenced example block inside the section carrying a heading-shaped line and a table. A fence is an example, not a claim, and must not false-reject a correct README."
+  },
+  {
+    "id": "T1",
+    "expect": "RED",
+    "verdict": "RED",
+    "pass": 98,
+    "fail": 2,
+    "scored": "OK",
+    "note": "",
+    "fired": [
+      "every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band",
+      "every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)"
+    ],
+    "why": "Band table row DELETED; the corpus still puts `performance` in the 5+ band (A7)."
+  },
+  {
+    "id": "T2",
+    "expect": "RED",
+    "verdict": "RED",
+    "pass": 99,
+    "fail": 1,
+    "scored": "OK",
+    "note": "",
+    "fired": [
+      "every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band"
+    ],
+    "why": "BAND RELOCATION: `philosophy` (corpus count 3) moved into the 5+ table (A8)."
+  },
+  {
+    "id": "T3",
+    "expect": "RED",
+    "verdict": "RED",
+    "pass": 99,
+    "fail": 1,
+    "scored": "OK",
+    "note": "",
+    "fired": [
+      "every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)"
+    ],
+    "why": "A WHOLE band table deleted, heading and rows (T-019)."
+  },
+  {
+    "id": "T5",
+    "expect": "RED",
+    "verdict": "RED",
+    "pass": 99,
+    "fail": 1,
+    "scored": "OK",
+    "note": "",
+    "fired": [
+      "README opening sentence must state correct multi-entry and single-entry tag counts"
+    ],
+    "why": "The section opening sentence states a wrong multi-entry count (12 -> 11). Adjacent prose guard; a band-focused rewrite must not collaterally weaken it."
+  },
+  {
+    "id": "T6",
+    "expect": "RED",
+    "verdict": "RED",
+    "pass": 99,
+    "fail": 1,
+    "scored": "OK",
+    "note": "",
+    "fired": [
+      "README tag counts must match corpus"
+    ],
+    "why": "A band table row whose COUNT is edited while the tag stays put (`design` 14 -> 4). The stated count must still be reconciled against the corpus even though the heading no longer states a total."
+  },
+  {
+    "id": "N1",
+    "expect": "RED",
+    "verdict": "GREEN",
+    "pass": 100,
+    "fail": 0,
+    "scored": "GATE-FAIL",
+    "note": "",
+    "fired": [],
+    "why": "THE J-2a C7 ANALOGUE, and the cell that decides whether deleting the prose count was a coverage INCREASE or a blind spot. A maintainer re-adds the count as ordinary prose, and gets it WRONG (\"9 tags have a robust pool\"; the table has 7 rows). If nothing reads it, the README now carries a false statement that no guard can see — which is exactly the hole J-2a closed on the Attribution side with its \"no digit runs outside the counts table\" rule."
+  },
+  {
+    "id": "N2",
+    "expect": "RED",
+    "verdict": "RED",
+    "pass": 99,
+    "fail": 1,
+    "scored": "OK",
+    "note": "",
+    "fired": [
+      "every `| Tag | Count |` table in the real README Tag vocabulary section is a recognised band table (no table may hide under an unrecognised heading shape)"
+    ],
+    "why": "v1/A2b carried forward — the hole I MEASURED OPEN before dispatch (92/0 green). A second `| Tag | Count |` table stating a FALSE band membership (`design`, corpus count 14, parked under a \"2 times\" band), under a PROSE lead-in rather than a #### heading. Old code skipped it for lacking an N+/N-M token; new code skips it for lacking a ####. The skip reason changed, so the cell must be re-run: if this is still GREEN the structural fix did not close the unread-surface hole, it renamed it."
+  },
+  {
+    "id": "N3",
+    "expect": "RED",
+    "verdict": "RED",
+    "pass": 99,
+    "fail": 1,
+    "scored": "OK",
+    "note": "",
+    "fired": [
+      "every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band"
+    ],
+    "why": "The same false table, but under a REAL #### heading, so it is unambiguously a band table by the document's own new convention. This one the fix must catch. If N3 is RED and N2 GREEN, the fix works exactly as designed and N2 is a documented boundary rather than a regression — that distinction is why both cells exist."
+  },
+  {
+    "id": "B1",
+    "expect": "RED",
+    "verdict": "RED",
+    "pass": 99,
+    "fail": 1,
+    "scored": "OK",
+    "note": "",
+    "fired": [
+      "every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band"
+    ],
+    "why": "SHAPE B, document order. The 5+ heading DUPLICATED, first copy keeping the correct table, second carrying a wrong one (`language`, corpus count 4, under a 5+ heading). A first-match or Map-keyed scan lets order hide the second table."
+  }
+]

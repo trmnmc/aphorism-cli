@@ -1,0 +1,101 @@
+[
+  {
+    "id": "D1-FMT",
+    "what": "format() collapses the two-line plain output into --list's one-line shape",
+    "MERGED": {
+      "verdict": "RED",
+      "expect": "RED",
+      "pass": 99,
+      "fail": 1,
+      "fired": [
+        "plain single-pick output is TWO lines: text, newline, four-space indent, EM DASH, space, author"
+      ],
+      "witnessOk": true,
+      "probe": "node bin/aphorism.js --seed 1 | has \"\\n    — \""
+    },
+    "PRE": {
+      "verdict": "GREEN",
+      "expect": "GREEN",
+      "pass": 92,
+      "fail": 0,
+      "fired": [],
+      "witnessOk": true,
+      "probe": "node bin/aphorism.js --seed 1 | has \"\\n    — \""
+    }
+  },
+  {
+    "id": "D2-SEED0",
+    "what": "the classic falsy-zero trap: pick(candidates, opts.seed || undefined)",
+    "MERGED": {
+      "verdict": "RED",
+      "expect": "RED",
+      "pass": 99,
+      "fail": 1,
+      "fired": [
+        "--json composes with --seed: the seeded JSON pick is reproducible AND is the same entry as the plain-text pick"
+      ],
+      "witnessOk": true,
+      "probe": "10x `--seed 0` in separate processes -> distinct outputs === 1"
+    },
+    "PRE": {
+      "verdict": "RED",
+      "expect": "RED",
+      "pass": 91,
+      "fail": 1,
+      "fired": [
+        "--json composes with --seed: the seeded JSON pick is reproducible AND is the same entry as the plain-text pick"
+      ],
+      "witnessOk": true,
+      "probe": "10x `--seed 0` in separate processes -> distinct outputs === 1"
+    }
+  },
+  {
+    "id": "D3-SEEDINF",
+    "what": "parseSeedValue rejects non-finite seeds, so the CLI string \"Infinity\" becomes a usage error",
+    "MERGED": {
+      "verdict": "RED",
+      "expect": "RED",
+      "pass": 98,
+      "fail": 2,
+      "fired": [
+        "--seed Infinity / --seed -Infinity parse to numbers, not a usage error",
+        "--seed Infinity and --seed -Infinity (typed as CLI strings) are accepted and deterministic"
+      ],
+      "witnessOk": true,
+      "probe": "--seed Infinity and --seed -Infinity both exit 0"
+    },
+    "PRE": {
+      "verdict": "GREEN",
+      "expect": "GREEN",
+      "pass": 92,
+      "fail": 0,
+      "fired": [],
+      "witnessOk": true,
+      "probe": "--seed Infinity and --seed -Infinity both exit 0"
+    }
+  },
+  {
+    "id": "D4-EMPTYLIST",
+    "what": "the empty-candidates check is reordered to run AFTER the --list branch",
+    "MERGED": {
+      "verdict": "RED",
+      "expect": "RED",
+      "pass": 99,
+      "fail": 1,
+      "fired": [
+        "--list with a filter that matches nothing is STILL exit 1, stderr only, stdout empty"
+      ],
+      "witnessOk": true,
+      "probe": "--list with a filter matching nothing exits 1 with empty stdout"
+    },
+    "PRE": {
+      "verdict": "GREEN",
+      "expect": "GREEN",
+      "pass": 92,
+      "fail": 0,
+      "fired": [],
+      "witnessOk": true,
+      "probe": "--list with a filter matching nothing exits 1 with empty stdout"
+    }
+  }
+]

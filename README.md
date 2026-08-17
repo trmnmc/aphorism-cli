@@ -54,7 +54,7 @@ entry in the filtered set, in corpus order.
 
 The corpus contains 12 distinct tags. The distribution is uneven, but every tag is a real pool: 12 tags appear on 2 or more entries. On the other side of that count, 0 tags appear exactly once and 0 tags sit on exactly one entry, so `--tag` never returns a foregone conclusion.
 
-7 tags have a robust pool (5+ entries):
+#### Robust pool (5+ entries)
 | Tag | Count |
 |---|---|
 | `design` | 14 |
@@ -65,7 +65,7 @@ The corpus contains 12 distinct tags. The distribution is uneven, but every tag 
 | `complexity` | 5 |
 | `performance` | 5 |
 
-5 tags appear 3–4 times:
+#### Appears 3–4 times
 | Tag | Count |
 |---|---|
 | `language` | 4 |

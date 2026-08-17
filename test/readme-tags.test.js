@@ -370,75 +370,46 @@ function getTagVocabSection(readmeContent) {
   return readmeContent.substring(tagVocabStart, tagVocabEnd);
 }
 
-// Helper: does `line` itself carry a parseable band token (an "N+" or
-// "N<dash>M" shape)? Used below to tell an ordinary prose sentence apart
-// from what is plausibly ANOTHER band heading, so the heading-to-table scan
-// knows where it must stop rather than reading through it.
+// Helper: is `line` itself a real band heading? Used below both to decide
+// which lines the heading-to-table scan even treats as a heading, and to
+// tell an ordinary prose sentence apart from what is plausibly ANOTHER band
+// heading, so the scan knows where it must stop rather than reading through
+// it.
 //
 // ---------------------------------------------------------------------------
-// T-026 — CLOSED AS A DOCUMENTED BOUNDARY (cycle 40), not hardened.
+// T-026 / T-039 / T-024b — HISTORY AND RESOLUTION (J-2b, this run).
 //
-// The question T-026 asked: a band heading separated from its table by prose
-// that carries a coincidental band-shaped token -- "Requires Node 18+ to
-// run." -- aborts this scan. Is that a silent HOLE?
+// This used to be answered by lineHasBandToken(line): does the line carry a
+// parseable "N+" or "N<dash>M" digit shape? That made ANY digit-shaped line
+// a heading candidate, prose included, and two items measured the fallout:
 //
-// MEASURED: no. It is LOUD, and the HOLE branch of the item's acceptance is
-// refuted by measurement, not by argument
-// (.swarm/runs/cycle-040-prose-anchor-probe.js, raw JSON alongside it; every
-// cell restored README.md byte-identical to HEAD, PRISTINE 80/80, DENOMINATOR
-// and FAILABLE controls green):
+// T-026 asked whether a band heading separated from its table by prose that
+// carries a coincidental band-shaped token -- "Requires Node 18+ to run." --
+// silently loses coverage. MEASURED: no, it is LOUD (T-019 still fires on a
+// deleted row even with the prose line present --
+// .swarm/runs/cycle-040-prose-anchor-probe.js). But the same measurement
+// found the stop rule does not PREVENT mis-attachment, it RELOCATES it
+// (.swarm/runs/cycle-040-band-dump.js): the prose line is itself a heading
+// candidate on the next loop iteration, matches its own "18+" token, and is
+// handed the very table the real heading was just stopped from reaching --
+// filed separately as T-039 so the relocation itself had a place to be
+// tracked once T-026 closed as a boundary on the narrower question it asked.
 //
-//   cell  layout                                   full suite  guards that fire
-//   C1    heading + "Requires Node 18+ to run."      78/2      EXACT, BAND
-//   C2    C1 + a deleted `debugging` row             77/3      EXACT, BAND, T-019
-//   C3    the deleted row ALONE (no prose)           78/2      EXACT, T-019
-//
-// C2 is the decisive cell: with the prose line present, deleting a row is
-// STILL caught (T-019 fires, exactly as it does in the isolating C3 control).
-// Nothing is masked, so there is no hole to close.
-//
-// WHAT THE MEASUREMENT FOUND INSTEAD, and the reason this comment is longer
-// than a "wontfix" would need to be. The stop rule does not PREVENT
-// mis-attachment; it RELOCATES it. Measured directly against the shipped
-// extractor (.swarm/runs/cycle-040-band-dump.js -- it lifts these two helpers
-// out of this file rather than re-implementing them, so it measures the
-// shipped code and not a copy):
-//
-//   pristine : band [5, inf) owns {design 13, simplicity 10, humor 9, debugging 5}
-//   C1       : that band is GONE. A band [18, inf) appears, headed by
-//              "Requires Node 18+ to run.", owning those same four rows.
-//
-// The real heading is correctly denied a foreign table -- but the prose line
-// is itself a candidate heading on the next loop iteration, matches its own
-// "18+" token, scans forward, and is handed the very table the real heading
-// was just stopped from reaching. The block comment below is accurate as
-// written ("a heading with no table of its own ... still never has a foreign
-// table grafted onto it HERE") and that precision now matters: the graft lands
-// on the prose line, one line lower.
-//
-// WHY LOOSENING THE DIGIT-SHAPE HEURISTIC IS STILL THE WORSE TRADE, even
-// though the current rule is not clean. Loosening means reading THROUGH a
-// band-shaped line to find a table further down. That reintroduces the
-// original hazard -- one heading's search reaching into a different heading's
-// table -- while leaving the relocation above untouched, because the prose
-// line would go on matching as a heading either way. It buys nothing and
-// costs the one thing the stop rule does buy.
-//
-// EXACT PROSE SHAPE OUT OF SCOPE: any line between a band heading and its
-// `| Tag | Count |` table that itself matches lineHasBandToken -- i.e. carries
-// an "N+" or "N<dash>M" token -- whether or not that token has anything to do
-// with tag bands ("Node 18+", "2-4 business days", a version range).
-//
-// The recorded right answer is NOT a further narrowing of this heuristic. It
-// is T-024, the umbrella re-shape: derive from document STRUCTURE (a heading
-// recognised AS a heading) rather than from digit shapes in a line. See the
-// cycle-25 standing decision and the cycle-40 non-discrimination finding in
-// state.json decisions[] -- a true sentence and a false one in the same
-// wording frame produce byte-identical suite output, so a maintainer who trips
-// one of these cannot tell a false rejection from a real catch.
+// Both items named the same recorded right answer: derive heading-ness from
+// document STRUCTURE (a heading recognised AS a heading) rather than from a
+// digit shape in a line. That is what this helper now does. README.md's
+// band lead-ins are real `#### ` markdown headings ("#### Robust pool (5+
+// entries)", "#### Appears 3–4 times") that no longer carry a leading "N
+// tags" prose count at all (see the T-024b resolution further down this
+// file for why dropping that count costs no coverage). A line's own digits,
+// however band-shaped, no longer make it a heading candidate -- only the
+// `#### ` marker does. Re-measured directly against this fix in the "T-039"
+// test below: the cycle-40 scenario (heading, "Requires Node 18+ to run.",
+// then the real table) now finds exactly the real band, never a phantom one
+// headed by the prose line.
 // ---------------------------------------------------------------------------
-function lineHasBandToken(line) {
-  return /(\d+)\s*\+/.test(line) || /(\d+)\s*[-‐‑‒–—―]\s*(\d+)/.test(line);
+function isBandHeadingLine(line) {
+  return /^####\s+\S/.test(line);
 }
 
 // Helper: find every "heading line eventually followed by a `| Tag | Count |`
@@ -454,7 +425,19 @@ function lineHasBandToken(line) {
 // Any dash character (hyphen, en dash, em dash) is accepted so a stylistic
 // dash swap does not break parsing.
 function extractBandTablesFromReadme(sectionText) {
-  const lines = sectionText.split('\n');
+  // Strip fenced code blocks before scanning at all (T-024b/T-039 sibling
+  // defect, measured live: a fenced illustrative example inside the Tag
+  // vocabulary section -- e.g. "the old format, for reference:" followed by
+  // a ``` block containing what LOOKS like a `#### ` heading and a
+  // `| Tag | Count |` table -- was read as a second, real band by this
+  // function before this line existed, because nothing scoped the scan away
+  // from fenced content. A fence is an example, not a claim: mirrors the
+  // fence-stripping the tag-name census already does for backtick-quoted
+  // tags earlier in this file (extractTagsFromReadme's caller). Done once,
+  // here, rather than at each of this function's call sites, so no future
+  // caller can reintroduce the hole by forgetting to strip first.
+  const strippedText = sectionText.replace(/```[\s\S]*?```/g, '');
+  const lines = strippedText.split('\n');
   const tableRowPattern = /\| `([a-z]+)` \| (\d+) \|/;
   const headerRowPattern = /^\|\s*Tag\s*\|\s*Count\s*\|\s*$/;
   const bands = [];
@@ -462,13 +445,23 @@ function extractBandTablesFromReadme(sectionText) {
   for (let i = 0; i < lines.length; i++) {
     const headingLine = lines[i];
 
+    // Only a real heading (isBandHeadingLine, i.e. a `#### ` line -- T-039)
+    // is even considered as a candidate. An ordinary prose line, however
+    // band-shaped its own digits look, is skipped outright and can never be
+    // mistaken for a heading -- this is what makes the mis-attachment/
+    // relocation hazard measured for T-026/T-039 (see the comment above
+    // isBandHeadingLine) structurally unreachable rather than merely
+    // stopped-at-and-relocated.
+    if (!isBandHeadingLine(headingLine)) {
+      continue;
+    }
+
     // Between the heading and its table's `| Tag | Count |` header row,
     // tolerate any number of blank lines AND any number of ordinary prose
     // lines (e.g. "See the table below.") -- idiomatic markdown may put a
     // lead-in sentence there (T-025). What the scan will NOT read through is
-    // a line that itself looks like another band heading (carries its own
-    // "N+" / "N-M" token, per lineHasBandToken): that is the one shape a
-    // real heading-to-table gap is never expected to contain, and it is
+    // another real heading (isBandHeadingLine again): that is the one shape
+    // a real heading-to-table gap is never expected to contain, and it is
     // also the shape of the exact hazard this scan must not walk past --
     // one heading's search reaching down into a DIFFERENT heading's table.
     // Hitting such a line aborts the search for THIS heading outright (no
@@ -499,8 +492,8 @@ function extractBandTablesFromReadme(sectionText) {
         headerIdx = idx;
         break;
       }
-      if (lineHasBandToken(lines[idx])) {
-        break; // looks like another band heading -- stop, no table for this one
+      if (isBandHeadingLine(lines[idx])) {
+        break; // another real heading -- stop, no table for this one
       }
       // else: ordinary prose line, keep scanning forward
     }
@@ -525,17 +518,13 @@ function extractBandTablesFromReadme(sectionText) {
     const openEnded = headingLine.match(/(\d+)\s*\+/);
     const rangePair = headingLine.match(/(\d+)\s*[-‐‑‒–—―]\s*(\d+)/);
 
-    let min, max, bandTokenStart, bandTokenEnd;
+    let min, max;
     if (openEnded) {
       min = parseInt(openEnded[1], 10);
       max = Infinity;
-      bandTokenStart = openEnded.index;
-      bandTokenEnd = openEnded.index + openEnded[0].length;
     } else if (rangePair) {
       min = parseInt(rangePair[1], 10);
       max = parseInt(rangePair[2], 10);
-      bandTokenStart = rangePair.index;
-      bandTokenEnd = rangePair.index + rangePair[0].length;
     } else {
       // A table with no parseable band token in its heading -- nothing to
       // check it against, skip rather than guess.
@@ -543,7 +532,9 @@ function extractBandTablesFromReadme(sectionText) {
     }
 
     // Collect this table's own rows (starting right after the separator
-    // row) until a line that is not itself a table row.
+    // row) until a line that is not itself a table row. The number of rows
+    // found here IS the band's count (T-024b) -- there is no separate "N
+    // tags" prose figure to parse or reconcile against it any more.
     const rows = {};
     let k = headerIdx + 2;
     while (k < lines.length) {
@@ -553,12 +544,7 @@ function extractBandTablesFromReadme(sectionText) {
       k++;
     }
 
-    // bandTokenStart/bandTokenEnd is the character span, within headingLine,
-    // consumed by the bounds token itself (e.g. "5+" or "2-4"). Kept so
-    // downstream parsing of the heading's leading "N tags" count (T-022)
-    // can tell the bounds digits apart from the count digits even when a
-    // reworded heading places them close together.
-    bands.push({ headingLine, min, max, rows, bandTokenStart, bandTokenEnd });
+    bands.push({ headingLine, min, max, rows });
   }
 
   return bands;
@@ -580,7 +566,7 @@ test('extractBandTablesFromReadme tolerates a prose sentence between a band head
   // real `| Tag | Count |` table. Every number here is correct (matches the
   // real corpus), so this must be found as a normal, complete band.
   const correctLayout = [
-    '4 tags have a robust pool (5+ entries):',
+    '#### Robust pool (5+ entries)',
     '',
     'See the table below.',
     '',
@@ -609,7 +595,7 @@ test('extractBandTablesFromReadme tolerates a prose sentence between a band head
   // rows against the corpus) -- and it must see the DEFECT, not silently
   // backfill or hide the missing row.
   const rowDeletedLayout = [
-    '4 tags have a robust pool (5+ entries):',
+    '#### Robust pool (5+ entries)',
     '',
     'See the table below.',
     '',
@@ -634,11 +620,11 @@ test('extractBandTablesFromReadme tolerates a prose sentence between a band head
   // table -- that is exactly the "widen the scan" hazard T-025 was filed to
   // measure.
   const misattachLayout = [
-    '4 tags have a robust pool (5+ entries):',
+    '#### Robust pool (5+ entries)',
     '',
     'The table for this band was removed by mistake.',
     '',
-    '12 tags appear 2-4 times:',
+    '#### Appears 2-4 times',
     '| Tag | Count |',
     '|---|---|',
     '| `performance` | 4 |',
@@ -653,6 +639,230 @@ test('extractBandTablesFromReadme tolerates a prose sentence between a band head
       'second heading\'s genuine band should be found'
   );
   assert.equal(bandsMisattach[0].min, 2, 'the one band found must be the second heading\'s own 2-4 band, not the first heading\'s 5+ band');
+});
+
+// ---------------------------------------------------------------------------
+// T-039 — re-measure the exact cycle-40 relocation scenario against the
+// isBandHeadingLine fix, directly (hand-built section text, same style as
+// the T-025 test above). Pre-fix, this heading-detection function was
+// lineHasBandToken(line) -- true for ANY line carrying an "N+"/"N-M" digit
+// shape, prose included. "Requires Node 18+ to run." satisfied it, so on
+// the loop iteration that reached that prose line, it was itself treated as
+// a heading candidate, matched its own "18+" token, and successfully found
+// the REAL heading's table below it -- producing a phantom band [18, inf)
+// that owned the real band's rows while the real [5, inf) band vanished
+// from the returned array entirely (see .swarm/runs/cycle-040-band-dump.js
+// for the original measurement). This test fails against that exact old
+// behaviour (a reverted isBandHeadingLine back to a lineHasBandToken-style
+// digit-shape test reproduces both assertions failing) and passes against
+// the fix, so it is the mutation-survivor proof for T-039 required by this
+// item's acceptance.
+// ---------------------------------------------------------------------------
+
+test('extractBandTablesFromReadme does not let a band-shaped PROSE line steal a real heading\'s table (T-039)', () => {
+  const layout = [
+    '#### Robust pool (5+ entries)',
+    '',
+    'Requires Node 18+ to run.',
+    '',
+    '| Tag | Count |',
+    '|---|---|',
+    '| `design` | 13 |',
+    '| `simplicity` | 10 |',
+    '| `humor` | 9 |',
+    '| `debugging` | 5 |',
+  ].join('\n');
+
+  const bands = extractBandTablesFromReadme(layout);
+  assert.equal(
+    bands.length,
+    1,
+    'exactly one band must be found: the real heading\'s own -- not a phantom band headed by the prose line'
+  );
+  assert.equal(
+    bands[0].min,
+    5,
+    'the band must be the real [5, inf) band, not a phantom [18, inf) band read off "Requires Node 18+ to run."'
+  );
+  assert.equal(bands[0].max, Infinity);
+  assert(
+    bands[0].headingLine.trim().startsWith('#### Robust pool'),
+    'the band must be attached to the real "#### " heading, not to the prose line: got "' +
+      bands[0].headingLine.trim() + '"'
+  );
+  assert.deepEqual(
+    Object.keys(bands[0].rows).sort(),
+    ['debugging', 'design', 'humor', 'simplicity'],
+    'the real heading must own all four of its table\'s rows -- none of them may be stranded under a phantom heading'
+  );
+});
+
+test('extractBandTablesFromReadme does not read a fenced example block as a second, real band table', () => {
+  // MEASURED live while closing J-2b: before extractBandTablesFromReadme
+  // stripped fenced code blocks, a fenced illustrative example inside the
+  // Tag vocabulary section -- e.g. an "old format, kept here as an
+  // example:" aside showing what a `#### ` heading and `| Tag | Count |`
+  // table used to look like -- was read as a second, genuine band. Its
+  // fabricated row (`design` with a wrong count) would then be checked
+  // against the real corpus by the set-equality guard below as if it were
+  // a real README claim, and a maintainer swapping in an out-of-band tag
+  // for the fenced example (entirely reasonable, since it is explicitly
+  // marked as illustrative) would false-reject an otherwise correct
+  // README. A fence is an example, not a claim.
+  const layout = [
+    '#### Robust pool (5+ entries)',
+    '',
+    '| Tag | Count |',
+    '|---|---|',
+    '| `design` | 13 |',
+    '| `simplicity` | 10 |',
+    '| `humor` | 9 |',
+    '| `debugging` | 5 |',
+    '',
+    'Old format, kept here as an example:',
+    '',
+    '```',
+    '#### Robust pool (5+ entries)',
+    '| Tag | Count |',
+    '|---|---|',
+    '| `philosophy` | 999 |',
+    '```',
+  ].join('\n');
+
+  const bands = extractBandTablesFromReadme(layout);
+  assert.equal(
+    bands.length,
+    1,
+    'a fenced illustrative example must not be read as a second band table -- only the one real band should be found'
+  );
+  assert.deepEqual(
+    Object.keys(bands[0].rows).sort(),
+    ['debugging', 'design', 'humor', 'simplicity'],
+    'the real band\'s rows must not be joined by a row fabricated from inside a fenced example'
+  );
+});
+
+// ---------------------------------------------------------------------------
+// SILENT HOLE, measured live while closing J-2b (sibling of T-024b/T-039,
+// same code, not filed as a separate backlog item because it was found and
+// closed within this item's own gate rather than inherited from a prior
+// cycle). extractBandTablesFromReadme only ever looks for a table BELOW a
+// line it recognises as a heading (isBandHeadingLine, i.e. `#### `). A
+// `| Tag | Count |` table placed under any OTHER heading shape -- a `### `
+// heading, a bold lead-in, or no heading at all -- is not rejected and does
+// not abort anything; it is simply never looked at. MEASURED: a table
+// placed under "### Additional tags" claiming `philosophy` belongs to the
+// 5+-entries band (real corpus count: 3) passed the full suite silently,
+// because extractBandTablesFromReadme's returned array never contained it --
+// nothing downstream (the set-equality guard, the T-019 wholesale-deletion
+// guard) ever iterates a band it was never handed.
+//
+// The fix is a second, independent structural scan that finds every
+// `| Tag | Count |` table in the section by its header-plus-separator shape
+// ALONE, with no heading requirement at all, and asserts its count matches
+// the number of bands extractBandTablesFromReadme actually recognised. A
+// mismatch means some table in this shape exists under a heading (or lack
+// of one) this file's band detection does not recognise -- named loudly,
+// with its preceding line for a maintainer to act on, rather than silently
+// dropped. This is the same shape of fix as the Attribution section's
+// "unrecognised row label" guard (RECOGNISED_ATTRIBUTION_COUNT_LABELS)
+// further down this file: a narrow, argued house rule that this ONE section
+// contains nothing in this exact table shape except a recognised band.
+// ---------------------------------------------------------------------------
+
+// Helper: every `| Tag | Count |` table in the given (already
+// fence-stripped) lines, located purely by its header row plus the
+// `|---|---|` separator row immediately below it -- no heading of any kind
+// required. `precedingLine` (the nearest non-blank line above the header)
+// is carried only for a useful failure message, never used to decide
+// whether a table counts.
+function findAllTagCountTableHeaders(strippedLines) {
+  const headerRowPattern = /^\|\s*Tag\s*\|\s*Count\s*\|\s*$/;
+  const headers = [];
+  for (let idx = 0; idx < strippedLines.length; idx++) {
+    if (!headerRowPattern.test(strippedLines[idx].trim())) continue;
+    const separatorLine = strippedLines[idx + 1];
+    if (!separatorLine || !/^\|[-\s|]+\|$/.test(separatorLine.trim())) continue;
+    let precedingIdx = idx - 1;
+    while (precedingIdx >= 0 && strippedLines[precedingIdx].trim() === '') precedingIdx--;
+    const precedingLine = precedingIdx >= 0 ? strippedLines[precedingIdx].trim() : '(start of section)';
+    headers.push({ headerIdx: idx, precedingLine });
+  }
+  return headers;
+}
+
+test('extractBandTablesFromReadme\'s recognised bands account for every structural `| Tag | Count |` table -- a table under an unrecognised heading shape is a loud mismatch, not a silent miss', () => {
+  // Adversarial fixture: the real band, plus a second, genuine
+  // `| Tag | Count |` table sitting under a "### " heading (not "#### ") --
+  // a heading shape extractBandTablesFromReadme does not recognise. Its
+  // claim is false (philosophy's real corpus count is 3, not a 5+-band
+  // fit), which is exactly the point: nothing about this table's SHAPE
+  // marks it as bogus, only its content does, and content is precisely what
+  // the silent hole never reaches.
+  const orphanedLayout = [
+    '#### Robust pool (5+ entries)',
+    '',
+    '| Tag | Count |',
+    '|---|---|',
+    '| `design` | 13 |',
+    '| `simplicity` | 10 |',
+    '| `humor` | 9 |',
+    '| `debugging` | 5 |',
+    '',
+    '### Additional tags',
+    '',
+    '| Tag | Count |',
+    '|---|---|',
+    '| `philosophy` | 3 |',
+  ].join('\n');
+
+  const strippedLines = orphanedLayout.replace(/```[\s\S]*?```/g, '').split('\n');
+  const allTables = findAllTagCountTableHeaders(strippedLines);
+  const bands = extractBandTablesFromReadme(orphanedLayout);
+
+  assert.equal(allTables.length, 2, 'the fixture structurally contains two "| Tag | Count |" tables');
+  assert.equal(bands.length, 1, 'only one of the two is recognised as a band -- the "### Additional tags" table is the silent hole this guard exists to name');
+  assert.notEqual(
+    allTables.length,
+    bands.length,
+    'the mismatch itself is the signal a real guard must act on -- see the next test for the real-README assertion'
+  );
+
+  // Control: the same layout with the second table removed entirely must
+  // NOT trip a mismatch -- this guard fires on an unrecognised table, not
+  // on having exactly one band.
+  const cleanLayout = [
+    '#### Robust pool (5+ entries)',
+    '',
+    '| Tag | Count |',
+    '|---|---|',
+    '| `design` | 13 |',
+    '| `simplicity` | 10 |',
+    '| `humor` | 9 |',
+    '| `debugging` | 5 |',
+  ].join('\n');
+  const cleanStrippedLines = cleanLayout.replace(/```[\s\S]*?```/g, '').split('\n');
+  assert.equal(findAllTagCountTableHeaders(cleanStrippedLines).length, extractBandTablesFromReadme(cleanLayout).length);
+});
+
+test('every `| Tag | Count |` table in the real README Tag vocabulary section is a recognised band table (no table may hide under an unrecognised heading shape)', () => {
+  const readmePath = path.join(__dirname, '..', 'README.md');
+  const readmeContent = fs.readFileSync(readmePath, 'utf8');
+  const tagVocabSection = getTagVocabSection(readmeContent);
+
+  const strippedLines = tagVocabSection.replace(/```[\s\S]*?```/g, '').split('\n');
+  const allTables = findAllTagCountTableHeaders(strippedLines);
+  const bands = extractBandTablesFromReadme(tagVocabSection);
+
+  assert.equal(
+    allTables.length,
+    bands.length,
+    'found ' + allTables.length + ' "| Tag | Count |" table(s) structurally in the Tag vocabulary section but only ' +
+      bands.length + ' were recognised as band tables. A table is sitting under a heading shape (or no heading at ' +
+      'all) that this file\'s band detection does not recognise, so it is being checked by nothing. Preceding ' +
+      'lines: ' + allTables.map((t) => JSON.stringify(t.precedingLine)).join(', ') +
+      '. Move it under its own `#### ` band heading with a parseable bound token ("N+" or "N-M").'
+  );
 });
 
 test('every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band', () => {
@@ -765,95 +975,110 @@ test('every corpus tag appearing on 2+ entries must have a row in some band tabl
 });
 
 // ---------------------------------------------------------------------------
-// Guard the remaining corpus-derived cardinalities in the Tag vocabulary
-// section that the tests above do not touch:
+// T-024b — CLOSED via structural re-shape (J-2b), not a further narrowing.
 //
-//   - line 57 / 65: each band table heading also states, up front, HOW MANY
-//     tags belong to that band (e.g. "4 tags have a robust pool (5+
-//     entries):", "12 tags appear 2-4 times:"). The band-table test above
-//     only checks that the table's ROWS match the corpus set for that band's
-//     numeric range -- it never looks at this leading count, so editing it
-//     to a wrong number while leaving the table's rows untouched was
-//     previously undetected.
+// This file used to carry a test here ("README band table headings must
+// state the correct count of tags in their band") that scanned each band
+// heading line for a "<digits> tags" phrase -- the README used to write
+// "7 tags have a robust pool (5+ entries):" and "5 tags appear 3–4 times:"
+// -- and compared it to a corpus-derived expectation. T-023 MEASURED that
+// scan's false rejection: a heading whose lead-in carries a SECOND, true
+// "N tags" phrase before its own count -- e.g. "Of 37 tags, 4 tags carry
+// 5+ entries each:" -- reads 37, not 4, no matter how the "first match
+// that doesn't overlap the bounds token" rule is refined, because both
+// numbers are genuinely "<digits> tags" phrases in the same line and
+// nothing about their shape distinguishes which one the heading MEANS.
 //
-//   - line 55: the section's opening sentence states, in prose, how many
-//     tags appear on 2-or-more entries and how many appear on exactly one
-//     entry. The "exactly one" figure here is a SEPARATE textual claim from
-//     the "tags appear exactly once" figure later in the section (line 81,
-//     already guarded) -- the two could be made to disagree with each other
-//     while this one stayed unchecked.
+// The cycle-39 family decision was against a further (fourth-plus)
+// narrowing of any guard in this prose-anchored family, and the J-2a half
+// of this run's item closed its sibling defect (the Attribution counts) by
+// deleting the prose reader and moving the claim into a table rather than
+// parsing it better. The same move applies here, in the form this
+// heading's numbers actually need: README.md's band headings no longer
+// state an "N tags" figure in prose at all. "#### Robust pool (5+
+// entries)" and "#### Appears 3–4 times" carry only the band's bound
+// token, never a count -- see extractBandTablesFromReadme above, where the
+// band's row count is now read directly off the table (`rows`), with no
+// heading-text count to parse, reconcile, or be fooled by a decoy digit
+// run in.
 //
-// Every expected number below is derived from `corpus` at test time, never
-// hardcoded. Extraction is keyed to the digits plus the minimal structural
-// tokens that carry their mathematical meaning ("tags" immediately after
-// the band-heading count; "or more" / "exactly one" for the prose claims),
-// never to the surrounding descriptive wording, so rewording "have a robust
-// pool" to "have a deep pool", "appear" to "occur", or "They are not evenly
-// distributed:" to anything else must not change whether this guard fires.
+// WHY THIS DROPS NO COVERAGE. The mutation the deleted test used to catch
+// was "a band heading states a WRONG 'N tags' figure while its table's rows
+// stay correct". That mutation is no longer expressible: there is no
+// prose figure left in the document to make wrong, the same way C7's
+// "no digit runs outside the counts table" rule (see the Attribution
+// section further down this file) makes a stray Attribution-section number
+// inexpressible rather than merely unchecked. The mutation that remains
+// reachable -- "the table's rows do not actually match what the corpus
+// says belongs in this band" (a row deleted, added, or relocated) -- is
+// still caught, and MORE strongly than the deleted count-comparison ever
+// was: the "every band table ... contains exactly the corpus tags whose
+// count fits that band" test just above this comment compares the full SET
+// of expected vs. actual tags per band, which implies the row count is
+// correct (two exactly-equal finite sets have equal cardinality) without
+// the reverse implication holding (a correct count does not imply a
+// correct set -- e.g. one wrong tag swapped for another of the same count
+// would pass a count-only check and fail the set check). The unit test
+// below proves the new design directly, independent of whatever README.md
+// says today: a decoy "N tags" phrase in the heading cannot change the
+// derived band or its row count, and a genuinely wrong table (a row
+// missing) is still visible as a wrong row count, not silently papered
+// over by the decoy text.
 // ---------------------------------------------------------------------------
 
-test('README band table headings must state the correct count of tags in their band', () => {
-  const readmePath = path.join(__dirname, '..', 'README.md');
-  const readmeContent = fs.readFileSync(readmePath, 'utf8');
-  const tagVocabSection = getTagVocabSection(readmeContent);
-  const tagsInCorpus = countTagsInCorpus();
+test('extractBandTablesFromReadme derives a band\'s row count purely from its table, ignoring decoy "N tags" phrases in the heading line (T-024b)', () => {
+  // T-023's measured false-rejection case, reproduced directly: a heading
+  // whose lead-in states a second, true "N tags" phrase (37, the old
+  // total-vocabulary figure) before its own band's actual count (4). The
+  // deleted prose-count reader read 37 off this exact line. This heading is
+  // no longer scanned for a count at all -- prove decoy digits anywhere in
+  // the heading text cannot change which band this table belongs to or how
+  // many rows it has.
+  const decoyHeadingLayout = [
+    '#### Of 37 tags, 4 tags carry 5+ entries each',
+    '| Tag | Count |',
+    '|---|---|',
+    '| `design` | 13 |',
+    '| `simplicity` | 10 |',
+    '| `humor` | 9 |',
+    '| `debugging` | 5 |',
+  ].join('\n');
 
-  const bands = extractBandTablesFromReadme(tagVocabSection);
-  assert(bands.length > 0, 'expected at least one parseable band table (heading with an N+ or N-M token, followed by a | Tag | Count | table) in the Tag vocabulary section');
+  const bands = extractBandTablesFromReadme(decoyHeadingLayout);
+  assert.equal(bands.length, 1, 'a decoy "N tags" phrase in the heading must not stop the real table from being found');
+  assert.equal(bands[0].min, 5, 'the band bounds must come from the 5+ token, not either decoy digit (37 or 4)');
+  assert.equal(bands[0].max, Infinity);
+  assert.equal(
+    Object.keys(bands[0].rows).length,
+    4,
+    'the band\'s count is the table\'s own row count (4), regardless of what the heading prose claims'
+  );
 
-  for (const band of bands) {
-    // The band's stated "N tags ..." count, found anywhere on the heading
-    // line -- NOT anchored to the start (T-022: a descriptive lead-in
-    // phrase, e.g. "Well-populated: 4 tags carry 5+ entries each.", must be
-    // free to precede it). Scan every "<digits> tags" occurrence in the
-    // line and take the first one whose digit run does NOT fall inside the
-    // span already claimed by the band's own bounds token (the "5+" or
-    // "2-4" parsed above as bandTokenStart/bandTokenEnd).
-    //
-    // Reading chosen for the digits-vs-digits hazard: the bounds token and
-    // the count token are different numbers in the same line, both matched
-    // by digit-based regexes, so a naive "first N-tags-shaped match wins"
-    // parse could be fooled by a reworded heading that happens to land the
-    // word "tags" right after the bounds token (e.g. "... 2-4 tags per
-    // band, 12 tags total qualify:" -- a naive scan would read the count as
-    // 4, not 12). Excluding any match whose digits overlap the bounds
-    // token's own character span closes that hole without keying the count
-    // extraction to any particular lead-in wording.
-    const countPattern = /(\d+)\s+tags\b/g;
-    let candidateMatch;
-    let leadingCountMatch = null;
-    while ((candidateMatch = countPattern.exec(band.headingLine)) !== null) {
-      const digitStart = candidateMatch.index;
-      const digitEnd = candidateMatch.index + candidateMatch[1].length;
-      const overlapsBandToken = digitStart < band.bandTokenEnd && digitEnd > band.bandTokenStart;
-      if (!overlapsBandToken) {
-        leadingCountMatch = candidateMatch;
-        break;
-      }
-    }
-    assert(
-      leadingCountMatch,
-      'could not parse a "N tags" count (distinct from the band\'s own bounds token) from band heading "' +
-        band.headingLine.trim() + '" -- this claim must fail loud, not pass silently, when it cannot be parsed'
-    );
-    const statedBandCount = parseInt(leadingCountMatch[1], 10);
+  // Same decoy heading, but the table itself is short a row. Proves the
+  // "wrong band count under this heading" direction still fails -- via a
+  // comparison of the table's actual rows, not a parsed prose digit -- so
+  // deleting the old count-comparison test did not create a blind spot.
+  const decoyHeadingRowDeleted = [
+    '#### Of 37 tags, 4 tags carry 5+ entries each',
+    '| Tag | Count |',
+    '|---|---|',
+    '| `design` | 13 |',
+    '| `simplicity` | 10 |',
+    '| `humor` | 9 |',
+  ].join('\n');
 
-    // Derived independently from the corpus using this band's own [min, max]
-    // bounds (themselves parsed from the OTHER digits in the same heading,
-    // e.g. the "5+" or "2-4" token) -- not from the table's rows, so this
-    // cannot degenerate into checking the README against itself.
-    const expectedBandCount = Object.keys(tagsInCorpus)
-      .filter(tag => tagsInCorpus[tag] >= band.min && tagsInCorpus[tag] <= band.max)
-      .length;
-
-    assert.equal(
-      statedBandCount,
-      expectedBandCount,
-      'Band heading "' + band.headingLine.trim() + '" states ' + statedBandCount +
-        ' tags, but the corpus has ' + expectedBandCount + ' tags with count in [' +
-        band.min + ', ' + (band.max === Infinity ? 'inf' : band.max) + ']'
-    );
-  }
+  const bandsShort = extractBandTablesFromReadme(decoyHeadingRowDeleted);
+  assert.equal(bandsShort.length, 1);
+  assert.equal(
+    Object.keys(bandsShort[0].rows).length,
+    3,
+    'a row missing from the table must be visible as a row-count of 3, not silently backfilled to whatever the decoy heading prose implies'
+  );
+  assert.notEqual(
+    Object.keys(bandsShort[0].rows).length,
+    4,
+    'the extracted count must diverge from the decoy heading\'s own "4 tags" phrase when the table disagrees with it -- proving the extraction reads the table, not the prose'
+  );
 });
 
 test('README opening sentence must state correct multi-entry and single-entry tag counts', () => {
