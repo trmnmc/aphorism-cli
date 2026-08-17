@@ -9579,7 +9579,10 @@ decisions recorded: (1) pass J-5 while filing J-9 rather than folding J-9 in and
   J-10. The cycle-0 stress test named this family the toy-version trap; a run that generates its
   own next item from its own last gate can look productive forever while the product stands still.
 
-commit: {COMMIT}
+commit: ed55d6f "cycle 6: J-5 closes the unrecognised-count-claim hole — gate 14/14, sealed
+  pre-dispatch; probes file J-9 + KI-24 as measured pre-existing [1 verified]" (pushed to
+  origin/master; the pre-dispatch seal is the separate earlier commit d22201a). This block was
+  stamped after the commit, so the stamp itself lands in a follow-up commit.
 next wakeup: 1786969457 (+90s, base — verified-value cycle; the pacer's 5-min tick is the real floor)
 runfile-mirror:
 ```json
