@@ -9458,7 +9458,7 @@ VERIFICATION EVIDENCE:
   test_cmd: node --test test/*.test.js -> tests 101, pass 101, fail 0  PASS (unchanged; this cycle added no test, and should not have)
   J-4 -> done. Wave CLEAN: 0 reverts, 0 failed verifies -> wave_streak 0 -> 1, k_current stays 3.
 
-commit: de795c3 "cycle 5: J-4 closes the last must-have — docs reconciled at every occurrence, gate 22/22 after two instrument rewrites [1 verified]"
+commit: 05af31c "cycle 5: J-4 closes the last must-have — docs reconciled at every occurrence, gate 22/22 after two instrument rewrites [1 verified]" (the block was stamped after the commit; the stamp itself lands in the follow-up commit, so this hash is the one carrying the cycle-5 work)
 next wakeup: 1786966963 (+90s, base — verified-value cycle; the pacer's 5-min tick is the real floor)
 runfile-mirror:
 ```json
