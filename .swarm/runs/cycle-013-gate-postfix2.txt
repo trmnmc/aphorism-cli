@@ -1,0 +1,14 @@
+PASS  A1  SPEC has a D-44 entry for the empty-value =/space asymmetry  [D-44=true flags=true empty=true]
+PASS  A2  D-44 records the four measured command/exit-code outcomes  [missing cmds=[] missing codes=[]]
+PASS  A3  D-44 sits inside "## Undecided behaviours", before Definition of done  [idx D-44=14303 section=[12706,15670)]
+PASS  A4  CONTROL: "## Domain rules" byte-identical to the sealed hash  [aeca11d7f79642e5 vs sealed aeca11d7f79642e5]
+PASS  A5  D-44 names J-7 as the human-owned tracker  [J-7 in D-44 block=true]
+PASS  A6  the old overclaiming test name no longer appears in the test file  [occurrences=0]
+PASS  A7  the renamed test carries the exact pinned name  [occurrences=1]
+FAIL  A8  CONTROL: token matcher body byte-identical to the sealed hash  [786fb17b5f44a4f6 vs sealed 389c3c2a1678ecdc (62B)]
+FAIL  A9  CONTROL: node --test test/*.test.js => tests 118 pass 118 fail 0  [tests=-1 pass=-1 fail=-1]
+PASS  A10  test file records the measured premise (0 single-entry tags, 12 distinct)  [zero=true twelve=true dated=true]
+PASS  A11  assertion message no longer claims the README must acknowledge a limitation  [old message present=false]
+
+9 PASS / 2 FAIL  (of 11)
+controls A4/A8/A9: A4=PASS A8=FAIL A9=FAIL

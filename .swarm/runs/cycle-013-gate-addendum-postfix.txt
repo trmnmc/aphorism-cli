@@ -1,0 +1,2 @@
+PASS  A9'  CONTROL (corrected): suite is 118/118/0  [tests=118 pass=118 fail=0]
+PASS  A9'-control  parser reads both dialects and refuses garbage  [tap=118 spec=118 junk=null]

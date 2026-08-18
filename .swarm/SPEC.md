@@ -212,6 +212,12 @@ loud; the aphorism is the product.
 - **Why the SPEC does not decide it:** Selection states "`--seed <n>` accepts any value that `Number()` parses to a non-NaN number", and `Number("") === 0` is non-NaN, suggesting ACCEPT. Exit codes states a missing flag argument is bad usage, suggesting REJECT. The two clauses point opposite ways, and there is no decided behaviour to test against.
 - **Status:** No test pins this. The ruling is human-owned and tracked as backlog item J-7.
 
+**Empty `--author` / `--tag` value, `=` form vs space form (measured gap D-44)**
+
+- **Shipped behaviour:** `--author ''` returns exit code 0, prints an aphorism, and leaves stderr empty — `--author '' --list | wc -l` is 50, identical to `--list | wc -l`, the whole corpus. `--author=` returns exit code 2 with zero bytes on stdout and stderr `aphorism: flag --author requires a value`. `--tag ''` returns exit code 1 with zero bytes on stdout and stderr `aphorism: no aphorism matches those filters`. `--tag=` returns exit code 2 with zero bytes on stdout and stderr `aphorism: flag --tag requires a value`.
+- **Why the SPEC does not decide it:** Exit codes makes a missing flag argument a usage error, and the `=` branch's rejection of an empty value is a deliberate line of code, so empty could be read as missing — arguing for treating the asymmetry as a defect. Against that: a shell that passes `''` DID supply an argument, a present empty token rather than an absent one, and the space-form results follow mechanically from two clauses the SPEC does state — Filtering's substring containment necessarily matches everything on an empty needle, and its whole-tag equality necessarily matches nothing on an empty tag. Two stated clauses point opposite ways, and no clause names an empty value or distinguishes the `=` form from the space form.
+- **Status:** No test pins this. The ruling is human-owned and tracked as backlog item J-7.
+
 ## Definition of done
 
 **Product (met 2026-08-14, must not regress):** `node bin/aphorism.js` prints a random

@@ -293,7 +293,27 @@ test('README must list all single-entry tags', () => {
 // are your regression set, the two FIRES cells are correct READMEs you must
 // not break, and the prediction in the T-031 block is now measured twice.
 // ===========================================================================
-test('README should acknowledge single-entry tag limitation', () => {
+//
+// RENAME NOTE (2026-08-18, verifier-reproduced finding). This test was
+// RENAMED and its matcher left byte-identical -- the sealed region below
+// (from `const singleEntryMarkers = [` through, but not including,
+// `assert(hasWarning`) was not touched. The old name and its assertion
+// message claimed the README "should acknowledge that some tags appear
+// only once," but as measured directly from src/corpus.js on this tree at
+// 2026-08-18 the corpus holds 12 distinct tags and 0 tags sit on exactly
+// one entry -- the limitation the old name named does not currently exist.
+// The guard is retained rather than deleted: it still checks token
+// co-occurrence (a tag word + an entry word + one of nine single-entry
+// marker phrases in the same sentence), and a human ruling on backlog item
+// T-040 (corpus retag consequences) could reintroduce single-entry tags,
+// at which point this guard would matter again. Because the name changed,
+// the historical probe harness at .swarm/runs/cycle-039-ackguard-probe.js
+// -- which selects this test by its OLD name via --test-name-pattern --
+// will no longer match; that file is a dated historical record and is
+// intentionally left unedited, so re-running it now requires substituting
+// the new name below.
+// ---------------------------------------------------------------------------
+test('README Tag vocabulary section carries a tag+entry sentence with a single-entry marker (token co-occurrence guard, not a meaning check)', () => {
   const readmePath = path.join(__dirname, '..', 'README.md');
   const readmeContent = fs.readFileSync(readmePath, 'utf8');
 
@@ -332,7 +352,7 @@ test('README should acknowledge single-entry tag limitation', () => {
     return singleEntryMarkers.some((marker) => marker.test(sentence));
   });
 
-  assert(hasWarning, 'README Tag vocabulary section should acknowledge that some tags appear only once');
+  assert(hasWarning, 'README Tag vocabulary section must contain a sentence pairing a tag word and an entry word with one of the nine single-entry marker phrases -- this checks token co-occurrence only, NOT that the README actually states any single-entry limitation');
 });
 
 // ---------------------------------------------------------------------------
