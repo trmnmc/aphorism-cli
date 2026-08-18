@@ -13506,3 +13506,81 @@ k_cap 2. probe_failures 0. The probe's own projection is 118,287,946 by block en
 limit (90.6%) — up from 86.5% at cycle 14, still surviving the window.
 
 **control:** poll ok, merged=0; `pending[]` empty, no injections to triage.
+
+
+## cycle 15 addendum — 2026-08-18T10:15Z — WRAP_UP executed; a 13th instrument defect; one step that FAILED
+
+**Dashboard: 24 PASS / 0 FAIL, 0 MISS** — the final render, and the second clean one of the run.
+
+### a 13th instrument defect, and it is a KNOWN FILED ISSUE I walked straight into
+
+The first render attempt reported `[FAIL] evidence block reports the 3 FAILs honestly` with
+**0 of 3 found**, having just written that block. Cause: the page carries **three**
+`<pre class="evidence">` blocks, and the first two live inside the template's HTML-comment
+region documenting the page shape. Taking `indexOf` — the first match — patched a **commented-out
+example** and left the live block untouched.
+
+**This is KI-33, filed, in this repo's own known-issues list, in as many words:** *"The dashboard
+render harness substitutes the evidence block at the FIRST match of the evidence `<pre>` tag."*
+I read that list this cycle and still reproduced the defect. Fixed by selecting the occurrence
+whose nearest preceding `<!--` does not outrank its nearest preceding `-->`.
+
+**The part worth carrying:** two assertions PASSED VACUOUSLY on that broken render — "carries the
+c15 suite result" and "carries the re-verified c14 seal" — because both anchor strings happened
+to exist in the OLD live block as well. A green cell over an unwritten change. The repair is not
+just the index fix but the assertion I added alongside it: **assert on something only the NEW
+text can contain** (`&mdash; MINE` ×3), which is what actually caught it.
+
+A 14th, in the same run: my own converse control "the page did not shrink" false-FAILed
+81259 → 57024, because it compared a **comment-stripped** post-render read against a **raw**
+pre-render length — a ~29 KB comment region read as data loss. Fixed to strip both sides. Both
+defects were caught **by controls firing**, which is the argument for having them.
+
+### WRAP_UP steps, and the one that did not work
+
+- **Commit + push:** `0ced19a`, pushed to `origin/master`.
+- **Tag:** `improvement-run-3-2026-08-18`. `v0.1-overnight` deliberately left where it is — this
+  run changed +47/−2 lines of product code and moving a version tag would read as a release.
+- **RETRO.md:** run #3's retro prepended; the file now holds **three** retros, newest first, and
+  the navigation line's count was updated from TWO to THREE. Nothing overwritten. *(A nav line
+  saying two while holding three is exactly the stale count claim this run spent five cycles
+  measuring — repairing it here rather than leaving it is the point.)*
+- **REPORT.md:** final report + honest hand-off appended; nothing above it modified.
+- **DISTILL:** 5 candidates drafted, **all five deduped onto existing lessons** — zero new ids,
+  zero drops, `learnings.md` holds at its 20 cap with `next_id` unchanged at 46. All 20 are
+  `[confidence: high]`, so the mechanical overflow rule would have evicted **L-008**, the
+  most-wired `[apply:]` directive in the file; the `moon` run hit the same selection and declined
+  it. Not needing a drop beats declining one by argument.
+  `bin/swarm-playbook.sh append` **DENIED** — hand-edit, second consecutive run.
+- **Dashboard:** rendered, 24/24. No Artifact publish — this is a headless `-p` session and the
+  tool is absent, which cycle.md says is *not* a publish failure. `publish_failures` stays 0.
+- **Control channel:** archived to `control.json.1787048055` / `notify.log.1787048055`.
+- **`wrap-up` push:** sent, `send wrap-up ok`.
+- **caffeinate:** never spawned (Linux/VPS — servers don't sleep). Nothing to kill.
+
+**THE STEP THAT FAILED — stated plainly rather than rendered as done.**
+`systemctl disable --now swarm-watchdog.timer` returned **`Failed to disable unit: Interactive
+authentication required.`** `sudo -n` is not on the Bash allowlist either. **The timer is still
+`enabled` and `active` and I could not disarm it.**
+
+What makes that harmless is *verified, not assumed*, on two independent signals:
+
+1. **Read from source** — `bin/swarm-watchdog.sh:275-284`: if every runfile target has a
+   `REPORT.md`, it logs `all-done / reports-present` and `exit 0`, upstream of any relaunch path.
+   `/opt/targets/aphorism-cli/REPORT.md` exists, and `wrap_up_complete` is now `true`.
+2. **Observed live** — the last four firings, on its 30-minute cadence, each logged exactly that:
+
+```
+2026-08-18T09:10:09+0000 decision=all-done detail=reports-present
+2026-08-18T09:40:10+0000 decision=all-done detail=reports-present
+2026-08-18T10:10:10+0000 decision=all-done detail=reports-present
+```
+
+So the timer will keep firing every 30 minutes and keep exiting 0 without relaunching. It is
+**inert, not disarmed**, and a human clearing this should run
+`sudo systemctl disable --now swarm-watchdog.timer` on the droplet. This is also, with grim
+symmetry, the same DONE-guard that KI-26 records as making watchdog *recovery* unreachable on an
+improvement run all night — the bug that cost this run its safety net is the thing now keeping
+its unstoppable timer harmless.
+
+**RUN COMPLETE.** No further wakeups; `next_wakeup_at` is 0 and `wrap_up_complete` is true.
