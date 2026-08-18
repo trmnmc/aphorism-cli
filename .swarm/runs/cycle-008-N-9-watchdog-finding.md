@@ -6,12 +6,37 @@ was run** — N-9's acceptance forbids staling this run's own heartbeat, and
 The verdict below comes from the watchdog's own decision log plus its source, not from a
 provoked failure.
 
+## Provenance — what was already known, and what this cycle actually adds
+
+Written before the verdict so the verdict cannot borrow credit. **The improvement-run root
+cause was NOT discovered here.** Run #2's cycle-9 addendum already recorded it inside KI-26
+itself, in those words: on an improvement run the target already carries a REPORT.md from
+the previous run, "so that safety net is true from the first firing and the guard can never
+come false", evidenced by ten consecutive `all-done` firings across run #2.
+
+An earlier draft of this file presented that as a fresh finding. It was not, and the
+correction is recorded rather than quietly edited away.
+
+What cycle 8 genuinely adds is four things:
+
+1. **Recurrence measured on a second run.** Six more firings, same decision — the defect is
+   not specific to run #2's circumstances.
+2. **The whole-history histogram (new, and the strongest single fact here):** across all 195
+   logged firings of every run, `decision=relaunch` appears **zero** times. KI-26 established
+   that recovery was blocked *this kind of run*; the histogram establishes that the relaunch
+   path has never executed in production *at all*.
+3. **Source-level confirmation with line numbers**, including the finding that pacer mode is
+   NOT a contributing factor — the staleness gate is intact and simply never reached.
+4. **A concrete patch and a named human decision**, which KI-26 recorded as owed but never
+   specified.
+
 ## Verdict
 
 KI-26 asked whether the watchdog actually RECOVERS or whether only its timer fires. The
 answer is neither of the two states N-9 anticipated. It is not "recovery proven" and it is
 not "recovery unproven". It is **recovery is unreachable, by construction, for the whole of
-this run** — and the cause is identified exactly.
+this run** — and, per point 2 above, the recovery code is additionally unexercised in every
+run SWARM has ever logged.
 
 ## Evidence 1 — the timer fires, and the watchdog runs, and it decides nothing
 
@@ -89,7 +114,7 @@ The check is a safety net for a run that died *after* writing its reports. It is
 that case. It was written on the unstated assumption that `REPORT.md` can only exist because
 *this* run produced it.
 
-## Root cause
+## Root cause (as first stated by run #2 cycle 9, re-measured here)
 
 **An improvement run breaks that assumption on contact.** Run #3 is an improvement run on a
 repo SWARM already built and already shipped (SKILL.md guard 1d: "the existing repo is the

@@ -1,0 +1,22 @@
+=== Q-3 GATE — 2026-08-18T07:02:00.007Z — tree 64a465f ===
+FAIL  a1  stderr-EPIPE preserves the earned exit code  (open=2 shut=1 (want 2/2))
+PASS  a2  no raw Node stack trace on broken stderr  (clean)
+FAIL  b   non-EPIPE stderr failure is not silently swallowed  (status=1 signal=null — 0 and 1 both lie)
+PASS  c1  open-stderr usage path exits 2  (2)
+PASS  c2  no-match path exits 1  (1)
+PASS  c3  normal path exits 0  (0)
+PASS  c4  normal path still prints an aphorism  (Bad programmers worry about the code. Good pro…)
+PASS  c5  stdout EPIPE still quiet, code preserved  (0)
+PASS  c6  --json still emits parseable JSON  (ok)
+--- full suite ---
+✔ pick: single-element candidates always returns that element regardless of seed (2.389987ms)
+ℹ tests 115
+ℹ suites 0
+ℹ pass 115
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4752.28487
+PASS  s   full suite green  (exit 0)
+=== FAILED CLAUSES: 2 ===

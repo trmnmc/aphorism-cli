@@ -34,6 +34,28 @@ process.stdout.on('error', (err) => {
   process.exitCode = EXIT_WRITE_ERROR;
 });
 
+// Same root cause, same fix, other stream: process.stderr is itself a pipe on
+// POSIX, so a reader that hangs up early (`2>&1 | true`, `2>&1 | head -0`, …)
+// makes a stderr write fail asynchronously as an 'error' event too. Without a
+// listener that crashes with a raw Node stack trace and Node's default
+// uncaught-exception exit code (1) -- silently overwriting whatever exit code
+// (2 for a usage error, 1 for no-match, …) the run had already earned with an
+// unrelated one. EPIPE here is a closed diagnostic channel, not a fault: it
+// must not touch process.exitCode, leaving intact whatever the run already
+// set. A non-EPIPE failure IS a real fault, but the tool's own convention for
+// reporting a fault is a line on stderr -- the very stream that just failed --
+// so writing another message to it would either recurse into this same
+// handler or, if it also fails, be silently lost. There's no third channel to
+// report to that a calling script would think to check, so the honest signal
+// left is the dedicated exit code alone: no message, no attempt to write to
+// the broken stream, no recursion risk.
+process.stderr.on('error', (err) => {
+  if (err && err.code === 'EPIPE') {
+    return;
+  }
+  process.exitCode = EXIT_WRITE_ERROR;
+});
+
 function format(entry) {
   return `${entry.text}\n    — ${entry.author}`;
 }

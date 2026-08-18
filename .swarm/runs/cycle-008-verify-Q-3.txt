@@ -1,0 +1,38 @@
+=== Q-3 GATE — 2026-08-18T07:09:00.783Z — tree edfeaf7 ===
+PASS  a1  stderr-EPIPE preserves the earned exit code  (open=2 shut=2)
+PASS  a2  no raw Node stack trace on broken stderr  (clean)
+PASS  b   non-EPIPE stderr failure is not silently swallowed  (status=3 signal=null)
+PASS  c1  open-stderr usage path exits 2  (2)
+PASS  c2  no-match path exits 1  (1)
+PASS  c3  normal path exits 0  (0)
+PASS  c4  normal path still prints an aphorism  (Bad programmers worry about the code. Good pro…)
+PASS  c5  stdout EPIPE still quiet, code preserved  (0)
+PASS  c6  --json still emits parseable JSON  (ok)
+--- full suite ---
+✔ pick: single-element candidates always returns that element regardless of seed (0.249642ms)
+ℹ tests 118
+ℹ suites 0
+ℹ pass 118
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4976.462712
+PASS  s   full suite green  (exit 0)
+=== FAILED CLAUSES: 0 ===
+PASS  no-match (earned 1), stderr reader CLOSED  got=1 want=1
+PASS  no-match (earned 1), stderr reader OPEN    got=1 want=1
+PASS  --help (earned 0), stdout reader CLOSED    got=0 want=0
+PASS  both streams unwritable, usage error       got=3 want=3
+PASS  usage diagnostic still reaches a healthy stderr  got="aphorism: unknown flag: --bogus"
+--- KI-31 (a): EPIPE on a consumer that closes without reading ---
+  exit=0 raw_node_internals=no  <- node bin/aphorism.js | true
+  exit=0 raw_node_internals=no  <- node bin/aphorism.js --list | true
+  exit=0 raw_node_internals=no  <- node bin/aphorism.js --list | head -0
+  exit=0 raw_node_internals=no  <- node bin/aphorism.js --list | /nonexistent-cmd-xyz
+--- KI-31 (b): ENOSPC must NOT be reported as exit 1 ("no aphorism matched") ---
+  exit=3 (KI-31 recorded exit 1 here; 1 would still collide with no-match)
+  stderr="aphorism: ENOSPC: no space left on device, write"
+--- control: consumers that DO read stay clean (KI-31 says these were already fine) ---
+  exit=0  <- node bin/aphorism.js --list | head -1
+  exit=0  <- node bin/aphorism.js --list | wc -l
