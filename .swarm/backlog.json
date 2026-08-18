@@ -1,6 +1,6 @@
 {
   "_schema_note": "Item schema: reference/state-spec.md (Backlog section). Keys starting with an underscore are ignored by the conductor -- this note is data, not schema.",
-  "_provenance": "Improvement run #2, kickoff 2026-08-17. Carried forward the open/blocked items from run #1 verbatim; 48 done + 4 dropped items are NOT restated here -- they live in backlog.json.pre-run2-1786955683 and in git history.",
+  "_provenance": "Improvement run #2, kickoff 2026-08-17. Carried forward the open/blocked items from run #1 verbatim; 48 done + 4 dropped items are NOT restated here -- they live in backlog.json.pre-run2-1786955683 and in git history.\n\n2026-08-18 run #3 cycle 1 (PLAN): appended N-1..N-9 covering must-haves K-1..K-5 plus KI-26. Nothing pre-existing was modified, reordered or removed -- the 16 verified-done records and the 3 live human-owned items (T-006 blocked, T-040, J-7) are byte-identical to their run #2 state. N-8 is the item that SETTLES those three rather than re-dispatching them. Verify commands are deliberately absent from every acceptance clause: the conductor authors each check at verification time (cycle.md step 6.1), so a builder cannot code to it.",
   "items": [
     {
       "id": "J-1a",
@@ -378,6 +378,201 @@
       "notes": "FOUND BY THE CONDUCTOR'S FOLLOW-UP PROBE AT CYCLE 6, not by a builder, and explicitly NOT CHARGED AGAINST J-5 — J-5's acceptance is about UNRECOGNISED claims and it closed that, 14/14. This is the adjacent hole, and it was measured to be PRE-EXISTING before it was filed.\n\nTHE MECHANISM, read off the code and then confirmed by running it. Two independent designs compose into the hole. (1) The three pre-existing guards each locate their claim with `.match()`, which returns the FIRST occurrence in the section — so a second claim of the same shape is never the one they read. (2) The new J-5 guard exempts a whole clause as soon as any RECOGNISED_TAG_COUNT_CLAIM_PATTERNS entry matches that clause — so a second claim of a recognised shape is exempted rather than flagged. Neither design is wrong on its own; the gap is exactly between them. This is the SAME defect the file already documents one level up for the Attribution counts table (the duplicated-label rule, which is why parseAttributionCountsTable deliberately keeps an ARRAY of values per label instead of one value) — recurring here at the prose level rather than the table level. The existing write-up of that rule is the obvious place to start.\n\nMEASURED, three cells, each inserted as a paragraph immediately AFTER the real opening sentence so it cannot steal the first match (.swarm/runs/cycle-006-probe-out.txt):\n  D1  \"9 tags appear on 2 or more entries.\"        FALSE (corpus: 12)  -> GREEN 102/0\n  D2  \"The corpus contains 13 distinct tags.\"      FALSE (corpus: 12)  -> GREEN 102/0\n  D4  \"In fact 4 tags sit on exactly one entry.\"   FALSE (corpus: 0)   -> GREEN 102/0\n\nPRE-EXISTENCE PROVED, not asserted (.swarm/runs/cycle-006-probe3-out.txt): all three cells were re-run on arm A, the pre-dispatch tree at 0e5d917, and all three are GREEN there too. J-5 neither introduced nor widened this. Charging it against the builder would have been dishonest, and so would leaving it unfiled.\n\nSCOPE WARNING FOR WHOEVER PICKS THIS UP — read the cycle-0 decision first. This run's kickoff stress-test explicitly reshaped the spec AWAY from the README-prose test family, calling a further descent into it the toy-version trap. J-5 was taken because it was an open measured finding from an earlier cycle; J-9 is a hole found by the fix for J-5, which is the shape of an infinite regress. It is filed at priority 6, BELOW the human-ruling items, on purpose. The cycle-6 stopping rule (recorded as a decision in state.json) is explicit: if J-9's own gate surfaces a further prose hole, that is the signal to STOP this family and report it, not to file J-10.\n\n=== CYCLE 8 (this run): TERMINAL — DONE VIA ROUTE (b), the retirement branch its own acceptance offers. See the verification field for the full measurement. Headline: the hole reproduces on 6/6 cells including 3 sealed ones no builder saw; a rebuilt fix closes 6/6 with 3/3 failability controls; and it costs 2 new false rejections on entirely true, ordinary README prose (V1: 4). That is the trade cycles 31/32/35 measured and reverted three times, and the cycle-39 family decision forbids it. The README-prose guard family is now closed for this run. ===",
       "verified_cycle": 8,
       "verification": "TERMINAL VIA ROUTE (b): RETIRED WITH A MEASURED ARGUMENT, which this item's acceptance names as a full completion, not a concession. Nothing shipped; the tree is byte-identical to the pre-dispatch commit cb4b1c2.\n\nTHE HOLE IS REAL, AND WIDER THAN FILED. The sealed pre-dispatch gate (.swarm/runs/cycle-008-r2-gate-J-9.mjs, output -postdispatch-out.txt) reproduces it on 6/6 cells: the three shapes the cycle-6 probe published (J1/J2/J3) PLUS three authored this cycle that no builder saw — J4 places the same falsehood at the END of the section (position independence), J5 uses a different sentence frame, J6 the \"exactly once\" phrasing. All 6 GREEN on the shipped tree at 102/0. All 13 cycle-6 regression cells hold and all 4 sealed false-rejection cells are green, so the instrument is measuring the hole and not collateral.\n\nA FIX CLOSES IT — AND THAT IS NOT THE QUESTION. Independently rebuilt from the SHIPPED test file rather than from the builder's diff, which no longer existed (.swarm/runs/cycle-008-r2-cost-probe.mjs): V1, the naive first-match -> matchAll widening at all four extraction sites; V2, the same plus threshold extraction for the \"or more\" shape. Both kill 3/3 published shapes; V2 additionally kills 6/6 including the three sealed cells, with 3/3 FAILABILITY CONTROLS green (the same sentences made TRUE stay green), so the kills come from the falsehood and not from the sentence shape (.swarm/runs/cycle-008-r2-cost-addendum-out.txt, 7/7).\n\nTHE COST IS WHAT RETIRES IT. V1 buys those kills with 4 NEW false rejections on entirely TRUE prose; V2, the more careful design, with 2:\n  C5 \"Of these, 7 distinct tags carry 5 or more entries each.\" — TRUE (7 tags carry 5+). Rejected because \"distinct tags\" is ambiguous between \"the vocabulary total\" and \"different tags\", which is a property of the English phrase, not of the implementation.\n  C7 \"7 tags appear on five or more entries.\" — TRUE. Rejected because the threshold is spelled as a WORD, so threshold extraction falls back to 2 and expects 12.\nBoth are ordinary sentences a maintainer would write. This is the same trade cycles 31, 32 and 35 each measured and each reverted, and the cycle-39 family decision forbids buying kills with false rejections. Retirement is therefore the consistent ruling, not a convenient one.\n\nA CORRECTION TO THE BUILDER'S OWN REPORT, found by my V0 column and recorded rather than smoothed over. It listed THREE new false rejections. Only two are new. The third — \"With 50 entries in the corpus, exactly one aphorism is chosen per run.\" — is RED on V0 as well, i.e. rejected by the SHIPPED tree before any fix, by the J-5 unrecognised-digit guard doing exactly what its own failure message documents (a stray digit in this section must be a recognised, corpus-checked claim). The builder's statement that \"under the original guards, none of cases 3-5 would ever fail\" is false for that case. Its CONCLUSION is unaffected — two new false rejections is still decisive — but the ledger should be right.\n\nSTOPPING RULE HONOURED (cycle-6 decision). This gate surfaced no further prose HOLE, so no J-10 is filed. The one adjacent finding (the pre-existing loud rejection above) is the guard behaving as designed and is recorded here and in the report, not on the board."
+    },
+    {
+      "kind": "docs",
+      "status": "todo",
+      "priority": 1,
+      "effort": "S",
+      "value": "H",
+      "model": "haiku",
+      "deps": [],
+      "attempts": 0,
+      "filed_cycle": 1,
+      "files_hint": [
+        "SWARM/playbook/HANDOFF-allowlist-2026-08-17.md"
+      ],
+      "packages": [],
+      "owner": "conductor",
+      "id": "N-1",
+      "covers": "K-1",
+      "title": "Update the allowlist HANDOFF with the 10th denial, the MEASURED root cause, and the exact patch",
+      "acceptance": "HANDOFF-allowlist-2026-08-17.md states, as of run #3 cycle 1: (a) the denial count is 10 consecutive runs, with cycle 1 of run #3 named as the tenth reproduction; (b) the ROOT CAUSE read directly out of /opt/swarm/.claude/settings.json rather than inferred -- permissions.allow holds 36 entries of which exactly TWO name a swarm helper, and BOTH name swarm-notify.sh (one macOS absolute path, one bare relative path); no entry exists for swarm-budget.sh, swarm-playbook.sh, swarm-craft.mjs, swarm-watchdog.sh, swarm-warmup.sh or collision-scan.mjs, which is exactly why swarm-notify.sh runs and every other helper is denied; and permissions.additionalDirectories is the EMPTY ARRAY, so the target path reaches this session only via the spawner's --add-dir flag; (c) the exact absolute-path JSON lines a human must add, per L-039; (d) the single command a human runs to confirm the fix; (e) the standing honest limit, restated verbatim rather than softened: the claim that cmd_parse exits 2 on any validator output was established by READING the script and has still never been EXECUTED; (f) that NO run in ANY permission mode can close this from the inside, because acceptEdits covers ordinary file writes but the harness guards settings.json specifically -- so this is permanently a human's item, not the swarm's.",
+      "notes": "CONDUCTOR-OWNED, never dispatchable: the file lives inside SWARM/playbook/, and hard rule 5 forbids handing any SWARM path to a workflow agent. The measurement this item writes up was taken live at cycle 1 -- swarm-notify.sh poll SUCCEEDED (silent, exit 0) while swarm-budget.sh and swarm-playbook.sh parse were both DENIED in the same session, which is the control that turns \"the helpers are denied\" into \"these specific helpers are missing from allow[]\"."
+    },
+    {
+      "kind": "docs",
+      "status": "todo",
+      "priority": 2,
+      "effort": "S",
+      "value": "M",
+      "model": "haiku",
+      "deps": [],
+      "attempts": 0,
+      "filed_cycle": 1,
+      "files_hint": [
+        "SWARM/playbook/applied.log"
+      ],
+      "packages": [],
+      "owner": "conductor",
+      "id": "N-2",
+      "covers": "K-2",
+      "title": "Confirm playbook validity and cap by structural read, and write this run's applied.log line as a stated hand-edit",
+      "acceptance": "Two separable claims, each carrying its own evidence. (1) learnings.md is VALID and WITHIN CAP by structural read: the lesson count is stated with the ids enumerated, compared against the documented cap of 20, and every lesson line is confirmed to carry the v2 grammar its own README specifies (id, bracketed category, text, [confidence:], [source:]). The read is stated as a HAND read, because bin/swarm-playbook.sh parse is denied -- never described as a validator pass. (2) applied.log gains this run's line, in the file's existing format, listing this run's applied ids and targets, and carrying a note that names it a hand-edit and gives the reason -- making explicit that this is the 6th consecutive hand-written line and that the script has not written one since 2026-08-09. The three staged-but-not-wired ids (L-020, L-021, L-022) are recorded as staged and held out of prompt_lines, with the reason, rather than silently listed as applied.",
+      "notes": "CONDUCTOR-OWNED (SWARM/playbook/ path, hard rule 5). Partially measured at cycle 1 already: learnings.md holds exactly 20 lessons (L-008, L-016, L-020, L-021, L-022, L-026, L-034, L-024, L-029, L-031, L-037, L-038, L-039, L-040, L-041, L-033, L-042, L-043, L-044, L-045) against a documented cap of 20 -- AT the ceiling, not over it, and the header next_id is 46. The remaining work is the grammar confirmation and the ledger line itself."
+    },
+    {
+      "kind": "qa",
+      "status": "todo",
+      "priority": 3,
+      "effort": "M",
+      "value": "H",
+      "model": "sonnet",
+      "deps": [],
+      "attempts": 0,
+      "filed_cycle": 1,
+      "files_hint": [
+        "src/",
+        "test/",
+        "bin/aphorism.js"
+      ],
+      "packages": [],
+      "owner": "conductor",
+      "id": "N-3",
+      "covers": "K-3",
+      "title": "Re-measure the 29-clause Domain-rule coverage map against the CURRENT tree with the standing mutation instrument",
+      "acceptance": "A per-clause table covering all 29 Domain-rule clauses, produced by planting one mutant per clause in a FULL THROWAWAY COPY of the tree and running the project's own test_cmd against that copy -- never against the live tree. Each row records the clause, the exact mutation applied, and KILLED or SURVIVED with the observed test output as its evidence. The map is compared against the 29/29 result carried forward from run #1 cycle 54 and re-measured in run #2, and any row that moved is called out. The deliverable is the MEASUREMENT: a result of 29/29 with zero survivors is a complete and reportable outcome of this item, not a failure of it.",
+      "notes": "The instrument already exists from run #1 cycle 50 and was re-run in run #2; this is a re-measurement against the current tree, not a new harness. L-042 applies -- the arms are built with git archive at the pre-dispatch commit, never by copying a live tree that may move underfoot. May be split across cycles by clause range if the gear cap makes one pass too large."
+    },
+    {
+      "kind": "qa",
+      "status": "todo",
+      "priority": 4,
+      "effort": "S",
+      "value": "M",
+      "model": "sonnet",
+      "deps": [
+        "N-3"
+      ],
+      "attempts": 0,
+      "filed_cycle": 1,
+      "files_hint": [
+        ".swarm/"
+      ],
+      "packages": [],
+      "owner": "conductor",
+      "id": "N-4",
+      "covers": "K-3",
+      "title": "Classify every measured survivor as HOLE or BOUNDARY before any test is written",
+      "acceptance": "Every survivor N-3 measured is classified exactly once as HOLE (a real gap in the suite) or BOUNDARY (behaviour the SPEC does not decide), with the reasoning written per survivor and traced to the specific Domain-rule clause text that does or does not decide it. A BOUNDARY is DOCUMENTED and explicitly NOT hardened -- per L-033, hardening an indiscriminable observable produces a check that false-rejects honest output. If N-3 measured zero survivors, this item closes as vacuously satisfied with that stated plainly, and N-5 closes with zero tests added.",
+      "notes": "Gate on L-033: classification strictly PRECEDES any test authoring."
+    },
+    {
+      "kind": "fix",
+      "status": "todo",
+      "priority": 5,
+      "effort": "M",
+      "value": "M",
+      "model": "sonnet",
+      "deps": [
+        "N-4"
+      ],
+      "attempts": 0,
+      "filed_cycle": 1,
+      "files_hint": [
+        "test/"
+      ],
+      "packages": [],
+      "owner": "conductor",
+      "id": "N-5",
+      "covers": "K-3",
+      "title": "Add tests ONLY for survivors classified HOLE, each proven failable, attributable and converse-controlled",
+      "acceptance": "For each survivor classified HOLE by N-4, and for NO other reason, one test is added that satisfies three independent proofs: FAILABLE -- it fails against the specific mutation that survived; ATTRIBUTABLE (L-029) -- removing just this test lets that mutation survive again, so the kill belongs to this test and not to some other assertion already in the suite; and CONVERSE-CONTROLLED (L-044) -- a paired control mutation that the spec permits leaves the suite GREEN, ruling out a check that merely dies on every edit. The project's own test suite, run by the conductor at verification time, is green with zero failures afterwards. ZERO NEW TESTS is an explicitly valid completion of this item when N-4 found no HOLE, and is reported as the measured result rather than as a gap. No test traces to \"the suite looks thin\" -- that is the churn the kickoff stress-test named and the SPEC lists as a non-goal."
+    },
+    {
+      "kind": "docs",
+      "status": "todo",
+      "priority": 4,
+      "effort": "M",
+      "value": "H",
+      "model": "sonnet",
+      "deps": [],
+      "attempts": 0,
+      "filed_cycle": 1,
+      "files_hint": [
+        "REPORT.md"
+      ],
+      "packages": [],
+      "owner": "conductor",
+      "id": "N-6",
+      "covers": "K-4",
+      "title": "Restructure REPORT.md so its FIRST SCREEN answers shipped / machine-verified / open -- deleting nothing",
+      "acceptance": "REPORT.md opens with a first screen (roughly 50 lines) that answers three questions for a maintainer who reads nothing else: what SHIPPED, what is MACHINE-VERIFIED and by which command, and what is OPEN and who owns it. Every byte of the existing forensic detail survives below that screen or in an appendix in the same file -- nothing deleted, no citation dropped, no cycle number orphaned, and the run-1 and run-2 sections still readable as their own runs. Verified by a before/after content census, not by an assurance that nothing was lost. The current file is ~98 KB for a three-file CLI, which is the specific complaint K-4 exists to answer.",
+      "notes": "APPEND-AND-REORDER, never rewrite: run #2 recorded a decision that REPORT.md and RETRO.md are appended to and never overwritten, and that holds here. The first screen is NEW text placed above; the history moves down intact."
+    },
+    {
+      "kind": "fix",
+      "status": "todo",
+      "priority": 3,
+      "effort": "S",
+      "value": "H",
+      "model": "sonnet",
+      "deps": [],
+      "attempts": 0,
+      "filed_cycle": 1,
+      "files_hint": [
+        "README.md",
+        "docs/"
+      ],
+      "packages": [],
+      "owner": "conductor",
+      "id": "N-7",
+      "covers": "K-4",
+      "title": "Audit every count claim in README.md, REPORT.md and docs/ against the live tree",
+      "acceptance": "Every numeric claim about this repo stated in README.md, REPORT.md or docs/ is enumerated with its file and line, checked against the live tree by a command whose output is recorded, and marked TRUE or FALSE. False claims are corrected to the measured value. At minimum: corpus entry count, test count, test-file count, source-file count, and dependency count. Two standing prohibitions are separately confirmed: nothing unverified is described as verified, and the corpus attributions are NEVER described as audited anywhere in the docs -- KI-2 is open, high, and human-owned, and a doc that calls the corpus audited would be the single most damaging false claim in the repo.",
+      "notes": "L-043 applies to HOW this is checked: read structural markers the documents own, and do not build a regex that pattern-matches prose and calls the result an audit."
+    },
+    {
+      "kind": "docs",
+      "status": "todo",
+      "priority": 5,
+      "effort": "S",
+      "value": "H",
+      "model": "haiku",
+      "deps": [],
+      "attempts": 0,
+      "filed_cycle": 1,
+      "files_hint": [
+        "REPORT.md",
+        ".swarm/SPEC.md"
+      ],
+      "packages": [],
+      "owner": "conductor",
+      "id": "N-8",
+      "covers": "K-5",
+      "title": "Give T-006, T-040 and J-7 a named next actor and the exact evidence that would settle each",
+      "acceptance": "Each of the three human-owned items -- T-006 (blocked: human audit of the 50 corpus attributions), T-040 (corpus retag consequences a human should confirm) and J-7 (two CLI behaviours the Domain rules do not decide) -- is EITHER closed by a decision this run can honestly make, OR restated in REPORT.md's hand-off section with three things: who the next actor is (named as a role, not \"someone\"), the exact evidence that would settle it, and what the swarm has already measured so the human does not repeat it. None is silently dropped. None is re-opened as agent work -- each requires a judgement an agent cannot honestly make, and re-dispatching them would be the churn K-5 exists to prevent. J-7 in particular already carries both behaviours MEASURED with their observed outputs; what is missing is only the ruling."
+    },
+    {
+      "kind": "qa",
+      "status": "todo",
+      "priority": 7,
+      "effort": "S",
+      "value": "M",
+      "model": "haiku",
+      "deps": [],
+      "attempts": 0,
+      "filed_cycle": 1,
+      "files_hint": [
+        ".swarm/"
+      ],
+      "packages": [],
+      "owner": "conductor",
+      "id": "N-9",
+      "covers": "KI-26",
+      "title": "Settle or bound KI-26: does the watchdog actually RECOVER, or is only its timer firing?",
+      "acceptance": "The distinction KI-26 turns on is resolved into one of two honest states, with evidence either way. Either runs/watchdog.log carries a record of an actual relaunch decision (staleness detected, PID identity-checked, session respawned) and the log lines are quoted -- or it does not, and the finding is recorded as \"the timer fires; recovery remains UNPROVEN\" with the precise reason: a firing timer proves scheduling and nothing about the recovery path. NO DRILL is run: deliberately staling this run's own heartbeat to trigger a relaunch would risk the live run and could stack a duplicate conductor, which runs/incident-duplicate-conductor.md records as having happened before. Bounding the claim is the deliverable; a fabricated pass is not available, and neither is an untested assumption that it works.",
+      "notes": "READ-ONLY on SWARM/bin per hard rule 5 -- this item observes the watchdog, it never edits it. Any defect found is journaled and reported, never live-patched."
     }
   ]
 }

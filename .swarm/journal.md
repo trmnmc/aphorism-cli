@@ -10279,3 +10279,128 @@ runfile-mirror:
 ```json
 {"version":1,"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":"2026-08-19T03:48:28+00:00","usage_reset_at":"2026-08-19T03:48:28+00:00","usage_reset_at_note":"UNMEASURED, and recorded as such rather than guessed. The 5-hour usage-window boundary cannot be read this run: bin/swarm-budget.sh is denied by the same allowlist gap as bin/swarm-playbook.sh (KI-2 of the moon run), so no probe output exists. Set equal to stop_at so the limp short-circuit degrades to its own 3600s clamp instead of to a fabricated boundary. runs/allocator.json supplies the only real usage evidence this run has: weekly_used_pct 22.0 at week_elapsed_pct 13.58, week_resets_at 1787547599.","model_policy":"value-routing","auth_mode":"subscription","run_label":"aphorism-cli improvement run #3","heartbeat":{"ts":1787025537,"next_wakeup_at":1787025627,"pid":2061860,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"allocator (probe denied)","gear":1,"gear_target":1,"ratio":0,"mode":"guest","k_cap":1,"promote":false,"demote":true,"window_tokens":0,"window_cost_usd":0,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":0,"projected_depletion_at":0,"last_probe_ts":1787024916,"last_real_probe_ts":0,"probe_failures":1,"gear_evidence":"Gear 1 at kickoff, and every input is named. bin/swarm-budget.sh is DENIED by the allowlist gap (reproduced live at this kickoff on bin/swarm-playbook.sh and on the settings.json write), so window rho is UNMEASURED and probe_failures opens at 1. The evidence rule lands cruise 3 without a probe; two clamps then bind below it. (1) guest mode caps the reachable gear at 3 and forces dial 1.0 for gear purposes. (2) The weekly governor, computed by hand from runs/allocator.json (ok:true, source:probe): weekly_used_pct 22.0 / week_elapsed_pct 13.58 = weekly_heat 1.62, well over the 1.3 trigger, so promote is BLOCKED and the ceiling drops. The allocator additionally reports posture TRICKLE with allow_premium_pct 5.592 and human_active true — the run is explicitly borrowing idle capacity beside a live human. Gear 1 is the honest read of that combination, and it matches the brief: haiku-priced work types, S-effort builds only.","weekly":{"ok":true,"weekly_used_pct":22,"opus_used_pct":15,"week_elapsed_pct":13.58,"weekly_heat":1.62,"opus_heat":1.1,"ceiling":1,"promote_blocked":true,"source":"REAL: runs/allocator.json ok=true source=probe, read at kickoff. Heat and ceiling computed by hand because bin/swarm-budget.sh is denied."}},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0,"plist_note":"systemd, not launchd. swarm-watchdog.timer confirmed ACTIVE and firing at this kickoff: `systemctl list-timers` shows it fired 03:39:47 UTC and is next due 04:09:47 UTC (30-min cadence). plist_loaded is set true on that evidence. NOTE KI-26 (high, carried from run #2) claims the watchdog was INERT for that entire run despite the timer firing — a firing timer is not the same signal as a recovering watchdog, and this kickoff verified only the former."},"wrap_up_complete":false,"cycles_since_recycle":0,"artifact":{"file":"/opt/swarm/runs/dashboard.html","publish_failures":0},"playbook":{"mode":"auto","applied":["L-008","L-016","L-020","L-021","L-022","L-024","L-026","L-029","L-031","L-033","L-034","L-042","L-043","L-044"],"vetoed":[],"source":"learnings.md parsed BY HAND — bin/swarm-playbook.sh parse DENIED at this kickoff (9th consecutive run). 20 lessons present, at the documented cap of 20, not over it.","not_wired":{"ids":["L-020","L-021","L-022"],"why":"All three instruct browser/React/SPA or env-var behaviour (component-mount tests, hard-reload after restart, persisted UI state). aphorism-cli is a zero-dependency terminal CLI with no browser surface and no env-var-dependent behaviour, so wiring them into prompt_lines would be noise a builder must discard. Staged as applied for the ledger, deliberately kept OUT of prompt_lines — the same call runs #2 and #3 made and reported as not-exercised."},"ledger_line_blocked":"record-applied could not run (allowlist gap) — this is the 5th consecutive run whose applied.log line is a hand-edit. K-2 owns writing it and saying so.","directives":{"wave_k":3,"routing_recs":["core-logic->fable"],"prompt_lines":{"builder":["The conductor is the SOLE committer — never commit or push yourself","The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test"],"reviewer":["The conductor is the SOLE committer — never commit or push yourself","The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test","Assign each fixer a pairwise-disjoint file set; two fixers must never share a file — and treat that as necessary, not sufficient: dispatch sequentially whenever one item's acceptance is a measurement OF a tree another item edits"],"qa":["The conductor is the SOLE committer — never commit or push yourself","The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test","Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish \"I verified this is wrong, here is the computation\" from \"this looks suspicious but I could not confirm it\".","Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value.","When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence.","Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps.","Classify each surviving mutant as HOLE (a real gap — harden it) or BOUNDARY (behaviour the spec does not decide — document it) BEFORE writing any test","Never assert against prose matched by regex — read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns","For every mutation that must kill the suite, author one control that must leave it GREEN — a check that dies on everything is a snapshot test, not an assertion"]}}}}
 ```
+
+---
+
+## cycle 1 — 2026-08-18T04:05Z — PLAN (inline, conductor-authored) — VALUE
+
+TARGET: /opt/targets/aphorism-cli · phase PLAN -> BUILD · gear 1 (crawl) · k_cap 1
+PICK: the PLAN gate, not a choice. cycle.md step 4 gate 2 holds the run in PLAN until the
+  backlog covers every must-have in SPEC.md. The carried-forward backlog held 20 items from
+  runs #1 and #2 — 16 done, 1 dropped, 3 live — and NONE of them covered K-1..K-5, which were
+  written into SPEC.md at this kickoff hours ago. So no build work was admissible this cycle
+  regardless of gear. Gear 1 (haiku-priced planning work) agrees with the gate; it did not
+  decide it.
+
+ORIENT:
+  - Prior conductor PID 2061860: DEAD (`ps -p 2061860` -> no such process). This session is
+    PID 2063888, spawned by the pacer at 04:05:09. No duplicate conductor — checked
+    explicitly because runs/incident-duplicate-conductor.md records that failure happening
+    before. `pgrep -af claude` showed exactly one claude process, mine.
+  - Target tree CLEAN at orient (`git status --porcelain` empty). No crashed-cycle salvage.
+  - Control channel: `bin/swarm-notify.sh poll` ran and exited 0 (silent). control.json ->
+    pending [] applied [], and no `inject` array. Nothing to apply, nothing to triage.
+
+ALLOWLIST — THE 10th CONSECUTIVE DENIAL, and the first with a MEASURED ROOT CAUSE:
+  Runs #1 and #2 established THAT the helpers are denied. This cycle establishes WHY, by
+  reading /opt/swarm/.claude/settings.json directly (the Read tool is not subject to the Bash
+  allowlist) instead of inferring it from failures:
+
+    permissions.allow holds 36 entries. Exactly TWO name a swarm helper:
+        Bash(/Users/truman/Projects/SWARM/bin/swarm-notify.sh:*)   <- macOS absolute path
+        Bash(bin/swarm-notify.sh:*)                                <- bare relative path
+    There is NO entry for swarm-budget.sh, swarm-playbook.sh, swarm-craft.mjs,
+    swarm-watchdog.sh, swarm-warmup.sh or collision-scan.mjs.
+    permissions.additionalDirectories == []  (the empty array)
+
+  That is the whole diagnosis, and it comes with its own CONTROL, taken live in this session:
+      `bin/swarm-notify.sh poll`      -> RAN, exit 0, silent      (it is in allow[])
+      `bin/swarm-budget.sh`           -> DENIED, "requires approval"  (it is not)
+      `bin/swarm-playbook.sh parse`   -> DENIED, "requires approval"  (it is not)
+  One helper works and two do not, in one session, differing only by presence in allow[].
+  This is no longer "the scripts are denied" — it is a named, patchable config gap, which is
+  what N-1 now has to write into the handoff.
+  UNCHANGED and restated rather than softened: the claim that `cmd_parse` exits 2 on any
+  validator output is still READ-ONLY knowledge, never EXECUTED. This run cannot execute it
+  either. And per run #2's finding, acceptEdits covers ordinary file writes but the harness
+  guards settings.json specifically — so no run in any permission mode closes this from the
+  inside. It is permanently a human's item.
+
+PLAYBOOK (K-2, partially measured this cycle): learnings.md holds EXACTLY 20 lessons —
+  L-008, L-016, L-020, L-021, L-022, L-026, L-034, L-024, L-029, L-031, L-037, L-038, L-039,
+  L-040, L-041, L-033, L-042, L-043, L-044, L-045 — against a documented cap of 20. AT the
+  ceiling, not over it, confirming the kickoff's hand-parse. Header next_id: 46. applied.log's
+  last line is dated 2026-08-16 and says in its own note that it was written by hand because
+  the script was permission-denied; the script has not written a line since 2026-08-09.
+
+WORK: appended N-1..N-9 to backlog.json. Coverage is the gate: K-1->N-1, K-2->N-2,
+  K-3->N-3+N-4+N-5, K-4->N-6+N-7, K-5->N-8, plus N-9 for KI-26 (watchdog recovery unproven).
+  N-3/N-4/N-5 are deliberately a CHAIN with deps, not one item: measure the 29 clauses, THEN
+  classify each survivor HOLE-or-BOUNDARY (L-033), THEN — and only for a HOLE — write a test
+  proven failable (L-029) and converse-controlled (L-044). Every one of those three carries
+  "zero new tests is a valid outcome" in its own acceptance text, because the SPEC says the
+  deliverable is the measurement and the kickoff stress-test named test-count churn as this
+  repo's specific failure mode.
+  N-1, N-2, N-8 and N-9 are marked owner: conductor and are NOT dispatchable: they touch
+  SWARM/playbook/ paths or require a judgement an agent cannot honestly make, and hard rule 5
+  forbids handing any SWARM path to a workflow agent.
+  NOTHING pre-existing was touched — the 3 live human-owned items (T-006, T-040, J-7) are the
+  INPUT to N-8, not work to re-dispatch.
+
+VERIFICATION EVIDENCE (gate authored AFTER the backlog was written, run by the conductor):
+
+  $ node --test test/*.test.js        # the floor this run must not break
+  i tests 102
+  i pass 102
+  i fail 0
+  i duration_ms 4665.697813
+
+  $ node /opt/swarm/runs/c1r3-gate.mjs
+  PASS  C1 backlog parses; all 12 LIVE items carry required fields :: 29 items scanned
+  WARN  C1 historical: done item J-8 is missing [deps] — left UNMODIFIED on purpose
+  PASS  C2 PLAN gate: all 5 must-haves covered :: K-1->N-1 K-2->N-2 K-3->N-3+N-4+N-5
+                                                  K-4->N-6+N-7 K-5->N-8
+  PASS  C3 no runnable verify command in any LIVE acceptance clause :: scanned 29 clauses
+  WARN  C3 historical: done item J-9 embeds a literal command — inert, left UNMODIFIED
+  PASS  C4 all 20 pre-existing items byte-identical to HEAD :: +9 new, 0 mutated, 0 dropped
+  PASS  C5 control: gate DETECTS a removed item :: control reported uncovered=[K-1]
+  PASS  C6 control: C3 detector DETECTS a re-poisoned live clause :: flagged=[N-5]
+  GATE PASS — 6/6 checks passed
+  (full output: .swarm/runs/cycle-001-verify-PLAN.txt)
+
+  The gate went RED on its first run and that is the honest part of this cycle. It caught
+  three things. ONE was live and mine: N-5's acceptance contained the literal string
+  `node --test test/*.test.js`, which is exactly the leak that lets a builder code to the
+  check rather than to the goal (L-042). It was FIXED — the clause now names the outcome and
+  not the command. The other two are pre-existing defects on DONE items (J-8 missing `deps`;
+  J-9 embedding a command). C1 and C3 were re-scoped to live items so those two stop failing
+  the gate, and that re-scope is recorded as a decision in state.json rather than done
+  quietly, because "loosened a check after it went red" is the precise shape hard rule 2
+  warns about. The defence, stated so it can be argued with: step 4 never picks a done item
+  and no builder is ever dispatched against one, so the hazard cannot occur there; both hits
+  still print as WARN on every future run; and they were left unedited because C4 proves the
+  20 inherited items are byte-identical to HEAD, which is worth more than tidiness.
+  C6 exists because fixing N-5 removed C3's only live violation — without a re-poisoned
+  control arm, "C3 PASS" would be indistinguishable from a regex that matches nothing.
+
+GEAR: 1 (crawl), held on re-measured inputs. swarm-budget.sh DENIED again -> probe_failures
+  1 -> 2; rho UNMEASURED, and the evidence rule forbids reading its absence as crawl OR
+  overdrive, so the clock fallback lands cruise 3 and the clamps bind below it: guest caps at
+  3, and the weekly governor from a fresh allocator.json read gives 22.0/13.74 = heat 1.60,
+  over the 1.3 trigger, so promote blocked and ceiling 1. allow_premium_pct is 4.717, DOWN
+  from 5.592 at kickoff — the human sharing this window got busier, not quieter. Guest mode
+  never upshifts and that is working as designed.
+
+KNOWN ISSUES touched: KI-2 (allowlist gap) now has a measured root cause and an exact patch
+  target — still open, still human-owned, but no longer only a symptom. KI-26 (watchdog
+  recovery unproven) filed as N-9 with an explicit no-drill constraint.
+
+next: N-1 (S, conductor-owned, priority 1) — write the measured root cause above into
+  playbook/HANDOFF-allowlist-2026-08-17.md with the exact JSON patch and the confirm command.
+  It is the highest-value item on the board because it is the only one that can end a
+  ten-run-old failure, and at gear 1 with k_cap 1 it is exactly one item's worth of work.
+
+runfile-mirror:
+```json
+{"version":1,"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":"2026-08-19T03:48:28+00:00","usage_reset_at":"2026-08-19T03:48:28+00:00","usage_reset_at_note":"UNMEASURED, and recorded as such rather than guessed. The 5-hour usage-window boundary cannot be read this run: bin/swarm-budget.sh is denied by the same allowlist gap as bin/swarm-playbook.sh (KI-2 of the moon run), so no probe output exists. Set equal to stop_at so the limp short-circuit degrades to its own 3600s clamp instead of to a fabricated boundary. runs/allocator.json supplies the only real usage evidence this run has: weekly_used_pct 22.0 at week_elapsed_pct 13.58, week_resets_at 1787547599.","model_policy":"value-routing","auth_mode":"subscription","run_label":"aphorism-cli improvement run #3","heartbeat":{"ts":1787026266,"next_wakeup_at":1787028664,"pid":2063888,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"allocator (probe DENIED at cycle 1 — 2nd consecutive)","gear":1,"gear_target":1,"ratio":0,"mode":"guest","k_cap":1,"promote":false,"demote":true,"window_tokens":0,"window_cost_usd":0,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":0,"projected_depletion_at":0,"last_probe_ts":1787026266,"last_real_probe_ts":0,"probe_failures":2,"gear_evidence":"Gear 1 held at cycle 1, on a re-measured input set. bin/swarm-budget.sh was invoked and DENIED again (probe_failures 1 -> 2), so window rho remains UNMEASURED and the evidence rule forbids reading its absence as either overdrive or crawl; the clock fallback lands cruise 3 and two clamps then bind below it. (1) guest mode caps the reachable gear at 3. (2) The weekly governor from a FRESH runs/allocator.json read this cycle: weekly_used_pct 22.0 / week_elapsed_pct 13.74 = weekly_heat 1.60, still well over the 1.3 trigger, so promote stays blocked and the ceiling stays 1. Posture TRICKLE, allow_premium_pct 4.717, human_active true — down from 5.592 at kickoff, i.e. the human beside this run got BUSIER, not quieter. Gear 1 rests on the allocator reading and the guest clamp, never on the missing probe.","weekly":{"ok":true,"weekly_used_pct":22.0,"opus_used_pct":16,"week_elapsed_pct":13.74,"weekly_heat":1.601,"opus_heat":1.164,"ceiling":1,"promote_blocked":true,"source":"REAL: runs/allocator.json ok=true source=probe, re-read at cycle 1. Heat computed by hand — swarm-budget.sh denied."}},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0,"plist_note":"systemd, not launchd. swarm-watchdog.timer confirmed ACTIVE and firing at this kickoff: `systemctl list-timers` shows it fired 03:39:47 UTC and is next due 04:09:47 UTC (30-min cadence). plist_loaded is set true on that evidence. NOTE KI-26 (high, carried from run #2) claims the watchdog was INERT for that entire run despite the timer firing — a firing timer is not the same signal as a recovering watchdog, and this kickoff verified only the former."},"wrap_up_complete":false,"cycles_since_recycle":1,"playbook":{"mode":"auto","applied":["L-008","L-016","L-020","L-021","L-022","L-024","L-026","L-029","L-031","L-033","L-034","L-042","L-043","L-044"],"vetoed":[],"source":"learnings.md parsed BY HAND — bin/swarm-playbook.sh parse DENIED at this kickoff (9th consecutive run). 20 lessons present, at the documented cap of 20, not over it.","not_wired":{"ids":["L-020","L-021","L-022"],"why":"All three instruct browser/React/SPA or env-var behaviour (component-mount tests, hard-reload after restart, persisted UI state). aphorism-cli is a zero-dependency terminal CLI with no browser surface and no env-var-dependent behaviour, so wiring them into prompt_lines would be noise a builder must discard. Staged as applied for the ledger, deliberately kept OUT of prompt_lines — the same call runs #2 and #3 made and reported as not-exercised."},"ledger_line_blocked":"record-applied could not run (allowlist gap) — this is the 5th consecutive run whose applied.log line is a hand-edit. K-2 owns writing it and saying so.","directives":{"wave_k":3,"routing_recs":["core-logic->fable"],"prompt_lines":{"builder":["The conductor is the SOLE committer — never commit or push yourself","The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test"],"reviewer":["The conductor is the SOLE committer — never commit or push yourself","The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test","Assign each fixer a pairwise-disjoint file set; two fixers must never share a file — and treat that as necessary, not sufficient: dispatch sequentially whenever one item's acceptance is a measurement OF a tree another item edits"],"qa":["The conductor is the SOLE committer — never commit or push yourself","The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test","Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish \"I verified this is wrong, here is the computation\" from \"this looks suspicious but I could not confirm it\".","Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value.","When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence.","Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps.","Classify each surviving mutant as HOLE (a real gap — harden it) or BOUNDARY (behaviour the spec does not decide — document it) BEFORE writing any test","Never assert against prose matched by regex — read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns","For every mutation that must kill the suite, author one control that must leave it GREEN — a check that dies on everything is a snapshot test, not an assertion"]}}}}
+```
