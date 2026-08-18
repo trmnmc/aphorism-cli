@@ -1,0 +1,20 @@
+=== TS-4 gate @ 852da64 ===
+PASS  A1 help has a jq tag-discovery line
+      line: Run --list --json | jq '.tags[]' to see tags in the corpus.
+FAIL  A2 line does not name the binary as a user invokes it
+      extracted: []
+FAIL  A3 no command could be extracted from the line
+FAIL  A4 printed command exited 1
+      stderr: no command
+FAIL  A5 output not a deduped list (0 lines, 0 unique)
+FAIL  A6 output != independently derived tag vocabulary
+      expected: complexity debugging design humor language performance philosophy process readability reliability simplicity teamwork
+      got:      
+PASS  A7 corpus untouched
+PASS  A8 still zero-dependency (no manifest/lockfile/node_modules)
+PASS  A9 flag set unchanged: --author --help --json --list --seed --tag -h
+PASS  A9b unknown flag still exits 2
+PASS  A10 test_cmd green (pass 118, fail 0)
+PASS  A11 README tag command runs clean
+      readme: node bin/aphorism.js --list --json | jq -r ".tags[]" | sort | uniq -c | sort -rn
+=== TS-4 gate: FAIL ===

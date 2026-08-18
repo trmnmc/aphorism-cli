@@ -11777,3 +11777,148 @@ NOT FIXED, and deliberately so: `.gitignore` is outside `runs/` and `playbook/`,
   fences it. Filed as KI-34 with both halves of the fix and a named owner, for the morning
   report. This cycle's own SWARM commit was simply not made, rather than forced with
   `--allow-empty` and a subject that would have repeated the same untruth.
+
+---
+
+## cycle 10 — pre-dispatch seal (polish-docs / TS-4)
+
+**Opened** 1787038818 (2026-08-18T07:40:18Z). Conductor PID 2190850, pacer-spawned headless
+`-p` session. stop_at 1787111308 — 72,417s (20.1h) remaining, so no admission pressure:
+polish-docs needs 900s against a 71,517s window.
+
+### step 1 — burn probe (REAL, 30-min anchor came due)
+
+`bin/swarm-budget.sh` is still unrunnable. Confirmed this cycle by STRUCTURAL READ of
+`SWARM/.claude/settings.json` rather than by triggering an 11th denial: `permissions.allow`
+carries `Bash(bin/swarm-notify.sh:*)` and a dead macOS absolute path for the same script, and
+NOTHING for `swarm-budget.sh` or `swarm-playbook.sh` in any path form. So its exact PROBE_CMD
+was invoked directly (`Bash(npx:*)` is allowlisted) and the script arithmetic replicated by
+hand from source — governor 104/131-139, T_target 196-214, active-block parse 247-251,
+ratio 300-309, `gear_from_ratio` 143-153, `emit` 156-176. Raw probe:
+`.swarm/runs/cycle-010-probe.json`. Replication script: `SWARM/runs/c10-gear.py`.
+
+```
+LIMIT          130591250
+TOKENS         93731996 (71.8% by token count; probe's own percentUsed 77.31 — it weights
+               differently, and swarm-budget.sh:300 uses lim-tok, which is the figure used here)
+COST USD       82.47
+TPM            401510   TPH 24090574
+T_target W     1787040000 (usage_reset rolled forward)  mins_out 17
+REM            36859254   target 2168191 tok/min
+RATIO rho      0.19  -> gear_from_ratio 5
+depletion at   1787044476
+weekly: heat 1.70 opus_heat 1.20 ceiling 2 promote_blocked true
+gear_target 2 -> APPLIED GEAR 2 (k_cap 2, promote false, demote true)
+```
+
+gear 2 · ρ 0.19 · 93.7M tokens · 24.1M tok/h · depletion 1787044476 · **governor clamp 2**.
+
+THE SHAPE, CONTINUED FROM CYCLE 8: ρ has fallen again, 0.57 → 0.47 → **0.19**. The 5h window
+is wide open and on its own would buy gear 5. The weekly governor is the sole binding
+constraint and cannot move before `week_resets_at` 1787547599. One correction to the cycle-8
+note: `opus_heat` is now 1.20 exactly, which is NOT `> 1.2`, so opus no longer blocks promote
+independently — `weekly_heat` 1.70 > 1.3 does it alone. That changes nothing about the applied
+gear; it is recorded because the cycle-8 entry named two independent blockers and only one is
+still live.
+
+`probe_failures` stays 6. The SCRIPT was not invoked, and an unattempted invocation is not a
+failed one — the same bookkeeping cycles 8 and 9 used. `last_real_probe_ts` and
+`last_probe_ts` both advance to 1787038968: this WAS a real probe of the real command.
+
+### step 2 — orient
+
+Tree clean at 852da64, no salvage needed. Control channel: `bin/swarm-notify.sh poll` → exit 0,
+`poll ok merged=0` appended at 07:41:55Z; `runs/control.json` `pending: []`, `applied: []`,
+no `inject` array. Nothing to apply, nothing to triage.
+
+### step 3 — re-anchor (cycle 10 % 5 == 0, so the FULL re-read)
+
+SPEC.md re-read end to end. Digest holds: improvement run #3, measure/repair/document, no new
+features; K-1..K-5 all ticked at cycle 5; non-goals still lock corpus expansion, rotation,
+`--width`, `NO_COLOR`, any new flag, any new dependency, any unmeasured test.
+
+Backlog hygiene: 37 items, of which **7 are live** — 1 todo (TS-4), 6 blocked (T-006, T-040,
+J-7, TS-1, TS-2, TS-3) — 29 done and 1 dropped (T-008). The ~30-live cap is not close to
+binding, there are no duplicates to merge, and nothing is stale enough to drop. **No mutation
+made.** Recording a no-change hygiene pass rather than manufacturing churn to look busy.
+
+### step 4 — pick
+
+**polish-docs, one item: TS-4** (help's tag-discovery snippet is not a pasteable command).
+
+It is the only `todo` in the backlog. The other three taste findings, TS-1..TS-3, are all
+corpus expansion — a locked non-goal of this run — and stay `blocked` on a human scope
+decision; picking one would be exactly the drift the spec lock exists to prevent. Gear 2's
+work-choice rule ("must-haves before polish/docs") does not bite: zero must-haves remain todo.
+
+VALUE_LOOP ratchet, both questions: *would the target user notice?* Yes — `--help` is
+user-visible output, and a user who pastes the line gets a command that does not run.
+*Would they still care after 10 minutes?* Yes — it is a wrong instruction shipped in the
+product's own help, not a cosmetic nit.
+
+Routing recomputed at pick time per `reference/workflows.md`: `kind: polish` + `effort: S` →
+**haiku** by the table as-is. Gear 2's demotion (sonnet→haiku for docs/polish) has no rung
+below haiku, so haiku is both the table value and the floor. The backlog's stored
+`model: sonnet` is stale plan-time data and is overridden here, per cycle.md step 4.
+
+Craft pack: `node SWARM/bin/swarm-craft.mjs` → `degraded: []`, `craft.docs` spliced into the
+polisher prompt.
+
+### step 6 gate — SEALED BEFORE DISPATCH
+
+The gate was authored, debugged and hashed while the backlog item was still `todo` and no
+agent had been dispatched. It lives at `SWARM/runs/c10-gate-TS-4.mjs` — **outside the target
+repo**, so a builder working in `/opt/targets/aphorism-cli` cannot read it even by accident.
+
+```
+a9f5e0f511dfba31c1ef6f06b5367d306193c4fbff420463bf6d89e005394438  c10-gate-TS-4.mjs      (7638 B)
+2aee4895d1cb950addd2d477c66b233beabfaf67ee67beb49aceaef2655a6ce6  c10-gate-baseline.txt  (1004 B)
+```
+
+**THE DISCRIMINATOR.** The gate does not grep the help text for a nice-looking string. It
+extracts the command out of the live `--help` output and *executes* it, then compares stdout
+against the tag vocabulary derived independently by `require()`ing `src/corpus.js`. A
+hardcoded list would have to reproduce the corpus exactly (A6); a pipeline that emits
+duplicates — the shipped defect — fails A5 no matter how the sentence is worded.
+
+**DISCRIMINATING BASELINE, run against the UNFIXED tree at 852da64** (full output:
+`SWARM/runs/c10-gate-baseline.txt`):
+
+```
+FAIL  A2 line does not name the binary as a user invokes it
+FAIL  A3 no command could be extracted from the line
+FAIL  A4 printed command exited 1
+FAIL  A5 output not a deduped list (0 lines, 0 unique)
+FAIL  A6 output != independently derived tag vocabulary
+PASS  A7 corpus untouched
+PASS  A8 still zero-dependency
+PASS  A9 flag set unchanged: --author --help --json --list --seed --tag -h
+PASS  A9b unknown flag still exits 2
+PASS  A10 test_cmd green (pass 118, fail 0)
+PASS  A11 README tag command runs clean
+=== TS-4 gate: FAIL ===
+```
+
+Exactly the five assertions that encode the TS-4 defect fail, and every assertion that should
+hold on the current tree holds. The gate can fail, and it fails for the right reason.
+
+**TWO GATE BUGS FOUND BY RUNNING THE BASELINE, and fixed before sealing.** Both were false
+FAILs that would have fired on *any* tree, including a correct fix:
+
+1. **A9 expected-flag list omitted `--tag`.** Six flags ship; I wrote five. Corrected to the
+   real set. The assertion still fails if any flag is added or removed — it was wrong, not
+   lenient.
+2. **A10 could not parse the test summary.** It matched `# pass N` (TAP reporter); `node --test`
+   here uses the spec reporter and prints `ℹ pass N`. It now accepts either marker AND
+   requires that one was actually found — an unparseable summary is a FAIL, never a silent
+   pass. Before the fix it reported "NOT green" against a suite that was green at 118/118.
+
+This is the argument for running the baseline rather than reasoning about the gate: a gate
+that has never failed is not known to be able to fail, and a gate that has never passed is not
+known to be readable. Two bugs in eleven assertions is the measured rate.
+
+Also recorded: the suite is at **118 tests**, not the 102 SPEC.md quotes from kickoff. The spec
+line is a kickoff-time measurement, not a claim about now; runs #2 and #3 added the difference.
+Noted so a reader does not read it as a false count claim under K-4.
+
+**Dispatch follows this commit.** Nothing below this line existed when the hash above was taken.
