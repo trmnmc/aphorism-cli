@@ -13062,3 +13062,230 @@ control should DERIVE the history serialization from the page (grep the tick tit
 timestamp they actually carry) rather than assuming it matches the stamp format.
 
 The dashboard page itself is correct.
+
+
+## cycle 14 | 2026-08-18T09:30:55Z -> 09:52Z | aphorism-cli | VALUE_LOOP
+
+**work:** build-wave [R-2] — reconcile every J-7 behaviour-count claim in REPORT.md against
+the backlog · **outcome:** 1/1 verified · **models:** haiku (docs/S per the routing table;
+already at the floor, so gear 2's demotion is a no-op)
+
+### clock + burn — a REAL probe, the first since cycle 12
+
+`date +%s` = 1787045455. stop_at 1787111308, so 18h17m of clock remains; limp false.
+
+`probe_failures` stood at 7, which suppresses the probe — but `last_real_probe_ts` was 3259s
+old, past the 1800s re-probe threshold that suppression carries with it, so a real probe was
+due and was run. `bin/swarm-budget.sh` is still allowlist-dead in every path form and was not
+attempted an eighth time; the measurement went through `npx ccusage@latest`, which IS
+allowlisted, exactly as cycle 2 established.
+
+```
+block 08:00:00Z -> 13:00:00Z   34,652,811 tokens of a MEASURED 130,591,250 limit
+burn 381,425 tok/min           ccusage projects 113,000,087 by block end (86.5%)
+```
+
+T_target is the block end (nearer than stop_at), 206 min out, remaining 95,938,439, guest
+forces dial 1.00 → target rate 465,758 tok/min → **ρ 0.819 → gear_from_ratio 3**. The weekly
+governor then dominates as it has every cycle of this run: `weekly_used 29.0 / week_elapsed
+16.97 = heat 1.709 > 1.3` → **ceiling 2**, promote blocked. opus_heat 1.179, still under the
+1.2 trigger. Guest clamp (3) inert at 2. Hysteresis from prev gear 2 → **applied gear 2**,
+k_cap 2, demote true. `probe_failures` 7 → 0.
+
+Worth stating because it is the kind of agreement that is easy to fake and easy to skip: the
+probe's own forward projection (113.0M by block end against a 130.6M limit) and the ρ reading
+are independent arithmetic over the same measurement, and they agree that the window survives.
+
+**control channel:** `bin/swarm-notify.sh poll` clean, `pending[]` empty, `applied[]` empty,
+no `inject` array. Nothing to triage. Tree clean at orient — no salvage.
+
+### the pick
+
+Board at orient: 6 blocked items (T-006, T-040, J-7, TS-1, TS-2, TS-3 — every one human-owned
+by its own acceptance clause) and 2 todo (R-1, R-2). Gear 2's work-choice rule is *must-haves
+before polish/docs*, and R-2 is not ordinary docs work — it is a live regression against
+**must-have K-4** ("no count claim in README.md, REPORT.md or docs/ is false"). S-effort,
+agent-workable, priority 3. R-1 is scored below and did not enter the wave.
+
+### the gate, and one thing done differently from cycle 13
+
+`cycle-014-gate.mjs`, sha256 `f3fb4648d979847f9ad14c2bfb2ade514facf1e341b3941e81b3baf7c39fa414`,
+sealed and committed to the target at **6c9d6a3 before any agent was dispatched**, together
+with its baseline on the unrepaired tree.
+
+**The gate file itself was NOT in the target repo during the dispatch window.** It sat under
+`SWARM/runs/` and was copied in only after verification. Cycle 13 committed its gate into the
+target before dispatch and relied on a prompt line — *"do not attempt to locate, read or infer
+the check"* — to keep builders out of it. That is an instruction, and an instruction is only
+as strong as the agent's compliance. Hard rule 5 gives agents target paths and never SWARM
+paths, so a gate held under `SWARM/runs/` is **structurally unreachable** rather than merely
+forbidden. The tamper-evidence property cycle 13 was buying is fully preserved — the hash was
+sealed in the target before dispatch, and the revealed file re-hashes to `f3fb4648...`,
+matching. Strictly stronger, zero cost.
+
+Two design choices inside the gate are worth naming:
+
+- **It derives its true count from `backlog.json` at run time** rather than hardcoding five.
+  A gate that hardcodes the answer goes stale the moment a sixth ruling is routed to J-7, and
+  this run has now measured that exact decay five times. The instrument should not join the
+  set of things that rot.
+- **Three-state cells.** R-2's acceptance sanctions *two* repairs per site — correct the count,
+  or re-label the site as dated history. A binary matcher cannot separate an honest re-label
+  from a stale claim without reading English, so each site cell reports PASS / **REVIEW** /
+  FAIL, where REVIEW means "stale count, but a dating token is within ±2 lines — the conductor
+  must read this one". A REVIEW cell is not a pass.
+
+### VERIFICATION EVIDENCE
+
+Baseline, unrepaired tree (full: `.swarm/runs/cycle-014-gate-baseline.txt`):
+
+```
+[FAIL] A1  heading: line 1300 reads "Four" (=4), true count is 5
+[FAIL] A2  ruling list: expected bullets (1)..(5), found [1,2,3,4]
+[FAIL] A3  D-44 present in substance: empty=true flag=false equals=false
+[FAIL] A4  "what would settle it": line 1313 reads "four" (=4)
+[REVIEW] A5.0 quoted backlog title: line 1304 quotes "Four CLI behaviours ... (from J-6 + N-4)"
+[FAIL] A6.0 executive summary: line 1230 reads "Two" (=2)
+[FAIL] A7.0 ranked actions: line 1244 reads "two" (=2)
+[FAIL] A8.0 cycle-8 narrative: line 1062 reads "two" (=2)
+[FAIL] A9  catch-all: 4 stale-count lines mention J-7, 4 carry no dating token
+[PASS] C1..C4  converse controls (T-040's "two judgment calls" intact; J-6 provenance
+               line intact; non-destruction vs HEAD; all 42 headings survive)
+PASS 4 / FAIL 8 / REVIEW 1 / UNPARSEABLE 0
+```
+
+Post-repair, same file, hash re-checked before running (full:
+`.swarm/runs/cycle-014-verify-R-2.txt`):
+
+```
+f3fb4648d979847f9ad14c2bfb2ade514facf1e341b3941e81b3baf7c39fa414  cycle-014-gate.mjs
+PASS 13 / FAIL 0 / REVIEW 0 / UNPARSEABLE 0
+```
+
+`test_cmd` — `node --test test/*.test.js`:
+
+```
+ℹ tests 118    ℹ pass 118    ℹ fail 0    ℹ cancelled 0    ℹ skipped 0    ℹ todo 0
+```
+
+Unmoved, as a documentation-only change must leave it.
+
+**Attributed kill on the REPAIRED tree** — the baseline proves the gate can fail on an
+unrepaired document; this proves it can still fail on a repaired one, which is the property
+that actually matters after the fix has landed. Reverting exactly one token (the heading's
+`Five` → `Four`) and re-running:
+
+```
+[FAIL] A1  J-7 section heading count
+[FAIL] A9  catch-all sweep for stale J-7 counts
+PASS 11 / FAIL 2 / REVIEW 0 / UNPARSEABLE 0
+```
+
+Two cells die and eleven survive, and the two that die are precisely the two that own that
+claim — A1 by name and A9 as the catch-all designed to shadow it. A gate that collapsed to
+2/13 on a one-token change would be a snapshot test wearing a gate's clothes.
+
+**Independent re-measurement of the prose the builder wrote.** The gate's A3 checks that the
+new bullet mentions an empty value, a filter flag and the `=` form; it does not check that
+what the bullet SAYS is true. Re-measured here rather than accepted:
+
+```
+["--author",""]           exit=0  stdout_lines=2   stderr=""
+["--author="]             exit=2  stdout_lines=0   stderr="aphorism: flag --author requires a value"
+["--tag",""]              exit=1  stdout_lines=0   stderr="aphorism: no aphorism matches those filters"
+["--tag="]                exit=2  stdout_lines=0   stderr="aphorism: flag --tag requires a value"
+["--list"]                exit=0  stdout_lines=50
+["--author","","--list"]  exit=0  stdout_lines=50   <- identical to bare --list: unfiltered
+```
+
+All four exit codes as written. Both cited source ranges confirmed by reading
+`src/args.js`: the equals-branch empty rejection is `if (value === '')` at **83–86**, and the
+space-branch is `if (arg in VALUE_FLAGS)` at **106–124**, checking only `next === undefined ||
+looksLikeFlag(next)` before assigning the empty string at 121. The builder's technical content
+is accurate.
+
+### the defect the gate could not see
+
+The builder dated its own edit **"extended by R-2 (run #3, cycle 6)"**. R-2 ran at cycle 14.
+
+That is a false provenance claim written into the one paragraph in REPORT.md whose entire job
+is dating claims correctly — and it is the precise overclaiming failure mode the cycle-4 N-6
+record predicted for a haiku agent on this document. The gate passed 13/13 with the false line
+sitting in it, and the gate was not wrong to: its cells check behaviour COUNTS against the
+backlog, and a cycle attribution is a different claim class. It was found by **reading the
+diff**, which is the answer to the question a gate cannot answer about itself.
+
+Repaired by the conductor (one token) and the item closed **done-by-conductor-repair, not
+done-as-delivered**, per the cycle-4 N-6 precedent, so neither the backlog nor this journal
+reads as a clean haiku delivery.
+
+**Note the shape, because it is new for this run.** The eight prior instrument defects were all
+the same category — *the gate was wrong*. This one is different: **the gate was right and
+insufficient.** Thirteen green cells over a document that contained a falsehood none of them was
+aimed at. A sealed gate bounds what you checked; it never bounds what is true. The correct
+response is not a fourteenth cell bolted on after the fact — it is that reading the diff stays
+mandatory no matter how green the instrument comes back.
+
+### a ninth instrument defect, in this cycle's own gate, found in the baseline
+
+`OBS-1` — an OBSERVE-only cell I wrote to flag that V-7's cycle-12 correction note claims it
+fixed "this heading, and the executive summary line", when the executive summary line was
+still stale — **never fired**. Its anchor regex requires that sentence on one line; it wraps in
+REPORT.md between "line" and "pointing", so the match silently failed.
+
+That is the **ninth instrument defect of the run**, and it is the same family as cycle 12's A6:
+*a prose regex defeated by a line wrap*. It carries no verdict weight — OBS-1 is OBSERVE-only
+by construction and can move no cell state — and it is recorded here rather than quietly patched
+because the baseline it appears in is sealed. It is also written into
+`.swarm/runs/cycle-014-gate-seal.md`, so a reader of the seal meets the defect at the same time
+as the seal.
+
+The observation itself was confirmed by hand and stands: V-7's note did overstate the scope of
+the cycle-12 repair. It is **not** filed as a new item — R-2's acceptance names count claims,
+not the self-description of a correction note, and failing or extending an item for a defect
+outside its acceptance is moving the gate after the fact (cycle-6 precedent). The repair R-2
+made moots it in practice: the executive summary line now reads Five.
+
+Also observed, not acted on: seven of the builder's added lines carry a single trailing space.
+Single trailing spaces are invisible in Markdown rendering (two or more make a `<br>`), so this
+changes nothing, and tidying prose I was not repairing at persist time is exactly the discipline
+cycle 13 held.
+
+### R-1 scored, DONE deliberately not called
+
+Cycle 13 asked this cycle to score R-1 against the two-question ratchet once R-2 landed.
+
+**"Would the target user notice?" — no.** R-1 reshapes an internal test guard; someone running
+`aphorism` in a terminal sees nothing either way. A no on question one ends it. The premise is
+gone as well: cycle 13 measured 12 distinct tags and **zero** on exactly one entry, so the
+single-entry-tag limitation the guard protects does not currently exist, and cycle 13 already
+removed the false CLAIM by renaming the test. What is left is a correctly-named vacuous guard.
+Its own note raises RETIREMENT as possibly more honest than reshaping — but retiring a guard is
+deleting a claim, and T-040's pending human ruling could reintroduce single-entry tags, so
+retirement is human-owned too.
+
+**DONE is nonetheless not declared this cycle.** This run has run the DONE decision three times
+(cycles 8, 11, 12), and cycle 8 was wrong four times over — cycles 9, 10, 11 and 12 each
+produced verified value after it. Cycle 13 asked for a score, and the score is discharged here.
+Making the judgment in the same breath, on a board I have only just changed, is how cycle 8 got
+it wrong. The next cycle re-runs it against a settled tree with this score already on the record.
+
+### wave autotune
+
+Not clean (a conductor repair was required) and not failed (no revert, no red verify) → the
+"any other outcome" branch: `wave_streak` 1 → 0, `k_current` unchanged at 4.
+
+### state
+
+gear 2, pinned by the weekly governor (heat 1.709, ceiling 2) until `week_resets_at`
+1787547599. usage_reset_at 13:00:00Z. `probe_failures` reset to 0 on a clean real probe;
+`last_real_probe_ts` moved. `bin/swarm-budget.sh` and `bin/swarm-playbook.sh` remain unrunnable
+in every path form; `bin/swarm-notify.sh` works relative-only. KI-34 and KI-35 stay fenced by
+hard rule 5 for the morning report.
+
+**FOR CYCLE 15:** the board is 6 human-owned blocked items plus R-1, which failed the ratchet
+above. Re-run the DONE decision against that settled board. If it comes back done, WRAP_UP and
+hand the unspent clock back with the reason on the record rather than manufacturing work — and
+say plainly in the report that R-1 is a known vacuous guard left standing on purpose, with the
+T-040 dependency named. **Do not pick:** TS-1/2/3 (locked non-goal), T-006, T-040, J-7 (human-owned).
+Do not re-open V-2. Do not narrow the readme-tags marker regex a fourth time.

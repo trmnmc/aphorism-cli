@@ -824,7 +824,7 @@
    "id": "R-2",
    "title": "Reconcile every J-7 behaviour-count claim in REPORT.md against the backlog (K-4 regression)",
    "kind": "docs",
-   "status": "todo",
+   "status": "done",
    "priority": 3,
    "effort": "S",
    "value": "M",
@@ -837,7 +837,9 @@
    ],
    "packages": [],
    "acceptance": "Every count claim about J-7 in REPORT.md matches the backlog item's actual enumeration (five as of cycle 13), or is explicitly re-labelled as a dated history claim. Known stale sites measured at cycle 13: line ~1300 section heading says 'Four'; lines ~1062, ~1230 and ~1244 each say 'two behaviours'. The line ~1062 case needs care rather than find-and-replace — it QUOTES J-7's acceptance string, so the honest repair is to fix the quoted source and the quotation together, or to mark it as a quotation of a superseded revision. Verified under a gate sealed BEFORE the file is touched, with a baseline proving the gate fails on the unrepaired tree.",
-   "notes": "Filed at cycle 13. This is a live K-4 regression — 'no count claim in README.md, REPORT.md or docs/ is false' — and it is the SAME decay class the run has now measured four times (V-1 cycle 11; V-7 cycle 12; the review-fix bookkeeping correction at cycle 12; and this). Cycle 12's gate assertion B6 caught the section heading and flipped it to 'Four'; it did not sweep the body, so three older 'two behaviours' mentions survived underneath the repair. Cycle 13 then raised the true count to five by routing D-44 here, and declared that debt instead of paying it unverified. PRIORITY 3, above R-1: a false count in the maintainer-facing report is exactly what must-have K-4 forbids, and it is S-effort."
+   "notes": "Filed at cycle 13. This is a live K-4 regression — 'no count claim in README.md, REPORT.md or docs/ is false' — and it is the SAME decay class the run has now measured four times (V-1 cycle 11; V-7 cycle 12; the review-fix bookkeeping correction at cycle 12; and this). Cycle 12's gate assertion B6 caught the section heading and flipped it to 'Four'; it did not sweep the body, so three older 'two behaviours' mentions survived underneath the repair. Cycle 13 then raised the true count to five by routing D-44 here, and declared that debt instead of paying it unverified. PRIORITY 3, above R-1: a false count in the maintainer-facing report is exactly what must-have K-4 forbids, and it is S-effort.\n\n|| CLOSED AT CYCLE 14, done-by-conductor-repair rather than done-as-delivered. Gate cycle-014-gate.mjs (sha256 f3fb4648..., sealed and committed at 6c9d6a3 BEFORE dispatch, held under SWARM/runs/ for the dispatch window so a builder could not reach it even in principle): baseline on the unrepaired tree 4 PASS / 8 FAIL / 1 REVIEW, post-repair 13 PASS / 0 FAIL / 0 REVIEW, gate hash byte-identical across both runs. Suite 118/118/0 unchanged, as a documentation-only change must leave it. ONE DEFECT THE GATE COULD NOT SEE was repaired by the conductor: the builder dated its own edit \"extended by R-2 (run #3, cycle 6)\" when R-2 ran at cycle 14 — a false provenance claim inside a paragraph whose entire purpose is dating claims correctly. The gate checks counts, not cycle attributions, so it passed 13/13 with the false line present; the defect was found by READING THE DIFF, which is why the diff is read. Recorded as an imperfect delivery per the cycle-4 N-6 precedent so the backlog does not read as a clean haiku delivery. Everything else the builder wrote was independently re-measured and TRUE: all four D-44 exit codes (--author '' -> 0 and unfiltered at 50 of 50 entries, --author= -> 2, --tag '' -> 1, --tag= -> 2) and both cited source ranges (src/args.js:83-86 equals-branch empty rejection; 106-124 space-branch). Attributed-kill control on the repaired tree: reverting the single heading token five->four takes the gate to 11 PASS / 2 FAIL, killing exactly A1 and the A9 catch-all and nothing else.",
+   "done_cycle": 14,
+   "model_used": "haiku"
   }
  ]
 }

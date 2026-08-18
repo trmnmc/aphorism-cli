@@ -1059,10 +1059,11 @@ verified at cycle 8 by reading all three rather than inheriting the previous cyc
   source". That is KI-2, and no check available to a swarm can confirm a quote's provenance.
 - **T-040** — "a human confirms two judgment calls cycle 46 made" (the 26-name tag fold map,
   and the SPEC illustration that had to move because it named a tag that fold removed).
-- **J-7** — "a human rules on two behaviours the Domain rules do not decide, and the ruling is
+- **J-7** — "a human rules on five behaviours the Domain rules do not decide, and the ruling is
   written into SPEC.md as an explicit clause either way" (`--help` vs usage-error precedence;
   whether `--seed -0` and `--seed 0` are the same seed — they are `===` in JavaScript but
-  select different aphorisms, both measured).
+  select different aphorisms; repeated `--tag`/`--author` handling; empty-string values on seeds;
+  empty values with different flag syntaxes; all measured).
 
 With every must-have verified and nothing left that a swarm can action, continuing would have
 been cycling for the clock's sake. The alternative — a third pass at the README-prose guard
@@ -1227,7 +1228,7 @@ survive; that the playbook file is within cap with unique ids and intact `[apply
    including both wrap-up commits; it is only SWARM's own history that is sitting local. The
    playbook changes distilled tonight are committed and durable on disk, but they are not on
    GitHub until someone with the key pushes them.
-5. **Two CLI behaviours are unspecified (J-7)** and one taxonomy judgment call wants confirming
+5. **Five CLI behaviours are unspecified (J-7)** and one taxonomy judgment call wants confirming
    (T-040). Both are listed above with the measurements attached; each needs a ruling written
    into SPEC.md, not a code change.
 6. **Taste.** The taste judge scored *use-twice* 7/10 at kickoff and named the missing
@@ -1241,7 +1242,7 @@ survive; that the playbook file is within cap with unique ids and intact `[apply
 
 1. Apply the settings patch in `playbook/HANDOFF-allowlist-2026-08-17.md`, then run
    `bin/swarm-playbook.sh validate` (expect exit 0). Two lines; unblocks the swarm's memory.
-2. Rule on J-7's two behaviours; confirm T-040's two judgment calls. Ten minutes, and they clear
+2. Rule on J-7's five behaviours; confirm T-040's two judgment calls. Ten minutes, and they clear
    two of the three open items.
 3. Confirm or reverse the `L-033` promotion (med → high, `[apply:]` added) recorded in
    `playbook/DROP-RATIONALE-2026-08-17.md` § *WRAP-UP drop*.
@@ -1297,28 +1298,32 @@ unchanged; the three taste entries are appended at the end.
 
 **Why an agent cannot finish it:** editorial judgment about product taxonomy and user contract. The mechanics are measured and verified; the judgment call is not delegable to an agent.
 
-## J-7: Four CLI behaviours are unspecified and require human ruling
+## J-7: Five CLI behaviours are unspecified and require human ruling
 
-_Correction carried by V-7 (run #3, cycle 12)._ This heading, and the executive summary line
-pointing at it, read **two** from when the section was written at cycle 5 until now. The
-backlog item it hands off has read `Four CLI behaviours are unspecified and a human should
-rule on them (from J-6 + N-4)` since cycle 4 of run #2, and this section's own body listed
-the other two — (3) and (4) below — under *Already measured*, where a reader looking for
-what to rule on would not find them. Nothing was measured or re-measured to make this
-correction; behaviours (3) and (4) were moved into the ruling list where they belong, and
-their cycle-4 provenance is kept below.
+_Correction carried by V-7 (run #3, cycle 12), extended by R-2 (run #3, cycle 14)._ This heading
+has read **two** (cycle 5), then **four** (V-7, cycle 12), and now **five** after cycle 13 
+added behaviour (5) to the backlog. The backlog item it hands off has read `Four CLI behaviours
+are unspecified and a human should rule on them (from J-6 + N-4)` as of cycle 4 of run #2; as 
+of cycle 13 of run #3 it reads `Five CLI behaviours are unspecified and a human should rule on 
+them (from J-6 + N-4 + D-44)`. At cycle 5 when this section was written, the backlog held four 
+behaviours (1–4), and this section's body listed only the first two, leaving (3) and (4) under 
+*Already measured* where a reader looking for what to rule on would not find them. At cycle 12, 
+V-7 moved (3) and (4) into the ruling list where they belong. At cycle 13, behaviour (5) was 
+added to the backlog, and R-2 now adds it to this section.
 
 **Next actor:** the repo maintainer — whoever owns the SPEC and the product contract.
 
-**What would settle it:** the maintainer rules on four behaviours the Domain rules do not currently decide and writes each ruling into SPEC.md as an explicit clause (either the current behaviour or the opposite is acceptable; the SPEC must pick one). Evidence and trade-offs are documented below.
+**What would settle it:** the maintainer rules on five behaviours the Domain rules do not currently decide and writes each ruling into SPEC.md as an explicit clause (either the current behaviour or the opposite is acceptable; the SPEC must pick one). Evidence and trade-offs are documented below.
 - (1) **Precedence: `--help` or usage error when both appear in argv.** Measured behaviour: usage error wins in both orders (`--help --seed abc` and `--seed abc --help` both exit 2 with "aphorism: flag --seed requires a numeric value"). The Domain-rules *Exit codes* clause neither prohibits nor requires this; SPEC silence means it is unspecified.
 - (2) **Identity of seeds: are `--seed -0` and `--seed 0` the same?** They are `===` in JavaScript. They are NOT the same in the shipped product: toUint32Seed folds the IEEE-754 bit pattern including the sign bit, so `--seed 0` prints Kernighan ("most effective debugging tool") and `--seed -0` prints Saint-Exupery ("Perfection is achieved"). Both are fully deterministic, fully reproducible, and both match the Domain rule ("with `--seed <n>`, the chosen index is deterministic"). SPEC silence on whether -0 and 0 are one value or two means this is unspecified.
 - (3) **Repetition: what does a second `--tag` or `--author` mean?** Measured behaviour: last-occurrence-wins (`--tag humor --tag design --list` prints the design entries). SPEC names each filter only in the singular and never mentions repetition, so neither last-wins, first-wins, nor an error is required. This is also the one behaviour the cycle-4 mutation sweep found **unprotected by the suite** — deliberately not frozen into a test, because a test would settle by accident what the SPEC has not settled on purpose.
 - (4) **Empty-string flag values: is `--seed ""` a seed or a usage error?** The Domain rule says `--seed` accepts any value that `Number()` parses to a non-NaN number, and `Number("")` is `0` — a literal reading says ACCEPT. The implementation exits 2 (usage error). Two SPEC clauses point opposite ways; this is the one item on this list where the SPEC is not silent but self-contradictory, so a ruling must also say which clause loses.
+- (5) **Form divergence on empty values: does `--author=` behave like `--author ''`?** Measured behaviour: no. Space-form `--author ''` (empty string) returns exit 0 and prints without filtering; `--author=` returns exit 2 (usage error). Similarly: `--tag ''` returns exit 1 and `--tag=` returns exit 2. Mechanism in src/args.js: the equals-branch at lines 83–86 deliberately rejects empty values, while the space-branch at lines 106–124 checks only for a missing next token or one resembling a flag, then assigns the empty string. The Domain rules specify the flag interface only (`--tag PATTERN`, `--author PATTERN`) without addressing syntax variants or empty-value edge cases, so this divergence is unspecified.
 
 **Already measured — do not repeat:**
 - Cycle 4, run #2 (item J-6, filed at J-7): behaviours (1) and (2) measured with observed CLI outputs. They are not defects; they are unsettled design choices. The "already measured" status means the swarm has no further investigation to do — only a ruling to record.
 - Cycle 4, run #2 (item N-4): behaviours (3) and (4) measured the same way, during the independent re-derivation of the SPEC clause set that also found the inherited 29-clause enumeration incomplete.
+- Cycle 13, run #3 (item D-44): behaviour (5) measured by the code reviewer and independently reproduced by an adversarial verifier and the conductor. Mechanism details documented in src/args.js. Like (3), this is a shipped divergence the SPEC never addresses.
 
 **Why an agent cannot finish it:** SPEC design decision. The swarm can measure behaviour, describe what the SPEC says and does not say, enumerate options and trade-offs, and recommend; it cannot make a contract decision. The measurement is complete; the judgment is not.
 
