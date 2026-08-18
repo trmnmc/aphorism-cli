@@ -1,0 +1,30 @@
+cycle-014 gate / item R-2 / true J-7 count from backlog = 5 ("Five")
+==============================================================================
+[FAIL] A1  J-7 section heading count
+        line 1300 reads "Four" (=4), true count is 5, no dating token within +/-2 lines
+[FAIL] A2  ruling list enumerates every behaviour
+        expected bullets (1)..(5), found [1,2,3,4] -- a count claim of 5 over a list of 4 is a NEW false claim, not a repair
+[FAIL] A3  D-44 present in substance
+        final bullet missing: empty=true flag=false equals=false
+[FAIL] A4  "what would settle it" count
+        line 1313 reads "four" (=4), true count is 5, no dating token within +/-2 lines
+[REVIEW] A5.0  quoted backlog title matches live backlog
+        line 1304 quotes "Four CLI behaviours are unspecified and a human should rule on them (from J-6 + N-4)" but live title is "Five CLI behaviours are unspecified and a human should rule on them (from J-6 + N-4 + D-44)"; dating tokens nearby: as written, run #2, cycle 5 -- CONDUCTOR MUST READ
+[FAIL] A6.0  executive-summary hand-off count
+        line 1230 reads "Two" (=2), true count is 5, no dating token within +/-2 lines
+[FAIL] A7.0  ranked-action count
+        line 1244 reads "two" (=2), true count is 5, no dating token within +/-2 lines
+[FAIL] A8.0  cycle-8 narrative quotation count
+        line 1062 reads "two" (=2), true count is 5, no dating token within +/-2 lines
+[FAIL] A9  catch-all sweep for stale J-7 counts
+        4 stale-count line(s) mention J-7; 4 carry no dating token: L1062("two"), L1230("Two"), L1244("two"), L1300("Four")
+[PASS] C1  CONVERSE CONTROL: T-040 still says "two judgment calls"
+        3 occurrences intact
+[PASS] C2  CONVERSE CONTROL: J-6 provenance line intact
+        the "(1) and (2) measured" cycle-4 provenance line survives
+[PASS] C3  non-destruction vs HEAD
+        REPORT.md is unchanged from HEAD (0 insertions, 0 deletions)
+[PASS] C4  heading survival
+        all 42 HEAD headings survive (J-7 heading excluded, it is A1's subject)
+==============================================================================
+PASS 4 / FAIL 8 / REVIEW 1 / UNPARSEABLE 0
