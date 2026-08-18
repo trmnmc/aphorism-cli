@@ -10420,3 +10420,36 @@ dashboard: runs/dashboard.html re-rendered (04:14:25Z);
   the first version sorted journal headers by cycle NUMBER, which is wrong on a journal
   spanning three runs whose numbering restarts at 0 — run #2 reached cycle 9, so "highest" is
   not "newest". Now sliced to this run's kickoff and ordered by file position.)
+
+### cycle 1 addendum — control-channel poll, now with LOG EVIDENCE (and L-039 observed twice more)
+
+The block above stated that the orient poll "ran and exited 0 (silent)". That was asserted
+from silence, and silence is not evidence. runs/notify.log settles it properly:
+
+    2026-08-18T04:06:08+0000 poll ok merged=0     <- the orient poll (block above)
+    2026-08-18T04:15:11+0000 poll ok merged=0     <- re-verified deliberately
+    2026-08-18T04:15:14+0000 send phase-change ok <- PLAN -> BUILD push, step 8
+
+So the claim holds and is now logged rather than inferred: the channel was polled, and it
+merged zero commands, which is why control.json still reads pending [] applied [].
+
+WHAT CAUGHT IT is worth recording, because it is L-039 happening live for the second and
+third time this cycle. The phase-change send FAILED on its first attempt with:
+
+    /bin/bash: line 1: bin/swarm-notify.sh: No such file or directory
+
+Not a permission denial — a RESOLUTION failure. An earlier `cd /opt/targets/aphorism-cli`
+in this session (to run the test suite) had left the shell's cwd in the target, and
+permissions.allow carries only the RELATIVE entry `Bash(bin/swarm-notify.sh:*)` for this
+host. So the command string must match that entry literally, which means it only works when
+cwd happens to be /opt/swarm. The absolute-path entry in allow[] points at
+/Users/truman/Projects/SWARM — a macOS path that cannot exist on this droplet.
+
+That is the SAME defect as the one N-1 documents, seen from the other side: the gap is not
+only that six helpers are missing from allow[], it is that the one helper that IS listed is
+listed in a form whose success depends on the conductor's current working directory. A
+wrapper script (`bash runs/c1r3-notify.sh`) was then also denied, because that command
+string does not match the entry either. The working invocation is `cd /opt/swarm;
+bin/swarm-notify.sh ...` in a single command, and N-1's patch must say so explicitly rather
+than only listing the missing entries — otherwise a human adds six lines and leaves the
+seventh, cwd-fragile, one in place.
