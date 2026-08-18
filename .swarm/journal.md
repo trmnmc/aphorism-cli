@@ -12257,3 +12257,165 @@ NOT FIXED, and outside this run's remit: the naming convention lives in
 `SWARM/reference/cycle.md`, which hard rule 5 fences as read-only mid-run. Filed as KI-35
 (low) for the morning report. Candidate fix for a human: prefix per-run, e.g.
 `cycle-r3-010-<type>`, or fold the run label into the directory (`.swarm/runs/run-3/`).
+
+---
+
+### cycle 11 — VALUE_LOOP candidate pass, then V-1 (VALUE)
+
+**Clock:** opened 1787040420 (2026-08-18T08:07:00Z). `stop_at` 1787111308 — 19.7 h out, so
+no admission pressure and no clock-driven excuse for a hurried DONE call.
+
+**Budget:** gear **2**, held. Real probe NOT due — `now − last_real_probe_ts` = 1452 s against
+the 1800 s re-probe anchor, so no probe was attempted and `probe_failures` stays 6 (an
+unattempted probe is not a failed one — the cycle-10 convention). `runs/allocator.json` re-read
+directly: `weekly_used 27.0 / week_elapsed 16.14` → weekly_heat **1.673** > 1.3 → ceiling 2,
+`promote` blocked; `opus_heat` 19/16.14 = 1.177, still not > 1.2, so the weekly heat is the sole
+binding constraint, unchanged from cycle 10. Hysteresis from PREV_GEAR 2 → applied **2**,
+`k_cap` 2. The clock-fallback cruise value (gear 3) is dominated by the governor ceiling, so it
+never applied.
+
+**Control channel:** `bin/swarm-notify.sh poll` was **DENIED** this cycle. Note the correction
+this forces to the cycle-7 helper_denials note: that note recorded the relative form
+`bin/swarm-notify.sh <verb>` as allowlisted-and-working, and it was, at cycle 7 from cwd
+`/opt/swarm`. It did not work here. Per cycle.md a failed poll is non-fatal, so the cycle
+continued on the file-sourced `pending[]` only: `runs/control.json` read directly —
+`pending: []`, `applied: []`, no `inject` array. **Nothing was dropped**, but the poll's
+delivery half was not exercised, and that is recorded as not-run rather than as clean.
+
+#### Step 4 — the VALUE_LOOP candidate-generation pass
+
+Generated from the LOCKED SPEC and the 31-entry `known_issues` list, not from the backlog
+(todo is empty: 30 done / 6 blocked / 1 dropped). Six candidates, each scored on the two
+ratchet questions AND on spec alignment, since this run is measure/repair/document and a
+candidate that is really a feature fails alignment no matter how it scores on value.
+
+| id | candidate | verdict |
+|---|---|---|
+| **V-1** | REPORT.md exec summary carries two count claims this run's own cycles made false | **BUILD** |
+| V-2 | consolidated SWARM tool-gap hand-off doc (KI-5/14/16/25/26/30/33/34/35) | reject |
+| V-3 | KI-12 — README acknowledgement guard satisfiable by an in-section decoy | reject |
+| V-4 | TS-1/TS-2/TS-3 — corpus depth, tag-pool exhaustion, voice concentration | reject |
+| V-5 | T-006 / T-040 / J-7 | reject |
+| V-6 | `state.json` is 116 KB | reject |
+
+Reasons, so each rejection can be argued with rather than taken on trust:
+
+- **V-2** — the nine SWARM-side gaps are all fenced by hard rule 5 and are already filed with
+  remedies, and WRAP_UP's morning report is where they surface by construction. Building a
+  second container for them now, an hour before that report, is the same bookkeeping counted
+  twice — the exact near-miss cycle 6 caught and retracted when Q-3/KI-32 turned out to
+  duplicate D-43. Rejected on value, not on effort.
+- **V-3** — real and open, but the cycle-0 scope decision retired the `readme-tags.test.js`
+  thread as "the toy-version trap", and K-3 admits a test ONLY for a measured mutation
+  survivor. Rejected on **spec alignment**, explicitly not on value.
+- **V-4** — corpus expansion is a LOCKED non-goal, named in SPEC.md rather than silently
+  defaulted. The swarm cannot lift its own non-goal mid-run; that is the drift the lock exists
+  to prevent. Reversible only on a word from the user.
+- **V-5** — human-owned. K-5 already surfaced all three with a named actor and settling
+  evidence; re-opening them as agent work is precisely what K-5 forbids.
+- **V-6** — swarm-internal artifact. No member of the three-audience list in SPEC.md reads it.
+
+**V-1 passes both ratchet questions.** Would the target user notice? The maintainer (audience
+#2, whose whole stake per SPEC.md is "has to trust what README.md and REPORT.md claim") reads
+`102 tests` in the first screen, runs `node --test`, and gets 118. Would they still care after
+ten minutes? Yes — a false figure under a heading that says **Machine-verified** discredits
+every other claim under it, including the true ones. And alignment is maximal: this is not a
+new candidate at all, it is a **regression against must-have K-4** ("No count claim in
+README.md, REPORT.md or `docs/` is false"), a box ticked at cycle 4 and invalidated by
+cycles 7, 8 and 10 of this same run.
+
+That last point is the finding, and it is worth more than the fix: **a verified must-have box
+decayed inside its own run, and nothing in the pipeline noticed.** Cycles 7 and 8 added tests
+and cycle 10 changed `--help`; none of them re-checked the documents whose claims those changes
+falsified.
+
+#### V-1 — the repair
+
+Gate authored and **sealed BEFORE the edit** (the cycle-10 pattern), then run against the
+UNFIXED tree to prove it discriminates. Two of seven assertions must fail on the broken tree
+and five must pass; a gate green on the unfixed tree proves nothing, and one red everywhere
+proves nothing either.
+
+`.swarm/runs/cycle-011-gate-V-1.mjs`, sha256
+`91770fd1af98fcec9da6a25686804b158167a5b78b019011d25037ff64447806` — **identical before and
+after the edit**, re-hashed at gate time.
+
+DISCRIMINATING BASELINE, unfixed tree, exit 1:
+
+```
+FAIL A1  claims 102 tests / 0 fail; live 118 tests / 0 fail
+FAIL A2  claims 4 test files; real 5 (args, cli, pipe, readme-tags, select)
+PASS A3  tests 118, fail 0
+PASS A5  48-tests row true, 80-tests row true
+PASS A6  2 occurrences of the frozen "80 pass / 0 fail" figure
+PASS A7  no test-count claim
+5/7 PASS
+```
+
+The gate carries the cycle-10 reporter lesson forward in code: `node --test` here uses the
+SPEC reporter (`ℹ tests 118`), not TAP, and a TAP-only regex reads a green suite as not-green.
+
+The edit is three lines changed plus a reconciliation note. `4 test files` → `5`,
+`102 tests pass` → `118`, and the section heading `Machine-verified (measured today unless
+noted otherwise)` → `(re-measured 2026-08-18 at improvement run #3, cycle 11)` — "today" was
+undated prose in a document explicitly stratified across three runs, which is how the figure
+went stale unnoticed. Per the document's own standing convention the correction is stated
+rather than hidden, and **no dated history row was touched**: the "48 tests" / "80 tests" run
+rows and run #1's frozen "80 pass / 0 fail" body figures are left exactly as written.
+
+#### VERIFICATION EVIDENCE — cycle 11, item V-1
+
+Sealed gate, hash unchanged, exit 0:
+
+```
+PASS A1  REPORT exec-summary test count equals the live suite count
+        claims 118 tests / 0 fail; live 118 tests / 0 fail
+PASS A2  REPORT "What ships" test-file count equals the real file count
+        claims 5 test files; real 5 (args, cli, pipe, readme-tags, select)
+PASS A3  suite is green — tests 118, fail 0
+PASS A5  dated run-history rows left as written
+PASS A6  run-#1 frozen figures not retro-edited
+PASS A7  README.md asserts no test count
+7/7 PASS
+```
+
+`test_cmd` run by the conductor independently of the gate:
+
+```
+ℹ tests 118   ℹ pass 118   ℹ fail 0   ℹ duration_ms 4587.778098
+```
+
+**One honest correction to my own gate.** Assertion **A4** ("REPORT.md is not shortened") is
+**vacuous as written** — it captures `BASELINE_LINES` by reading the file at script start and
+then re-reads the same file, so within a single run it compares the document to itself and can
+never fail. It is reported here as NOT-RUN, not as passed, and is excluded from the 7/7 above
+being read as seven independent checks. The nothing-deleted claim rests instead on measurement
+the gate did not make: `git diff --numstat REPORT.md` → **13 insertions, 3 deletions**, and the
+three deletions are exactly the three modified lines (each edit counts as one delete plus one
+insert). No content was removed. Left in the file unrepaired because a gate is evidence of what
+it measured, and quietly rewriting it after it has run would destroy that.
+
+`collision-scan` not applicable — doc-only change, no browser surface. Reported as
+not-applicable, never as passed.
+
+#### The DONE decision — NOT done, and V-1 is the reason
+
+The heartbeat note left this cycle two exits: build a candidate, or go to WRAP_UP. Having
+built V-1, the tempting read is that the candidate pass is now spent and the target is done.
+**That would be the wrong call, and V-1 is itself the evidence.**
+
+What V-1 measured is not one stale number. It is that must-have K-4 was verified at cycle 4 and
+then silently falsified by cycles 7, 8 and 10 — the run's own work invalidating the run's own
+checked box, with no step in the pipeline positioned to notice. I checked one document's
+executive summary. K-4 governs `README.md`, `REPORT.md` **and `docs/`**, and K-5's hand-off
+section makes claims about item state that later cycles also moved. The same decay class has
+not been swept.
+
+Filed as **V-7** (todo, S-effort): re-validate every falsifiable claim in README.md, REPORT.md
+and docs/ against the current tree, on the same seal-then-baseline discipline. It clears the
+ratchet on the same argument V-1 did, and it is the honest next bounded thing. Declaring the
+target DONE one cycle after discovering that its verified boxes decay would be reasoning from
+the checkmarks rather than from the tree — which is the failure V-1 just caught.
+
+`consecutive_no_value` stays 0. Wave autotune untouched: no build wave ran this cycle, so
+`k_current` stays 4 and `wave_streak` stays 1.
