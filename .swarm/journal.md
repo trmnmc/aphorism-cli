@@ -13289,3 +13289,84 @@ hand the unspent clock back with the reason on the record rather than manufactur
 say plainly in the report that R-1 is a known vacuous guard left standing on purpose, with the
 T-040 dependency named. **Do not pick:** TS-1/2/3 (locked non-goal), T-006, T-040, J-7 (human-owned).
 Do not re-open V-2. Do not narrow the readme-tags marker regex a fourth time.
+
+
+## cycle 14 addendum — 2026-08-18T09:57Z — the dashboard harness, a corrected near-false-finding, and the first clean render of the run
+
+**Render: 22 PASS / 0 FAIL, 0 MISS.** Cycles 12 and 13 each closed with one FAIL in this
+harness; this is the first cycle since the family was catalogued that renders clean.
+
+### the rebuilt converse control works
+
+The cycle-13 addendum instructed its successor, in as many words, to make the converse control
+*derive the history serialization from the page* rather than assume it matches the stamp
+format. Applied here, not backdated there. Cycle 13's version asserted that the previous
+cycle's stamp string `2026-08-18 09:22Z` survived somewhere on the page; it false-FAILed
+because the history rows spell the same instant differently — the tick titles carry
+`2026-08-18T09:20Z`, ISO, with a `T` and a different minute. The rebuilt control reads the 39
+timestamps the history rows **actually carry**, off the live page, before any substitution, and
+asserts those survive afterwards:
+
+```
+derived 39 history-row timestamps from the live page; newest: 2026-08-18T08:38Z, 2026-08-18T09:20Z
+PASS  CONVERSE CONTROL: the page still remembers its own history
+      (39/39 history-row timestamps survive, in their own serialization)
+```
+
+It passes, and it still has teeth: it would go red if a substitution wiped the page's memory of
+its own past, which is the property it exists to protect.
+
+### a tenth instrument defect — in the harness, not in the page
+
+The first render attempt MISSed three of nine anchors: the tick strip, the burn-up strip and
+the journal one-liners. The cause was mine and it is the same family again: **I reconstructed
+those anchors from the previous cycle's harness source instead of extracting them from the live
+page.** The harness source writes `&mdash;` and `-&gt;`; the rendered page carries the literal
+`—` and `->`. Cycle 13's harness had already applied the derive-from-the-document rule to the
+*stamp* anchors and left the *content* anchors reconstructed by hand, and that is exactly where
+this landed.
+
+Fixed by extracting all three from the live page. Re-render: 0 MISS.
+
+### the finding I nearly filed, and why it was wrong
+
+Between the two renders, the evidence looked like something worse. Grepping tick elements with
+`class="tick[^"]*"[^>]*>(\d+)</span>` returned cycle numbers `0..12` and no `13`, which read as:
+*cycle 13's tick never landed, and cycle 13's own assertion `/>13<\/span>/` passed vacuously on
+an unrelated span* — a SUBSTRING-FOR-STRUCTURE bug of precisely the kind the cycle-13 journal
+had just finished cataloguing. It was a satisfying finding and I was one step from writing it up.
+
+**It was false, and the flaw was in my grep.** `[^>]*` cannot cross the raw `>` inside the
+cycle-13 tick's own title text (`... on the unfixed tree -> 9 PASS ...`), so the extractor
+stopped short and reported the element as absent. A direct match confirms the tick is on the
+page and always was:
+
+```
+<span class="tick tick-ok" title="aphorism-cli cycle 13 — 2026-08-18T09:20Z — review-fix, …
+… sealed gate 2 PASS / 9 FAIL on the unfixed tree -> 9 PASS / 2 FAIL after, both residual
+FAILs my own instrument">13</span>
+```
+
+A raw `>` inside an attribute *value* is valid HTML — only `<` and `&` require escaping there —
+so the page is correct and the measuring instrument was not. Recorded because the pattern is
+worth more than the non-finding: **the run has now produced ten instrument defects, and this
+would have been the first to become a false accusation against a previous cycle rather than a
+false verdict on a tree.** The thing that stopped it was the same move that catches the others —
+going back to the document and matching directly instead of trusting the extractor.
+
+The cycle-14 tick assertion is written structurally as a result, anchored on the attribute
+delimiter rather than on `>`:
+
+```js
+/<span class="tick tick-ok" title="aphorism-cli cycle 14 [^"]*">14<\/span>/
+```
+
+and a companion assertion checks cycle 13's tick is still present, so a future harness cannot
+quietly drop history and pass.
+
+### numbers
+
+Bar 33/41 done (80%), 1 todo, 6 blocked. Burn-up 19/41 verified (46%) — it rises for the first
+time since cycle 12, because R-2 closed the debt cycle 13 declared rather than paid and this
+cycle filed nothing new. A denominator that stops growing while the numerator moves is what the
+end of a run should look like.
