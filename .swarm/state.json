@@ -459,6 +459,14 @@
       "owner": "conductor",
       "what": "bin/aphorism.js writes to process.stdout (lines 28, 43, 48) with no error handler, so any stdout write failure surfaces as an unhandled 'error' event: ~1006 bytes of raw Node internals on stderr. Two measured instances. (a) EPIPE when a consumer closes the pipe without reading — `--list | true`, `| true`, `--list | head -0`, `--list | /nonexistent-cmd-xyz`. Realistic trigger: the downstream command fails to exec. (b) ENOSPC on a failed write exits 1, the code README documents as \"no aphorism matched\", so a script mistakes a full disk for an empty filter result. NOT triggered by consumers that read at least one line: head -1, head -5, sed 1q, grep -q and wc -l are all measured clean.",
       "settled_by": "Backlog Q-1 (todo, priority 2). Handle stdout error events: exit quietly on EPIPE per Unix filter convention, and report other write failures in the tool's own one-line \"aphorism: ...\" convention with an exit code distinct from 1."
+    },
+    {
+      "id": "KI-33",
+      "severity": "medium",
+      "opened_cycle": 6,
+      "owner": "swarm-maintainer",
+      "what": "The dashboard render harness (runs/c*-dashboard.mjs, used by cycles 3-6) substitutes the evidence block at the FIRST match of the evidence <pre> tag. dashboard.html holds three such blocks, two of them inside HTML template comments, and the FIRST is a commented one. The harness therefore reports \"ok evidence block\" and \"MISS count: 0\" while the live TARGETS-region block stays stale. Measured at cycle 6: lines 60 and 346 are commented, line 379 is live; only line 60 was being updated. A \"zero MISS\" render report is NOT evidence that the page a visitor sees is current. The same duplication hid a second staleness: the phase badge read BUILD through cycle 5 although the phase was REVIEW.",
+      "settled_by": "Either strip the template-comment copies from dashboard.html so exactly one evidence block exists, or make the harness select the block not enclosed in a comment and assert an EXPECTED occurrence count per anchor (it already prints counts for the other anchors, which is how the duplication became visible at all). Cycle 6 corrected the CONTENT by replacing every block still carrying the previous cycle tag, but the harness bug itself is untouched — hard rule 5 forbids editing SWARM tooling mid-run."
     }
   ],
   "counters": {
