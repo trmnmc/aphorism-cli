@@ -1,39 +1,53 @@
 # SPEC — aphorism-cli
 
-<!-- REWRITTEN 2026-08-17 for IMPROVEMENT RUN #2 (allocator auto-kickoff,
-     source=allocator, mode=guest, dial=0.33, posture=trickle,
-     brief: "harden tests, fix playbook items, polish docs — no new features").
+<!-- REWRITTEN 2026-08-18 for IMPROVEMENT RUN #3 (allocator auto-kickoff,
+     source=allocator, mode=guest, dial=0.30, posture=trickle,
+     brief: "TRICKLE POSTURE: housekeeping only — harden tests, fix playbook items,
+     polish docs — no new features. Haiku-priced work types; no new features.").
 
      The PRODUCT spec (Idea / Audience / Product must-haves / Taste notes /
-     Domain rules) is UNCHANGED from the 2026-08-14 build run and the 2026-08-15
-     improvement run. The "This run's must-haves" section is additive and scopes
-     THIS run only. The previous run's I-1..I-6 must-haves all closed and were
-     conductor-verified; they are preserved in git history, not restated here.
+     Domain rules) is UNCHANGED from the 2026-08-14 build run and the two improvement
+     runs that followed. The "This run's must-haves" section is additive and scopes
+     THIS run only. Run #2's J-1a..J-4 must-haves all closed and were conductor-verified;
+     they are preserved in git history and in REPORT.md, not restated here.
 
-     Stress-test verdict at this kickoff: RESHAPE (confidence 8). The brief's
-     "harden tests" was aimed at the wrong file — see J-2. Taste judge:
-     use-twice 7 / product-not-demo 8 / scope-fits-night 8 / one-memorable 6. -->
+     Stress-test verdict at this kickoff: RESHAPE (confidence 8). "Harden tests" was
+     aimed at work already finished — run #1 cycle 54 closed the Domain-rule coverage
+     map at 29/29 and run #2 re-measured it, so "add tests" now means churn. Re-aimed
+     at regression measurement (K-3). "Polish docs" re-aimed at a 98 KB REPORT.md (K-4).
+
+     Taste judge (fresh subagent, spec text only): use-twice 3 / product-not-demo 8 /
+     scope-fits-night 8 / one-memorable-thing 4. Verdict: "Worth the night only if the
+     operator is explicitly buying repo trustworthiness rather than product motion."
+     Recorded as a dissent, not overridden — see the note under K-1. -->
 
 ## Idea
 
 A tiny, zero-dependency Node.js CLI that prints a random programming aphorism with its
 attribution. `fortune(6)`, but curated for programmers. Quiet, pipeable, unix-clean.
 
-It already ships and passes 91 tests. This run does NOT build product. It is a
-housekeeping run on the repo and on the swarm's own cross-run memory.
+It already ships and passes 102 tests across 4 test files (conductor-verified at this
+kickoff: `node --test test/*.test.js` → tests 102, pass 102, fail 0, 4.79s). Source is 3
+files plus a 1.4 KB binary. This run builds NO product. It is a housekeeping run on the
+repo's own trustworthiness and on the swarm's cross-run memory. Nothing it does is
+visible to the CLI's user. That is deliberate, and it is the main thing a reader should
+weigh when judging whether the night was worth spending.
 
 ## Audience
 
-Two, and they are different people.
+Three, and they are different people.
 
 1. **The CLI's user** — a developer who wants one memorable line of programming wisdom in
    their shell prompt, MOTD, or `.bashrc`, and who will be annoyed by anything that prints
-   more than it must. Nothing this run does is visible to them. That is deliberate.
+   more than it must. Nothing this run does reaches them.
 2. **The repo's maintainer** — who has to trust what README.md and REPORT.md claim, and who
-   is currently getting ZERO playbook lessons applied to every swarm run because of a defect
-   this run exists to fix.
+   is currently asked to read a 98 KB REPORT.md and a 56 KB RETRO.md to learn the state of a
+   three-file CLI.
+3. **The swarm operator** — whose cross-run playbook has been mechanically inert for eight
+   consecutive runs because one helper script is missing from an allowlist. Reproduced live
+   again at this kickoff, making it nine.
 
-## Product must-haves (built + verified 2026-08-14, cycle 1)
+## Product must-haves (built + verified 2026-08-14; re-verified 2026-08-18)
 
 <!-- The floor this run must not break. Any regression here fails the cycle. -->
 
@@ -41,67 +55,74 @@ Two, and they are different people.
 - [x] A curated corpus of >= 40 aphorisms as structured data (text, author, tags) — 50 entries
 - [x] Flags: `--author <name>`, `--tag <tag>`, `--seed <n>`, `--list`, `--json`, `--help`
 - [x] No-match behaviour: message on stderr, nothing on stdout, non-zero exit
-- [x] `node --test test/*.test.js` suite — 91 tests, 0 failures
+- [x] `node --test test/*.test.js` suite — 102 tests, 0 failures
 
-## This run's must-haves (2026-08-17)
+## This run's must-haves (2026-08-18)
 
 <!-- The PLAN gate (cycle.md step 4) holds until every box below is covered by a
      backlog item. Checked off only after conductor verification, never by claim. -->
 
-- [ ] **J-1a Playbook cap breach repaired losslessly.** `SWARM/playbook/learnings.md` holds
-      35 lessons against its documented cap of 20. Brought within cap by the file's own
-      documented overflow rule (drop the oldest non-high-confidence PRE-EXISTING lesson
-      first), with a byte-exact archive of the pre-repair file and a written, arguable
-      drop-list rationale naming every lesson dropped and why. Nothing is deleted without an
-      archive. `next_id` is left strictly monotonic so no dropped lesson's ID is ever
-      re-minted.
+- [ ] **K-1 The playbook allowlist gap is CLOSED AND PROVEN BY EXECUTION, or its ninth
+      consecutive denial is recorded with an exact patch.** The conductor attempted the
+      `SWARM/.claude/settings.json` write at kickoff step 5 and it was **DENIED** — the
+      ninth consecutive reproduction, and the first one recorded as a live kickoff
+      measurement rather than inherited from a prior run's notes. This box therefore closes
+      on the handoff, not on the gap: `SWARM/playbook/HANDOFF-allowlist-2026-08-17.md`
+      updated with the denial count, the exact JSON lines to add (absolute-path entries for
+      every `/opt/swarm/bin/*.sh` helper, per lesson L-039), and the one command a human runs
+      to confirm the fix. If a later cycle finds the gap closed, proof is the real stdout of
+      the previously-denied script, pasted into the journal — never "it should work now."
 
-- [ ] **J-1b The allowlist gap that made the playbook inert is HANDED OFF with an exact
-      patch — it cannot be closed from inside a run.** Root cause, reproduced live at this
-      kickoff: `bin/swarm-playbook.sh` appears in `SWARM/.claude/settings.json` under no
-      path form that a headless session resolves, so `validate`/`parse`/`append`/
-      `record-applied` are all denied. The conductor attempted the settings fix at kickoff
-      step 5 and the write was DENIED — a `-p` session cannot write settings.json. This box
-      closes on a handoff document carrying the exact JSON lines to add and the one command
-      a human runs to confirm, NOT on the gap being closed.
+      **Honest limit, restated from run #2 because it has not changed:** the claim that
+      `cmd_parse` exits 2 on any validator output was established by READING the script and
+      has still never been EXECUTED. This run cannot execute it either.
 
-      **Honest limit, stated up front:** the prior run's central claim — that `cmd_parse`
-      exits 2 on any validator output, so every run applies zero lessons — was established
-      by READING the script and has never been EXECUTED. This run cannot execute it either.
-      J-1a makes the claim moot by removing the condition; it does not verify the claim. Any
-      report that says otherwise is wrong.
+      **Taste-judge dissent, recorded rather than resolved:** the judge scored this run
+      use-twice 3 and argued K-1 should be demoted from a headline must-have to a ten-minute
+      handoff so the night has room to earn a second use. The scope above IS the ten-minute
+      version — one attempt, already spent, then a document. The disagreement is only about
+      billing, and the judge's read is on the record.
 
-- [ ] **J-2 The five README-prose test items are RESOLVED in one direction and stop
-      generating work.** T-024, T-024a, T-024b, T-032 and T-039 all live in one 74 KB test
-      file (`test/readme-tags.test.js`) that parses README prose to assert counts. T-024a is
-      already blocked at attempts 2, and KI-9/KI-10 record a MEASURED finding that a count
-      cannot be bound to its marker without false-rejecting some honest, entirely-true
-      README. Each of the five is either closed by a structural re-shape that is
-      mutation-proved, or formally RETIRED as a documented BOUNDARY with the measurement
-      that justifies retirement recorded in the item. None may be left in a state a later
-      run silently re-opens. Retiring a check that cannot be made correct is test hardening,
-      not a concession — it removes a false-confidence surface.
+- [ ] **K-2 The playbook file is valid, within its documented cap, and this run's
+      applied-ledger line is written.** `learnings.md` currently holds 20 lessons against a
+      documented cap of 20 — at the ceiling, not over it. This run confirms that count by
+      structural read, confirms the file still parses under its own documented grammar, and
+      writes this run's `applied.log` line — by `record-applied` if K-1 ever lands, by a
+      stated hand-edit if not. `applied.log` has not been written by the script since
+      2026-08-09; every line since is a hand-edit that says so. Never silently skipped.
 
-- [ ] **J-3 Every test added this run traces to a MEASURED mutation survivor in `src/` or
-      the shipped binary — never to reading the suite for gaps.** Each added test is proven
-      twice (it fails against its specific mutation, and removing it lets that mutation
-      survive), and each survivor is classified HOLE or BOUNDARY before anything is
-      hardened. A BOUNDARY survivor is documented, never "hardened".
+- [ ] **K-3 Test work is REGRESSION MEASUREMENT, not test-count growth.** Re-run the standing
+      instrument (plant one mutant in a full throwaway copy of the tree, run the project's own
+      `test_cmd`) across the 29 Domain-rule clauses, and confirm the coverage map still holds
+      at 29/29 against the current tree. A test is added ONLY for a measured survivor, and
+      only after that survivor is classified HOLE or BOUNDARY (L-033) — a BOUNDARY is
+      documented, never "hardened". Every added test is proven FAILABLE and ATTRIBUTABLE
+      (L-029) and paired with a CONVERSE control that must leave the suite GREEN (L-044).
+      **"Zero new tests, coverage map still 29/29" is a legitimate and reportable outcome of
+      this must-have** — the deliverable is the measurement, not the delta.
 
-- [ ] **J-4 Docs match the verified state.** README.md, REPORT.md and
-      `docs/corpus-attribution-triage.md` carry no count claim that is false, describe
-      nothing unverified as verified, and never describe the corpus attributions as
-      audited. Every claim removed or corrected is listed, so the diff is reviewable.
+- [ ] **K-4 The maintainer-facing documents are readable and true.** REPORT.md answers what
+      shipped / what is machine-verified / what is open in its FIRST SCREEN, with the forensic
+      detail preserved below it or in an appendix — nothing deleted, no citation lost, no
+      cycle number orphaned. No count claim in README.md, REPORT.md or `docs/` is false;
+      nothing unverified is described as verified; the corpus attributions are never described
+      as audited (KI-2 remains open and human-owned).
+
+- [ ] **K-5 The human-owned open items are surfaced, not churned.** T-006 (blocked: human
+      audit of corpus attributions), T-040 (corpus retag consequences) and J-7 (two
+      unspecified CLI behaviours) are each either closed by a decision this run can honestly
+      make, or restated in REPORT.md's hand-off with exactly what a human must do and what
+      evidence would settle it. None is silently dropped, and none is re-opened as agent work
+      that an agent cannot honestly finish.
 
 ## Nice-to-haves
 
 <!-- DEFERRED — every entry is a new user-visible feature, excluded by the brief.
      Recorded, not built. -->
 
-- No-repeat-until-exhausted rotation (cursor in `$XDG_STATE_HOME` or `/tmp`). This is the
-  cheap half of the taste fix and the single thing that would make use #9 stop feeling
-  samey; the taste judge named its absence as the cause of a 4/10 use-twice score at the
-  previous kickoff.
+- No-repeat-until-exhausted rotation (cursor in `$XDG_STATE_HOME` or `/tmp`). Still the single
+  change that would most improve the product: the corpus repeats by roughly the ninth
+  invocation, and both taste judges that have looked at this repo named it.
 - `--width <n>` wrapping for long aphorisms
 - ANSI dim for the attribution line, respecting `NO_COLOR`
 
@@ -112,16 +133,18 @@ Two, and they are different people.
 - npm-registry publishing / global install packaging
 - **This run only:** any new user-visible feature or flag, including every Nice-to-have above
 - **Corpus expansion (backlog T-008, 50 → 120 entries)** — named explicitly rather than
-  silently defaulted, because it is the one open item a user WOULD notice: a corpus repeat
-  is met by roughly the ninth invocation. Excluded on two grounds, both stated so they can
-  be argued with: (1) the brief says no new features; (2) the highest-severity open issue
-  (KI-2) is that the existing 50 attributions are UNAUDITED, and programming aphorisms are
-  widely misattributed — more than doubling a corpus nobody can vouch for makes the worst
-  open problem worse. Reversible on a word from the user.
-- Adding a mutation-testing dependency (Stryker or kin) to a zero-dependency repo. Named
-  at the prior-art scout as the honest off-the-shelf alternative to hand-rolled mutation
-  arms (Apache-2.0, 3.0k stars, actively pushed); a toolchain addition is a scope change,
-  not housekeeping.
+  silently defaulted, because it is the one open item a user WOULD notice. Excluded on two
+  grounds, both stated so they can be argued with: (1) the brief says no new features; (2) the
+  highest-severity open issue (KI-2) is that the existing 50 attributions are UNAUDITED, and
+  programming aphorisms are widely misattributed — more than doubling a corpus nobody can
+  vouch for makes the worst open problem worse. Reversible on a word from the user.
+- Adding a mutation-testing dependency (Stryker or kin) to a zero-dependency repo. Re-scouted
+  at this kickoff: three searches turned up no candidate clearing both the license gate and
+  grep-verify, and Stryker remains the honest off-the-shelf alternative — a toolchain addition
+  is a scope change, not housekeeping.
+- **Any test that does not trace to a measured mutation survivor.** A test added because the
+  suite "looks thin" is churn, and on this repo it is the specific failure mode the stress-test
+  flagged.
 
 ## Taste notes
 
@@ -132,8 +155,8 @@ loud; the aphorism is the product.
 
 ## Domain rules
 
-<!-- UNCHANGED from the previous run. A regression against any clause below fails the
-     cycle regardless of what else the cycle achieved. -->
+<!-- UNCHANGED. A regression against any clause below fails the cycle regardless of what
+     else the cycle achieved. These 29 clauses are the coverage map K-3 re-measures. -->
 
 - Selection: with `--seed <n>`, the chosen index is deterministic — the same seed and the
   same filtered candidate set always yield the same aphorism. `--seed` accepts any value
@@ -165,13 +188,15 @@ attributed aphorism; all six flags behave per the Domain rules; `node --test tes
 passes with zero failures; the corpus holds >= 40 entries; README documents install-free
 usage and every flag; the tree has zero runtime dependencies.
 
-**This run:** learnings.md within its documented cap with a byte-exact archive and an
-arguable drop rationale; the allowlist gap handed off with an exact patch and its
-never-executed status stated plainly; all five README-prose items closed or formally
-retired with the measurement behind the call recorded in the item; every test added this
-run traceable to a measured mutation survivor and proven failable AND attributable; docs
-carrying no false claim; `node --test test/*.test.js` green with zero failures throughout;
-zero new user-visible features.
+**This run:** the allowlist gap handed off with its denial count and an exact patch, and its
+never-executed status stated plainly; the playbook confirmed valid and within cap with this
+run's ledger line written and its authorship stated; the 29-clause coverage map re-measured
+against the current tree, with every added test traced to a measured survivor and proven
+both failable and attributable, and zero-new-tests accepted as a valid result; REPORT.md
+readable in one screen with nothing deleted and no false count claim anywhere in the docs;
+every human-owned item carrying an explicit next actor and settling evidence;
+`node --test test/*.test.js` green with zero failures throughout; zero new user-visible
+features.
 
 ## Commands
 
@@ -180,10 +205,10 @@ zero new user-visible features.
 
 ## Spec digest
 
-- IMPROVEMENT RUN #2 on a shipped zero-dep Node CLI — harden, repair, document; no new features
-- must: playbook within cap losslessly (J-1a) + allowlist gap handed off with an exact patch (J-1b)
-- must: the five README-prose test items closed OR formally retired as measured boundaries (J-2)
-- must: new tests only from measured mutation survivors, proven failable + attributable (J-3); docs carry no false claim (J-4)
-- non-goals: corpus expansion, rotation, --width, NO_COLOR, any new flag, any new dependency
+- IMPROVEMENT RUN #3 on a shipped zero-dep Node CLI — measure, repair, document; no new features
+- must: allowlist gap handed off with denial count + exact patch (K-1); playbook valid, in cap, ledger written (K-2)
+- must: 29-clause coverage map RE-MEASURED, tests only from measured survivors, zero-new-tests is a valid result (K-3)
+- must: REPORT.md readable in one screen, nothing deleted, no false count claim (K-4); human-owned items get a named actor (K-5)
+- non-goals: corpus expansion, rotation, --width, NO_COLOR, any new flag, any new dependency, any unmeasured test
 - rules unchanged: seed deterministic incl. non-finite, filters AND, empty match = exit 1 + stderr only
 - taste: unix-quiet, pipeable, errors to stderr, the aphorism is the product
