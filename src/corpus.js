@@ -221,7 +221,7 @@ const corpus = [
   },
   {
     text: 'Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away.',
-    author: 'Antoine de Saint-Exupery',
+    author: 'Antoine de Saint-Exupéry',
     tags: ['simplicity', 'design'],
   },
   {

@@ -108,9 +108,15 @@ stderr rather than printing an aphorism. The fold map that produced this change 
 | `0` | Success — an aphorism (or the help text) was printed to stdout |
 | `1` | No aphorism matched the given filters; message on stderr, stdout empty |
 | `2` | Usage error — unknown flag, seed that `Number()` parses to NaN, or missing flag argument |
+| `3` | The output could not be written — a real stdout write failure (for example the device is full); one `aphorism: …` line on stderr |
 
 Errors always go to stderr, so `node bin/aphorism.js --tag nonexistent > out.txt`
 leaves `out.txt` empty rather than writing a diagnostic into your pipeline.
+
+Exit `3` exists so that a failure to *deliver* the output is never confused with exit `1`,
+which means the corpus had nothing to say. A reader that hangs up without reading is not an
+error at all: `node bin/aphorism.js --list | true` and `… | head -0` both break the pipe,
+and the tool exits `0` with nothing on stderr, the way a well-behaved Unix filter should.
 
 ## Attribution
 

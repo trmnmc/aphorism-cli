@@ -1,0 +1,24 @@
+CELL Q2-a position 41 of 50          (pre-state: 41 of 50 — must be unchanged)
+CELL Q2-b author "Antoine de Saint-Exupéry"
+CELL Q2-c codepoints 0041 006e 0074 006f 0069 006e 0065 0020 0064 0065 0020 0053 0061 0069 006e 0074 002d 0045 0078 0075 0070 00e9 0072 0079
+CELL Q2-d has-U+00E9 true
+CELL Q2-e no-ascii-ery true
+CELL Q2-f emdash-count 50        (pre-state: 50 — transport control)
+CELL Q2-g corpus-U+00E9-count 1   (pre-state: 0)
+CELL Q2-h list-lines 50              (pre-state: 50 — no expansion; expansion is a run non-goal)
+CELL Q2-i json {"text":"Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away.","author":"Antoine de Saint-Exupéry","tags":["simplicity","design"]}
+CELL Q2-j json-author-cp 41 6e 74 6f 69 6e 65 20 64 65 20 53 61 69 6e 74 2d 45 78 75 70 e9 72 79
+CELL Q2-k tags ["simplicity","design"]      (pre-state: ["simplicity","design"])
+CELL Q2-l text-unchanged true
+CELL Q2-m seed42-sha 6cab75ad66518c18   (pre-state: 6cab75ad66518c18 — unrelated draws unchanged)
+=== SUITE ===
+SUITE ✔ pick: single-element candidates always returns that element regardless of seed (0.350496ms)
+SUITE ℹ tests 115
+SUITE ℹ suites 0
+SUITE ℹ pass 115
+SUITE ℹ fail 0
+SUITE ℹ cancelled 0
+SUITE ℹ skipped 0
+SUITE ℹ todo 0
+SUITE ℹ duration_ms 4586.815045
+CELL SUITE-rc 0

@@ -11,6 +11,28 @@ const { parseArgs, HELP } = require('../src/args.js');
 const EXIT_OK = 0;
 const EXIT_NO_MATCH = 1;
 const EXIT_USAGE = 2;
+const EXIT_WRITE_ERROR = 3;
+
+// process.stdout writes to a pipe are async on POSIX, so a broken pipe (the
+// reader exits/closes early — `| head`, `| true`, a reader that never
+// spawned, …) surfaces later as an 'error' event, not as a thrown exception
+// at the call site. With no listener, Node treats that as an unhandled
+// 'error' event and crashes with a raw stack trace on stderr — even though,
+// from a CLI-contract point of view, a reader hanging up early isn't our
+// problem to report. Registering a listener here (before any write happens)
+// lets us tell that apart from a genuine write failure (e.g. the output
+// device is full): EPIPE exits quietly with whatever exit code the run
+// already earned, anything else is a real fault that must not be reported
+// as exit 1 ("no aphorism matched" — see README) and must not dump a raw
+// trace, so it gets the tool's own one-line stderr convention and a
+// dedicated exit code instead.
+process.stdout.on('error', (err) => {
+  if (err && err.code === 'EPIPE') {
+    return;
+  }
+  process.stderr.write(`aphorism: ${err.message}\n`);
+  process.exitCode = EXIT_WRITE_ERROR;
+});
 
 function format(entry) {
   return `${entry.text}\n    — ${entry.author}`;

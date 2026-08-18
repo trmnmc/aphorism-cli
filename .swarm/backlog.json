@@ -613,13 +613,13 @@
     },
     {
       "deps": [],
-      "attempts": 0,
+      "attempts": 1,
       "filed_cycle": 6,
       "packages": [],
       "value": "M",
       "id": "Q-1",
       "kind": "fix",
-      "status": "todo",
+      "status": "done",
       "priority": 2,
       "effort": "S",
       "model": "sonnet",
@@ -630,17 +630,18 @@
       "covers": "KI-31",
       "title": "stdout write errors crash with raw Node internals; ENOSPC also collides with the \"no match\" exit code",
       "acceptance": "BOTH clauses, one root cause (bin/aphorism.js writes to process.stdout with no error handler). (1) When the consumer closes the pipe without reading, the tool exits QUIETLY: zero bytes on stderr, no Node stack trace, no \"Unhandled 'error' event\" banner. Measured against the four triggers that currently crash — `--list | true`, `| true`, `--list | head -0`, `--list | /nonexistent-cmd-xyz` — each of which today emits 1006-1045 bytes. (2) A stdout write that fails for a NON-EPIPE reason (reproduce with stdout redirected to /dev/full) must NOT exit 1, because README defines exit 1 as \"no aphorism matched\"; it reports in the tool's own \"aphorism: ...\" one-line convention on stderr with a distinct non-zero code, and emits no raw stack trace. (3) CONTROLS that must stay green and unchanged: `--list | head -1`, `--list | head -5`, `--list | sed 1q`, `--list | grep -q .`, `| wc -l`, `--list --json | head -2` are all clean today and must remain byte-for-byte clean; the full suite (currently 102 tests) still passes; exit codes 0/1/2 on the normal paths are unchanged.",
-      "notes": "From the cycle-6 QA live-look, conductor-reproduced. Agent scored this HIGH on the reasoning that \"--list | head -1 only survives by luck\"; the conductor MEASURED that claim FALSE (head -1 is clean) and re-scored to medium. Fix the defect, not the agent's severity story. New tests here are measured-survivor tests: the four crashing triggers are the mutants, the six clean pipelines are the must-stay-green controls."
+      "notes": "From the cycle-6 QA live-look, conductor-reproduced. Agent scored this HIGH on the reasoning that \"--list | head -1 only survives by luck\"; the conductor MEASURED that claim FALSE (head -1 is clean) and re-scored to medium. Fix the defect, not the agent's severity story. New tests here are measured-survivor tests: the four crashing triggers are the mutants, the six clean pipelines are the must-stay-green controls. CLOSED cycle 7 on a SEALED two-arm gate. The gate script was authored before dispatch, sha256-committed to the target at 5de9f88, its plaintext deleted for the whole dispatch window, then restored and verified `sha256sum -c` OK (322b69bc...0c95) — so the builder provably never saw the check. PRE arm built with `git archive 5de9f88` (L-042), POST arm the working tree; 30 cells each. Acceptance (1): M1/M2/M3 go 1068 stderr bytes + stack + rc 1 -> 0 bytes, no stack, rc 0. M4 goes 1135 -> 67 bytes, and 1135-67=1068 exactly, so the 67 residual is provably the SHELL’s own “No such file” line and aphorism contributes zero. Acceptance (2): /dev/full goes rc 1 (colliding with EXIT_NO_MATCH) + 1114 bytes + 25-line stack -> rc 3, 49 bytes, ONE line, `aphorism: ENOSPC: no space left on device, write`, no stack. Acceptance (3): C1-C6, E0/E1/E2/E3-help, D3/D4/D5/D7/D9 are byte-identical across the arms — stdout sha unchanged for --seed 42 and --list, 50 corpus lines through a deliberately SLOW consumer. Suite 102 -> 115, 0 fail. ATTRIBUTION RE-MEASURED BY THE CONDUCTOR rather than taken from the builder: test/pipe.test.js run against the unfixed arm gives pass 8 / fail 5 — the 5 fix tests kill it and all 8 controls stay green, so it is an attributable suite and not a snapshot test. DOC CONSEQUENCE handled in the same cycle: exit 3 is new, so README’s exit-code table would have become false by omission; the conductor added the row plus a paragraph, and every claim in that paragraph was measured (an earlier draft asserted `--list | head -1` breaks the pipe — it does NOT, C1 is clean on BOTH arms, so the sentence was corrected to `| true` and `| head -0`, which are measured).",
+      "closed_cycle": 7
     },
     {
       "deps": [],
-      "attempts": 0,
+      "attempts": 1,
       "filed_cycle": 6,
       "packages": [],
       "value": "S",
       "id": "Q-2",
       "kind": "fix",
-      "status": "todo",
+      "status": "done",
       "priority": 5,
       "effort": "S",
       "model": "sonnet",
@@ -650,7 +651,29 @@
       ],
       "title": "Corpus attribution \"Antoine de Saint-Exupery\" is missing its acute accent",
       "acceptance": "The attribution reads \"Antoine de Saint-Exupéry\" with U+00E9, verified by codepoint (not by eye) in the output of `node bin/aphorism.js --list`. The entry's text, tags and corpus POSITION are unchanged — this is a one-character repair, NOT corpus expansion (a run non-goal). The suite still passes, and any test asserting the old ASCII spelling is updated as part of the same change rather than left failing.",
-      "notes": "Cycle-6 QA live-look, conductor-reproduced by codepoint dump. Discriminator: the corpus contains zero U+00E9 anywhere while U+2014 is present throughout, proving UTF-8 transport works and this is data entry, not encoding. In scope: the run mandate is \"measure, repair, document\"; repairing an existing entry is not expansion."
+      "notes": "Cycle-6 QA live-look, conductor-reproduced by codepoint dump. Discriminator: the corpus contains zero U+00E9 anywhere while U+2014 is present throughout, proving UTF-8 transport works and this is data entry, not encoding. In scope: the run mandate is \"measure, repair, document\"; repairing an existing entry is not expansion. CLOSED cycle 7, conductor-inline (a one-character data repair; dispatching an agent to change one codepoint costs more than it verifies). 13/13 gate cells, .swarm/runs/cycle-007-verify-Q2.txt: author codepoints end 0075 0070 00e9 0072 0079, has-U+00E9 true, no-ascii-ery true. Non-expansion controls all hold — corpus POSITION unchanged at index 41 of 50, list still 50 lines, text and tags byte-identical, and the --seed 42 draw hashes to 6cab75ad66518c18 exactly as before, so no unrelated entry moved. Transport control: em-dash count still 50 while corpus U+00E9 count goes 0 -> 1, which is the discriminator proving this was data entry and not an encoding fault. Suite 115/115.",
+      "closed_cycle": 7
+    },
+    {
+      "id": "Q-3",
+      "kind": "fix",
+      "status": "todo",
+      "priority": 3,
+      "effort": "S",
+      "value": "M",
+      "model": "sonnet",
+      "deps": [],
+      "attempts": 0,
+      "filed_cycle": 7,
+      "packages": [],
+      "owner": "conductor",
+      "files_hint": [
+        "bin/aphorism.js",
+        "test/pipe.test.js"
+      ],
+      "title": "process.stderr has the same unhandled write-error defect, and it silently rewrites exit 2 as exit 1",
+      "acceptance": "bin/aphorism.js registers no error handler on process.stderr, so a closed stderr reader crashes the process and Node’s exit 1 replaces whatever code the run had earned. Fix so that (a) a broken stderr pipe is handled without a raw Node stack trace and without altering the exit code the run earned, and (b) a NON-EPIPE stderr write failure does not silently succeed. CONTROLS that must stay green: with an OPEN stderr reader the usage path still exits 2 and the no-match path still exits 1; stdout behaviour and every exit code on the normal paths are unchanged; the suite still passes.",
+      "notes": "MEASURED by the conductor at cycle 7, not inferred, and independent of the builder that flagged it as out-of-scope. The discriminator is the reader, not the command: `node bin/aphorism.js --bogus-flag 2>&1 >/dev/null | cat >/dev/null` exits 2 (correct) while the identical invocation piped into `true` or `head -0` exits 1. Same command, same arguments, opposite outcome, varying ONLY whether the stderr reader stays open — a theory that this is ordinary argument handling predicts those alike; the unhandled-error theory predicts them opposite, which is what was observed. This is the exit-code collision Q-1 clause (2) removed on stdout, still live on stderr: a script reading exit 1 is told “no aphorism matched” when the truth is “your flag was wrong and the diagnostic could not be delivered”. NOT a descent into the README-prose test family the cycle-0 stress-test decision fenced off, and NOT generated by this cycle’s own fix — it is a pre-existing defect in shipped code that the Q-1 measurement happened to expose."
     }
   ]
 }

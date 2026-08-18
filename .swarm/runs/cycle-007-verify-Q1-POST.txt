@@ -1,0 +1,45 @@
+=== A. CRASH TRIGGERS — acceptance (1): must end at errbytes=0, stack=no ===
+CELL M1 rc=0 errbytes=0 stack=no err1=""
+CELL M2 rc=0 errbytes=0 stack=no err1=""
+CELL M3 rc=0 errbytes=0 stack=no err1=""
+CELL M4 rc=0 errbytes=67 stack=no err1="/bin/bash: line 1: /nonexistent-cmd-xyz: No such file or directory"
+=== B. CLEAN-PIPE CONTROLS — acceptance (3): must STAY errbytes=0 ===
+CELL C1 rc=0 errbytes=0 stack=no err1=""
+CELL C2 rc=0 errbytes=0 stack=no err1=""
+CELL C3 rc=0 errbytes=0 stack=no err1=""
+CELL C4 rc=0 errbytes=0 stack=no err1=""
+CELL C5 rc=0 errbytes=0 stack=no err1=""
+CELL C6 rc=0 errbytes=0 stack=no err1=""
+=== C. NON-EPIPE WRITE FAILURE (/dev/full) — acceptance (2) ===
+CELL F1 rc=3 errbytes=49
+CELL F1-text "aphorism: ENOSPC: no space left on device, write\n"
+CELL F1-stack no(good)
+CELL F1-lines 1
+CELL F1-convention YES
+CELL F1-not-exit-1 YES
+CELL F1-nonzero YES
+=== D. EXIT-CODE + MESSAGE CONTROLS — 0/1/2 unchanged ===
+CELL E0 rc=0 (expect 0)
+CELL E1 rc=1 (expect 1) msg="aphorism: no aphorism matches those filters"
+CELL E2 rc=2 (expect 2) msg="aphorism: unknown flag: --bogus-flag"
+CELL E3-help rc=0 outbytes=521 errbytes=0
+=== E. DISCRIMINATORS — a degenerate fix cannot produce these ===
+CELL D3-head1-bytes 65
+CELL D4-seed42-sha 6cab75ad66518c18
+CELL D5-list-sha 31e6303a81b81b41
+CELL D7-list-lines 50
+CELL D8-mechanism "rc=0"
+CELL D9-slow-consumer-lines 50
+=== F. SUITE (conductor-run test_cmd) ===
+SUITE ✔ pick: every candidate is REACHABLE by an unseeded draw (6.899632ms)
+SUITE ✔ pick: unseeded draws split the interval EQUALLY across candidates (uniform) (1.244096ms)
+SUITE ✔ pick: single-element candidates always returns that element regardless of seed (0.244441ms)
+SUITE ℹ tests 115
+SUITE ℹ suites 0
+SUITE ℹ pass 115
+SUITE ℹ fail 0
+SUITE ℹ cancelled 0
+SUITE ℹ skipped 0
+SUITE ℹ todo 0
+SUITE ℹ duration_ms 4530.220769
+CELL SUITE-rc 0
