@@ -60,9 +60,22 @@ Three, and they are different people.
 ## This run's must-haves (2026-08-18)
 
 <!-- The PLAN gate (cycle.md step 4) holds until every box below is covered by a
-     backlog item. Checked off only after conductor verification, never by claim. -->
+     backlog item. Checked off only after conductor verification, never by claim.
 
-- [ ] **K-1 The playbook allowlist gap is CLOSED AND PROVEN BY EXECUTION, or its ninth
+     ALL FIVE CHECKED AT CYCLE 5. Each box names the cycle whose journal carries the
+     verification evidence, so a reader can audit the claim rather than trust the tick:
+       K-1  N-1                cycle 2  (allowlist handoff; the gap itself is STILL OPEN
+                                        — the box closes on the handoff, per its own text)
+       K-2  N-2                cycle 2  (playbook valid + in cap; ledger line hand-written)
+       K-3  N-3, N-4, N-5      cycles 3-4 (29/29 re-measured, then the enumeration itself
+                                        re-derived: 14 further clauses, 1 BOUNDARY survivor,
+                                        0 HOLE, therefore ZERO new tests — the outcome K-3
+                                        explicitly names as legitimate)
+       K-4  N-7, N-6           cycles 3-4 (count audit, then REPORT.md first screen)
+       K-5  N-8, N-10          cycle 5  (hand-off section + undecided-behaviours record)
+     No box is ticked on an agent's claim; every one was re-run by the conductor. -->
+
+- [x] **K-1 The playbook allowlist gap is CLOSED AND PROVEN BY EXECUTION, or its ninth
       consecutive denial is recorded with an exact patch.** The conductor attempted the
       `SWARM/.claude/settings.json` write at kickoff step 5 and it was **DENIED** — the
       ninth consecutive reproduction, and the first one recorded as a live kickoff
@@ -83,7 +96,7 @@ Three, and they are different people.
       version — one attempt, already spent, then a document. The disagreement is only about
       billing, and the judge's read is on the record.
 
-- [ ] **K-2 The playbook file is valid, within its documented cap, and this run's
+- [x] **K-2 The playbook file is valid, within its documented cap, and this run's
       applied-ledger line is written.** `learnings.md` currently holds 20 lessons against a
       documented cap of 20 — at the ceiling, not over it. This run confirms that count by
       structural read, confirms the file still parses under its own documented grammar, and
@@ -91,7 +104,7 @@ Three, and they are different people.
       stated hand-edit if not. `applied.log` has not been written by the script since
       2026-08-09; every line since is a hand-edit that says so. Never silently skipped.
 
-- [ ] **K-3 Test work is REGRESSION MEASUREMENT, not test-count growth.** Re-run the standing
+- [x] **K-3 Test work is REGRESSION MEASUREMENT, not test-count growth.** Re-run the standing
       instrument (plant one mutant in a full throwaway copy of the tree, run the project's own
       `test_cmd`) across the 29 Domain-rule clauses, and confirm the coverage map still holds
       at 29/29 against the current tree. A test is added ONLY for a measured survivor, and
@@ -101,14 +114,14 @@ Three, and they are different people.
       **"Zero new tests, coverage map still 29/29" is a legitimate and reportable outcome of
       this must-have** — the deliverable is the measurement, not the delta.
 
-- [ ] **K-4 The maintainer-facing documents are readable and true.** REPORT.md answers what
+- [x] **K-4 The maintainer-facing documents are readable and true.** REPORT.md answers what
       shipped / what is machine-verified / what is open in its FIRST SCREEN, with the forensic
       detail preserved below it or in an appendix — nothing deleted, no citation lost, no
       cycle number orphaned. No count claim in README.md, REPORT.md or `docs/` is false;
       nothing unverified is described as verified; the corpus attributions are never described
       as audited (KI-2 remains open and human-owned).
 
-- [ ] **K-5 The human-owned open items are surfaced, not churned.** T-006 (blocked: human
+- [x] **K-5 The human-owned open items are surfaced, not churned.** T-006 (blocked: human
       audit of corpus attributions), T-040 (corpus retag consequences) and J-7 (two
       unspecified CLI behaviours) are each either closed by a decision this run can honestly
       make, or restated in REPORT.md's hand-off with exactly what a human must do and what
@@ -180,6 +193,24 @@ loud; the aphorism is the product.
   for each entry in the filtered set, in corpus order.
 - Exit codes: 0 success, 1 no match, 2 bad usage (unknown flag, missing flag argument, or
   seed value that `Number()` parses to NaN).
+
+## Undecided behaviours
+
+<!-- This section records GAPS, not Domain rules. The 29-clause coverage map that K-3
+     re-measures does NOT grow because of these entries. The "## Domain rules" block
+     above is unchanged by this edit. -->
+
+**Repeated `--tag` / `--author` (measured gap D-42)**
+
+- **Shipped behaviour:** `--tag humor --tag design --list` prints the 14-entry design list; a first-occurrence mutation prints the 9-entry humor list; the suite stays 102 pass/0 fail on both, so the behaviour is unprotected.
+- **Why the SPEC does not decide it:** Selection and Filtering spell every filter flag in the singular ("e.g., `--tag desi` does not match a `design` tag"; "`--author` matches by substring") and never mention repetition, so last-occurrence-wins is an artifact of assignment order in `parseArgs`, not a contract.
+- **Status:** No test pins this. The ruling is human-owned and tracked as backlog item J-7.
+
+**Empty or whitespace `--seed` (measured gap D-43)**
+
+- **Shipped behaviour:** The implementation rejects an empty or whitespace-only seed with exit code 2.
+- **Why the SPEC does not decide it:** Selection states "`--seed <n>` accepts any value that `Number()` parses to a non-NaN number", and `Number("") === 0` is non-NaN, suggesting ACCEPT. Exit codes states a missing flag argument is bad usage, suggesting REJECT. The two clauses point opposite ways, and there is no decided behaviour to test against.
+- **Status:** No test pins this. The ruling is human-owned and tracked as backlog item J-7.
 
 ## Definition of done
 
