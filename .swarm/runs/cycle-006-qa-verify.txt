@@ -1,0 +1,54 @@
+=== S1: --list --author dijk, seed ignored, EM DASH format ===
+exit1=0 exit2=0
+stderr1="" stderr2=""
+byte-identical across seeds: true
+lines=7
+every line has exactly one " \u2014 " separator: true
+every author segment contains "dijk" (ci): true
+hyphen-minus/en-dash used as separator anywhere: false
+sample: "Simplicity is prerequisite for reliability. — Edsger W. Dijkstra"
+
+=== S2: --json --seed Infinity --tag design, deterministic single-line object ===
+exit1=0 exit2=0
+stderr1=""
+byte-identical across identical runs: true
+stdout lines=1
+has text/author/tags: true | tags isArray: true
+tags contains "design" (whole-tag, ci): true
+object: "{\"text\":\"Organizations which design systems are constrained to produce designs which are copies of the communication structures of these organizations.\",\"author…(+47B)"
+-Infinity also exit 0: true | Infinity vs -Infinity differ: true
+
+=== S3 (negative): --json --tag desi must NOT substring-match design ===
+exit=1 (spec: exactly 1)
+stdout bytes=0 (spec: exactly 0)
+stderr bytes=44 (spec: non-empty)
+stderr="aphorism: no aphorism matches those filters\n"
+
+=== S4 (negative): --list --seed abc is still a usage error ===
+exit=2 (spec: exactly 2)
+stdout bytes=0 (must NOT contain the listing)
+stderr bytes=47 (spec: non-empty)
+stderr="aphorism: flag --seed requires a numeric value\n"
+control: bare --list exits 0 with 50 lines
+
+=== LOOK-1 reproduction: EPIPE on early consumer close ===
+pipeline exit=0
+stderr bytes=1006
+stderr head="node:events:487\n      throw er; // Unhandled 'error' event\n      ^\n\nError: write EPIPE\n    at afterWriteDispatched (node:internal/stream_base_commons:159:15)\n    at writeGeneric (node:internal/stream_base_commons:150:3)\n    at Socket._writeGeneric (node:net:1171:11)\n    at Socket._write (node:net:1183:8)\n    at writeOr…(+686B)"
+
+=== LOOK-2 reproduction: failed stdout write (/dev/full) ===
+exit=1  (README defines exit 1 as "no aphorism matched")
+stderr head="node:events:487\n      throw er; // Unhandled 'error' event\n      ^\n\nError: ENOSPC: no space left on device, write\n    at writeSync (node:fs:978:3)\n    at SyncWriteStream._write (node:internal/fs/sync_write_stream:27:5)\n    at writeOrBuffer (node:internal/streams/writable:570:12)\n    at _write (node:…(+752B)"
+
+=== LOOK-3 reproduction: Saint-Exupery accent ===
+line: "Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away. — Antoine de Saint-Exupery"
+codepoints around "Exup": E=U+0045 x=U+0078 u=U+0075 p=U+0070 e=U+0065 r=U+0072 y=U+0079
+corpus contains any U+00E9 (é) at all: false
+corpus contains EM DASH U+2014: true
+
+=== LOOK-4 reproduction: --seed "" vs Number("") === 0 ===
+--seed "" exit=2 stderr="aphorism: flag --seed requires a numeric value\n"
+--seed 0  exit=0
+Number("") = 0 -> non-NaN, so spec says it is a VALID seed
+--seed " 5 " matches --seed 5: true | pad exit=0
+Number(" 5 ") = 5
