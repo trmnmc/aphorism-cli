@@ -1,0 +1,72 @@
+{
+  "_note": "Raw return of the cycle-9 TASTE pass. Dispatched as a DIRECT Agent call (fable, effort high), NOT via workflows/qa-verify.js: this is a headless pacer-spawned `-p` cycle where the Workflow tool is review-gated, and SKILL.md prescribes direct Agent dispatch as the documented fallback. The prompt was transcribed from qa-verify.js lines 404-447 (the taste-agent brief) with two contract-faithful adaptations recorded here: (1) serverBrief is web-server-shaped (port, curl, kill the listener) and this target is a zero-dep CLI, so it was replaced by an equivalent CLI brief carrying the same read-only constraint and the same .swarm/runs/-only write path; (2) browseBrief and screenshots are inapplicable with no browser surface, so the agent was told to return raw terminal output as evidence and an empty screenshots array. The playbook qa prompt_lines were passed as the crew-notes block per cycle.md step 5. The `evidence` key is an addition to the script's tasteSchema, required by the conductor so every claim could be reproduced at the gate.",
+  "mode": "taste",
+  "run_label": "improvement-run-3",
+  "timestamp": 1787037614,
+  "cycle": 9,
+  "model": "fable",
+  "agents_used": 1,
+  "dead_agents": [],
+  "taste": {
+    "verdict": "wears-thin",
+    "minutes_used": 7,
+    "flows_exercised": [
+      "plain run x32 (core loop, two bursts of 12 and 20)",
+      "--tag debugging",
+      "--author knuth",
+      "--tag humor --author hoare (AND -> empty match)",
+      "--seed 42 twice + --seed 43 (determinism)",
+      "--seed 20260818..20260824 (simulated week of daily-seed MOTD)",
+      "--list | wc -l",
+      "--list --tag philosophy",
+      "--json piped into node one-liner",
+      "--list --json NDJSON piped into author-histogram script",
+      "--tag nonsense (exit 1, stderr-only, stdout 0 bytes)",
+      "--seed banana (exit 2 usage error)",
+      "--help"
+    ],
+    "boredom_findings": [
+      {
+        "where": "core loop, plain run",
+        "after_n_uses": 12,
+        "what_gets_stale": "The content, in two layers. Layer one: the corpus is 50 entries and the first exact repeat landed at use 12 ('Errors are values. - Rob Pike' at run 1 and run 12); across a second burst of 20, 'Plan to throw one away' came up twice and four quotes from burst one reappeared. A .bashrc user (the README's own pitch) has seen the pool's whole texture inside two weeks. Layer two, the deeper one: every quote is maximum-canon - 'Premature optimization is the root of all evil', 'Given enough eyeballs', 'billion-dollar mistake', Conway's law. For the programmer audience this targets, these are recognition, not discovery; by the tenth draw the dominant reading experience is 'yes, I know this one' rather than a small jolt. The interaction is a fortune(6) done right - quiet, pipeable, the em-dash attribution line is genuinely tasteful - so what wears out is strictly the pool, not the shape.",
+        "suggestion": "Out of scope this run (non-goal: corpus expansion), but must be named for the next one: the corpus needs depth from the second shelf - less-anthologized lines from the same canonical voices, and quotes from the last 15 years - plus some recent-repeat avoidance (a tiny statefile of the last N picks) so consecutive shells don't hand back the same greatest hit. The daily --seed pattern partially masks this and is the product's best idea; lean into it.",
+        "severity": "notable",
+        "_conductor_verdict": "REPRODUCED and STRENGTHENED. Gate check C4/C8: corpus is 50 entries; under uniform draws the MEDIAN first exact repeat is draw 9 and P(repeat by draw 12) = 76.2%. The agent's use-12 observation is therefore CONSERVATIVE, not a lucky anecdote. Severity 'notable' accepted after review, not rubber-stamped - the product's shape held across 32 runs; only the pool ran out. Filed as TS-1 (blocked on a human scope decision)."
+      },
+      {
+        "where": "--tag filter as a returning-user mode",
+        "after_n_uses": 3,
+        "what_gets_stale": "Small tag pools exhaust almost instantly. --list --tag philosophy shows the entire pool is 3 quotes (two of them Dijkstra); after three filtered draws there is literally nothing left to discover in that tag, and the 3-4-count tags (philosophy, language, process, readability, reliability) all hit this wall within a session. The README's boast that 'the smallest pool holds three aphorisms, so --tag always has something to choose between' is technically true and experientially thin - three is a foregone conclusion by the third use.",
+        "suggestion": "Same root cause as the corpus finding: the thin tags need entries, not code. Until then the docs could steer users toward the 5+ pools as the tags worth filtering on.",
+        "severity": "minor",
+        "_conductor_verdict": "REPRODUCED EXACTLY. Gate check C6: philosophy=3 (two Dijkstra, one Alan Kay), and exactly the five named tags (language, philosophy, process, readability, reliability) hold <= 4 entries, 5 of 12. Filed as TS-2 (blocked, same scope lock)."
+      },
+      {
+        "where": "random draws across a session (voice distribution)",
+        "after_n_uses": 15,
+        "what_gets_stale": "Author skew: NDJSON analysis shows 24 authors but Dijkstra holds 7 of 50 entries and Perlis/Pike 5 each - a third of the corpus is three voices. Across 32 runs the Dijkstra-adjacent aphorism register (austere, epigrammatic, mid-century) recurs enough that draws start sounding same-voiced even when the words differ.",
+        "suggestion": "When the corpus expands, diversify voice and era before adding more Dijkstra.",
+        "severity": "minor",
+        "_conductor_verdict": "REPRODUCED EXACTLY. Gate check C4/C5: 24 distinct authors; Dijkstra 7 + Perlis 5 + Pike 5 = 17/50 = 34%. Filed as TS-3 (blocked, same scope lock)."
+      },
+      {
+        "where": "--help, tag discovery",
+        "after_n_uses": 2,
+        "what_gets_stale": "The second-session question 'what tags can I filter on?' has no first-class answer. Help says: Run --list --json | jq '.tags[]' to see tags - which is not pasteable as printed (no binary name, and .tags[] on NDJSON needs jq -s or dedup to be useful) and outsources basic vocabulary discovery to jq or to reading README tables. New flags are a non-goal so --tags is off the table this run, but the help text could at least print a copy-pasteable full command.",
+        "suggestion": "Make the help snippet a complete, runnable command line; note --tags as a candidate for a future run.",
+        "severity": "minor",
+        "_conductor_verdict": "REPRODUCED EXACTLY. Gate check C7: --help line 12 is \"Run --list --json | jq '.tags[]' to see tags in the corpus.\" - no binary name. Filed as TS-4, the ONE finding this run's non-goals permit fixing (todo)."
+      }
+    ],
+    "screenshots": [],
+    "server_log_tail": ""
+  },
+  "conductor_gate": {
+    "script": ".swarm/runs/cycle-009-taste-gate.mjs",
+    "authored": "at verification time, after the agent returned; the agent never saw it",
+    "result": "8/8 PASS",
+    "test_cmd": "node --test test/*.test.js -> 118/118 pass, 0 fail",
+    "repo_untouched": "git status --porcelain empty after the agent's run - the read-only constraint held"
+  }
+}
