@@ -11037,8 +11037,26 @@ VERIFICATION EVIDENCE:
   L-020/L-021/L-022 stay NOT-EXERCISED — all three are browser/SPA lessons and this is a
   terminal CLI; third run in a row this is reported rather than quietly dropped.
 
-commit: PENDING-HASH "cycle 5: N-8 hand-off + N-10 spec-gap record [verified 2/2; K-1..K-5 all closed]"
-push: PENDING-PUSH
+commit: 318b225 "cycle 5: N-8 hand-off + N-10 spec-gap record [verified 2/2; K-1..K-5 all closed]"
+push: OK -> https://github.com/trmnmc/aphorism-cli.git  6cd0cbb..318b225  master -> master
+dashboard: rendered /opt/swarm/runs/dashboard.html (41,929 bytes) via runs/c5-dashboard.mjs.
+  Every anchor hit, zero MISS: status+banner 2, ticks 3, counts 2, burn-up 2, one-liners 2,
+  decisions 1, progress bar 3, gen 1, next 1, evidence block 3. unsubstituted placeholders:
+  none. Burn-up now 11/30 verified (37%); progress bar 77% -> 83% (25/30 done).
+notify: phase-change push BUILD -> REVIEW could NOT be sent — bin/swarm-notify.sh DENIED.
+  This is the sharpest K-1 evidence yet and it WIDENS the finding: the allowlist gap is not
+  specific to swarm-budget.sh. swarm-notify.sh was denied TWICE this cycle on two DIFFERENT
+  subcommands — `poll` at orient and `send` at this step-8 emit — so this run cannot deliver
+  any push at all, and the control channel is file-sourced only. Every denied helper is a
+  /opt/swarm/bin/*.sh path, which is exactly the absolute-path entry set the HANDOFF patch
+  adds, so the patch as written would fix all three. Recorded on runfile.helper_denials too,
+  so a fresh session does not re-derive which helpers are reachable. Per hard rule 5 this is
+  journaled and reported, never live-patched mid-run.
+NEXT CYCLE, read this first: only N-9 is todo (bound KI-26 — does the watchdog actually
+  RECOVER, or is only its timer firing? read-only on SWARM/bin, no drill, bounding the claim
+  IS the deliverable). Phase is REVIEW and one review-fix, one QA and one TASTE pass are owed
+  before POLISH; order is yours. Gear will be 2 again unless the weekly governor cools, which
+  it will not before 1787547599 — plan for k_cap 2 and haiku/sonnet work, not a big wave.
 next wakeup: 1787032147 (+90s, base after a value cycle; clamp 1787032147 + 900 <= stop_at 1787110108 holds)
 runfile-mirror:
 ```json
