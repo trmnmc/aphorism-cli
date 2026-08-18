@@ -10598,3 +10598,150 @@ next wakeup: 1787027627 (04:33:47Z, +90s — step-9 base delay for a verified-va
 dashboard: runs/dashboard.html re-rendered; 18/29 done (62%), 9 todo, 1 blocked.
 notifications: none emitted — phase unchanged (BUILD -> BUILD), no target stalled,
   publish_failures still 0. Step 8 emits are diff-based and nothing diffed.
+
+---
+
+## cycle 3 — 2026-08-18T04:38:29Z → 04:57Z — build-wave (N-3 + N-7) — VALUE (2/2 verified)
+
+CLOCK/GEAR. now 1787027909, stop_at 1787111308 (~23.2h left). Not limp, not WRAP_UP.
+`bin/swarm-budget.sh` invoked and DENIED a 4th consecutive time. No new probe was taken and
+none was due: cycle 2's REAL npx measurement is `last_real_probe_ts` 1787027368, only 592s
+old, and the step-1 rule re-invokes the real probe only at >= 1800s. Gear therefore CARRIED
+FORWARD at **2** (rho 0.79, k_cap 2, demote true, promote blocked by weekly heat 1.65) on
+cycle 2's evidence rather than on a fresh guess. Recorded as a carry-forward, not as a
+measurement taken this cycle.
+
+ORIENT. Tree clean, no salvage. Control channel polled: `pending: []`, `inject: []` — nothing
+to apply, nothing to triage. Craft pack read clean, zero degraded entries; neither item is UI.
+
+PICK. Effective wave size = min(k_current 3, gear cap 2) = **2**. Both picks are must-haves,
+which is what gear 2 demands (must-haves before polish/docs):
+  - **N-3** (M, qa, sonnet) — re-measure the 29-clause Domain-rule coverage map. Head of the
+    N-3 -> N-4 -> N-5 chain and the largest remaining must-have (K-3).
+  - **N-7** (S, fix, sonnet) — audit every count claim in README/REPORT/docs (K-4).
+Routing at gear 2: N-3 is a mechanical measurement (the HOLE/BOUNDARY judgment is N-4's job,
+not this item's), so it is not a judgment seat and the fable guard does not apply; qa/fix
+never demote below sonnet, so both stay sonnet. Scopes pairwise-disjoint: N-3 measures
+src/test/bin inside a throwaway copy and writes only `.swarm/runs/`, N-7 writes README/
+REPORT/docs. N-6 was deliberately NOT paired: it is docs/M, so gear-2 demotion would drop it
+to haiku for a 98 KB delete-nothing restructure, and it collides with N-7 on REPORT.md.
+Dispatched as direct Agent calls — Workflow is review-gated in a `-p` session.
+
+WORK — N-3: 29 KILLED / 0 SURVIVED / 0 INERT / 0 NOT-PLANTED out of 29. Arms built by
+  `git archive` at the pre-dispatch SHA b627ed2 (L-042) instead of copying a live tree that a
+  second agent was editing. Every cycle-52 anchor string still occurs exactly once in current
+  source, so no mutation needed repair and no cell went NOT-PLANTED. No clause verdict moved
+  since run #1 cycle 54 — L5 and L7, the two cycle-52 holes, are still killed. The suite grew
+  84 -> 102 since cycle 52, so several kills are now attributed to newer tests while the
+  clause-level verdicts are unchanged. Zero tests were written: N-3 is a measurement, and test
+  authorship is gated behind N-4's classification, which has not run.
+
+WORK — N-7: 36 count claims enumerated — 23 CURRENT, 12 HISTORICAL, 1 AMBIGUOUS. Every CURRENT
+  claim measured TRUE. **Zero false claims, therefore zero corrections and a zero-byte diff to
+  every tracked file.** That is the audit's result, not the audit being skipped, and the
+  distinction is load-bearing: it also made three of my REPORT.md preservation checks VACUOUSLY
+  green (nothing was edited, so nothing could have been deleted). Those three are recorded as
+  vacuous rather than as evidence, and the real verification burden moved to re-measuring the
+  claims myself. The agent correctly declined two calls instead of guessing: README's "Node 18+"
+  floor (unverifiable here -> filed KI-27, human-owned) and REPORT.md's "three SWARM runs"
+  (genuinely ambiguous while run #3 is in flight -> folded into N-6, which owns REPORT.md).
+
+VERIFICATION EVIDENCE (gate authored at verification time, sealed before agent output existed;
+builders never saw it; all commands run by the conductor):
+
+    $ node runs/c3r3-mutants.mjs      # conductor's OWN mutants, authored from source
+    P0 CONTROL — pristine archive:   tests 102 / pass 102 / fail 0   OK
+    INERT CONTROL — comment-only:    tests 102 / pass 102 / fail 0   OK
+    C-A KILLED F2  98p/4f     C-B KILLED F3  100p/2f    C-C KILLED S2  99p/3f
+    C-D KILLED E1  98p/4f     C-E KILLED L5  101p/1f    C-F KILLED L7  96p/6f
+    C-G KILLED X2c 97p/5f
+    ARM VERDICT: every sampled clause is PROTECTED by the shipped suite   (7/7)
+
+    $ node runs/c3r3-gate.mjs
+    PASS F1    FLOOR: suite green at known size — tests 102 / pass 102 / fail 0
+    PASS F2    FLOOR: neither agent modified src/, test/ or bin/
+    PASS N3-c  table carries one verdict per clause, tally KILLED 29 = 29; headline
+               "29 KILLED / 0 SURVIVED / 0 INERT / 0 NOT-PLANTED" agrees with the table
+    PASS N3-d  CROSS-CHECK: builder verdicts agree with my arm on all 7 sampled clauses
+    PASS N3-e  CONTROL: a fabricated SURVIVED row for L7 IS detected
+    PASS N3-c2 CONTROL: 28 rows read as 28, and "suite 94p/8f" is never read as a count
+    PASS N7-c  REPORT.md census: 0 lines removed, 0 of them digit-free
+    PASS N7-e  CONTROL: a deleted prose line IS detected
+    PASS N7-f  CONVERSE CONTROL: a digit-only correction stays GREEN
+    PASS N7-g  HISTORICAL CONTROL: 6 cycle-anchored count lines, 0 rewritten
+    GATE PASS — 15/15 checks passed
+    (full: .swarm/runs/cycle-003-verify-N3-N7.txt and cycle-003-conductor-mutation-arm.txt;
+     both harnesses committed alongside as .mjs so a reader can re-run them)
+
+  Independently re-measured for N-7, against the corpus and the shipped binary, NOT against the
+  agent's ledger: 12 distinct tags / 12 with >= 2 entries / 0 with exactly 1 / smallest pool 3,
+  and all twelve per-tag counts match README's table exactly (design 14, simplicity 12, humor 9,
+  debugging 7, teamwork 7, complexity 5, performance 5, language 4, process 4, readability 4,
+  reliability 4, philosophy 3). Triage doc: 50 numbered rows, 50 distinct indices, 8 rated HIGH.
+  Corpus 50 by source AND by `--list | wc -l` (a discriminator: it observes the product, not the
+  source text). Fold-map list counted by hand: 26 names, matching README's "Twenty-six". Every
+  CURRENT claim confirmed TRUE, so N-7's headline is not merely plausible, it is re-derived.
+
+THREE BUGS IN MY OWN INSTRUMENTS, ALL CAUGHT BY CONTROLS, ALL FIXED IN THE HARNESS:
+  1. P0 went RED on the first run. Node 24 defaults to the SPEC reporter (`i pass 102`), so my
+     TAP regex matched nothing and every count came back null — and `null > 0` is false, which
+     silently rendered all seven cells SURVIVED. **A regex miss was manufacturing the most
+     alarming possible verdict.** Fixed by forcing `--test-reporter=tap` and by giving an
+     unparseable result its own SUITE-UNPARSED state instead of letting it fall through to a
+     verdict. Without a P0 control this cycle would have opened by reporting six fabricated
+     holes in a suite that has none.
+  2. Cell C-E read INERT. My witness asserted a single pick prints ONE line; it prints TWO
+     (text, then the indented "    — author"). The mutation was real, my observation of it was
+     wrong. Re-authored to encode the clause directly — "--list --seed output stops being
+     identical to --list output".
+  3. Gate check N3-c read "KILLED 94". It was grepping the whole document for a number near the
+     word KILLED and hit `suite 94p/8f` inside a row's evidence cell — precisely the failure
+     L-043 names. Rewritten to tally verdicts from the 29 table ROWS the document owns, and to
+     cross-check the prose headline against that tally; it then read 27 because L5 and L7 carry
+     `**KILLED**` in bold, so the matcher now strips markdown emphasis.
+  In all three the fix went into the INSTRUMENT, never into the strictness of the check. The
+  honest path to green was making the measurement true, not making the check agree.
+
+HONEST LIMIT ON MY OWN CROSS-CHECK. I authored my mutants from source before any agent output
+  existed, but 6 of 7 came out BYTE-IDENTICAL to the builder's (F2, F3, E1, X2c, L5, L7) — the
+  minimal mutation for each clause is obvious enough that two authors converge on it. So for
+  those six cells my arm establishes that the measurement REPRODUCES, not that an independently
+  chosen mutant would also be caught. Only S2 differs genuinely (I changed the guard in
+  `pick()`; the builder inserted a non-finite guard inside `toUint32Seed`) and it also killed.
+  Both harnesses produced identical suite pass/fail counts on every shared cell, which is real
+  corroboration of the instrument — but it is corroboration, and calling it independence would
+  overclaim. Recorded as a decision in state.json, not only here.
+
+WHAT THIS CYCLE DOES NOT ESTABLISH. Mutation testing at N=1 per clause is a LOWER bound: 29/29
+  KILLED says the suite notices these 29 specific defects, not that it notices every way each
+  clause can break, nor anything about combined defects or sites outside the 29 pre-registered
+  ones. The completeness of the 29-clause enumeration itself is unverified — it is inherited
+  from run #1 cycle 52 and no one has re-derived it from the SPEC text this run. N-7's coverage
+  of REPORT.md's ~600 non-count digit-lines was a scoped exclusion, not a sweep.
+
+KNOWN ISSUES. Filed KI-27 (low, human-owned): README's "Node 18+" floor is unverified — no
+  engines field, no CI matrix, no runtime assertion. Settled by running the suite under 18 and
+  20 and recording it, or by lowering the claim to what is actually exercised. No other new
+  issues: the three instrument bugs above were all corrected here, so they are decisions.
+
+NAMING HAZARD (for the retro, not fixed mid-run): run #3's artifacts land as `cycle-003-*` in
+  the same directory as run #1's `cycle-003-*` files, because the run counter reset at kickoff.
+  Nothing was overwritten — the suffixes differ — but `.swarm/runs/` no longer separates runs by
+  filename, and `cycle-003-build-wave.json` (run #1) now sits beside `cycle-003-coverage-map.md`
+  (run #3). A run-scoped prefix would fix it; renaming 323 files mid-run would not be worth it.
+
+WAVE AUTOTUNE. Clean wave — zero reverts, zero failed verifies. `wave_streak` 0 -> 1;
+  `k_current` stays 3 (it rises at a streak of 2). k_current was not the binding constraint this
+  cycle — the gear-2 cap of 2 was.
+
+next: N-4 (S, qa) — classify every N-3 survivor as HOLE or BOUNDARY. N-3 measured ZERO
+  survivors, so N-4's honest output is an empty classification plus the reasoning for why the
+  set is empty, and N-5 (add tests only for HOLEs) then correctly adds NO tests. That chain is
+  now cheap; the real remaining weight is N-6 (REPORT.md restructure, with the "three runs"
+  ruling folded in) and N-8. N-6 wants a gear that does not demote a 98 KB delete-nothing
+  restructure to haiku, so it is worth taking when the gear allows, or splitting into S pieces.
+
+runfile-mirror:
+```json
+{"version":1,"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":"2026-08-19T03:48:28+00:00","usage_reset_at":"2026-08-18T08:00:00+00:00","usage_reset_at_note":"MEASURED at cycle 2 (was fabricated as stop_at through cycle 1). \"npx ccusage@latest blocks --json --token-limit max\" - the exact PROBE_CMD of the denied swarm-budget.sh - reports the active 5h block as 2026-08-18T03:00:00Z..08:00:00Z. Bash(npx:*) is allowlisted, so the allowlist gap blocks the SCRIPT, not the MEASUREMENT. Rolls forward in 5h blocks per swarm-budget.sh:205-209.","model_policy":"value-routing","auth_mode":"subscription","run_label":"aphorism-cli improvement run #3","heartbeat":{"ts":1787029007,"next_wakeup_at":1787029097,"pid":2068231,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"CARRIED FORWARD from cycle 2's real npx measurement. bin/swarm-budget.sh invoked and DENIED again (probe_failures 3 -> 4). No fresh probe was taken and none was due: last_real_probe_ts 1787027368 was 592s old at this cycle's open, and step 1 re-invokes the real probe only at 1800s or more.","gear":2,"gear_target":2,"ratio":0.79,"mode":"guest","k_cap":2,"promote":false,"demote":true,"window_tokens":15109544,"window_cost_usd":13.57,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":25256308,"projected_depletion_at":1787043375,"last_probe_ts":1787029007,"last_real_probe_ts":1787027368,"probe_failures":4,"gear_evidence":"Gear 2 UNCHANGED, carried forward on cycle 2 evidence rather than re-measured. rho 0.79, k_cap 2, demote true, promote blocked (weekly heat 23.0/13.91 = 1.65, over 1.3, so WCEIL 2). The gear-2 cap of 2 was the BINDING constraint on this cycle's wave size, not counters.k_current (3). Next real npx probe falls due at last_real_probe_ts + 1800 = 1787029168.","weekly":{"ok":true,"weekly_used_pct":23,"opus_used_pct":16,"week_elapsed_pct":13.91,"weekly_heat":1.653,"opus_heat":1.15,"ceiling":2,"promote_blocked":true,"source":"REAL: runs/allocator.json ok=true source=probe, re-read at cycle 2. Ceiling 2 per swarm-budget.sh:133-137 (heat>1.3), correcting cycle 1 hand-computed ceiling 1."}},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0,"plist_note":"systemd, not launchd. swarm-watchdog.timer confirmed ACTIVE and firing at this kickoff: `systemctl list-timers` shows it fired 03:39:47 UTC and is next due 04:09:47 UTC (30-min cadence). plist_loaded is set true on that evidence. NOTE KI-26 (high, carried from run #2) claims the watchdog was INERT for that entire run despite the timer firing — a firing timer is not the same signal as a recovering watchdog, and this kickoff verified only the former."},"wrap_up_complete":false,"cycles_since_recycle":2,"artifact":{"url":"","file":"/opt/swarm/runs/dashboard.html","publish_failures":0},"playbook":{"mode":"auto","applied":["L-008","L-016","L-020","L-021","L-022","L-024","L-026","L-029","L-031","L-033","L-034","L-042","L-043","L-044"],"vetoed":[],"source":"learnings.md parsed BY HAND — bin/swarm-playbook.sh parse DENIED at this kickoff (9th consecutive run). 20 lessons present, at the documented cap of 20, not over it.","not_wired":{"ids":["L-020","L-021","L-022"],"why":"All three instruct browser/React/SPA or env-var behaviour (component-mount tests, hard-reload after restart, persisted UI state). aphorism-cli is a zero-dependency terminal CLI with no browser surface and no env-var-dependent behaviour, so wiring them into prompt_lines would be noise a builder must discard. Staged as applied for the ledger, deliberately kept OUT of prompt_lines — the same call runs #2 and #3 made and reported as not-exercised."},"ledger_line_blocked":"RESOLVED at cycle 2 by item N-2: record-applied is still denied, but the ledger line was written by hand into playbook/applied.log and is marked as a hand-edit in its own note, with two inherited provenance claims corrected against the file.","directives":{"wave_k":3,"routing_recs":["core-logic->fable"],"prompt_lines":{"builder":["The conductor is the SOLE committer — never commit or push yourself","The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test"],"reviewer":["The conductor is the SOLE committer — never commit or push yourself","The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test","Assign each fixer a pairwise-disjoint file set; two fixers must never share a file — and treat that as necessary, not sufficient: dispatch sequentially whenever one item's acceptance is a measurement OF a tree another item edits"],"qa":["The conductor is the SOLE committer — never commit or push yourself","The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test","Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish \"I verified this is wrong, here is the computation\" from \"this looks suspicious but I could not confirm it\".","Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value.","When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence.","Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps.","Classify each surviving mutant as HOLE (a real gap — harden it) or BOUNDARY (behaviour the spec does not decide — document it) BEFORE writing any test","Never assert against prose matched by regex — read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns","For every mutation that must kill the suite, author one control that must leave it GREEN — a check that dies on everything is a snapshot test, not an assertion"]}}}}
+```
