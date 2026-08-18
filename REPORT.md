@@ -1405,3 +1405,174 @@ scope was locked against exactly this change at kickoff. The measurement is comp
 permission is not.
 
 ---
+
+---
+
+# Improvement run #3 — final report (cycle 15, DONE)
+
+*Appended at WRAP_UP, 2026-08-18. Nothing above this line was modified. Run #3's earlier
+sections (the J-4 reconciliation, the human-owned hand-off, the taste-pass hand-off) stand as
+written, and the derivation table's deliberate pinning to commit `dbc1939` is preserved — see
+the note at that table's head before comparing its figures to today's tree.*
+
+## What this run was, and what it was not
+
+Improvement run #3 was a **housekeeping run**, auto-kicked by the allocator under a *trickle*
+posture with the brief *"no new features."* It built **no product feature**, and that was the
+point rather than a shortfall. Across 15 cycles it touched **3 source files, +47/−2 lines** —
+all of it at cycles 7, 8 and 10, and none of it after — repairing two write-error paths the QA
+pass found. **Nothing this run did is visible to someone running `aphorism` in a terminal.**
+The SPEC said so at kickoff and named it the main thing a reader should weigh.
+
+What it actually bought is the repo's own **trustworthiness**: the claims in README.md,
+REPORT.md and `docs/` were re-measured against the tree, five separate instances of stale-count
+decay were found and repaired, and a mandatory verification gate that had never run was
+discovered and paid.
+
+## Verified at WRAP_UP — machine-checked, today, on the shipped tree
+
+| Check | Result | Evidence |
+|---|---|---|
+| `node --test test/*.test.js` | **118 tests, 118 pass, 0 fail** | `.swarm/runs/cycle-015-verify-suite.txt` |
+| Default run: one attributed aphorism, exit 0, clean stderr | **PASS** | cycle-15 gate P1* |
+| Seed determinism, incl. non-finite (`Infinity`) | **PASS** | gate P2, P3 |
+| `--list` prints every corpus entry (count derived from `src/corpus.js`, not from a note) | **PASS — 50/50** | gate P4 |
+| No match → exit 1, message on stderr, **zero bytes stdout** | **PASS** | gate P5 |
+| Unknown flag → exit 2 | **PASS** | gate P6 |
+| Filters compose as AND (expected count derived from the corpus itself) | **PASS — 3/3** | gate P7 |
+| `--json` single-line object with `text`/`author`/`tags` | **PASS** | gate P8 |
+| **Zero new user-visible flags** vs the six SPEC names | **PASS** | gate R1 |
+| `--help` on stdout, exit 0, one screen | **PASS — 13 lines** | gate R2 |
+| README.md and `docs/` unchanged since the last full three-surface sweep | **PASS** | gate K4a |
+| REPORT.md's J-7 count family (the repaired regression) | **13 PASS / 0 FAIL** | cycle-14 gate, re-run today, sha256 still matching its pre-dispatch seal |
+
+\* P1 and S1 are recorded as **FAIL** in the raw gate output and are **conductor instrument
+errors, adjudicated by hand with the gate file left unedited** — see "Instrument defects" below.
+The underlying claims were each re-measured directly and hold. The raw output is preserved
+unaltered at `.swarm/runs/cycle-015-done-gate-out.txt`; a gate is never rewritten after it has
+run, because that destroys the evidence of what it measured.
+
+## The run's five must-haves
+
+All five were conductor-verified, each at a named cycle, and **K-4 was independently
+re-verified at WRAP_UP** because this run measured it decaying inside its own lifetime.
+
+- **K-1 — allowlist gap handed off.** Closed on the *handoff*, which is what its own text says
+  closes it. **The gap itself is STILL OPEN**: at cycle 15 both `bin/swarm-playbook.sh parse`
+  and `… append` were DENIED, a third session of run #3 reproducing it after cycles 1 and 2.
+  The run-level counter stands at **ten consecutive runs** and cycle 15 does not advance it —
+  this is still the same run. *(Stated carefully because two different units are in play here,
+  reproductions and runs, and conflating them is the exact false-count shape this run spent
+  five cycles repairing.)* The patch a human must apply is in
+  `SWARM/playbook/HANDOFF-allowlist-2026-08-17.md`.
+- **K-2 — playbook valid, in cap, ledger line written.** By hand, marked as a hand-edit.
+- **K-3 — coverage map re-measured, not grown.** 29/29 killed; the *enumeration itself* was then
+  re-derived from the SPEC and found incomplete (43 clauses, 14 never mutation-tested — of which
+  12 turned out protected anyway, 1 BOUNDARY, 1 not-planted). **Zero new tests**, which the
+  must-have explicitly names as a legitimate outcome: the deliverable is the measurement.
+- **K-4 — documents readable and true.** Repaired repeatedly; green at WRAP_UP.
+- **K-5 — human-owned items surfaced, not churned.** All seven carry a named actor and the
+  evidence that would settle them, in the hand-off sections above.
+
+## Instrument defects — twelve in fifteen cycles
+
+**This is the run's dominant failure mode, and it is worth more to a reader than the repairs.**
+Not agent errors, not bad merges, not flaky tests: *the conductor's own measuring instruments*
+were wrong twelve times. Every one was adjudicated by hand and **no gate file was ever edited
+after it had run.**
+
+The recurring shape is a **regex asserting against prose that wraps** (cycle 12's A6 dropped
+`interoperability` because README wraps `to\nreliability`; cycle 14's OBS-1 was identical;
+cycle 14's `[^>]*` extractor could not cross a raw `>` inside an HTML attribute value and
+reported a present element as absent — which **nearly became a false accusation against a
+previous cycle** rather than a false verdict on a tree).
+
+Two are worth a maintainer's attention as general hazards:
+
+1. **An under-measuring harness that still exits 0.** Cycle 15's gate hardcoded a six-file test
+   list naming two files that do not exist. `node --test` ran the four that did, **exited 0**,
+   and reported a green **100 pass / 0 fail** against a true suite of **118**. No exit-code check
+   would have caught it; only comparing against a directly-run `test_cmd` did.
+2. **A gate can be right and still insufficient.** At cycle 14 a builder passed **13/13** while
+   writing a false provenance claim into the very paragraph whose job is dating claims
+   correctly. The gate's cells checked behaviour *counts*; cycle attribution is a different
+   claim class. It was caught by **reading the diff**, which is the answer to the question a
+   gate cannot answer for itself.
+
+## The DONE decision, and why it took four tries
+
+Cycle 8 declared this target DONE with ~19 hours left. **It was wrong four times over** —
+cycles 9, 10, 11 and 12 each then produced verified value. Every one of those four traces to a
+single root: **a mandatory gate that had never run, while a summary note said it had.**
+`state.json`'s `taste_note_cycle_009` asserted review-fix ran at cycle 5; cycle 5's own journal
+block reads `work: build-wave [N-8, N-10]`. Cycle 12 caught it by reading the primary blocks
+instead of the summary, and review-fix was finally paid at cycle 13.
+
+Cycle 15's call rests on that root being **measured absent**: review-fix (c13), QA full (c6),
+TASTE (c9) and POLISH (c10) each confirmed against its own journal block. The load-bearing new
+measurement is that **README.md and `docs/` have not moved at all** since cycle 12's full
+three-surface sweep, and the one surface that did move — REPORT.md — is covered by a gate that
+re-verifies green today and that *derives its expected count from `backlog.json` at run time*,
+so it cannot go stale the way the claims it guards did.
+
+**~17.7 hours of clock were handed back unspent**, deliberately. The absence of work is the
+reason to stop; a clock is not a reason to keep going.
+
+## What is open — and who owns it
+
+**Seven items survive, and every one is human-owned by its own acceptance clause or locked
+behind a non-goal the swarm cannot lift for itself.** Full detail in the hand-off sections
+above; this is the index.
+
+| Item | Owner | What would settle it |
+|---|---|---|
+| **T-006** corpus attributions unaudited (**KI-2, high — the repo's highest-severity open issue**) | human | Work `docs/corpus-attribution-triage.md`; settle its 8 HIGH-risk rows against primary sources |
+| **T-040** corpus retag consequences | human | Confirm or reverse two judgment calls, the load-bearing one being `testing`→`debugging` |
+| **J-7** five unspecified CLI behaviours (D-42, D-43, D-44 + two inline) | human | Rule either way; the ruling is written into SPEC.md as an explicit clause |
+| **TS-1 / TS-2 / TS-3** corpus depth, tag-pool exhaustion, voice concentration | human (scope) | Lift the "corpus expansion" non-goal at a future kickoff |
+| **R-1** structural reshape of the README acknowledgement guard | human | See below |
+
+**R-1 is left standing on purpose, and a reader should know it is vacuous.** It is a correctly
+named internal test guard whose *premise no longer holds* — cycle 13 measured **12 distinct tags
+and ZERO on exactly one entry**, so the single-entry-tag limitation it exists to protect does
+not currently exist. It fails the value ratchet outright (a terminal user notices nothing either
+way). Its two dispositions are both human-owned: reshaping it is out of this run's scope, and
+*retiring* it means deleting a claim — which **T-040's pending ruling could reintroduce**, since
+a retag could recreate single-entry tags. So it is neither built nor deleted, and that is stated
+rather than quietly dropped.
+
+## Honest hand-off — what a machine checked, and what only you can
+
+**Machine-checked and trustworthy:** the CLI's behaviour against every clause of the SPEC's
+Domain rules; the suite at 118/118; the *shape* of the corpus (50 entries, each with text,
+author, tags); the absence of runtime dependencies; every count claim in README.md, REPORT.md
+and `docs/`, re-measured against the tree rather than inherited.
+
+**Not machine-checked, and not machine-checkable here:**
+
+- **The corpus attributions are UNVERIFIED.** This is the single most important sentence in this
+  report. Fifty quotes are attributed to named people; **their provenance has never been
+  confirmed against a primary source**, programming aphorisms are widely misattributed, and
+  `docs/corpus-attribution-triage.md` rates **8 of the 50 as HIGH risk**. The corpus module says
+  so at its head. Confirming them needs sources this run cannot reach — network access is a
+  product non-goal and web tools are outside the conductor's allowed surface. **Read every
+  author field as "commonly attributed to."**
+- **Whether the product is worth using.** The taste pass returned *wears-thin*: with 50 entries
+  the median first repeat is **draw 9**, and P(repeat by 12) = **76.2%**. The product's *shape*
+  held up over 32 uses — one quiet attributed line, pipeable, stderr-clean — but its *pool* runs
+  out. The single change that would most improve it (no-repeat-until-exhausted rotation, or a
+  deeper corpus) is a locked non-goal and needs your word.
+- **The five unspecified CLI behaviours (J-7).** Each is a genuine SPEC gap where two stated
+  clauses point opposite ways. An agent can measure what ships; only you can decide what *should*.
+- **The SWARM tooling gaps.** `bin/swarm-playbook.sh` and `bin/swarm-budget.sh` have no allowlist
+  entry in any path form and have been mechanically inert for **ten consecutive runs** (the
+  count is of runs, not of denials);
+  `bin/swarm-notify.sh` works in its **relative form only**. Separately, the watchdog **cannot
+  recover an improvement run at all** — its DONE-guard exits 0 on the bare existence of
+  `REPORT.md`, which a *previous* run wrote, so the staleness gate is never reached (zero
+  `decision=relaunch` in 195 firings, ever). Both are fenced read-only by hard rule 5 and are
+  reported, never live-patched. Patches: `SWARM/playbook/HANDOFF-allowlist-2026-08-17.md` and
+  `.swarm/runs/cycle-008-N-9-watchdog-finding.md`.
+
+**Cycles run: 15.** Backlog **33 done / 1 todo / 6 blocked / 1 dropped** of 41.
+`consecutive_no_value` **0**. The run ends at a finish line, not a stall.

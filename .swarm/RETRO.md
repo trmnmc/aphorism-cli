@@ -4,11 +4,153 @@
      here exactly as in the verification gate: every entry cites cycle numbers
      from .swarm/journal.md. No cycle number, no entry — vibes are not evidence. -->
 
-> **This file holds TWO retros, newest first.** Everything down to the horizontal rule is
-> **improvement run #2 (2026-08-17)**. Below it, preserved verbatim and clearly fenced, is
-> **improvement run #1's** retro (2026-08-15/16). Nothing was overwritten: run #1's own
-> provenance note records that this file once silently carried a *previous* run's retro into
-> a new run, and that was filed as the defect. Appending rather than replacing is the repair.
+> **This file holds THREE retros, newest first.** This section is **improvement run #3
+> (2026-08-18)**. Below it, preserved verbatim and clearly fenced, are **improvement run #2's**
+> (2026-08-17) and **improvement run #1's** (2026-08-15/16). Nothing was overwritten: run #1's
+> own provenance note records that this file once silently carried a *previous* run's retro
+> into a new run, and that was filed as the defect. Appending rather than replacing is the
+> repair, and this run kept it. *(Count updated from TWO to THREE at run #3's WRAP_UP — a
+> navigation line that says two while holding three is exactly the stale count claim this run
+> spent five cycles measuring.)*
+
+---
+
+# Improvement run #3 — 2026-08-18
+
+Run: **2026-08-18 improvement run #3** (allocator auto-kickoff, `source=allocator`,
+`mode=guest`, `dial=0.30`, posture *trickle*, brief *"housekeeping only — harden tests, fix
+playbook items, polish docs — no new features"*) | cycles run: **15** (cycle 0 kickoff through
+cycle 15, which is both the DONE decision and this WRAP_UP) | stop reason: **target DONE at
+cycle 15**, declared with **~17.7 h of clock left** against `stop_at` 2026-08-19T03:48:28Z —
+not a stall, not a usage limit, not a crash. Product code touched: **3 files, +47/−2 lines**,
+all of it at cycles 7/8/10 and none of it after.
+
+## What worked
+
+- **Holding the sealed gate OUTSIDE the target repo during the dispatch window.** (cycle 14)
+  Cycle 13 committed its gate into the target and kept builders out with a prompt line — an
+  instruction, only as strong as compliance. Hard rule 5 gives agents target paths and never
+  SWARM paths, so a gate held under `SWARM/runs/` is **structurally** unreachable rather than
+  merely forbidden. Tamper-evidence was fully preserved: sha256 sealed into the target
+  pre-dispatch, file copied in after verification and re-hashed to match (`f3fb4648…`).
+  Strictly stronger at zero cost. Adopt as the default.
+- **Gates that DERIVE their expected value at run time instead of hardcoding it.** (cycles 14,
+  15) The cycle-14 gate reads the true J-7 ruling count out of `backlog.json` when it runs, so
+  it does not go stale the moment a sixth ruling is routed. It still passed 13/13 a cycle later
+  against a tree it was not authored on. An instrument that hardcodes the answer joins the set
+  of things that rot — and this run measured that decay **five separate times** (cycles 11, 12
+  ×2, 13, 14).
+- **Three-state gate cells (PASS / REVIEW / FAIL).** (cycle 14) R-2's acceptance sanctioned two
+  different valid repairs; a binary matcher cannot tell an honest re-label from a stale claim.
+  The third state is what let the gate stay strict without false-failing a legitimate fix.
+- **Baselining every gate on the UNFIXED tree before trusting it.** (cycles 10, 12, 13, 14, 15)
+  Cycle 10 found **two bugs in eleven assertions** this way, both false FAILs that would have
+  fired against any tree. Discriminating baselines — the gate must FAIL what the fix will flip
+  and PASS the rest — caught instrument defects in five separate cycles. A gate green on a
+  broken tree proves nothing.
+- **Reading the diff even when the gate came back green.** (cycles 14, 15) Cycle 14's builder
+  passed 13/13 while writing a *false provenance claim* into the one paragraph whose job is
+  dating claims correctly; it was caught by reading the diff, not by a cell. Cycle 15 then read
+  the one diff nobody had read — cycle 14's own close commit — for the same reason.
+- **Correcting the run's own bookkeeping against primary sources.** (cycles 2, 7, 12) Cycle 12
+  found that `taste_note_cycle_009` claimed review-fix ran at cycle 5; cycle 5's own journal
+  block says otherwise. That single correction is why the target was still running at cycle 13
+  and why the DONE call at cycle 15 rests on something.
+
+## What thrashed
+
+- **Twelve instrument defects in fifteen cycles**, and they are the run's dominant failure
+  mode by a wide margin — not agent errors, not merges, not tests. Catalogued: cycle 4 (N4-c
+  stricter than the contract it enforced), cycle 12 (A6 — a prose regex defeated by a line
+  wrap), cycle 13 (a converse control that false-FAILed on a serialization it assumed), cycle
+  14 (OBS-1, same line-wrap family; plus a `[^>]*` extractor that could not cross a raw `>`
+  inside an attribute value and nearly became a **false accusation against a previous cycle**),
+  cycle 15 (P1 asserted a one-line default output for a product that has always printed two;
+  S1 hardcoded a test-file list naming two files that do not exist — `node --test` ran the four
+  that did, **exited 0**, and reported a green 100/0 instead of the true 118/0). The last is the
+  worst shape: an under-measuring instrument that still exits zero. **Every one was adjudicated
+  by hand with the gate file left unedited**, per the cycle-4 precedent — rewriting a gate after
+  it has run destroys the evidence of what it measured.
+- **Declaring DONE four times before it was true.** Cycle 8 declared done with ~19 h left and
+  was wrong four times over; cycles 9, 10, 11 and 12 each then produced verified value. Every
+  one of those four traces to the same root: **a mandatory gate that had never run while the
+  bookkeeping said it had.** Cycles 11 and 12 re-ran the decision and correctly returned NOT
+  DONE; cycle 14 scored the last item but deliberately withheld the judgment for a settled
+  tree. The cost of the original error was four cycles; the fix was one correction at cycle 12.
+- **A self-generating backlog.** (cycles 6, 8) J-9 was produced by the fix for J-5 — a run that
+  keeps generating its own next item from its own last gate can look productive forever while
+  the product does not move. Cycle 6 wrote an explicit **stopping rule** for the README-prose
+  test family rather than trusting taste, and cycle 8 honoured it (no J-10). Worth keeping.
+- **`bin/swarm-playbook.sh` and `bin/swarm-budget.sh` unreachable for the tenth consecutive
+  run.** Reproduced live again at cycle 15 (`parse` → DENIED). Neither has an allowlist entry in
+  *any* path form; `swarm-notify.sh` works **relative-only**, which cycles 5, 6 and 11 each
+  misrecorded as a denial of the helper rather than of the form they chose. Fenced by hard rule
+  5 all run; the patch is in `SWARM/playbook/HANDOFF-allowlist-2026-08-17.md`.
+- **The watchdog cannot recover this run at all.** (cycle 8, item N-9) Its DONE-guard exits 0 on
+  the bare existence of `<target>/REPORT.md`, which on an *improvement run* was written by a
+  previous run — so the staleness gate is never reached. Whole-log histogram: **zero
+  `decision=relaunch` in 195 firings, ever.** Unreachable by construction, not by bad luck.
+
+## Config recommendations
+
+- `[apply: gate] Hold the sealed gate under SWARM/runs/ for the dispatch window and copy it
+  into the target only after verification — hard rule 5 makes it structurally unreachable to
+  agents, where an in-repo gate plus a prompt line is only an instruction. [source: run #3
+  cycle 14] [confidence: high]`
+- `[apply: gate] Derive every count a gate asserts from the live backlog/tree at run time;
+  never hardcode the expected number — a gate that hardcodes the answer rots exactly like the
+  claim it guards. [source: run #3 cycles 14, 15] [confidence: high]`
+- `[apply: all] A gate is a program: baseline it on the UNFIXED tree and require it to FAIL
+  what the fix will flip while PASSING the rest, and check its exit code against a KNOWN test
+  count — an instrument that silently measures a subset still exits 0. [source: run #3 cycles
+  10, 12, 13, 14, 15] [confidence: high]`
+- `[process] Read the diff even when the gate is green. A sealed gate bounds what you checked,
+  never what is true. [source: run #3 cycles 14, 15] [confidence: high]`
+- `[process] Before declaring DONE, verify each mandatory gate against its own journal block,
+  never against a summary note that says it ran. [source: run #3 cycles 8, 12, 15]
+  [confidence: high]`
+
+## Applied-lessons check
+
+One line per lesson in `runfile.playbook.applied` (14 staged, 11 wired into prompt lines):
+
+- **L-008** (sole-committer discipline) — **re-observed.** Wired into all three role prompt
+  lines; no agent committed or pushed in any of the 15 cycles.
+- **L-016**, **L-024**, **L-026**, **L-031** — **re-observed** across the cycle-13 review-fix
+  and the cycle-6 QA pass; disjoint reviewer lenses and refute-first framing both produced
+  reproduced findings rather than impressions.
+- **L-029** (prove every added test failable AND attributable) — **re-observed, and it
+  decided K-3.** Zero new tests were written from the coverage map because zero survivors
+  classified HOLE; the rule made "zero new tests" a legitimate reportable outcome rather
+  than a gap.
+- **L-033** (classify survivors HOLE vs BOUNDARY before hardening) — **re-observed three
+  times** (cycles 3, 6, 8) and it decided J-9's retirement. This is the lesson run #2 archived
+  as advice-only and then re-learned; the restoration was correct.
+- **L-034**, **L-043** (never assert against prose matched by regex; read a structural marker
+  the document owns) — **contradicted in practice, four times, by my own instruments.** A6
+  (cycle 12), the cycle-13 converse control, OBS-1 and the `[^>]*` extractor (cycle 14) are all
+  prose/markup regexes that failed exactly as L-034 predicts. The lesson is right and I kept
+  breaking it. **The next run should treat it as a hard gate on gate-authoring, not advice.**
+- **L-042** (build gate arms with `git archive` at the pre-dispatch SHA) — **re-observed**
+  (cycle 3 onward); arms pinned to a commit removed the tree-stability guesswork entirely.
+- **L-044** (pair every must-kill mutation with a converse control that must stay GREEN) —
+  **re-observed, and it earned its place twice**: the cycle-13 converse control caught its own
+  false-FAIL, and cycle 14's attributed-kill check (revert one token → exactly 2 of 13 cells
+  die) is what proves the gate is not a snapshot test.
+- **L-020**, **L-021**, **L-022** — **not-exercised, by design.** All three instruct
+  browser/React/SPA or env-var behaviour; this is a zero-dependency terminal CLI with no browser
+  surface. Staged for the ledger, deliberately kept out of prompt lines. Third consecutive run
+  reporting them not-exercised — **they should be scoped or dropped rather than re-staged a
+  fourth time.**
+
+**Cycles run: 15.** The run ends at a finish line, not a stall: **33 done, 1 todo, 6 blocked,
+1 dropped** of 41, `consecutive_no_value` **0**, suite **118/118/0**, and every one of the seven
+survivors human-owned by its own acceptance clause or locked behind a non-goal the swarm cannot
+lift for itself.
+
+---
+
+# Improvement run #2 — 2026-08-17
 
 Run: **2026-08-17 improvement run #2** (allocator auto-kickoff, `source=allocator`,
 `mode=guest`, `dial=0.33`, posture *trickle*, brief *"harden tests, fix playbook items,

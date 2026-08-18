@@ -13370,3 +13370,139 @@ Bar 33/41 done (80%), 1 todo, 6 blocked. Burn-up 19/41 verified (46%) — it ris
 time since cycle 12, because R-2 closed the debt cycle 13 declared rather than paid and this
 cycle filed nothing new. A denominator that stops growing while the numerator moves is what the
 end of a run should look like.
+
+
+## cycle 15 — 2026-08-18T10:10Z — the DONE decision, re-run against a settled tree: **DONE**
+
+**work:** DONE decision (inline, zero agents) → **DONE, WRAP_UP**
+**outcome:** value 1/1 — the decision itself is the deliverable cycle 14 chartered.
+
+Cycle 14 closed by refusing to make this call in the same breath as changing the board, and
+asked cycle 15 to re-run it against a settled tree with R-1's ratchet score already on the
+record. That is what happened. The board did not move this cycle: **no agents were dispatched,
+no product code was touched, nothing was filed.**
+
+### the check nobody had run
+
+The run's own cycle-14 lesson is that a sealed gate bounds what you checked, never what is
+true, and that **reading the diff stays mandatory however green the instrument comes back**.
+Cycle 14 applied that to its builder's diff. It could not apply it to *its own close commit*,
+which was its last act. So cycle 15 read the diff nobody had read — `806c0d1`, +81 lines,
+`.swarm/journal.md` only. It is clean and internally consistent: 33+1+6+1 = 41 backlog items,
+80% and 46% both check out against those figures, and the "tenth instrument defect" count
+follows correctly from cycle 14's own ninth.
+
+### the DONE gate — 13 PASS / 3 FAIL, every FAIL adjudicated, the file left unedited
+
+`.swarm/runs/cycle-015-done-gate.mjs` (full output: `cycle-015-done-gate-out.txt`).
+Authored at verification time and **deliberately NOT commit-reveal sealed** — the seal exists
+to stop a builder coding to the check, and this cycle dispatched zero agents; there was nobody
+to hide it from. What it does hold to is independence: every cell re-derives its expected value
+from the tree, the corpus module or `backlog.json` **at run time**, never from a journal note.
+
+```
+[PASS] P4    --list prints every corpus entry, count derived from corpus.js not from a note
+        list=50 corpus=50 (SPEC floor >=40)
+[PASS] P7    filters compose as AND, expected count derived from the corpus itself
+        expected=3 exit=0 got=3
+[PASS] R1    zero NEW user-visible flags vs the six SPEC names
+        flags in args.js: --author --help --json --list --seed --tag
+[PASS] K4a   README.md and docs/ are UNCHANGED since the last full three-surface sweep
+        moved since c64fc09: REPORT.md
+[PASS] K4b   the ONLY moved surface is REPORT.md (the one the cycle-14 gate covers)
+[PASS] C1    CONVERSE CONTROL: a NaN seed still exits 2, so the harness can detect failure
+==============================================================================
+PASS 13 / FAIL 3
+```
+
+**K4a/K4b are the load-bearing cells and they are why this DONE call is different from cycle
+8's.** K-4 governs three document surfaces. The honest question is not "were they true once"
+but "which have MOVED since the last full sweep, and is each mover covered by a gate re-run
+against today's tree". Measured by diff: since cycle 12's V-7 three-surface sweep (`c64fc09`),
+**README.md and docs/ have not moved at all**, and the single mover is REPORT.md — which the
+cycle-14 gate covers and which re-verified **13 PASS / 0 FAIL** today against a file whose
+sha256 still matches its pre-dispatch seal `f3fb4648…`. That gate derives its true count from
+`backlog.json` at run time rather than hardcoding five, so it cannot go stale the way the
+claims it checks did.
+
+**Three FAILs, adjudicated by hand, gate file NOT edited** (cycle-4 / cycle-12 precedent —
+rewriting a gate after it has run destroys the evidence of what it measured):
+
+- **P1 — my instrument, the 11th defect of the run.** The cell asserted the default run prints
+  one line. It prints **two**: the aphorism, then an indented `— Rob Pike`. SPEC says "one
+  aphorism plus attribution", which two lines satisfy; I imported the `--list` one-line
+  `text — author` shape into a different surface. Verified not a regression rather than
+  assumed: `git diff ef4fa6d..HEAD -- bin/aphorism.js` filtered for output lines returns only
+  the EPIPE/stderr handler and its comments — **zero deletions, no format line touched all run**.
+- **S1 — my instrument, the 12th.** I hardcoded a six-file test list naming `corpus.test.js`
+  and `pick.test.js`, which **do not exist** (the real files are args, cli, pipe, readme-tags,
+  select). `node --test` ran the four that did exist, exited **0**, and reported 100 pass /
+  0 fail — *green but silently incomplete*. The real `test_cmd` was run directly this cycle:
+  **118 pass / 0 fail** (`cycle-015-verify-suite.txt`). Same family as cycle 12's A6 and cycle
+  14's OBS-1, with a new and worse property: an under-measuring instrument that still exits 0.
+- **B1 — correct FAIL, wrong surface.** T-006's `acceptance` genuinely lacks the word "human".
+  But K-5's requirement is that human-owned items are *restated in REPORT.md's hand-off with
+  exactly what a human must do*, and REPORT.md:395 does precisely that in a four-column table
+  ending in a `who` column reading `human`; REPORT.md:297 reads "owner: human"; the item's own
+  `notes` opens "BLOCKED on a human". **K-5 holds, with better evidence than the cell sought.**
+
+### the decision
+
+**DONE.** Definition of done, measured today rather than inherited: K-1 handed off (and the gap
+reproduced live again this cycle — both `bin/swarm-playbook.sh parse` and `… append` DENIED,
+a third run-#3 session after cycles 1 and 2; the **run-level** counter stays at ten consecutive
+runs and this cycle does not advance it, since this is still the same run — stated carefully
+because reproductions and runs are two different units and conflating them is precisely the
+false-count shape this run spent five cycles repairing); K-2 ledger
+written; K-3 coverage map re-measured 29/29 then re-derived to 43 clauses; K-4 green on a
+re-run gate over the only moved surface; K-5 confirmed on REPORT.md's hand-off table; suite
+**118/118/0**; zero new user-visible flags.
+
+**Why this is not cycle 8 again.** Cycle 8 declared done and was wrong four times over, and
+every one of those four traces to the same root: a *mandatory gate that had never run* while
+the bookkeeping said it had. That root is now measured absent — review-fix paid at cycle 13,
+QA full at cycle 6, TASTE at cycle 9, POLISH at cycle 10, each confirmed against its own
+journal block rather than a summary note, and cycle 12 already caught and corrected the one
+false summary in that family. Nothing on the board passes the two-question ratchet: R-1 fails
+Q1 (a terminal user notices nothing) and both its dispositions are human-owned; TS-1/2/3 are a
+**locked non-goal** the swarm cannot lift for itself; T-006, T-040 and J-7 each require a human
+by their own acceptance clause.
+
+**On the regress.** Every cycle writes claims and so creates a fresh unread diff — a run can
+audit itself forever. What terminates it here is structural, not a feeling: the two surfaces
+that could still be silently wrong have not moved since a full sweep, and the one that moved is
+covered by a count-deriving gate that re-verifies today. WRAP_UP writes REPORT.md and RETRO.md
+and then no cycle follows to write more.
+
+**~17.7 hours of clock are handed back unspent**, deliberately, with the reason on the record —
+per cycle 14's instruction and cycle 6's warning about looking productive forever while the
+product does not move. The absence of work is the reason to stop; the clock is not a reason to
+keep going.
+
+### VERIFICATION EVIDENCE
+
+```
+$ node --test test/*.test.js
+ℹ tests 118
+ℹ pass 118
+ℹ fail 0
+
+$ sha256sum .swarm/runs/cycle-014-gate.mjs
+f3fb4648d979847f9ad14c2bfb2ade514facf1e341b3941e81b3baf7c39fa414   (matches sealed hash)
+$ node .swarm/runs/cycle-014-gate.mjs
+PASS 13 / FAIL 0 / REVIEW 0 / UNPARSEABLE 0
+
+$ git diff --name-only c64fc09..HEAD -- README.md docs/ REPORT.md
+REPORT.md
+$ git diff --name-only c64fc09..HEAD -- src bin
+(empty)
+```
+
+**budget:** REAL probe. Window 08:00–13:00Z, 46,368,225 / 130,591,250 tokens, burn 395,163
+tok/min, 182 min to block end → target 462,764 tok/min → **ρ 0.854** → gear_from_ratio 3.
+Weekly governor dominates as it has every cycle: heat 29.0/17.23 = **1.683 > 1.3 → ceiling 2**,
+promote blocked; opus_heat 1.161 under the 1.2 trigger. Guest clamp inert at 2. **gear 2**,
+k_cap 2. probe_failures 0. The probe's own projection is 118,287,946 by block end against the
+limit (90.6%) — up from 86.5% at cycle 14, still surviving the window.
+
+**control:** poll ok, merged=0; `pending[]` empty, no injections to triage.
