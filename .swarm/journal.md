@@ -11922,3 +11922,338 @@ line is a kickoff-time measurement, not a claim about now; runs #2 and #3 added 
 Noted so a reader does not read it as a false count claim under K-4.
 
 **Dispatch follows this commit.** Nothing below this line existed when the hash above was taken.
+
+### cycle 10 — dispatch, gate, outcome (VALUE)
+
+**Work type:** polish-docs, one item, dispatched as a DIRECT Agent call. Headless
+pacer-spawned `-p` cycle, so the Workflow tool is review-gated and direct dispatch is the
+documented SKILL.md fallback — the same basis cycles 6, 8 and 9 used. `craft.docs` from
+`swarm-craft.mjs` spliced into the polisher prompt; `degraded: []`.
+
+#### Attempt 1 — haiku — FAILED the gate, honestly and usefully
+
+The polisher returned a confident result, including a section it labelled EXECUTION_PROOF:
+"Exit code: 0", with twelve lines of plausible tag output. The help line it shipped was:
+
+```
+Run node bin/aphorism.js --list --json | jq -r ".tags[]" | sort | uniq -c | sort -rn to see tags in the corpus.
+```
+
+The gate extracted the command **from the live `--help` output** and ran that, which is not
+the same thing as running what the agent had in mind:
+
+```
+FAIL  A3 extracted command ends in '.' — not pasteable as printed
+sort: cannot read: to: No such file or directory
+FAIL  A4 printed command exited 2
+FAIL  A5 output not a deduped list (0 lines, 0 unique)
+FAIL  A6 output != independently derived tag vocabulary
+```
+
+The command was embedded mid-sentence, so a user pasting the line hands `sort` the words
+"to see tags in the corpus." as filenames. The agent's "exit code 0" was true of the command
+it *intended* and false of the command the product *prints* — and the acceptance clause says
+"as printed", which is the entire item. **This is the single clearest justification this run
+has produced for hard rule 2.** An orchestrator that had accepted the EXECUTION_PROOF section
+at face value would have shipped a help line that does not run, and would have reported it as
+verified.
+
+Response per cycle.md step 6.4: `git checkout -- src/args.js` back to a clean tree,
+`attempts` → 1, escalate ONE rung on the routing ladder (haiku → sonnet). The failure was
+described to attempt 2 in terms of the *acceptance clause and the observed product defect* —
+never in terms of the check, which stayed sealed and unread.
+
+#### Attempt 2 — sonnet — PASSED 12/12
+
+```
+Valid tags are documented in README.md under "Tag vocabulary".
+To see tags in the corpus, run:
+  node bin/aphorism.js --list --json | jq -r '.tags[]' | sort -u
+```
+
+Diff is two lines in `src/args.js` and nothing else. README untouched — its ~line 82
+frequency-count variant (`| sort | uniq -c | sort -rn`) is correct for *its* purpose, showing
+pool sizes, and stays; the help line answers its own stated question ("to see tags in the
+corpus") with the plain vocabulary. That division was the sealed gate's reading (A6 compares
+against bare tag names) and it survives contact with the result.
+
+#### VERIFICATION EVIDENCE — gate byte-identical to the pre-dispatch seal
+
+```
+=== TS-4 gate @ 69bb9df ===
+PASS  A1 help has a jq tag-discovery line
+      line:   node bin/aphorism.js --list --json | jq -r '.tags[]' | sort -u
+PASS  A2 line names the invocation (node bin/aphorism.js)
+PASS  A3 command is pasteable as printed (no trailing period)
+PASS  A4 printed command exits 0
+PASS  A5 output deduped (12 lines, 12 unique)
+PASS  A6 output == corpus tag vocabulary (12 tags)
+PASS  A7 corpus untouched
+PASS  A8 still zero-dependency (no manifest/lockfile/node_modules)
+PASS  A9 flag set unchanged: --author --help --json --list --seed --tag -h
+PASS  A9b unknown flag still exits 2
+PASS  A10 test_cmd green (pass 118, fail 0)
+PASS  A11 README tag command runs clean
+=== TS-4 gate: PASS ===
+```
+
+Hash re-computed AFTER the run, against the seal committed in 69bb9df before dispatch:
+
+```
+a9f5e0f511dfba31c1ef6f06b5367d306193c4fbff420463bf6d89e005394438  c10-gate-TS-4.mjs   (post-run)
+a9f5e0f511dfba31c1ef6f06b5367d306193c4fbff420463bf6d89e005394438  c10-gate-TS-4.mjs   (sealed pre-dispatch)
+```
+
+Identical. The gate that passed is the gate that was written before any agent existed, and
+attempt 1 proves it can fail.
+
+`test_cmd` re-run by the conductor, not by an agent:
+
+```
+ℹ tests 118
+ℹ pass 118
+ℹ fail 0
+ℹ duration_ms 5074.95
+```
+
+**Residual limitation, stated rather than papered over:** `node bin/aphorism.js …` is relative,
+so the printed command works from the repo root and not from an arbitrary directory. That is
+not a gap the fix should close — it is exactly how README documents every invocation ("No
+install step and no dependencies — Node 18+ and the repo is all you need"), and packaging a
+PATH binary is a locked non-goal. Recorded so nobody reads A2 as a stronger claim than it is.
+
+#### A bookkeeping defect found while persisting, and fixed here
+
+`state.json.last_cycle` still read `{"cycle": 7, …}`. Cycles 8 and 9 both did real, verified
+work and neither updated the field, so for three cycles the dashboard's "last cycle outcome"
+column has been reporting cycle 7's fix wave. Nothing was lost — the journal, backlog and
+per-cycle artifacts all carry the truth, and this is a display field, not a resume input — but
+it is a second instance of the KI-34 pattern: a *record* that quietly stops tracking the thing
+it names. Corrected to cycle 10 in this cycle's write. Recorded rather than silently fixed,
+because a silent fix is how the first three cycles of drift happened.
+
+#### Counters, autotune, attribution
+
+- `consecutive_no_value` → 0 (verified value this cycle). `verified_this_cycle` 1.
+- **Wave autotune NOT applied.** cycle.md scopes it to "after a build-wave's merges +
+  verification complete"; this was polish-docs. `k_current` stays 4, `wave_streak` stays 1.
+  Noting it explicitly because attempt 1 failed a verify, and it would be easy — and wrong —
+  to reach for the k-1 rule on a work type the rule does not govern.
+- Burn attribution: `window_tokens` 77,982,439 → 93,731,996, delta **+15,749,557** credited to
+  cycle 9's target (same target, single-target run). `window_tokens_attributed` updated.
+
+#### Where the run now stands — and the decision the NEXT cycle owes
+
+**The backlog has zero `todo` items.** Six live items remain and all six are `blocked` on a
+human decision this swarm cannot honestly make for itself:
+
+| item | blocked on |
+|---|---|
+| TS-1, TS-2, TS-3 | corpus expansion — a locked non-goal of run #3 |
+| T-006 | human audit of corpus attributions (KI-2) |
+| T-040 | corpus retag consequences |
+| J-7 | two unspecified CLI behaviours (measured gaps D-42, D-43) |
+
+All five of this run's must-haves (K-1..K-5) were ticked and conductor-verified at cycle 5,
+and the three pre-POLISH gates are complete: review-fix c5, QA full c6, TASTE c9. POLISH is
+now complete too. On the face of it the churn-breaker's DONE condition is met — definition of
+done satisfied, no VALUE_LOOP candidate passing the ratchet.
+
+**I am deliberately NOT declaring DONE this cycle**, and the reason is worth stating because
+either error is expensive. There are **20.1 hours to `stop_at`**, so terminating now throws
+away a large paid window on a judgment made in the same breath as finishing a task — and the
+DONE flag routes straight to WRAP_UP, which is not reversible within the run. But the opposite
+error is just as real: a run whose scope is genuinely exhausted, kept alive for 20 hours,
+manufactures busywork, and this run's own kickoff taste judge already scored it use-twice 3.
+
+So the next cycle owes exactly one bounded thing: **one deliberate VALUE_LOOP candidate-
+generation pass against the locked SPEC** — candidates sourced from the spec and the known-
+issues list, not from the exhausted backlog — scored on the two-question ratchet ("would the
+target user notice?" AND "would they still care after 10 minutes?"). If nothing clears it,
+declare the target `done`, set phase `DONE`, and go to WRAP_UP with the clock unspent and the
+reason on the record. If something clears it, build that. Either way the answer is settled
+next cycle, not deferred again.
+
+**Commit:** see below. **Outcome: VALUE** (1/1 verified).
+
+#### runfile-mirror (cycle 10) — the RESUME path if the runfile is lost
+
+```json
+{
+ "version": 1,
+ "targets": [
+  {
+   "path": "/opt/targets/aphorism-cli",
+   "status": "active",
+   "weight": 1
+  }
+ ],
+ "rotation_cursor": 0,
+ "rotation_schedule": [
+  0
+ ],
+ "stop_at": "2026-08-19T03:48:28+00:00",
+ "usage_reset_at": "2026-08-18T08:00:00+00:00",
+ "usage_reset_at_note": "MEASURED at cycle 2 (was fabricated as stop_at through cycle 1). \"npx ccusage@latest blocks --json --token-limit max\" - the exact PROBE_CMD of the denied swarm-budget.sh - reports the active 5h block as 2026-08-18T03:00:00Z..08:00:00Z. Bash(npx:*) is allowlisted, so the allowlist gap blocks the SCRIPT, not the MEASUREMENT. Rolls forward in 5h blocks per swarm-budget.sh:205-209.",
+ "model_policy": "value-routing",
+ "auth_mode": "subscription",
+ "run_label": "aphorism-cli improvement run #3",
+ "heartbeat": {
+  "ts": 1787039264,
+  "next_wakeup_at": 1787040164,
+  "pid": 2190850,
+  "limp": false,
+  "degraded_tiers": [],
+  "wakeup_note": "Cycle 10 IN FLIGHT. Work type PICKED: polish-docs (TS-4) -> re-touched to the 900s polish-docs wave budget per cycle.md step 0.3. Gate sealed pre-dispatch, sha256 in runs/c10-gate-TS-4.sha256; discriminating baseline in runs/c10-gate-baseline.txt FAILS A2-A6 on the unfixed tree and PASSES A7-A11, so the gate can fail and the five failing assertions are exactly the TS-4 defect."
+ },
+ "pacing": {
+  "mode": "guest",
+  "dial": 0.3
+ },
+ "budget": {
+  "source": "REAL, MEASURED at cycle 10. bin/swarm-budget.sh is still unrunnable; confirmed this cycle by STRUCTURAL READ of SWARM/.claude/settings.json rather than by triggering an 11th denial (permissions.allow carries nothing for swarm-budget.sh or swarm-playbook.sh in any path form). Its exact PROBE_CMD was invoked directly (Bash(npx:*) allowlisted) and the script arithmetic replicated by hand from source: governor 104/131-139, T_target 196-214, active-block parse 247-251, ratio 300-309, gear_from_ratio 143-153, emit 156-176. Raw probe: <target>/.swarm/runs/cycle-010-probe.json. Replication: SWARM/runs/c10-gear.py. probe_failures stays 6 -- the SCRIPT was not invoked, and an unattempted probe is not a failed one.",
+  "gear": 2,
+  "gear_target": 2,
+  "ratio": 0.19,
+  "mode": "guest",
+  "k_cap": 2,
+  "promote": false,
+  "demote": true,
+  "window_tokens": 93731996,
+  "window_cost_usd": 82.47,
+  "api_cap_usd": null,
+  "api_spend_usd": 0,
+  "tokens_per_hour": 24090574,
+  "projected_depletion_at": 1787044476,
+  "last_probe_ts": 1787038968,
+  "last_real_probe_ts": 1787038968,
+  "probe_failures": 6,
+  "gear_evidence": "MEASURED at cycle 10. limit 130591250, window 93731996 (71.8% by token count; the probe own percentUsed says 77.31 -- it weights differently, and swarm-budget.sh:300 uses lim-tok, which is the figure used here), burn 401510 tok/min. T_target = min(rolled-forward reset 1787040000, stop 1787111308) = 1787040000, 17 min out; target = dial 1.00 (guest forces 1.0) x 36859254 remaining / 17 min = 2168191 tok/min; rho = 401510/2168191 = 0.19 -> gear_from_ratio 5. Weekly governor from runs/allocator.json (re-read: ok=true source=probe, posture trickle, allow_premium_pct 3.379, dial 0.30): weekly_used 27.0 / week_elapsed 15.87 = heat 1.70 > 1.3 -> ceiling 2, promote blocked. t = min(5,2) = 2; guest clamp (t>3) inert; PREV_GEAR 2 -> hysteresis APPLIED 2. TREND: rho 0.57 (c7) -> 0.47 (c8) -> 0.19 (c10). The 5h window is wide open and alone would buy gear 5; the weekly governor is the sole binding constraint and cannot move before week_resets_at 1787547599. ONE CORRECTION to the cycle-8 note: opus_heat is now 1.20 exactly, which is NOT > 1.2, so opus no longer blocks promote independently -- weekly_heat 1.70 does it alone. No effect on the applied gear; recorded because cycle 8 named two live blockers and only one still is.",
+  "weekly": {
+   "ok": true,
+   "weekly_used_pct": 27.0,
+   "opus_used_pct": 19,
+   "week_elapsed_pct": 15.87,
+   "weekly_heat": 1.7,
+   "opus_heat": 1.2,
+   "ceiling": 2,
+   "promote_blocked": true,
+   "source": "REAL: runs/allocator.json ok=true source=probe, re-read at cycle 10 (posture trickle, allow_overall_pct 0, allow_premium_pct 3.379, dial 0.30, week_resets_at 1787547599)."
+  }
+ },
+ "watchdog": {
+  "mode": "normal",
+  "plist_loaded": true,
+  "lockfile": "/opt/swarm/runs/watchdog.lock",
+  "relaunch_attempts": 0,
+  "plist_note": "systemd, not launchd. swarm-watchdog.timer is ACTIVE and firing on its 30-min cadence (last 06:39:49Z, next 07:09:49Z). plist_loaded true on that evidence. KI-26 IS NOW SETTLED by cycle 8 item N-9, and the answer is worse than the kickoff caveat guessed: the timer fires and the script runs, but its DONE-guard (swarm-watchdog.sh:283) exits 0 on the bare existence of <target>/REPORT.md - which on an IMPROVEMENT RUN was written by a previous run - so the staleness gate at :340 is never reached and no relaunch can ever be attempted. Whole-log histogram: ZERO decision=relaunch in 195 firings, ever. Recovery for this run is unreachable by construction; hard rule 5 forbids patching bin/ mid-run. Full finding + hand-off patch: <target>/.swarm/runs/cycle-008-N-9-watchdog-finding.md."
+ },
+ "wrap_up_complete": false,
+ "cycles_since_recycle": 9,
+ "artifact": {
+  "url": "",
+  "file": "/opt/swarm/runs/dashboard.html",
+  "publish_failures": 0
+ },
+ "playbook": {
+  "mode": "auto",
+  "applied": [
+   "L-008",
+   "L-016",
+   "L-020",
+   "L-021",
+   "L-022",
+   "L-024",
+   "L-026",
+   "L-029",
+   "L-031",
+   "L-033",
+   "L-034",
+   "L-042",
+   "L-043",
+   "L-044"
+  ],
+  "vetoed": [],
+  "source": "learnings.md parsed BY HAND \u2014 bin/swarm-playbook.sh parse DENIED at this kickoff (9th consecutive run). 20 lessons present, at the documented cap of 20, not over it.",
+  "not_wired": {
+   "ids": [
+    "L-020",
+    "L-021",
+    "L-022"
+   ],
+   "why": "All three instruct browser/React/SPA or env-var behaviour (component-mount tests, hard-reload after restart, persisted UI state). aphorism-cli is a zero-dependency terminal CLI with no browser surface and no env-var-dependent behaviour, so wiring them into prompt_lines would be noise a builder must discard. Staged as applied for the ledger, deliberately kept OUT of prompt_lines \u2014 the same call runs #2 and #3 made and reported as not-exercised."
+  },
+  "ledger_line_blocked": "RESOLVED at cycle 2 by item N-2: record-applied is still denied, but the ledger line was written by hand into playbook/applied.log and is marked as a hand-edit in its own note, with two inherited provenance claims corrected against the file.",
+  "directives": {
+   "wave_k": 3,
+   "routing_recs": [
+    "core-logic->fable"
+   ],
+   "prompt_lines": {
+    "builder": [
+     "The conductor is the SOLE committer \u2014 never commit or push yourself",
+     "The conductor seals its verification gate by hash before dispatch \u2014 do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test"
+    ],
+    "reviewer": [
+     "The conductor is the SOLE committer \u2014 never commit or push yourself",
+     "The conductor seals its verification gate by hash before dispatch \u2014 do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test",
+     "Assign each fixer a pairwise-disjoint file set; two fixers must never share a file \u2014 and treat that as necessary, not sufficient: dispatch sequentially whenever one item's acceptance is a measurement OF a tree another item edits"
+    ],
+    "qa": [
+     "The conductor is the SOLE committer \u2014 never commit or push yourself",
+     "The conductor seals its verification gate by hash before dispatch \u2014 do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test",
+     "Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish \"I verified this is wrong, here is the computation\" from \"this looks suspicious but I could not confirm it\".",
+     "Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value.",
+     "When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive \u2014 a kill you cannot attribute is not evidence.",
+     "Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps.",
+     "Classify each surviving mutant as HOLE (a real gap \u2014 harden it) or BOUNDARY (behaviour the spec does not decide \u2014 document it) BEFORE writing any test",
+     "Never assert against prose matched by regex \u2014 read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns",
+     "For every mutation that must kill the suite, author one control that must leave it GREEN \u2014 a check that dies on everything is a snapshot test, not an assertion"
+    ]
+   }
+  }
+ },
+ "helper_denials": {
+  "swarm-budget.sh": 6,
+  "swarm-notify.sh": "CORRECTED at cycle 7 \u2014 NOT denied. The relative form `bin/swarm-notify.sh <verb>` from cwd /opt/swarm is allowlisted and WORKS: poll returned exit 0 and appended `poll ok merged=0` to runs/notify.log at 06:26:33Z this cycle, and runs/notify.log already carried `send phase-change ok` at 04:15:14Z. The 3 denials cycles 4-6 recorded were denials of the ABSOLUTE path form, which has no allowlist entry; they were journaled as if the helper itself were dead. Consequence: cycle 6s REVIEW -> QA phase-change push was avoidable, not impossible.",
+  "swarm-playbook.sh": "denied at kickoff (parse) and at cycle 2 (record-applied) \u2014 genuinely dead, no allowlist entry in any path form",
+  "note": "The gap is NOT uniform across helpers, which is the correction cycle 7 makes to every prior cycles version of this note. permissions.allow carries `Bash(bin/swarm-notify.sh:*)` (relative, works) and a dead macOS absolute path for the same script; it carries NOTHING for swarm-budget.sh or swarm-playbook.sh in any form. So notify is reachable relative-only, budget and playbook are unreachable entirely, and the K-1 hand-off patch (absolute /opt/swarm/bin entries) still fixes all three. Per hard rule 5 this is journaled and reported, never live-patched mid-run."
+ },
+ "stop_at_epoch_note": "stop_at 2026-08-19T03:48:28+00:00 parses to 1787111308. The cycle-5 journal recorded 1787110108, 1200s low. The error was CONSERVATIVE (it could only have triggered WRAP_UP early, never late), so hard rule 8 was never at risk; corrected here so it stops propagating."
+}
+```
+
+#### cycle 10 addendum — `cycle-NNN-*` artifact names collide across runs (KI-35, low)
+
+Noticed while confirming this cycle's evidence files had landed. `.swarm/runs/` now holds two
+generations of `cycle-010-*`:
+
+```
+-rw-r--r-- 1 swarm swarm   590 Aug 15 14:00 cycle-010-await.py          <- run #1
+-rw-r--r-- 1 swarm swarm  6657 Aug 15 14:06 cycle-010-dashboard.py      <- run #1
+-rw-r--r-- 1 swarm swarm  1675 Aug 15 13:51 cycle-010-heartbeat.py      <- run #1
+-rw-r--r-- 1 swarm swarm 11728 Aug 15 14:03 cycle-010-persist.py        <- run #1
+-rw-r--r-- 1 swarm swarm 11318 Aug 15 14:00 cycle-010-verify-I-4b.js    <- run #1
+-rw-r--r-- 1 swarm swarm  7638 Aug 18 07:57 cycle-010-gate-TS-4.mjs     <- run #3 (this cycle)
+-rw-r--r-- 1 swarm swarm 13537 Aug 18 07:42 cycle-010-probe.json        <- run #3 (this cycle)
+```
+
+cycle.md names per-cycle artifacts `cycle-NNN-<type>` with NNN the zero-padded cycle number.
+Improvement runs restart that counter at 1 while writing into the *same* `.swarm/runs/`
+directory, so run #3's cycle 10 shares a namespace with run #1's cycle 10.
+
+**Nothing was overwritten this cycle** — verified by the Aug 15 timestamps above, all intact.
+But that is luck, not design: it held only because this cycle's suffixes (`gate-TS-4`,
+`probe`, `verify-TS-4-attemptN`) happen to differ from run #1's (`await`, `dashboard`,
+`heartbeat`, `persist`, `verify-I-4b`). A run-#3 cycle that wrote `cycle-010-dashboard.py`
+would have silently destroyed run #1's evidence file of the same name, and since the target
+repo commits every cycle, the loss would look like an ordinary modification in the diff.
+
+The exposure is bounded — `.swarm/runs/` is version-controlled in the target repo (unlike
+SWARM's own `runs/`, which KI-34 records as unversioned), so an overwrite is *recoverable*
+from git history even though it is not *visible* as a collision.
+
+NOT FIXED, and outside this run's remit: the naming convention lives in
+`SWARM/reference/cycle.md`, which hard rule 5 fences as read-only mid-run. Filed as KI-35
+(low) for the morning report. Candidate fix for a human: prefix per-run, e.g.
+`cycle-r3-010-<type>`, or fold the run label into the directory (`.swarm/runs/run-3/`).

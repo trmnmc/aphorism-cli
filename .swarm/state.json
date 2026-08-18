@@ -5,7 +5,7 @@
   "run_label": "improvement-run-3",
   "run_started_at": "2026-08-18T03:48:36+00:00",
   "phase": "VALUE_LOOP",
-  "cycle": 9,
+  "cycle": 10,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "spec_digest": [
@@ -507,6 +507,17 @@
       "detail": "MEASURED at cycle 9, not inferred. `git -C /opt/swarm show --stat 76b3a01` -> subject \"run #3 cycle 6: QA full pass -- dashboard render, c6 harness, runfile\", contents: tmp_aph_err.txt (0 bytes) and tmp_aph_out.txt (0 bytes), 2 files changed, 0 insertions, 0 deletions. The commit contains two empty stray temp files and nothing else. The same shape applies to c2 (c2703b1). Found because cycle 9's own SWARM commit returned \"nothing to commit, working tree clean\" and that was CHECKED rather than shrugged off; `git check-ignore -v` confirmed runs/dashboard.html, runs/c9-dashboard.mjs and runs/current.json are all ignored by .gitignore:2.",
       "why_it_matters": "Low severity because NOTHING IS LOST: the durable state lives in the TARGET repo, which is committed and pushed every cycle per hard rule 1 and carries .swarm/journal.md, state.json, backlog.json and every per-cycle artifact. The runfile is additionally mirrored into each journal block, which is exactly the RESUME path for a lost runfile. The defect is one of RECORD HONESTY, not data: a reader auditing the run through SWARM commit subjects would believe a dashboard render was committed there when it was not. It also means the gitignored `runs/` tree is the ONE part of the run with no version history -- a bad render overwrites the previous one irrecoverably.",
       "fix": "Two independent halves, both for a human, neither applied (hard rule 5 fences SWARM outside runs/ and playbook/, and .gitignore is outside both). (1) Stop naming untracked artifacts in SWARM commit subjects -- or drop the SWARM-side cycle commit entirely, since the target commit is the one that carries the state. (2) Decide deliberately whether `runs/` should stay ignored; if the per-cycle harnesses and dashboards are meant to be auditable, un-ignore runs/*.mjs and runs/dashboard.html. Also worth deleting the two stray empty tmp_aph_*.txt files that DID get committed."
+    },
+    {
+      "id": "KI-35",
+      "severity": "low",
+      "opened_cycle": 10,
+      "title": "cycle-NNN-* artifact names collide across runs in .swarm/runs/",
+      "detail": "Improvement runs restart the cycle counter at 1 while writing into the same .swarm/runs/ directory, so run #3 cycle 10 shares a filename namespace with run #1 cycle 10. Both generations of cycle-010-* are present today and NOTHING was overwritten -- verified by intact Aug 15 timestamps -- but only because this cycle's suffixes (gate-TS-4, probe, verify-TS-4-attemptN) differ from run #1's (await, dashboard, heartbeat, persist, verify-I-4b). A collision would be a silent overwrite that reads as an ordinary modification in the per-cycle commit diff.",
+      "exposure": "Bounded and recoverable: .swarm/runs/ IS version-controlled in the target repo (unlike SWARM/runs/, see KI-34), so an overwrite is recoverable from git history even though it is not visible as a collision.",
+      "why_not_fixed": "The naming convention lives in SWARM/reference/cycle.md, which hard rule 5 fences as read-only mid-run.",
+      "owner": "human (SWARM maintainer)",
+      "candidate_fix": "Prefix per-run (cycle-r3-010-<type>) or fold the run label into the directory (.swarm/runs/run-3/)."
     }
   ],
   "counters": {
@@ -514,7 +525,7 @@
     "consecutive_failures": 0,
     "k_current": 4,
     "wave_streak": 1,
-    "window_tokens_attributed": 0,
+    "window_tokens_attributed": 15749557,
     "verified_this_cycle": 1
   },
   "qa": {
@@ -527,7 +538,8 @@
     "full_qa_note_cycle_006": "QA FULL pass run as DIRECT AGENT calls, not workflows/qa-verify.js: this is a headless pacer-spawned `-p` cycle where the Workflow tool is review-gated, and SKILL.md RESUME prescribes direct Agent dispatch as the documented fallback. Two deviations from the script contract, both recorded and neither a weakening: (1) the spec-only author was isolated by giving it a byte-identical COPY of SPEC.md in a directory containing nothing else (sha256 b495c99f... verified equal to the original) plus an explicit no-other-file instruction, because the script achieves spec-blindness by passing spec_text inline and args must be literal; (2) the executor stage was run BY THE CONDUCTOR instead of a sonnet agent \u2014 for a CLI with no dev server the scenarios are plain invocations, so running them here yields conductor evidence directly rather than an agent claim the gate would have to re-verify anyway. Result: 4/4 scenarios PASS against a spec-derived answer key. The value came from the live-look, not the scenarios: 4 findings, all 4 conductor-reproduced, one agent severity claim measured FALSE and re-scored down. DEDUPE CORRECTION applied within the same cycle: the look agent's 4th finding (empty --seed contradicts the Selection clause) turned out to duplicate measured gap D-43, which cycle 5 had already written into SPEC.md \"Undecided behaviours\" and routed to J-7. Q-3 and KI-32 were filed, then RETRACTED before commit; the one fact D-43 lacks (whitespace-PADDED seeds are accepted, so the refusal is specific to empty/whitespace-only) was folded into J-7's notes instead. Recorded because the near-miss is the lesson: an independent instrument re-deriving a known gap is corroboration, not new backlog, and filing it as new work would have inflated this cycle's apparent output with bookkeeping the run already owned.",
     "fix_wave_note_cycle_007": "Q-1 and Q-2 came from the cycle-6 QA live-look and were verified this cycle, so the QA pass converted into shipped repair rather than a list. Suite 102 -> 115 (13 new tests in test/pipe.test.js, the runs first new tests; K-3s zero-new-tests rule is not violated \u2014 that rule binds tests derived from the mutation coverage map, and these are derived from a measured, conductor-reproduced live-look defect). last_full_qa_cycle stays 6: this cycle ran no QA workflow.",
     "fix_wave_note_cycle_008": "Q-3 closed the write-error story on the second stream. bin/aphorism.js now carries a symmetric stderr error handler mirroring the stdout one from Q-1. The deliberate asymmetry, which is a judgment call and is recorded as such: on a NON-EPIPE stderr failure the tool writes NO diagnostic anywhere - re-writing to stderr could recurse into its own handler, and diverting to stdout would corrupt the data channel calling scripts parse. The exit code (3) is the only honest signal left. Suite 115 -> 118. TASTE remains the owed pass (last_taste_cycle still 0); backlog todo is now EMPTY, the 3 survivors are human-owned blocked items (T-006, T-040, J-7), so the next cycle picks TASTE or a VALUE_LOOP candidate, not a backlog item.",
-    "taste_note_cycle_009": "TASTE pass RUN and VERIFIED at cycle 9 -- the last of the three pre-POLISH gates (review-fix c5, QA full c6, TASTE c9). Verdict: wears-thin, 4 boredom findings, 0 fundamental. Dispatched as a DIRECT fable Agent call, not workflows/qa-verify.js: headless `-p` cycle, Workflow tool review-gated, direct dispatch is the documented SKILL.md fallback. Two contract-faithful adaptations are recorded in .swarm/runs/cycle-009-taste.json (CLI brief replaces the web serverBrief; no browser so evidence is raw terminal output, screenshots empty). THE GATE IS THE POINT: all four findings were conductor-reproduced by an 8-check script authored AFTER the agent returned (.swarm/runs/cycle-009-taste-gate.mjs, 8/8 PASS) plus test_cmd 118/118. One agent figure was measured and came back CONSERVATIVE rather than inflated: it reported the first repeat at use 12, but with N=50 the median first repeat is draw 9 and P(repeat by 12) = 76.2%, so the staleness bites SOONER than reported. The agent honored read-only -- git status was empty after its run. last_full_qa_cycle stays 6: this cycle ran no full-QA workflow."
+    "taste_note_cycle_009": "TASTE pass RUN and VERIFIED at cycle 9 -- the last of the three pre-POLISH gates (review-fix c5, QA full c6, TASTE c9). Verdict: wears-thin, 4 boredom findings, 0 fundamental. Dispatched as a DIRECT fable Agent call, not workflows/qa-verify.js: headless `-p` cycle, Workflow tool review-gated, direct dispatch is the documented SKILL.md fallback. Two contract-faithful adaptations are recorded in .swarm/runs/cycle-009-taste.json (CLI brief replaces the web serverBrief; no browser so evidence is raw terminal output, screenshots empty). THE GATE IS THE POINT: all four findings were conductor-reproduced by an 8-check script authored AFTER the agent returned (.swarm/runs/cycle-009-taste-gate.mjs, 8/8 PASS) plus test_cmd 118/118. One agent figure was measured and came back CONSERVATIVE rather than inflated: it reported the first repeat at use 12, but with N=50 the median first repeat is draw 9 and P(repeat by 12) = 76.2%, so the staleness bites SOONER than reported. The agent honored read-only -- git status was empty after its run. last_full_qa_cycle stays 6: this cycle ran no full-QA workflow.",
+    "polish_note_cycle_010": "POLISH gate run at cycle 10 as a DIRECT Agent dispatch, not workflows/polish-docs.js: headless pacer-spawned `-p` cycle, Workflow tool review-gated, direct dispatch is the documented SKILL.md fallback (same basis as cycles 6, 8 and 9). Single item TS-4, the only todo in the backlog. THE GATE WAS SEALED BEFORE DISPATCH this time rather than authored after the agent returned (the cycle-9 taste-gate pattern): SWARM/runs/c10-gate-TS-4.mjs, sha256 a9f5e0f5..., committed in 69bb9df together with a DISCRIMINATING BASELINE proving it failed A2-A6 on the unfixed tree while passing A7-A11. Running that baseline found TWO BUGS IN THE GATE ITSELF (an expected-flag list missing --tag; a test-summary regex matching the TAP reporter when node --test here uses the spec reporter, which reported a green 118/118 suite as NOT green) -- both false FAILs that would have fired against any tree, both fixed before sealing. Two bugs in eleven assertions is the measured argument for baselining a gate instead of reasoning about it. Attempt 1 (haiku) failed the gate honestly; attempt 2 (sonnet, one rung up the ladder) passed 12/12 with the gate byte-unchanged. last_full_qa_cycle stays 6, last_taste_cycle stays 9: this cycle ran no QA or taste workflow."
   },
   "baseline_2026_08_18": {
     "test_cmd_output": "tests 102 | suites 0 | pass 102 | fail 0 | cancelled 0 | skipped 0 | todo 0 | duration_ms 4788.75",
@@ -535,9 +547,9 @@
     "git_head": "3d8997a"
   },
   "last_cycle": {
-    "cycle": 7,
-    "work": "fix wave \u2014 Q-1 (stdout write errors, 1 sonnet builder) + Q-2 (corpus accent, inline)",
+    "cycle": 10,
+    "work": "polish-docs \u2014 TS-4 (help tag-discovery snippet), 1 agent, gate sealed pre-dispatch",
     "outcome": "value",
-    "verified": "Q-1 30-cell sealed two-arm gate PASS; Q-2 13/13 PASS; suite 102 -> 115, 0 fail; Q-3 filed on a measured discriminator"
+    "verified": "TS-4 gate 12/12 PASS on attempt 2 (haiku attempt 1 failed A3-A6, escalated to sonnet); gate sha256 unchanged since pre-dispatch seal; suite 118/118, 0 fail"
   }
 }

@@ -685,7 +685,7 @@
       "id": "TS-4",
       "title": "Help's tag-discovery snippet is not a pasteable command",
       "kind": "polish",
-      "status": "todo",
+      "status": "done",
       "priority": 8,
       "effort": "S",
       "model": "sonnet",
@@ -696,8 +696,9 @@
       ],
       "packages": [],
       "acceptance": "The --help line that tells a user how to discover tags prints a COMPLETE, copy-pasteable command line (it names the binary as a user invokes it) and, as printed, actually produces a deduped tag list when pasted into a shell that has jq. No new flag, no new dependency, corpus untouched. If a correct one-liner is not achievable, the line is replaced by one that IS correct rather than left aspirational.",
-      "attempts": 0,
-      "notes": "From the cycle-9 TASTE pass, finding 4 (minor). CONDUCTOR-REPRODUCED: `node bin/aphorism.js --help` line 12 reads \"Run --list --json | jq '.tags[]' to see tags in the corpus.\" It omits the binary name, so it is not pasteable as printed, and `.tags[]` over NDJSON emits duplicates rather than a tag vocabulary. This is the ONLY one of the four taste findings that run #3's non-goals permit fixing: no flag, no dependency, no corpus entries."
+      "attempts": 1,
+      "notes": "From the cycle-9 TASTE pass, finding 4 (minor). CONDUCTOR-REPRODUCED: `node bin/aphorism.js --help` line 12 reads \"Run --list --json | jq '.tags[]' to see tags in the corpus.\" It omits the binary name, so it is not pasteable as printed, and `.tags[]` over NDJSON emits duplicates rather than a tag vocabulary. This is the ONLY one of the four taste findings that run #3's non-goals permit fixing: no flag, no dependency, no corpus entries. || CLOSED cycle 10. Attempt 1 (haiku) FAILED the sealed gate: it put the command mid-sentence, so as printed a paste yields \"sort: cannot read: to: No such file or directory\" (exit 2) -- the agent had verified the command it INTENDED, not the command the help PRINTS. Reverted to a clean tree, attempts=1, escalated haiku->sonnet per the routing ladder. Attempt 2 PASSED 12/12 against the same byte-identical gate (sha256 a9f5e0f5..., unchanged since the pre-dispatch seal in commit 69bb9df). Help now prints the command alone on its own line: node bin/aphorism.js --list --json | jq -r '.tags[]' | sort -u -> 12 unique tags, exit 0, set-equal to the vocabulary derived independently from src/corpus.js. README line 82 deliberately keeps its frequency-count variant.",
+      "verified_cycle": 10
     },
     {
       "id": "TS-1",

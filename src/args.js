@@ -15,7 +15,8 @@ Options:
   -h, --help       show this help and exit
 
 Valid tags are documented in README.md under "Tag vocabulary".
-Run --list --json | jq '.tags[]' to see tags in the corpus.
+To see tags in the corpus, run:
+  node bin/aphorism.js --list --json | jq -r '.tags[]' | sort -u
 `;
 
 const VALUE_FLAGS = {

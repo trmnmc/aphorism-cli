@@ -1,0 +1,17 @@
+=== TS-4 gate @ 69bb9df ===
+PASS  A1 help has a jq tag-discovery line
+      line:   node bin/aphorism.js --list --json | jq -r '.tags[]' | sort -u
+PASS  A2 line names the invocation (node bin/aphorism.js)
+      extracted: [node bin/aphorism.js --list --json | jq -r '.tags[]' | sort -u]
+PASS  A3 command is pasteable as printed (no trailing period)
+PASS  A4 printed command exits 0
+PASS  A5 output deduped (12 lines, 12 unique)
+PASS  A6 output == corpus tag vocabulary (12 tags)
+PASS  A7 corpus untouched
+PASS  A8 still zero-dependency (no manifest/lockfile/node_modules)
+PASS  A9 flag set unchanged: --author --help --json --list --seed --tag -h
+PASS  A9b unknown flag still exits 2
+PASS  A10 test_cmd green (pass 118, fail 0)
+PASS  A11 README tag command runs clean
+      readme: node bin/aphorism.js --list --json | jq -r ".tags[]" | sort | uniq -c | sort -rn
+=== TS-4 gate: PASS ===
