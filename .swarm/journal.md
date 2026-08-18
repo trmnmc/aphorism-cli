@@ -12476,3 +12476,150 @@ failure, `publish_failures` stays 0. On the VPS the file write IS the publicatio
 Notification emits: none owed. Phase did not change (VALUE_LOOP → VALUE_LOOP), no target went
 stalled, `publish_failures` did not reach 3. The meta line records `poll DENIED (cycle 11)`
 rather than a clean poll, per the step-2 finding.
+
+## cycle 12 | 2026-08-18T08:22:47+00:00 -> 08:35Z | aphorism-cli | VALUE_LOOP -> REVIEW
+
+work: V-7 (fix, S, conductor-inline) -- re-validate every falsifiable claim in README.md,
+  REPORT.md and docs/ against the current tree. The only todo on the board, opened by cycle
+  11's V-1 finding that must-have K-4 was verified at cycle 4 and then silently falsified by
+  cycles 7, 8 and 10 of this same run.
+dispatch: ZERO agents. Conductor-inline, as the item was routed. Same basis as cycles 1 and
+  11: this session carries a standing instruction not to call the Agent tool unless the user
+  asked for it, and V-7's work is measurement plus document repair that the conductor is
+  already holding the context for. Recorded because a zero-agent cycle can otherwise look
+  like a cycle that did nothing.
+
+budget: gear 2 (target 4, clamped) | rho 0.70 | 7,159,077 tokens this window | 18.7M tok/hour
+  | projected depletion 1787065222. governor clamp 2, promote blocked. REAL probe, DUE at
+  2442s >= 1800. bin/swarm-budget.sh remains unrunnable (no allowlist entry in any path form),
+  so its exact PROBE_CMD -- npx ccusage@latest blocks --json --token-limit max, allowlisted --
+  was run directly and the gear re-derived by hand against swarm-budget.sh:75-82, 125-142,
+  143-176, 190-214, 240-260, 295-315. Raw probe: .swarm/runs/cycle-012-probe.json.
+  THE WINDOW ROLLED: usage_reset_at was 08:00:00Z and is now past, so the script's roll-forward
+  (BLOCK=18000) puts T_target at 13:00:00Z -- which the probe independently confirms as the
+  active block end. Corrected in the runfile rather than carried stale.
+  weekly governor re-read from runs/allocator.json: weekly_used 28.0 / week_elapsed 16.3 =
+  heat 1.72 > 1.3 -> ceiling 2, promote blocked. opus_heat 19/16.3 = 1.17, still under 1.2, so
+  weekly heat remains the sole binding constraint. Hysteresis from PREV_GEAR 2 -> applied 2.
+  probe_failures stays 6: the SCRIPT was not invoked, and an unattempted probe is not a failed
+  one (cycle-10 convention).
+
+control: bin/swarm-notify.sh poll returned exit 0 and appended `poll ok merged=0` at 08:24:01Z.
+  0 pending, 0 inject, 0 applied. THIS CORRECTS CYCLE 11, which recorded the poll as DENIED and
+  told the next cycle to treat notify as unreliable. The relative form works, as cycle 7 first
+  established; cycle 11's denial was of a form it chose, not of the helper. notify is reachable,
+  relative-only. swarm-budget.sh and swarm-playbook.sh remain genuinely dead in every path form.
+
+METHOD -- the gate was sealed before the tree was touched, and its baseline is the point:
+  1. Authored .swarm/runs/cycle-012-gate-V-7.mjs from V-7's ACCEPTANCE CLAUSE, never from the
+     documents' own wording. 30 assertions over the three surfaces: 16 README, 10 REPORT,
+     4 docs/, of which 2 are declared NOTRUN by construction.
+  2. sha256 7ab5c2bb5425d0dfe6f0c8a2267148d1889d9d9d9d34bc91d5dacfa3f6264c13, committed in
+     be85a7f BEFORE a single document byte changed.
+  3. Ran it against the UNFIXED tree: 24 PASS / 4 FAIL / 2 NOTRUN
+     (.swarm/runs/cycle-012-baseline-V-7.txt). A gate green on the broken tree proves nothing;
+     this one goes red in four places and names each.
+  4. Repaired. Re-ran. 27 PASS / 1 FAIL / 2 NOTRUN, gate byte-identical (`sha256sum -c` OK).
+
+VERIFICATION EVIDENCE -- sealed gate, baseline vs post-repair (full files in .swarm/runs/):
+  FAIL   A6: README: 25 retired tag names, each exits 1 with stdout empty and a stderr message
+  FAIL   B5: REPORT run #3 hand-off names every blocked item with a next actor -- 3/6 covered,
+             MISSING TS-1, TS-2, TS-3
+  FAIL   B6: REPORT J-7 heading number word matches the 2 behaviours the section enumerates and
+             the backlog title (heading "Two", backlog "Four")
+  FAIL   C2: every triage row index maps to a real corpus entry with the same author
+             -- MISMATCH at 41
+  24 PASS / 4 FAIL / 2 NOTRUN          <- unfixed tree
+  27 PASS / 1 FAIL / 2 NOTRUN          <- after repair; only A6 remains, adjudicated below
+
+VERIFICATION EVIDENCE -- test_cmd, run by the conductor after the repair:
+  node --test test/*.test.js
+  tests 118 | suites 0 | pass 118 | fail 0 | cancelled 0 | skipped 0 | todo 0
+
+THE THREE REAL DEFECTS, and what each actually cost a reader:
+  (B5) The run #3 hand-off section covered 3 of the 6 items the backlog holds blocked on a
+       human. It was written at cycle 5; cycles 9-11 of the same run filed TS-1, TS-2 and TS-3
+       from the taste pass and nothing extended it. This is K-5 ("human-owned items get a named
+       actor") decaying inside its own run, the same shape K-4 decayed in at cycle 11 -- so the
+       decay was NOT a one-off in one document's first screen, which is the question V-7 existed
+       to answer. Repaired by appending all three with their measured evidence, and by stating
+       up front that all three wait on ONE scope decision, not three.
+  (B6) The J-7 hand-off heading read "Two CLI behaviours" while the backlog item it hands off
+       has read "Four CLI behaviours ... (from J-6 + N-4)" since run #2 cycle 4 -- and the
+       section's own body listed the other two under "Already measured", where a reader looking
+       for what to rule on would never find them. Repaired: heading and executive summary now
+       read four, and behaviours (3) and (4) moved into the ruling list. No measurement changed;
+       provenance kept.
+  (C2) docs/corpus-attribution-triage.md row 41 printed "Antoine de Saint-Exupery" where the
+       corpus holds "Antoine de Saint-Exupery" with an acute e. Not typography: --author is a
+       literal substring match, so MEASURED --
+         --author "Antoine de Saint-Exupery"  [as printed in the triage] -> exit 1, stdout empty,
+             stderr "aphorism: no aphorism matches those filters"
+         --author "Antoine de Saint-Exup<e-acute>ry" [corpus spelling]   -> exit 0, prints the entry
+       The document indexing the corpus printed an author string that finds nothing in it. All
+       50 rows were then checked mechanically against corpus author AND quoted prefix (gate C2,
+       C3): row 41 was the only one.
+
+THE ONE RESIDUAL FAIL IS MY OWN INSTRUMENT, and the sealed file is left unedited:
+  A6 extracts the retired tag names with the lookahead /(?=,| and | to )/ -- a LITERAL SPACE
+  after "to". The README wraps that phrase as "...and interoperability to<newline>reliability",
+  so `interoperability` never matches, the extractor counts 25, and it fails the README against
+  its own word "Twenty-six". The README is RIGHT. Hand-adjudicated: the 26 names read off the
+  prose by eye, each run through the binary --
+    A6 hand list length: 26
+    A6 names NOT taking the no-match path: none -- all 26 exit 1, stdout empty, stderr non-empty
+  The sealed gate is NOT rewritten (cycle-4 precedent: a gate rewritten after it runs destroys
+  the evidence of what it measured). The corrected assertion is a SEPARATE file that says in its
+  own header it was authored AFTER the baseline and carries no weight as pre-committed evidence:
+  .swarm/runs/cycle-012-gate-V-7-addendum.mjs -- 3/3 PASS including a NEGATIVE CONTROL (drop one
+  name from the paragraph and the extractor must count 25, not 26). It is a fair control on both
+  trees because V-7 changed no README byte at all: `git diff --stat be85a7f -- . ':!*.swarm*'`
+  is REPORT.md 106 +++ and docs/corpus-attribution-triage.md 10 +++, nothing else.
+  5th instrument bug of the run, 2nd inside a gate I sealed myself.
+
+NOTHING DELETED (K-4), measured not asserted: `git diff --numstat be85a7f` = 100+/6- REPORT.md,
+  9+/1- docs/. All 7 deleted lines listed in full: the exec-summary "Two CLI behaviors" line, the
+  hand-off's one-line cycle-5 dateline, the J-7 heading, its "rules on two behaviours" sentence,
+  two "Already measured" bullets, and triage row 41 -- each replaced in place by a version
+  carrying the correction. No dated history row was touched: gate B10 re-confirms the frozen
+  "48 tests", "80 pass / 0 fail" and "101 pass / 0 fail at dbc1939" figures still read as written,
+  and B9 re-confirms the derivation table's static rows still verify AT dbc1939.
+  METHOD NOTE, because I got this wrong once in the same cycle: my first deleted-line filter was
+  `grep -E "^-[^-]"`, which cannot see a deleted markdown bullet -- "- Cycle 4..." appears in the
+  diff as "-- Cycle 4..." and was excluded. It reported 4 deletions where there are 7. That is
+  cycle 11's A4 defect in a new costume (a check structurally unable to observe what it claims),
+  caught only because the numstat total disagreed with the line count. Re-run unfiltered.
+
+THE DONE DECISION, re-run as the cycle-11 hand-off required -- NOT DONE, and not for the
+reason anyone expected:
+  V-7's own result argues FOR done. The decay is bounded and now repaired; every falsifiable
+  claim across all three surfaces is green or honestly labelled not-run.
+  What blocks done is what the sweep found in the run's OWN BOOKKEEPING. state.json's
+  taste_note_cycle_009 says "the last of the three pre-POLISH gates (review-fix c5, QA full c6,
+  TASTE c9)". The review-fix half is FALSE, measured against the journal:
+    cycle 5 header: "## cycle 5 | ... | aphorism-cli | BUILD -> REVIEW"
+    cycle 5 work:   "build-wave [N-8, N-10] -- the last open must-have"
+    cycle 6 work:   "review-fix and TASTE remain owed before POLISH; whoever runs review-fix
+                     later should scope it to src/ bin/ test/, NOT to this run's diff"
+  Cycle 5 moved the PHASE into review; it ran no review-fix pass. TASTE was paid at cycle 9.
+  REVIEW-FIX HAS NEVER RUN IN RUN #3 -- one of the three passes cycle.md step 4 makes mandatory
+  before POLISH.
+  And it is not owed vacuously. `git diff --stat ef4fa6d..HEAD -- src bin` = bin/aphorism.js
+  +44, src/args.js 3, src/corpus.js 2, landed at cycles 7, 8 and 10 -- real shipped product code
+  that no review pass has ever examined. That is exactly the condition cycle 6 named when it
+  deferred the pass.
+  Cycle 8 declared this target DONE and has now been wrong four times over: cycles 9, 10, 11 and
+  12 each produced verified value, and every one traces to running a gate that had never run or
+  to the chain such a gate started. Declaring done while a mandatory gate sits unrun, on the
+  strength of a note that says it ran, is reasoning from the bookkeeping instead of from the
+  tree -- the exact error V-7 was chartered to correct.
+
+collision-scan: NOT APPLICABLE and reported as such, never as passed -- the standing gate check
+  is for browser targets built from classic non-module scripts; aphorism-cli is a terminal CLI
+  with no browser surface.
+
+outcome: VALUE 1/1 verified. Backlog 32 done / 6 blocked / 1 dropped / 0 todo.
+next: REVIEW-FIX, scoped as cycle 6 instructed -- src/ bin/ test/, adversarial, reproduce every
+  finding before fixing anything. Not the run's documentation diff.
+
+runfile-mirror: {"version": 1, "targets": [{"path": "/opt/targets/aphorism-cli", "status": "active", "weight": 1}], "rotation_cursor": 0, "rotation_schedule": [0], "stop_at": "2026-08-19T03:48:28+00:00", "usage_reset_at": "2026-08-18T13:00:00+00:00", "usage_reset_at_note": "ROLLED FORWARD at cycle 12, and independently confirmed. The prior value 08:00:00Z went past mid-cycle. swarm-budget.sh:205-209 rolls a past reset forward in 5h BLOCK steps, giving 13:00:00Z -- and the direct ccusage probe reports the active block as 08:00:00Z..13:00:00Z, so the arithmetic and the measurement agree. Raw probe: <target>/.swarm/runs/cycle-012-probe.json.", "model_policy": "value-routing", "auth_mode": "subscription", "run_label": "aphorism-cli improvement run #3", "heartbeat": {"ts": 1787042196, "next_wakeup_at": 1787043096, "pid": 2206718, "limp": false, "degraded_tiers": [], "wakeup_note": "Cycle 12 CLOSED. V-7 verified (VALUE 1/1): every falsifiable claim across README.md, REPORT.md and docs/ re-measured against the tree on a gate sealed by sha256 BEFORE the tree was touched -- baseline 24 PASS / 4 FAIL on the unfixed tree, 27 PASS / 1 FAIL after repair, test_cmd 118/118. Backlog is now 32 done / 6 blocked / 1 dropped / 0 TODO.\n\nTHE DONE DECISION CAME BACK **NOT DONE** AGAIN, on a new and better-founded reason than cycle 11's. V-7 itself argues FOR done: the documentation decay was real but bounded, and it is repaired. What blocks done is what V-7 turned up in the run's own bookkeeping -- **REVIEW-FIX HAS NEVER RUN IN RUN #3**, and state.json's taste_note_cycle_009 claims it ran at cycle 5. That claim is false against the journal: cycle 5's block reads 'work: build-wave [N-8, N-10]' under the header 'BUILD -> REVIEW' (the PHASE moved; no pass ran), and cycle 6 says in as many words that 'review-fix and TASTE remain owed before POLISH'. TASTE was paid at cycle 9; review-fix never was.\n\nNEXT CYCLE OWES THE REVIEW-FIX PASS, scoped exactly as cycle 6 instructed: **src/ bin/ test/, NOT this run's diff, or it will review bookkeeping**. It is not owed vacuously -- `git diff --stat ef4fa6d..HEAD -- src bin` is bin/aphorism.js +44, src/args.js 3, src/corpus.js 2, shipped at cycles 7, 8 and 10, and no review pass has ever looked at it. Three mandatory stages, and the middle one is the one that matters: reviewers -> adversarial verifiers that REPRODUCE each finding (an unreproducible finding is DISCARDED, not fixed) -> fixers for reproduced findings only. Budget 1800s; ~19h to stop_at, so no admission pressure.\n\nDISCIPLINE, unchanged and not optional: author the gate, SEAL IT BY HASH BEFORE touching the tree, run it against the UNFIXED tree first and require that it FAILS the assertions the fix is meant to flip while PASSING the rest. A gate green on the broken tree proves nothing. Corrections are stated, never hidden; dated history rows are never retro-edited.\n\nCARRY FORWARD A GATE DEFECT, UNREPAIRED ON PURPOSE: cycle-012-gate-V-7.mjs assertion A6 extracts the 26 retired tag names with a lookahead requiring a literal space after 'to', so the README's line-wrapped 'to<newline>reliability' drops `interoperability` and it counts 25. The README claim is TRUE (hand-verified: all 26 names exit 1, stdout empty, stderr non-empty). The sealed file is deliberately NOT edited -- rewriting a gate after it has run destroys the evidence of what it measured (cycle-4 precedent). The corrected assertion, with a negative control, is in cycle-012-gate-V-7-addendum.mjs, whose header states it was authored AFTER the baseline. If a later cycle reuses that gate, fix the lookahead to \\s, not a literal space. This is the 5th instrument bug of the run and the 2nd inside a gate I sealed myself -- the standing lesson is that a gate is a program and needs its own baseline, not confidence.\n\nDO NOT PICK: TS-1, TS-2, TS-3 (corpus expansion -- a LOCKED non-goal; the swarm cannot lift its own non-goal mid-run), T-006, T-040, J-7 (human-owned by their own acceptance clauses). All six stay blocked and are now ALL handed off in REPORT.md, which is what V-7 fixed. Do not re-open V-2 (consolidated SWARM tool-gap handoff) -- scored and rejected at cycle 11; WRAP_UP's morning report already carries those gaps.\n\nAFTER REVIEW-FIX: re-run the DONE decision once more. With review-fix paid, all three pre-POLISH gates will genuinely have run, the board will be 0 todo / 6 human-blocked, and DONE becomes the honest call -- WRAP_UP with reports, retro, distill, tag, final dashboard, wrap_up_complete = true, systemctl disable --now swarm-watchdog.timer. Hand unspent clock back with the reason on the record rather than manufacturing work.\n\nSTATE: gear pinned at 2 by the weekly governor (heat 1.72, ceiling 2) until week_resets_at 1787547600 -- rho is irrelevant, expect no upshift. The usage window ROLLED at 08:00Z; usage_reset_at is now 13:00:00Z, confirmed by both the script's roll-forward arithmetic and the probe's own active-block end. probe_failures 6; next real probe due at last_real_probe_ts + 1800. bin/swarm-budget.sh and bin/swarm-playbook.sh remain unrunnable; bin/swarm-notify.sh poll WORKED this cycle (exit 0), correcting cycle 11's note -- notify is reachable in its RELATIVE form only. KI-34 and KI-35 remain filed, fenced by hard rule 5, for the morning report."}, "pacing": {"mode": "guest", "dial": 0.3}, "budget": {"source": "REAL, MEASURED at cycle 12. bin/swarm-budget.sh is still unrunnable in any path form; its exact PROBE_CMD (npx, allowlisted) was invoked directly and the script arithmetic replicated by hand from source: guest dial force :82, governor :125-142, gear_from_ratio :143-153, emit :156-176, T_target roll-forward :190-214, active-block parse :247-251, ratio :295-315. probe_failures stays 6 -- the SCRIPT was not invoked, and an unattempted probe is not a failed one.", "gear": 2, "gear_target": 2, "ratio": 0.7, "mode": "guest", "k_cap": 2, "promote": false, "demote": true, "window_tokens": 7159077, "window_cost_usd": 6.75, "api_cap_usd": null, "api_spend_usd": 0, "tokens_per_hour": 18659411, "projected_depletion_at": 1787065222, "last_probe_ts": 1787042196, "last_real_probe_ts": 1787042196, "probe_failures": 6, "gear_evidence": "HELD AT 2, cycle 12, on a fresh window. The 5h block rolled at 08:00:00Z, so this is a new window: 7,159,077 tokens of a 130,591,250 limit, burn 310,990 tok/min. T_target = the rolled-forward reset 13:00:00Z (nearer than stop_at), 276 min out, remaining 123,432,173, guest forces dial 1.00 -> target rate 447,218 tok/min -> rho 0.70 -> gear_from_ratio 4. The weekly governor then dominates as it has all run: weekly_used 28.0 / week_elapsed 16.3 = heat 1.72 > 1.3 -> ceiling 2, promote blocked. opus_heat 1.17, still under the 1.2 trigger. Guest clamp (3) is inert at 2. Hysteresis from PREV_GEAR 2 -> applied 2, k_cap 2, demote true. Note the reading is genuinely healthier than last cycle (rho 0.19 -> 0.70 reflects a fresh window, not a slowdown) and it changes nothing: the ceiling binds until week_resets_at 1787547600.", "weekly": {"ok": true, "weekly_used_pct": 28.0, "opus_used_pct": 19, "week_elapsed_pct": 16.3, "weekly_heat": 1.72, "opus_heat": 1.166, "ceiling": 2, "promote_blocked": true, "source": "REAL: runs/allocator.json re-read at cycle 12 (ok=true, source=probe, posture trickle, allow_premium_pct 3.714, dial 0.30, week_resets_at 1787547600)."}}, "watchdog": {"mode": "normal", "plist_loaded": true, "lockfile": "/opt/swarm/runs/watchdog.lock", "relaunch_attempts": 0, "plist_note": "systemd, not launchd. swarm-watchdog.timer is ACTIVE and firing on its 30-min cadence (last 06:39:49Z, next 07:09:49Z). plist_loaded true on that evidence. KI-26 IS NOW SETTLED by cycle 8 item N-9, and the answer is worse than the kickoff caveat guessed: the timer fires and the script runs, but its DONE-guard (swarm-watchdog.sh:283) exits 0 on the bare existence of <target>/REPORT.md - which on an IMPROVEMENT RUN was written by a previous run - so the staleness gate at :340 is never reached and no relaunch can ever be attempted. Whole-log histogram: ZERO decision=relaunch in 195 firings, ever. Recovery for this run is unreachable by construction; hard rule 5 forbids patching bin/ mid-run. Full finding + hand-off patch: <target>/.swarm/runs/cycle-008-N-9-watchdog-finding.md."}, "wrap_up_complete": false, "cycles_since_recycle": 11, "artifact": {"url": "", "file": "/opt/swarm/runs/dashboard.html", "publish_failures": 0}, "playbook": {"mode": "auto", "applied": ["L-008", "L-016", "L-020", "L-021", "L-022", "L-024", "L-026", "L-029", "L-031", "L-033", "L-034", "L-042", "L-043", "L-044"], "vetoed": [], "source": "learnings.md parsed BY HAND — bin/swarm-playbook.sh parse DENIED at this kickoff (9th consecutive run). 20 lessons present, at the documented cap of 20, not over it.", "not_wired": {"ids": ["L-020", "L-021", "L-022"], "why": "All three instruct browser/React/SPA or env-var behaviour (component-mount tests, hard-reload after restart, persisted UI state). aphorism-cli is a zero-dependency terminal CLI with no browser surface and no env-var-dependent behaviour, so wiring them into prompt_lines would be noise a builder must discard. Staged as applied for the ledger, deliberately kept OUT of prompt_lines — the same call runs #2 and #3 made and reported as not-exercised."}, "ledger_line_blocked": "RESOLVED at cycle 2 by item N-2: record-applied is still denied, but the ledger line was written by hand into playbook/applied.log and is marked as a hand-edit in its own note, with two inherited provenance claims corrected against the file.", "directives": {"wave_k": 3, "routing_recs": ["core-logic->fable"], "prompt_lines": {"builder": ["The conductor is the SOLE committer — never commit or push yourself", "The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test"], "reviewer": ["The conductor is the SOLE committer — never commit or push yourself", "The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test", "Assign each fixer a pairwise-disjoint file set; two fixers must never share a file — and treat that as necessary, not sufficient: dispatch sequentially whenever one item's acceptance is a measurement OF a tree another item edits"], "qa": ["The conductor is the SOLE committer — never commit or push yourself", "The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test", "Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish \"I verified this is wrong, here is the computation\" from \"this looks suspicious but I could not confirm it\".", "Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value.", "When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence.", "Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps.", "Classify each surviving mutant as HOLE (a real gap — harden it) or BOUNDARY (behaviour the spec does not decide — document it) BEFORE writing any test", "Never assert against prose matched by regex — read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns", "For every mutation that must kill the suite, author one control that must leave it GREEN — a check that dies on everything is a snapshot test, not an assertion"]}}}, "helper_denials": {"swarm-budget.sh": 6, "swarm-notify.sh": "NOT DENIED. Re-confirmed at cycle 12: `bin/swarm-notify.sh poll` (relative, from cwd /opt/swarm) returned exit 0 and appended `poll ok merged=0` to runs/notify.log at 08:24:01Z. THIS CORRECTS CYCLE 11, which recorded the poll as DENIED and instructed the next cycle to treat notify as unreliable. Cycle 7 had it right and cycle 11 regressed the note: the ABSOLUTE path form has no allowlist entry and is denied; the relative form is allowlisted and works. Two cycles have now recorded a denial of a form they chose as a denial of the helper.", "swarm-playbook.sh": "denied at kickoff (parse) and at cycle 2 (record-applied) -- genuinely dead, no allowlist entry in any path form", "note": "The gap is NOT uniform across helpers. permissions.allow carries `Bash(bin/swarm-notify.sh:*)` (relative, works) plus a dead macOS absolute path for the same script; it carries NOTHING for swarm-budget.sh or swarm-playbook.sh in any form. So notify is reachable relative-only, budget and playbook are unreachable entirely, and the K-1 hand-off patch (absolute /opt/swarm/bin entries) still fixes all three. Per hard rule 5 this is journaled and reported, never live-patched mid-run."}, "stop_at_epoch_note": "stop_at 2026-08-19T03:48:28+00:00 parses to 1787111308. The cycle-5 journal recorded 1787110108, 1200s low. The error was CONSERVATIVE (it could only have triggered WRAP_UP early, never late), so hard rule 8 was never at risk; corrected here so it stops propagating."}

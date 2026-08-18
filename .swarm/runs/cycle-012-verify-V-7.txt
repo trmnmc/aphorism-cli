@@ -1,0 +1,32 @@
+PASS   A1: README "zero-dependency": no package.json/node_modules and every require() is relative or a Node builtin
+PASS   A2: README flag table documents exactly --author --tag --seed --list --json --help and an undocumented flag exits 2
+PASS   A3: README tag tables list all 12 tags with counts equal to the measured corpus
+PASS   A4: README prose: 12 distinct tags, 12 with >=2 entries, 0 singletons, smallest pool 3
+PASS   A5: README tag-discovery snippet is pasteable and reproduces the table (snippet emitted 12 tags)
+FAIL   A6: README: 25 retired tag names, each exits 1 with stdout empty and a stderr message
+PASS   A7: README names .swarm/runs/cycle-046-retag.mjs as the fold map and that file exists
+PASS   A8: README exit codes: 0 success, 1 no-match (stderr only, stdout empty), 2 unknown flag / NaN seed / missing arg
+PASS   A9: README: breaking the pipe (--list | head -0) exits 0, the way a well-behaved Unix filter should
+PASS   A10: README attribution table: 50 entries ranked, 8 HIGH — equal to the triage document
+PASS   A11: README Layout block: every named path exists in the tree
+PASS   A12: README: --list prints every entry in corpus order as `<text> — <author>` (EM DASH)
+PASS   A13: README: --list --json emits one JSON object per line (NDJSON) in corpus order
+PASS   A14: README: --author + --tag intersect (AND) — 3 entries, strictly fewer than --author alone (7)
+PASS   A15: README: --list ignores a valid --seed (identical output) and still rejects an unparseable one with exit 2
+NOTRUN A16: README "Node 18+": no engines field, no CI matrix, no Node 18/20 runtime available to this run — reported as not-run, never as passed (REPORT.md already flags it; KI-27)
+PASS   B1: REPORT exec summary suite figure equals a live run (measured tests 118, pass 118, fail 0)
+PASS   B2: REPORT exec summary inventory: 3 src, 1 bin, 5 test files, 1 docs
+PASS   B3: REPORT exec summary claims 6 options
+PASS   B4: REPORT exec summary: corpus is 50 entries
+PASS   B5: REPORT run #3 hand-off names every blocked item with a next actor — 6/6 covered
+PASS   B6: REPORT J-7 heading number word matches the 4 behaviours the section enumerates and the backlog title (heading "Four", backlog "Four")
+PASS   B7: REPORT exec summary "unspecified behaviours" count matches J-7's 4 (summary says "Four")
+PASS   B8: REPORT exec summary: 3 blocked items carried in from runs #1-#2
+PASS   B9: REPORT derivation table is anchored to a commit and its static rows still verify there (at dbc1939: corpus 50, triage rows 50, HIGH 8)
+PASS   B10: REPORT dated history rows (48 tests, 80 pass/0 fail, 101 pass/0 fail at dbc1939) are left as written, not retro-edited to today
+PASS   C1: triage: 50 rows for 50 corpus entries, bands sum to the row count (H8/M16/L26)
+PASS   C2: every triage row index maps to a real corpus entry with the same author
+PASS   C3: every triage row's quoted prefix still matches its corpus entry's text
+NOTRUN C4: triage "produced with no network access": a negative claim about how a past agent worked; not measurable from the tree — reported as not-run
+
+27 PASS / 1 FAIL / 2 NOTRUN

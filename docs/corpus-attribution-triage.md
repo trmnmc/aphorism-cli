@@ -18,6 +18,14 @@ contested each entry's provenance appears to be. Treat every
 "documented-source" / LOW-risk row as "plausible and traceable in
 principle," not as something this pass established as true.
 
+> **Correction, 2026-08-18 (improvement run #3, cycle 12, item V-7).** Row 41's author read
+> `Antoine de Saint-Exupery` — an ASCII fold of the corpus's `Antoine de Saint-Exupéry`. That
+> was not a typographical nicety: `--author` is a literal substring match, so the string this
+> table printed returned *no match* (exit 1) against the very corpus it indexes, while the
+> corpus spelling returns the entry. The row now carries the corpus spelling. No risk band,
+> signal or reasoning was changed, and no other row's author differed from the corpus —
+> checked mechanically for all 50 rows.
+
 ## Attribution risk table
 
 | # | Aphorism (first ~40 chars) | Author | Risk | Signal | Why |
@@ -63,7 +71,7 @@ principle," not as something this pass established as true.
 | 38 | All problems in computer science can… | David Wheeler | HIGH | contested-origin | Also widely credited to Butler Lampson, and the common addendum ("...except for the problem of too many layers of indirection") is a separate later joke sometimes folded into the same line; no single originator is settled. |
 | 39 | It's easier to ask forgiveness than… | Grace Hopper | HIGH | no-primary-source | The saying appears to predate Hopper's computing career as general folk wisdom; no recording or transcript establishes her as originator rather than a popularizer. |
 | 40 | The most dangerous phrase in the… | Grace Hopper | MEDIUM | no-primary-source | Loosely corroborated across several interviews and speeches she gave, but no single original recording is commonly cited as the source. |
-| 41 | Perfection is achieved, not when… | Antoine de Saint-Exupery | LOW | documented-source | From his 1939 book "Terre des Hommes" ("Wind, Sand and Stars"), a specific published work, though the English here is a translation. |
+| 41 | Perfection is achieved, not when… | Antoine de Saint-Exupéry | LOW | documented-source | From his 1939 book "Terre des Hommes" ("Wind, Sand and Stars"), a specific published work, though the English here is a translation. |
 | 42 | You aren't gonna need it. | Ron Jeffries | MEDIUM | co-author-credit | YAGNI is documented in "Extreme Programming Installed," co-authored by Jeffries with Ann Anderson and Chet Hendrickson, though only Jeffries is named here. |
 | 43 | Given enough eyeballs, all bugs are… | Eric S. Raymond | LOW | documented-source | From "The Cathedral and the Bazaar" (1997/1999); Raymond named the idea "Linus's Law" about Torvalds but wrote the line himself. |
 | 44 | Code is read much more often than it… | Guido van Rossum | LOW | documented-source | A line from PEP 8, the Python style guide van Rossum originally authored. |

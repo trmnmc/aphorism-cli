@@ -1,0 +1,4 @@
+extracted 26 retired tag names: optimization, algorithms, caching, naming, style, elegance, yagni, focus, abstraction, humility, architecture, dependencies, data, errors, robustness, interoperability, history, innovation, culture, management, organization, psychology, opensource, habits, pragmatism, testing
+PASS A6'-count : README says "Twenty-six" and 26 names are listed
+PASS A6'-nomatch: all 26 exit 1 with stdout empty and a stderr message
+PASS A6'-control: dropping one name from the paragraph makes the extractor count 25, not 26
