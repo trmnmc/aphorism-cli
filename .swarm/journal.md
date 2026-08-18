@@ -11743,3 +11743,37 @@ artifact: skipped silently. The Artifact tool is not available in a headless pac
   0. On the VPS the dashboard.html write IS the publication (caddy serves it).
 
 commit: b5b9d55 (target), pushed to origin/master a68e78d..b5b9d55.
+
+### cycle 9 addendum — a defect in the run's own bookkeeping (KI-34, low)
+
+Found by VERIFYING a no-op instead of shrugging at it. The step-8 SWARM-side commit returned
+  `nothing to commit, working tree clean`, which was surprising after writing dashboard.html,
+  c9-dashboard.mjs and the runfile. `git check-ignore -v` explains it: `.gitignore:2` ignores
+  `runs/` wholesale, so all three are untracked in the SWARM repo.
+
+That is fine on its own. What is NOT fine is what it reveals about earlier commit subjects:
+
+```
+$ git -C /opt/swarm show --stat --oneline 76b3a01
+76b3a01 run #3 cycle 6: QA full pass — dashboard render, c6 harness, runfile
+ tmp_aph_err.txt | 0
+ tmp_aph_out.txt | 0
+ 2 files changed, 0 insertions(+), 0 deletions(-)
+```
+
+The subject names three artifacts; the commit contains two empty stray temp files and none of
+  them. The message asserts contents it cannot have.
+
+SEVERITY IS LOW AND THE REASON MATTERS: nothing is lost. Hard rule 1's durable state is the
+  TARGET repo, which is committed and pushed every cycle and carries the journal, state,
+  backlog and every per-cycle artifact; the runfile is additionally mirrored into each journal
+  block, which is precisely the RESUME path. So this is a record-honesty defect, not a data
+  loss. But the morning report reads commit subjects as evidence, and a subject that claims a
+  dashboard render it does not contain is the kind of small untruth that makes a run's whole
+  record harder to trust. Also worth stating: because `runs/` is ignored, it is the one part of
+  the run with NO version history — a bad render silently overwrites the last good one.
+
+NOT FIXED, and deliberately so: `.gitignore` is outside `runs/` and `playbook/`, so hard rule 5
+  fences it. Filed as KI-34 with both halves of the fix and a named owner, for the morning
+  report. This cycle's own SWARM commit was simply not made, rather than forced with
+  `--allow-empty` and a subject that would have repeated the same untruth.
