@@ -12419,3 +12419,60 @@ the checkmarks rather than from the tree — which is the failure V-1 just caugh
 
 `consecutive_no_value` stays 0. Wave autotune untouched: no build wave ran this cycle, so
 `k_current` stays 4 and `wave_streak` stays 1.
+
+#### cycle 11 close — dashboard (step 8), and two false FAILs in my own assertion pass
+
+Rendered `SWARM/runs/dashboard.html` via `runs/c11-dashboard.mjs` (60858 → 65018 bytes,
+**MISS count 0**, unsubstituted placeholders none). KI-33 fix retained — split/join so ALL
+occurrences move, and the evidence block was replaced at all **3** occurrences, not the first.
+KI-19 fix retained by construction — the `gen`/`next` stamp anchors are grepped out of the live
+page at run time rather than copied forward, so they cannot point at a timestamp the page never
+had (derived `2026-08-18T08:00:36+00:00` → `2026-08-18T08:22Z`).
+
+The assertion pass then failed, twice, on ONE assertion — and both failures were bugs in the
+check, not in the page. Recording them because this cycle already carries one admitted gate
+defect (A4), and three in one cycle is a pattern worth naming rather than a run of bad luck.
+
+- **Draft 1: `!/102 tests/`** — assert the stale figure appears nowhere on the live page.
+  Over-broad. This cycle's evidence and decision text legitimately **quote** the defect they
+  report (`A1 claims 102 tests, live 118`). A page whose job is to describe the bug has to be
+  allowed to name it. 19/20.
+- **Draft 2: corrective `118` within 120 characters.** Also wrong, and measurably so rather
+  than arguably: the three live occurrences sit at **16, 105 and 130** characters from their
+  correction, so a 120-char window false-FAILs the third. The tempting move was to widen to
+  130. That is coding to the observation — the number would have been derived from the page it
+  was supposed to judge. 18/19.
+- **Draft 3, kept:** the property actually wanted is **block-local** — a mention of the stale
+  figure must be corrected inside the same block element it appears in. No magic distance.
+
+Draft 3 ships with **two controls**, because drafts 1 and 2 were each a different flavour of
+worthless check and only running them revealed which: one control feeds it a bare stale claim
+(`<li>x 102 tests pass, 0 fail x</li>`) and requires FAIL; the other feeds it a corrected claim
+and requires PASS. A check that passes everything and a check that fails everything look
+identical from a green summary line.
+
+Authoritative run: `runs/c11-assert-rerun.mjs` — **20/20 PASS, both controls green**. It re-runs
+the assertion half only; the substitution half of the harness is not idempotent (its anchors
+are consumed by the first run), so re-running the whole thing would report MISS on every
+substitution and bury the signal.
+
+```
+PASS  every live "102 tests" is corrected within its own block element
+PASS  CONTROL: the check still catches a bare stale claim (must not pass everything)
+PASS  CONTROL: the check accepts a corrected claim (must not fail everything)
+assertions: 20/20 pass
+```
+
+The corrected logic was backported into `runs/c11-dashboard.mjs` rather than left stale there.
+That is deliberate and is the opposite of the A4 decision, so the distinction is worth stating:
+**A4 had already produced a result I reported, so rewriting it would have destroyed the record
+of what was actually measured. This assertion never produced an accepted result — both drafts
+were rejected — so there is nothing to preserve, and leaving a known-wrong check in a harness a
+later cycle may reuse would seed exactly the decay V-1 exists to catch.**
+
+Artifact publish: skipped, no Artifact tool in this headless `-p` session — not a publish
+failure, `publish_failures` stays 0. On the VPS the file write IS the publication.
+
+Notification emits: none owed. Phase did not change (VALUE_LOOP → VALUE_LOOP), no target went
+stalled, `publish_failures` did not reach 3. The meta line records `poll DENIED (cycle 11)`
+rather than a clean poll, per the step-2 finding.
