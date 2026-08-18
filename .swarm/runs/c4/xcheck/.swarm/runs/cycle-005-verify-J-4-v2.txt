@@ -1,0 +1,65 @@
+GATE J-4 attempt 2 — RE-AUTHORED v2 — 15/21
+
+PASS S1  sealed ground truth unmoved: git diff over src/ bin/ test/ is EMPTY
+       empty
+
+FAIL D1a  every "1511" site is either corrected-in-place or covered by a block naming it
+       LIVE UNCORRECTED: REPORT.md:866 10. **"1511 of 2101 test lines"** — **three sites, all stale, none previously ma | REPORT.md:867 `grep -n "1511\|2101" README.md REPORT.md docs/corpus-attribution-triage.md` ret | REPORT.md:870 cycles 49–50* ("hardening README guards to 1511 of 2101 test lines"), § *What th | REPORT.md:871 actually spent itself on* ("now **1511 of the repo's 2101 test lines**"), and th | REPORT.md:874 suites gives 190 + 220 + 1511 + 180 = 2101 — and was overtaken by later test gro  [2 covered by a naming correction block: REPORT.md:163, REPORT.md:188]  [5 quoted inside a correction block]
+
+FAIL D1b  every "2101" site is either corrected-in-place or covered by a block naming it
+       LIVE UNCORRECTED: REPORT.md:838 **superseded by entry 13: the figure is 101 pass / 0 fail, and the same table's  | REPORT.md:866 10. **"1511 of 2101 test lines"** — **three sites, all stale, none previously ma | REPORT.md:867 `grep -n "1511\|2101" README.md REPORT.md docs/corpus-attribution-triage.md` ret | REPORT.md:870 cycles 49–50* ("hardening README guards to 1511 of 2101 test lines"), § *What th | REPORT.md:871 actually spent itself on* ("now **1511 of the repo's 2101 test lines**"), and th | REPORT.md:872 table ("2101 lines of tests"). A correction note is now appended at each. The pa | REPORT.md:874 suites gives 190 + 220 + 1511 + 180 = 2101 — and was overtaken by later test gro | REPORT.md:896 row, whose "2101 lines of tests" it had not flagged (→ **3034**) and whose "549   [3 covered by a naming correction block: REPORT.md:163, REPORT.md:188, REPORT.md:484]  [6 quoted inside a correction block]
+
+PASS D1c  the TRUE replacements appear (1978 of 3034)
+       sites stating 3034: 9; stating 1978: 10
+
+PASS D1d  the per-file test-line breakdown the corrections state is measured-true
+       args 217, cli 541, readme-tags 1978, select 298, total 3034
+
+PASS D1e  CONTROL — the already-correct "549 lines" claim survives and is still true
+       6 site(s); measured 549
+
+FAIL D2a  the introduced claim "100 tests as of run #2 cycle 4" is gone or covered
+       LIVE UNCORRECTED: REPORT.md:818 **`# 100 tests as of run #2 cycle 4`**, since that comment is a live instruction | REPORT.md:857 9. **`# 100 tests as of run #2 cycle 4`** (§ Run it) → replaced with **`# prints  [0 covered by a naming correction block: -]  [0 quoted inside a correction block]
+
+FAIL D2b  no live suite-size assertion contradicts the measured 101
+       LIVE: REPORT.md:31 | Build | 2026-08-14 05:38 → 05:44 UTC | SMOKE (25-min pipeline validation) | pr | REPORT.md:817 2. **`node --test test/*.test.js  # 80 tests`** in the Run it section → correcte | REPORT.md:818 **`# 100 tests as of run #2 cycle 4`**, since that comment is a live instruction | REPORT.md:834 6. **Stats table "Cycles run: 46 completed, 47 in flight" and "Tests: 80 pass /  | REPORT.md:857 9. **`# 100 tests as of run #2 cycle 4`** (§ Run it) → replaced with **`# prints | REPORT.md:866 10. **"1511 of 2101 test lines"** — **three sites, all stale, none previously ma | REPORT.md:870 cycles 49–50* ("hardening README guards to 1511 of 2101 test lines"), § *What th | REPORT.md:871 actually spent itself on* ("now **1511 of the repo's 2101 test lines**"), and th | REPORT.md:894 13. **The § *Stats* pointer note** → rewritten. "Currently **100 pass / 0 fail** | REPORT.md:901 at cycle 56, 2026-08-16T11:24 UTC, commit `ef4fa6d`) and marks the row's "80 tes
+
+FAIL D3a  no live site asserts T-024a is blocked (board: done)
+       LIVE: REPORT.md:825 4. **T-024a listed as "blocked" in the Blocked items table** → corrected: T-024a | REPORT.md:879 11. **T-024a asserted as blocked — three sites, one previously corrected.** | REPORT.md:883 (T-024a) is blocked at the attempts cap" clause inside the **T-024** row of § *U
+
+FAIL D3b  GENERALISED — no done item is left asserted blocked
+       T-024 @ REPORT.md:883 | T-024a @ REPORT.md:883
+
+PASS A1  the corpus attributions are never described as audited (negation checked over a 2-line window)
+       11 attribution-audit site(s), 0 positive
+
+PASS A2  KI-2 survives open and high (state.json severity high)
+       19 KI-2 site(s), 0 softened in-sentence
+
+PASS A2b  KI-2 is positively asserted open somewhere in the docs
+       8 site(s)
+
+PASS A3  the cmd_parse honest limit keeps its NEVER-EXECUTED status
+       2 site(s), none upgraded
+
+PASS A4  the corrections list was EXTENDED (attempt 1 left 8 entries), not replaced
+       0 numbered entries; new-section heading present: true
+
+PASS X-commits  the corrected total-commit count (122) matches git
+       sites stating 122: 2
+
+PASS X-backlog  the corrected backlog counts match the board (18: {"done":12,"todo":4,"blocked":1,"dropped":1})
+       board 18 {"done":12,"todo":4,"blocked":1,"dropped":1}; doc states it: true
+
+PASS X-knownissues  the corrected known-issue count matches state.json (20)
+       state.json has 20; doc states it: true
+
+PASS SC1  the docs item touched ONLY files in its scope
+       changed: README.md, REPORT.md
+
+PASS SU1  suite green and unchanged (101 tests)
+       tests 101 pass 101 fail 0
+
+PASS X1  FAILABILITY — a claim no correction block names is NOT exempted (and one that is, is)
+       uncovered-token exempted: false (must be false); named-token exempted: true (must be true)
+

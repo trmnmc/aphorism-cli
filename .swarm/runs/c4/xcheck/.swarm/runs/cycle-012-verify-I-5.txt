@@ -1,0 +1,19 @@
+PASS  C1 archive is byte-identical to git HEAD version  :: HEAD 10338B vs archive 10338B
+PASS  C2a line COUNT unchanged  :: 37 -> 37
+PASS  C2b exactly 4 lines differ  :: changed line numbers: 4,26,28,29
+PASS  C2c the 4 changes are next_id + the 3 intended id/tag pairs  :: [["next_id: 34","next_id: 37"],["L-023/qa","L-034/qa"],["L-025/process","L-035/process"],["L-026/process","L-036/process"]]
+PASS  C2d repo-atlas half of each collision kept its id and tag  :: L-023/process, L-025/qa, L-026/routing
+PASS  C3 reverting only the ID tokens reproduces the archive EXACTLY  :: byte-identical
+PASS  C4 zero duplicate ids in the edited file  :: all ids unique
+PASS  C5 [negative control] dup detector fires on the pre-edit archive  :: L-023x2,L-025x2,L-026x2
+PASS  C6 lesson count unchanged  :: 31 -> 31
+PASS  C7 lesson bodies are an identical multiset (only ids moved)  :: 31 bodies compared
+PASS  C8 new ids were never used before (no re-mint)  :: L-034/035/036 absent from archive
+PASS  C9 next_id exceeds max id present  :: next_id 37 > max L-36
+PASS  C10 every lesson matches the transcribed grammar  :: 31/31 well-formed
+PASS  C11 [negative control] grammar detector rejects 3 synthetic bad lines  :: 3/3 rejected
+PASS  C12 cap violation still OPEN (asserted, not assumed)  :: 31 lessons vs documented cap 20 -- overflow 11
+PASS  C13 no ledger JOIN KEY references a disputed id without a source suffix  :: join keys clean; only suffixed refs (L-023-moon, L-026-repo-atlas)
+PASS  C13b [negative control] narrowed detector catches bare ids in applied=/vetoed=  :: caught ["L-023","L-025"] in a synthetic ledger line
+
+17/17 checks passed

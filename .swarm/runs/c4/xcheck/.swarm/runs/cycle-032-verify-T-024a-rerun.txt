@@ -1,0 +1,45 @@
+G0  FIXED 19/19/0   C1=GREEN             C2=GREEN             | HEAD 19/19/0   C1=GREEN             C2=GREEN
+    control: untouched README
+    expect: C1 GREEN / C2 GREEN
+
+G1  FIXED 19/19/0   C1=GREEN             C2=GREEN             | HEAD 19/18/1   C1=GREEN             C2=MISMATCH(read 50)
+    THE ITEM: dashes removed, every number TRUE
+    expect: C1 GREEN / C2 GREEN (was C2 read 50)
+
+G2  FIXED 19/18/1   C1=GREEN             C2=MISMATCH(read 9)  | HEAD 19/18/1   C1=GREEN             C2=MISMATCH(read 50)
+    THE CELL THAT MATTERS: wrong HIGH (9) in the reworded shape
+    expect: C2 RED reading 9, not 50
+
+G3  FIXED 19/18/1   C1=GREEN             C2=MISMATCH(read 9)  | HEAD 19/18/1   C1=GREEN             C2=MISMATCH(read 9)
+    kill preserved: wrong HIGH (9), shipped dashed shape
+    expect: C2 RED reading 9
+
+G4  FIXED 19/18/1   C1=MISMATCH(read 51) C2=GREEN             | HEAD 19/18/1   C1=MISMATCH(read 51) C2=GREEN
+    kill preserved: wrong corpus size (51), shipped dashed shape
+    expect: C1 RED reading 51
+
+G5  FIXED 19/18/1   C1=MISMATCH(read 51) C2=GREEN             | HEAD 19/17/2   C1=MISMATCH(read 51) C2=MISMATCH(read 51)
+    kill preserved: wrong corpus size (51) reworded; HIGH claim (8) still TRUE
+    expect: C1 RED reading 51 / C2 GREEN
+
+G6  FIXED 19/18/1   C1=GREEN             C2=PARSE-MISS        | HEAD 19/18/1   C1=GREEN             C2=PARSE-MISS
+    parse miss: HIGH marker absent entirely
+    expect: C2 PARSE-MISS, never a guessed number
+
+D1  FIXED 19/19/0   C1=GREEN             C2=GREEN             | HEAD 19/19/0   C1=GREEN             C2=GREEN
+    DISCRIMINATOR: subject-last word order, every number TRUE
+    expect: GREEN if the rule reads grammar; RED if it just flipped first/last
+
+D2  FIXED 19/18/1   C1=GREEN             C2=MISMATCH(read 9)  | HEAD 19/18/1   C1=GREEN             C2=MISMATCH(read 9)
+    DISCRIMINATOR: wrong HIGH (9) in subject-last word order
+    expect: RED naming 9 if attribution is real
+
+D3  FIXED 19/19/0   C1=GREEN             C2=GREEN             | HEAD 19/19/0   C1=GREEN             C2=GREEN
+    DISCRIMINATOR: parenthetical aside, every number TRUE
+    expect: GREEN
+
+D4  FIXED 19/18/1   C1=GREEN             C2=PARSE-MISS        | HEAD 19/19/0   C1=GREEN             C2=GREEN
+    SILENT-HOLE PROBE: false HIGH claim (9) with a true 8 adjacent to the marker
+    expect: RED on both arms -- GREEN here is a silent hole
+
+README + test file restored byte-identical: true

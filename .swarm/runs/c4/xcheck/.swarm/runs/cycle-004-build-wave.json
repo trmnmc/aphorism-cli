@@ -1,0 +1,48 @@
+{
+  "_note": "cycle 4 wave record. Dispatched as TWO DIRECT Agent calls, not via the build-wave Workflow script: the Workflow tool is review-gated in a `-p` session, which is the documented failure-table fallback. No worktrees (KI-6: a subagent is sandboxed to the session --add-dir list, so a /tmp worktree is unreachable) — both builders worked directly in the one tree with strictly disjoint file scopes, conductor sole committer.",
+  "_status_of_every_field_below": "CLAIM. The conductor's verdicts live in cycle-004-verify-J-4.txt (+ addendum) and cycle-004-verify-J-6.txt.",
+  "timestamp": 1786963469,
+  "cycle": 4,
+  "dispatch_mode": "direct-agent",
+  "k_effective": 2,
+  "k_reason": "min(k_current 3, gear cap 3, hard max 5) = 3, but only 2 items were dispatchable with disjoint scopes. J-5 was deliberately EXCLUDED: it edits test/readme-tags.test.js while J-4 edits README.md, so the file scopes are disjoint but the semantics are not — J-5's whole measurement is guard behaviour against a README that J-4 would have been rewriting underneath it.",
+  "wave": [
+    {
+      "itemId": "J-4",
+      "model": "sonnet",
+      "status_claimed": "done",
+      "files_changed_claimed": ["REPORT.md"],
+      "files_changed_verified": ["REPORT.md"],
+      "summary_claimed": "8 stale claims corrected in REPORT.md with house-style correction notes plus one consolidated 'Claims corrected or flagged' section; README.md and docs/corpus-attribution-triage.md read and verified as already true, zero edits.",
+      "self_test_claimed": "tests 101 / pass 101 / fail 0",
+      "self_disclosed_before_gate": [
+        "The '100 tests' figure it wrote was true when measured but the live count moved to 101 within the session because of the concurrent builder; it left 100 rather than chase a moving target.",
+        "It judged the reconciliation unit to be additive correction notes rather than rewriting the frozen run-#1 body — a judgment call about how much surgery 'do not rewrite wholesale' permits.",
+        "It touched neither README.md nor the triage doc, having found every claim in them true, and declined to add a 'last verified' marker to avoid tripping readme-tags guards on a concurrently-edited file.",
+        "KI-8 DISCLOSURE: a repo-wide grep for the audit word family used an exclusion pattern anchored on a leading './' that the real grep output did not carry, so the filter silently failed and single matched lines from ~18 files under .swarm/runs/ entered its output. All were run-#1 historical material (cycles 10-45); none referenced cycle-004 or this cycle's sealed baseline."
+      ],
+      "conductor_verdict": "FAILED THE GATE — todo, attempts 1, escalated sonnet -> opus. Three real defects (D-1 the 'N test lines' family false at 3 sites, D-2 the '100 tests as of run #2 cycle 4' claim false at cycle end, D-3 T-024a still asserted blocked at 2 of 3 sites). Four of the six raw BAD cells were the conductor's own over-literal checks and were corrected, not the builder's work."
+    },
+    {
+      "itemId": "J-6",
+      "model": "sonnet",
+      "status_claimed": "done",
+      "files_changed_claimed": ["test/cli.test.js"],
+      "files_changed_verified": ["test/cli.test.js"],
+      "new_tests_claimed": 1,
+      "summary_claimed": "All four compound cases measured or classified. Cases 1 (--help vs usage-error precedence) and 3 (duplicate-flag last-wins) recorded OUT-OF-RULE — no Domain-rule clause maps. Case 2 (--seed -0 vs 0) recorded as needing a SPEC clarification, no test. Case 4 (--tag \"\") maps to the empty-candidate-set clause, mutant SURVIVED the 100-test suite, hole closed with exactly one new test. The --author \"\" half was measured and found to be a provable no-op, so correctly earns no test.",
+      "self_test_claimed": "tests 101 / pass 101 / fail 0",
+      "self_disclosed_before_gate": [
+        "Its case-1 'does not map' call rests on an inference from the --list carve-out's existence (silence implies deliberate scoping) rather than on direct textual statement; a reviewer could read the Exit-codes clause as unconditional and call it a hole.",
+        "Case 2 is a real live behavioural fork (-0 and 0 select different aphorisms) that a maintainer may find surprising; SPEC.md was out of scope so nothing was edited there.",
+        "It tested one candidate mutation for case 4 (the filter() tag guard) and deliberately did not mutate src/args.js, on the ground that no domain-rule text governs whether the PARSER should accept a bare empty string — only the filtering semantics once a value is accepted."
+      ],
+      "conductor_verdict": "VERIFIED. Gate 11/12 on first authoring plus a re-authored G2 at 4/4 — the one BAD cell was mis-authored by the conductor (it compared unseeded random draws) and attributes nothing. All four case classifications independently corroborated; the conductor's own independent reading of the Domain rules, recorded BEFORE this return arrived, reached the same four verdicts."
+    }
+  ],
+  "dead_items": [],
+  "scope_controls": {
+    "KI-7_scratch": "PASS, and the cleanest sample yet. Both dispatch prompts named an explicit in-target scratch path (.swarm/scratch-c004-j4/, .swarm/scratch-c004-j6/) AND required removing that exact directory rather than merely its contents (the cycle-24 refinement). BOTH agents removed their own directory — the first time in this family's history that self-cleanup held for every agent in a wave. `git -C /opt/swarm status --porcelain` empty at orient AND at commit.",
+    "KI-8_seal": "COMMIT-REVEAL HELD. sha256 committed at e06852b pre-dispatch, plaintext deleted for the whole dispatch window, rewritten from context afterwards, `sha256sum -c` OK. NEW CHANNEL FOUND — see the KI-8 cycle-4 note: a repo-wide grep whose exclusion pattern silently failed. Also NEW: /home/swarm/.swarm-seal/ (the cycle-33 out-of-sandbox seal location) is NOT writable in this session shape, so the stronger mitigation was unavailable."
+  }
+}

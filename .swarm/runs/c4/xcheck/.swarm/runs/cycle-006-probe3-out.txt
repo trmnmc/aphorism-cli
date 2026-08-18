@@ -1,0 +1,9 @@
+=== cycle-6 probe v3 — duplicate-shape slip: regression or pre-existing? ===
+[P0] A(pre-J-5)=GREEN(101/0)  B(post-J-5)=GREEN(102/0)  -> UNCHANGED by J-5
+      control, unmutated
+[D1] A(pre-J-5)=GREEN(101/0)  B(post-J-5)=GREEN(102/0)  -> UNCHANGED by J-5
+      FALSE duplicate of the "or more" shape (corpus: 12)
+[D2] A(pre-J-5)=GREEN(101/0)  B(post-J-5)=GREEN(102/0)  -> UNCHANGED by J-5
+      FALSE duplicate of the "distinct tags" shape (corpus: 12)
+[D4] A(pre-J-5)=GREEN(101/0)  B(post-J-5)=GREEN(102/0)  -> UNCHANGED by J-5
+      FALSE duplicate of the "exactly one" shape (corpus: 0)

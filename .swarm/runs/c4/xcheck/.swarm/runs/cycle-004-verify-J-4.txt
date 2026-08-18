@@ -1,0 +1,60 @@
+=== J-4 CONDUCTOR GATE — sealed truth e06852b ===
+
+[OK ] H1    expect=no unexpected paths                            actual=["REPORT.md","test/cli.test.js"]
+        only REPORT.md (J-4) and test/cli.test.js (J-6) changed; src/ and bin/ untouched
+
+[OK ] H1b   expect=(empty)                                        actual=""
+        no product code touched by a docs item
+
+[BAD] H2    expect=zero unaccounted                               actual=33 integers, 10 unaccounted
+        every integer in README.md is a SEALED truth or a benign structural number
+        unaccounted: [{"line":5,"n":6,"ctx":"`fortune(6)`, but curated for programmers. Quiet by default: one aphorism to stdout,"},{"line":49,"n":2,"ctx":"fails to parse is still a usage error (exit 2), even with `--list`. When combined with"},{"line":55,"n":2,"ctx":"The corpus contains 12 distinct tags. The distribution is uneven, but every tag is a real pool: 12 tags appear"},{"line":55,"n":0,"ctx":"The corpus contains 12 distinct tags. The distribution is uneven, but every tag is a real pool: 12 tags appear"},{"line":55,"n":0,"ctx":"The corpus contains 12 distinct tags. The distribution is uneven, but every tag is a real pool: 12 tags appear"},{"line":87,"n":37,"ctx":"The vocabulary above replaces an earlier 37-tag one in which 21 tags matched exactly one"},{"line":87,"n":21,"ctx":"The vocabulary above replaces an earlier 37-tag one in which 21 tags matched exactly one"},{"line":102,"n":46,"ctx":"`.swarm/runs/cycle-046-retag.mjs`."},{"line":108,"n":0,"ctx":"| `0` | Success — an aphorism (or the help text) was printed to stdout |"},{"line":110,"n":2,"ctx":"| `2` | Usage error — unknown flag, seed that `Number()` parses to NaN, or missing flag argument |"}]
+
+[BAD] H3    expect=zero unaccounted                               actual=18 prose integers, 17 unaccounted
+        every PROSE integer in the triage doc is a SEALED truth
+        unaccounted: [{"line":80,"n":45,"ctx":"1. **#45 — Bjarne Stroustrup, \"shoot yourself in the foot.\"** Check Stroustrup's own FAQ page, where he direct"},{"line":82,"n":38,"ctx":"2. **#38 — David Wheeler, \"another level of indirection.\"** Check whether any Wheeler-authored text contains t"},{"line":84,"n":48,"ctx":"3. **#48 — Alan Kay, \"predict the future... invent it.\"** Check Dennis Gabor's 1963 book \"Inventing the Future"},{"line":84,"n":1963,"ctx":"3. **#48 — Alan Kay, \"predict the future... invent it.\"** Check Dennis Gabor's 1963 book \"Inventing the Future"},{"line":86,"n":3,"ctx":"4. **#3 — Phil Karlton, \"two hard things.\"** There is no talk, paper, or slide by Karlton himself to check aga"},{"line":88,"n":39,"ctx":"5. **#39 — Grace Hopper, \"ask forgiveness... permission.\"** Check whether the phrase shows up in print before "},{"line":90,"n":0,"ctx":"6. **#0 — Donald Knuth, \"premature optimization.\"** Check the full 1974 \"Structured Programming with Go To Sta"},{"line":90,"n":1974,"ctx":"6. **#0 — Donald Knuth, \"premature optimization.\"** Check the full 1974 \"Structured Programming with Go To Sta"},{"line":92,"n":10,"ctx":"7. **#10 — Edsger W. Dijkstra, \"computer science... telescopes.\"** Check the University of Texas E.W. Dijkstra"},{"line":94,"n":27,"ctx":"8. **#27 — Kent Beck, \"make it work, make it right, make it fast.\"** Check for earlier appearances of this sta"},{"line":105,"n":45,"ctx":"1. **#45 (Stroustrup, \"shoot yourself in the foot\") — check this one first, and check the"},{"line":108,"n":46,"ctx":"Stroustrup's own FAQ *disclaims* the line — and row #46 leans on the same asserted FAQ to"}]
+
+[BAD] H4a   expect=no stale "two runs" claim                      actual=STILL PRESENT
+        REPORT.md no longer claims "two SWARM runs"
+
+[BAD] H4b   expect=live=101                                       actual=claims=[48,80,100,2101] not-live-or-historical=[48,80,2101]
+        every "N tests" claim in REPORT.md equals the LIVE suite count, or is explicitly historical
+        live_tests: 101
+        live_fail: 0
+        seal_tests: 100
+
+[OK ] H4c   expect=all done                                       actual={"T-024":"done","T-024a":"done","T-024b":"done","T-032":"done","T-039":"done"}
+        the five README-prose items really are done on the board (the doc says so)
+
+[BAD] H4d   expect=corrected                                      actual=mentioned
+        REPORT.md does not still list T-024a as blocked without a correction marker
+
+[OK ] H4e   expect=real=121                                       actual=[]
+        any "N commits" claim is within 2 of the real count (the cycle commit lands after)
+        real_commits: 121
+
+[OK ] H4f   expect=real total=19                                  actual=["Fifteen recorded","43 recorded","Fifteen recorded"]
+        known-issue counts are either current or carry a staleness marker
+        real_total: 19
+
+[OK ] H5    expect=section present, >= 6 entries                  actual=section=true entries=8
+        a reviewable corrected-or-removed list exists in REPORT.md with one entry per change
+
+[BAD] H6    expect=zero dishonest hits                            actual=10 hits, 3 dishonest
+        no line in the shipped repo describes the corpus attributions as audited
+        dishonest: ["REPORT.md:595:| 49–51 | **KI-17 extension + KI-18 + KI-19** — the dashboard staleness family. Live evidence strip found stale since cycle 42 (renders 43–48 had been writing into a legend comment); repaired and re-audited with the KI-11 classifier. KI-18: the mandated burn-up strip has never rendered and was deliberately not fabricated. | `.swarm/runs/` cycle-049/050/051 artifacts |","REPORT.md:785:source of truth exactly, and neither file describes the corpus attributions as audited,","REPORT.md:789:it, that currently misdescribes the corpus as audited."]
+
+[OK ] H7    expect=high + not resolved                            actual=severity=high
+        KI-2 survives as OPEN and HIGH
+
+[OK ] H8    expect=zero overclaiming lines                        actual=1 mentions, 0 overclaiming
+        the cmd_parse / playbook-inert claim is still described as CODE-READ, never executed
+        mentions: ["breach, this makes the shared playbook **inert**: `cmd_parse` exits 2 on any validate"]
+
+[OK ] H9    expect=caught                                         actual=caught
+        FAILABILITY: the H2 enumerator catches a planted false prose count (77)
+
+[OK ] H10   expect=fail 0                                         actual=101 tests / 0 fail
+        test_cmd green on the shipped tree
+
+GATE 10/16

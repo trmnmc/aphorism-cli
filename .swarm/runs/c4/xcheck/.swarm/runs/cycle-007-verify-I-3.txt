@@ -1,0 +1,46 @@
+--- (a) --author is SUBSTRING containment, case-insensitive ---
+  PASS  exit 0 :: code=0
+  PASS  matched >=1 entry on a partial, lowercased author :: 7 line(s)
+  PASS  every match contains "dijkstra" case-insensitively :: Simplicity is prerequisite for reliability. — Edsger W. Dijkstra
+  PASS  DISCRIMINATOR: partial-author result set equals full-name result set :: substring, not equality
+--- (b) --tag is WHOLE-TAG membership, not substring ---
+  PASS  --tag test exits 1 (no whole tag "test" exists) :: code=1
+  PASS  --tag test writes nothing to stdout :: ""
+  PASS  --tag test writes a message to stderr :: aphorism: no aphorism matches those filters
+  PASS  --tag testing exits 0 and matches entries :: code=0, 2 line(s)
+--- (c) --list accepts --seed and IGNORES it ---
+  PASS  --list --seed 1 exits 0 :: code=0
+  PASS  seeded --list output identical to unseeded :: three distinct seeds + unseeded all byte-identical
+  PASS  EDGE: --list --seed abc is still a usage error (exit 2) :: code=2
+  PASS  EDGE: --list --seed abc writes nothing to stdout :: ""
+--- (d) --list --json emits one JSON object per line (NDJSON, not an array) ---
+  PASS  exit 0 :: code=0
+  PASS  output does NOT start with "[" (not a JSON array) :: "{\"text\":\"Pre"
+  PASS  every line parses independently as a JSON object :: 50 lines
+  PASS  one JSON line per --list entry (same cardinality) :: json=50 plain=50
+  PASS  NDJSON lines are in corpus order :: first="Premature optimization is th..."
+--- (e) --list plain form is "<text> — <author>", one line per entry ---
+  PASS  line count equals corpus size :: lines=50 corpus=50
+  PASS  first line is exactly `text EM-DASH author` :: Premature optimization is the root of all evil. — Donald Knuth
+  PASS  last line is exactly `text EM-DASH author` :: It's not a bug, it's an undocumented feature. — Anonymous
+  PASS  every line carries the EM DASH U+2014 (not a hyphen or en dash) :: all 50 lines
+  PASS  DISCRIMINATOR: default output form differs (2 lines, indented attribution) :: "Bad programmers worry about the code. Good programmers worry about data structures and their relationships.\n    — Linus Torvalds\n"
+--- (f) --seed: every non-NaN Number() value is accepted AND deterministic ---
+  PASS  --seed 42 exits 0 and is deterministic over 8 runs :: distinct outputs=1
+  PASS  --seed -5 exits 0 and is deterministic over 8 runs :: distinct outputs=1
+  PASS  --seed -3.5 exits 0 and is deterministic over 8 runs :: distinct outputs=1
+  PASS  --seed 3.75 exits 0 and is deterministic over 8 runs :: distinct outputs=1
+  PASS  --seed Infinity exits 0 and is deterministic over 8 runs :: distinct outputs=1
+  PASS  --seed -Infinity exits 0 and is deterministic over 8 runs :: distinct outputs=1
+  PASS  --seed 1e21 exits 0 and is deterministic over 8 runs :: distinct outputs=1
+  PASS  DISCRIMINATOR: distinct seeds reach multiple distinct aphorisms :: 7 distinct results across 7 seeds
+  PASS  --seed abc is a usage error, exit 2 :: code=2
+  PASS  --seed abc writes nothing to stdout :: ""
+  PASS  --seed abc writes to stderr :: aphorism: flag --seed requires a numeric value
+  PASS  --seed NaN is a usage error, exit 2 :: code=2
+--- (g) --json alone is a single-line JSON object with text/author/tags ---
+  PASS  exactly one line :: 1 line(s)
+  PASS  parses as an object carrying text, author, tags :: {"text":"The best way to predict the future is to invent it....
+
+TOTALS: pass=36 fail=0
+GATE: PASS

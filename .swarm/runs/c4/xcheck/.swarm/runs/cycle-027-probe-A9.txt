@@ -1,0 +1,24 @@
+=== A9 residual probe ===
+
+[wrongcount-only] (fixed parser)
+  73/72/1
+  FAILING: README tag counts must match corpus
+
+[wrongcount+reformat] (fixed parser)
+  73/72/1
+  FAILING: README tag counts must match corpus
+
+[wrongcount-only-HEAD] (HEAD parser)
+  73/72/1
+  FAILING: README tag counts must match corpus
+
+[wrongcount+reformat-HEAD] (HEAD parser)
+  73/71/2
+  FAILING: README tag counts must match corpus
+  FAILING: every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+
+=== VERDICT INPUTS ===
+fixed parser: no-reformat 73/72/1 | reformat 73/72/1
+HEAD  parser: no-reformat 73/72/1 | reformat 73/71/2
+same-under-fix (reformat is not what changed it): true
+identical at HEAD without reformat (pre-existing behaviour): true

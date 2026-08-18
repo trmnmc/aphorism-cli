@@ -1,0 +1,28 @@
+CYCLE 30 — L-029 STRICT ATTRIBUTION for the four T-021 tests
+skip pattern: getListBehaviourSection
+
+M1  78/77/1
+    failing: 
+      - getListBehaviourSection reports ambiguity loudly instead of taking the first of two qualifying headings (T-021)
+M2  74/74/0
+    failing: (none)
+C1  74/74/0
+    failing: (none)
+C2  74/73/1
+    failing: 
+      - README `--list` format literal matches the shipped binary's actual --list output (T-017)
+
+--- checks -----------------------------------------------------------
+  PASS  M1 RED
+  PASS  M1 names a test added this cycle
+  PASS  M1 failures are ONLY new tests (no pre-existing test also catches it)
+  PASS  M2 GREEN (mutation survives everything that pre-dates this cycle)
+  PASS  M2 lands exactly on the 74-test pre-cycle baseline
+  PASS  C1 DENOMINATOR: filter removes exactly the 4 new tests, rest green
+  PASS  C2 SKIP-SANITY: filter does not disable the run
+
+attribution checks: 7 pass / 0 fail
+
+READING: M1 red + M2 green at exactly the pre-cycle baseline is the strict
+form -- the first-match regression survives every test that existed before
+this cycle, and is caught only by the tests added this cycle.

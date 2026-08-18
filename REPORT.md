@@ -1,5 +1,27 @@
 # aphorism-cli — overnight build report
 
+## Executive summary
+
+**The product ships.** `node bin/aphorism.js` prints one attributed programming aphorism from a 50-entry curated corpus.
+
+**What ships:**
+- Command-line interface: 6 options (`--author`, `--tag`, `--seed`, `--list`, `--json`, `-h`/`--help`).
+- Corpus: 50 entries, each with an attributed quote and tags.
+- Zero runtime dependencies — every `require()` is a relative path or Node builtin; no `package.json` or `node_modules`.
+- Source code: 3 files in `src/`, 1 in `bin/`, 4 test files in `test/`, 1 document in `docs/`.
+
+**Machine-verified (measured today unless noted otherwise):**
+- Test suite: 102 tests pass, 0 fail (`node --test test/*.test.js`).
+- Mutation coverage: 29 pre-registered domain-rule clauses, all 29 killed by the suite under single-site mutation, 0 survived (run #3, cycle 3). This is a **lower bound** — one mutant per clause. Cycle 4 re-derived the clause set independently from the spec and found that 29-clause enumeration itself incomplete: 14 further behaviours were measured, of which 12 killed, 1 was unmeasurable (the spec contradicts itself), and **1 survived** — a repeated `--tag`/`--author` is unprotected by the suite. That survivor is behaviour the spec never decides, so it is filed for a human ruling rather than frozen into a test.
+
+**Human-owned — unverified:**
+- Corpus attribution accuracy: 50 quotes against claimed authors; 8 rows flagged HIGH risk in `docs/corpus-attribution-triage.md`.
+- Node 18+ floor (claimed in README): unverified — no `engines` field, no CI matrix, no runtime assertion, and no run under Node 18 or 20 recorded anywhere in this repo's journal. Today's suite run was under Node v24.19.0 (KI-27).
+- Two CLI behaviors are unspecified and require human ruling.
+- Consequences of the corpus retag — see sections **§ Unfinished work** and **§ Honest hand-off**.
+
+**This document** contains stratified history from three SWARM runs. Each section was true when written and carries its own date; the document has never been retro-edited to hide that.
+
 A zero-dependency Node CLI that prints one attributed programming aphorism from a curated
 50-entry corpus — `fortune(6)` for programmers, unix-quiet and pipeable.
 

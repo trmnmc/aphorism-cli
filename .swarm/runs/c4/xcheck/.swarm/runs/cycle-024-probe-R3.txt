@@ -1,0 +1,17 @@
+HEAD-plus    tests 72 pass 71 fail 1
+             failing: README band table headings must state the correct count of tags in their band
+HEAD-range   tests 72 pass 71 fail 1
+             failing: README band table headings must state the correct count of tags in their band
+HEAD-both    tests 72 pass 71 fail 1
+             failing: README band table headings must state the correct count of tags in their band
+NEW-plus     tests 73 pass 72 fail 1
+             failing: README band table headings must state the correct count of tags in their band
+NEW-range    tests 73 pass 72 fail 1
+             failing: README band table headings must state the correct count of tags in their band
+NEW-both     tests 73 pass 72 fail 1
+             failing: README band table headings must state the correct count of tags in their band
+
+VERDICT: HEAD (no T-019 test) fails 1 test(s) on the same rewording.
+         T-019 test among the NEW failures: false
+         => PRE-EXISTING fragility. NOT attributable to T-019.
+root: /tmp/aph-c24-r3-QPHze3

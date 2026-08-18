@@ -1,0 +1,4 @@
+316f493616d233c36a63f60dbb5bb364369efc2474b4cd0d9570fc22794d0907  cycle-033-precommit.md
+# SEALED 2026-08-15T22:58:50.825Z BEFORE dispatch. Plaintext held at /home/swarm/.swarm-seal/
+# (outside the subagent --add-dir sandbox, per KI-8). Copied into this directory AFTER the
+# classifier returned; verify with: sha256sum cycle-033-precommit.md

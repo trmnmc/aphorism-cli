@@ -1,0 +1,39 @@
+PASS A1  --seed 20260815 is stable across 6 runs
+       distinct outputs: 1 | The best way to predict the future is to invent it.
+           — Alan Kay
+PASS A2  negative control: unseeded runs are NOT stable (A1 can detect instability)
+       distinct outputs across 25 unseeded runs: 19
+PASS A3  --seed 20260815 and --seed 20260816 yield different aphorisms
+       tomorrow: The most dangerous phrase in the language is, 'We've always done it this way.'
+           — Grace Hopper
+PASS A4  adjacent-day collisions over the next 365 days (reported, not gated)
+       11/364 consecutive-day pairs repeat | first few: 20261015->20261016, 20261107->20261108, 20270121->20270122, 20270126->20270127, 20270128->20270129 | distinct quotes across the year: 50
+PASS A5  README contains a date-seeded recipe line
+       node bin/aphorism.js --seed $(date +%Y%m%d)      # same aphorism all day; changes at local midnight
+PASS A6  the README line, pasted verbatim into bash, exits 0 and prints an aphorism
+       exit 0 | The best way to predict the future is to invent it.
+           — Alan Kay
+PASS A7  the pasted recipe output equals the today-seeded output (same recipe, same result)
+       pasted: The best way to predict the future is to invent it.
+           — Alan Kay
+PASS A8  negative control: an absent marker string is not found in README
+       absent-string probe
+PASS A9  the recipe explanation makes no unhedged every-day-different promise (measured: 11/364 consecutive-day pairs repeat)
+       no absolute phrasing found
+PASS B1  only README.md changed since the pre-wave commit
+       changed: ["README.md"]
+PASS B2Exitcodes  section "## Exit codes" is byte-identical to pre-wave
+PASS B2Attribution  section "## Attribution" is byte-identical to pre-wave
+PASS B2Layout  section "## Layout" is byte-identical to pre-wave
+PASS B2Tests  section "## Tests" is byte-identical to pre-wave
+PASS B3  the Flags table is byte-identical to pre-wave
+PASS B4  README diff is exactly 1 insertion, 0 deletions
+       numstat: "1\t0\tREADME.md"
+PASS B5  the single added line is the date-seeded recipe
+       +node bin/aphorism.js --seed $(date +%Y%m%d)      # same aphorism all day; changes at local midnight
+PASS C1  full suite green
+       exit 0 | pass 59 | fail 0
+PASS C2  negative control: the summary parser detects a non-zero fail count
+       parser sees fail 1 in a synthetic summary
+
+=== 19 passed, 0 failed ===

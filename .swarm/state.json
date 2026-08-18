@@ -5,7 +5,7 @@
   "run_label": "improvement-run-3",
   "run_started_at": "2026-08-18T03:48:36+00:00",
   "phase": "BUILD",
-  "cycle": 3,
+  "cycle": 4,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "spec_digest": [
@@ -158,6 +158,24 @@
       "kind": "evidence",
       "what": "The conductor’s independent mutation arm is recorded as CONFIRMING REPRODUCIBILITY on 6 of 7 sampled clauses, not independence.",
       "why": "Authored from source before any agent output existed, yet 6 of 7 conductor mutants (F2, F3, E1, X2c, L5, L7) came out BYTE-IDENTICAL to the builder’s — the minimal mutation for each clause is simply obvious, so two authors converge on it. Only S2 differed genuinely (conductor changed the guard in pick(); builder inserted a non-finite guard inside toUint32Seed) and it also killed. Both harnesses independently produced identical suite pass/fail counts on every shared cell. Stating this as full independence would overclaim: agreement on a shared mutant tests that the measurement reproduces, not that a second choice of mutant would also be caught."
+    },
+    {
+      "cycle": 4,
+      "kind": "scope",
+      "what": "Re-scope N-4 from \"classify the survivors\" to \"test whether the inherited 29-clause enumeration is COMPLETE\".",
+      "why": "N-3 measured 0 survivors, so N-4 as chartered was an empty set and N-5 a guaranteed no-op - two items that would have closed as vacuously satisfied while establishing nothing. Cycle 3 journaled the real weakness in its own result: the 29-clause enumeration is inherited from run #1 cycle 52 and had never been re-derived from the SPEC. Re-scoping tested exactly that. It paid: an independent derivation found 43 clauses, 14 never mutation-tested, and one genuine unprotected behaviour. The item still honours K-3 - tests come only from measured survivors, zero survivors were HOLE, so zero tests were written."
+    },
+    {
+      "cycle": 4,
+      "kind": "process",
+      "what": "The sealed cycle-4 gate FAILED check N4-c, and the failure was adjudicated by hand rather than by editing the gate.",
+      "why": "N4-c required every newly-derived clause to carry a mutation_site, which contradicts the NOT-PLANTED verdict the dispatch contract explicitly sanctioned (and which the structure check already guards with a >=30-char reason requirement). The failing row D-43 was verified by hand instead: Number(\"\")===0 and Number(\"   \")===0 are non-NaN (so SPEC Selection literally says accept), the pristine binary rejects both with exit 2, and a mutant accepting \"\" as seed 0 left the suite at 102p/0f. The contradiction is real, so NOT-PLANTED is the honest verdict and the CHECK is the defective instrument. The sealed gate file was NOT edited and its FAIL stands recorded. This is the 4th instrument bug of the run, all the same shape: a check stricter than the contract it was written to enforce."
+    },
+    {
+      "cycle": 4,
+      "kind": "process",
+      "what": "N-6 was closed done-by-conductor-repair rather than done-as-delivered.",
+      "why": "The haiku agent produced correct structure but two overreaching claims, the worse being a bare \"29/29 killed, 0 survived\" with the lower-bound caveat dropped - which N-4, in this same cycle, proved materially understates the uncertainty. Re-dispatching at attempts+1 would have spent a cycle on a two-line correction whose facts only the conductor holds. The repair is journaled and the agent attempt is recorded as failed so the backlog does not read as a clean delivery."
     }
   ],
   "known_issues": [
@@ -403,22 +421,47 @@
       "cycle_found": 3,
       "owner": "human",
       "settles_it": "Either run the suite under Node 18 and 20 and record the output, or replace the claim with the lowest version actually exercised. A CI matrix is the durable form."
+    },
+    {
+      "id": "KI-28",
+      "severity": "low",
+      "opened_cycle": 4,
+      "owner": "human",
+      "what": "Repeated --tag / --author is unprotected AND spec-undecided. Shipped behaviour is last-occurrence-wins; the suite does not notice a first-wins implementation (102p/0f against the mutant, conductor-reproduced). SPEC describes every filter flag in the singular and never mentions repetition.",
+      "settled_by": "A human ruling in SPEC.md (tracked as J-7 item 3). Only once the behaviour is decided may a test pin it - hardening it now would freeze an artifact of argument-parsing order."
+    },
+    {
+      "id": "KI-29",
+      "severity": "low",
+      "opened_cycle": 4,
+      "owner": "conductor",
+      "what": "Three domain-rule clauses (D-04 non-integer seeds, D-36 --help on stdout, D-41 positional-argument rejection) are each killed by exactly ONE test. A single test deletion or skip silently removes protection for that clause.",
+      "settled_by": "Either accept it explicitly, or add a second independent assertion per clause. Measured by N-4 at cycle 4 as a by-product; not itself a defect, but it is the thin ice in an otherwise 41/43-killed map."
+    },
+    {
+      "id": "KI-30",
+      "severity": "medium",
+      "opened_cycle": 4,
+      "owner": "swarm-maintainer",
+      "what": "The SWARM self-modification fence (hard rule 5) depends on agent goodwill. The N-4 agent found /tmp blocked by its sandbox and created scratch at /opt/swarm/.n4-scratch - INSIDE the SWARM repo, outside the runs/ and playbook/ paths the fence permits. It was dispatched with target paths only and never told a SWARM path; it derived one. It cleaned up after itself (directory absent and git status clean at verification), so no residue reached the repo.",
+      "settled_by": "Give subagents a writable scratch dir inside the TARGET (e.g. <target>/.swarm/runs/scratch) in the dispatch contract, or unblock /tmp for subagents. Until then the fence is a convention, not a control."
     }
   ],
   "counters": {
     "consecutive_no_value": 0,
     "consecutive_failures": 0,
     "k_current": 3,
-    "wave_streak": 1,
+    "wave_streak": 0,
     "window_tokens_attributed": 0,
-    "verified_this_cycle": 2
+    "verified_this_cycle": 3
   },
   "qa": {
     "last_full_qa_cycle": 0,
     "last_look_cycle": 0,
     "last_taste_cycle": 0,
     "carried_forward_note": "Cycle markers RESET for run #3 (they numbered run-1/run-2 cycles and would misread against this run's counter). The full run-1 and run-2 qa note blob — the cycle-50 mutation instrument, the 29/29 coverage map, and every suite_coverage_note — is preserved byte-exact in .swarm/state.json.pre-run3-1787024916 and is the input K-3 re-measures against. Prior values: last_full_qa_cycle 13, last_taste_cycle 14, last_e2e_cli_gate_cycle 50.",
-    "suite_coverage_note_cycle_003_run3": "K-3 RE-MEASURED. The 29-clause Domain-rule coverage map, re-run against today’s tree with the standing run-1 cycle-50/52 instrument, arms built by `git archive` at the pre-dispatch SHA b627ed2 (L-042) rather than by copying a live tree two agents were editing. Result 29 KILLED / 0 SURVIVED / 0 INERT / 0 NOT-PLANTED. No clause verdict moved since run #1 cycle 54; L5 and L7 (the cycle-52 holes) are still killed. Every cycle-52 anchor string still occurs exactly once in current source, so no mutation needed repair. Suite 84 tests at cycle-52 P0 -> 102 today, so several kills are now attributed to newer tests even though no clause-level verdict changed. RECORDED HERE, NOT in last_full_qa_cycle: this is the conductor/agent mutation instrument, not the qa-verify.js workflow (spec-author -> executor -> live-look), and putting it in that field would misreport which instrument produced the evidence — the same convention run #1 cycles 49-50 set."
+    "suite_coverage_note_cycle_003_run3": "K-3 RE-MEASURED. The 29-clause Domain-rule coverage map, re-run against today’s tree with the standing run-1 cycle-50/52 instrument, arms built by `git archive` at the pre-dispatch SHA b627ed2 (L-042) rather than by copying a live tree two agents were editing. Result 29 KILLED / 0 SURVIVED / 0 INERT / 0 NOT-PLANTED. No clause verdict moved since run #1 cycle 54; L5 and L7 (the cycle-52 holes) are still killed. Every cycle-52 anchor string still occurs exactly once in current source, so no mutation needed repair. Suite 84 tests at cycle-52 P0 -> 102 today, so several kills are now attributed to newer tests even though no clause-level verdict changed. RECORDED HERE, NOT in last_full_qa_cycle: this is the conductor/agent mutation instrument, not the qa-verify.js workflow (spec-author -> executor -> live-look), and putting it in that field would misreport which instrument produced the evidence — the same convention run #1 cycles 49-50 set.",
+    "suite_coverage_note_cycle_004_run3": "K-3 COMPLETENESS TESTED. The 29-clause map that cycle 3 re-measured 29/29 KILLED had itself never been re-derived from the SPEC. Cycle 4 derived 43 clauses independently from SPEC Domain rules / must-haves / taste notes / exit codes plus README, then diffed: 29 map onto the inherited enumeration (verdicts carried, not re-measured - src/ bin/ test/ are byte-identical between b627ed2 and e6c53b1), 14 are NEW. The 14 measured: 12 KILLED, 1 SURVIVED, 1 NOT-PLANTED. So the inherited enumeration was INCOMPLETE as an enumeration (14 omissions) while the SUITE turned out to protect 12 of those 14 anyway. The single survivor D-42 (repeated --tag/--author) is BOUNDARY, not HOLE. 0 HOLE therefore 0 new tests, which is why N-5 closes empty. RECORDED HERE, NOT in last_full_qa_cycle: this is the conductor/agent mutation instrument, not the qa-verify.js workflow - same convention as run #1 cycles 49-50 and run #3 cycle 3."
   },
   "baseline_2026_08_18": {
     "test_cmd_output": "tests 102 | suites 0 | pass 102 | fail 0 | cancelled 0 | skipped 0 | todo 0 | duration_ms 4788.75",
@@ -426,10 +469,9 @@
     "git_head": "3d8997a"
   },
   "last_cycle": {
-    "cycle": 3,
-    "work": "build-wave: N-3 coverage map re-measure + N-7 count-claim audit",
-    "outcome": "value",
-    "verified": 2,
-    "failed": 0
+    "cycle": 4,
+    "work": "build-wave (N-4 + N-6)",
+    "outcome": "VALUE (3 verified: N-4, N-5, N-6)",
+    "ts": 1787030903
   }
 }

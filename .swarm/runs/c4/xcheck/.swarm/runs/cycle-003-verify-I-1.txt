@@ -1,0 +1,81 @@
+CYCLE 3 — VERIFICATION EVIDENCE for item I-1 (close the --seed non-finite determinism hole)
+Conductor-authored at verification time. The builder never saw these checks.
+Run 2026-08-15T11:52Z on /opt/targets/aphorism-cli @ working tree (pre-commit).
+
+--------------------------------------------------------------------------
+BASELINE, measured BEFORE dispatch (defect reproduction, same cycle)
+--------------------------------------------------------------------------
+$ node -e '6x execFileSync bin/aphorism.js --seed Infinity --json'
+Focus is a matter of deciding what things you
+All programmers are optimists.
+Talk is cheap. Show me the code.
+Optimization hinders evolution.
+I call it my billion-dollar mistake. It was t
+The question of whether computers can think i
+distinct: 6 of 6          <-- DEFECT PRESENT: non-deterministic under a seed
+
+--------------------------------------------------------------------------
+GATE CHECK 0 — file scope + no weakened assertions
+--------------------------------------------------------------------------
+$ git status --porcelain
+ M src/select.js
+ M test/select.test.js
+$ git diff --stat
+ src/select.js       | 13 ++++++++-----
+ test/select.test.js | 31 +++++++++++++++++++++++++++++++
+ 2 files changed, 39 insertions(+), 5 deletions(-)
+$ git diff -U0 test/select.test.js | grep -c '^-[^-]'
+0                          <-- zero deleted lines: no existing assertion weakened
+
+Substantive change in src/select.js is one guard line:
+-  if (typeof seed === 'number' && Number.isFinite(seed)) {
++  if (typeof seed === 'number' && !Number.isNaN(seed)) {
+(remaining 8 changed lines are the JSDoc contract above pick(), made truthful.)
+
+--------------------------------------------------------------------------
+GATE CHECK 1 — full test_cmd, run by the conductor
+--------------------------------------------------------------------------
+$ node --test test/*.test.js
+i tests 52
+i suites 0
+i pass 52
+i fail 0
+i cancelled 0
+i skipped 0
+i todo 0
+i duration_ms 1119.147952
+(baseline before this wave was 48 pass / 0 fail; +4 new tests, none removed)
+
+--------------------------------------------------------------------------
+GATE CHECK 2 — conductor's own CLI-level checks (A-D)
+--------------------------------------------------------------------------
+A. End-to-end stability through the real binary, not the unit seam.
+   8 consecutive process spawns each; value = count of DISTINCT outputs.
+A1 +Inf distinct/8 : 1
+A2 -Inf distinct/8 : 1
+A3 +Inf+filter    : 1     <-- --tag simplicity applied, per the item's acceptance
+
+B. DISCRIMINATOR. A degenerate fix (e.g. pinning index 0, or collapsing every
+   non-finite seed onto one entry) would pass A. So the conductor independently
+   re-implemented mulberry32 + the IEEE-754 bit-fold in the verify script and
+   PREDICTED which corpus index each seed must select, then compared against
+   what the CLI actually printed:
+B Infinity  predicted-index match: true | idx 21
+B -Infinity predicted-index match: true | idx 3
+B 42        predicted-index match: true | idx 32
+   Three distinct indices, each independently predicted -> the deterministic
+   branch is genuinely computing the seed, not returning a fixed element.
+
+C. NaN must NOT have been swept into the deterministic branch.
+$ node bin/aphorism.js --seed NaN
+C NaN exit: 2 | stdout empty: true | stderr: "aphorism: flag --seed requires a numeric value"
+   Exit-2 + stderr-only contract intact; unchanged from before the fix.
+
+D. Anti-pinning control: the random branch must still be random.
+D unseeded distinct/12: 12
+
+--------------------------------------------------------------------------
+VERDICT: PASS. Item I-1 -> done. Known issue KI-4 -> resolved at cycle 3.
+The Domain rule "a seeded pick is deterministic" now holds with no finiteness
+carve-out, verified through the shipped binary and against an independent
+re-derivation of the expected index.

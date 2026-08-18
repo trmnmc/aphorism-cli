@@ -1,0 +1,64 @@
+# conductor census: 50 entries, 37 distinct tags, 21 singletons
+
+PASS A1    exactly 3 paths differ from HEAD (README.md, src/args.js, +test/readme-tags.test.js)
+            changed: ["README.md","src/args.js","test/readme-tags.test.js"]
+PASS A2    no runtime module touched (corpus/select/bin) and no dependency manifest added
+            touched=[] package.json exists=false
+PASS A3    new test file requires nothing outside node: builtins and relative paths (zero-dep held)
+            requires=["node:test","node:assert","fs","path","../src/corpus.js"]
+PASS B1    src/args.js OUTSIDE the HELP template literal is byte-identical to HEAD
+            outside-bytes head=2849 new=2849
+PASS B2    the HELP literal did change (the item is not a no-op)
+            help lines head=10 new=13
+PASS B3    parseArgs is behaviourally identical to HEAD across 44 argv vectors
+            all 44 vectors identical
+PASS C1    README has its own "## Tag vocabulary" heading (the acceptance criterion)
+            38 lines
+PASS C2    every tag named in the section exists in the corpus (no invented vocabulary)
+            37 backticked names, bogus=[]
+PASS C3    every count in the section's tables matches the corpus exactly
+            16 rows, wrong=[]
+PASS C4    the three groups partition all 37 tags with no gap, no overlap, no duplicate
+            documented=37/37 tables=16 singles=21 dupes=[] missing=[] singles-exact=true
+PASS C5    the prose totals (37 distinct / 16 multi / 21 single) are the real figures
+            stated 37/16/21 vs real 37/16/21
+PASS C6    the section states the unevenness plainly (the honesty requirement)
+            states both the count and the consequence
+PASS C7    the rest of README.md is unchanged apart from the inserted section
+            residual delta bytes=0
+PASS D1    README's advertised census pipeline runs and reproduces the conductor's census
+            cmd=node bin/aphorism.js --list --json | jq -r ".tags[]" | sort | uniq -c | sort -rn -> 37 tags, mismatch=[]
+PASS D2    --help still exits 0, writes only to stdout, and now names where the tags live
+            exit=0 stderr="" lines=12 points-at-readme=true
+PASS D3    the --help pointer is not a dangling reference: that heading really is in README.md
+            quoted=["Tag vocabulary"] dangling=[]
+PASS D4    the --help jq recipe is truthful: --list --json really does expose .tags[]
+            37 distinct tags via the advertised recipe vs 37 real
+PASS D5    every tag the README advertises actually returns a match (exit 0, non-empty stdout)
+            37 tags exercised against the real binary, broken=[]
+PASS E1    full suite green in the worktree
+            tests=65 pass=65 fail=0 exit=0
+PASS E2    the new file is the whole test delta and adds real tests (59 -> 65)
+            without new file: tests=59 fail=0; delta=6
+PASS F1    control: understate the distinct-tag total (37 -> 36) must turn the suite RED
+            suite fail=1 (expected RED) :: test at test/readme-tags.test.js:112:1
+PASS F2    control: corrupt one table count (design 13 -> 12) must turn the suite RED
+            suite fail=1 (expected RED) :: test at test/readme-tags.test.js:95:1
+PASS F3    control: drop a real single-entry tag (`yagni`) from the list must turn the suite RED
+            suite fail=1 (expected RED) :: test at test/readme-tags.test.js:147:1
+PASS F4    control: misstate the single-entry count (21 -> 20) must turn the suite RED
+            suite fail=1 (expected RED) :: test at test/readme-tags.test.js:126:1
+PASS F5    control: INVENT a tag (`refactoring`, absent from the corpus) in the single-entry list must turn the suite RED
+            suite fail=1 (expected RED) :: test at test/readme-tags.test.js:52:1
+PASS F6    control: INVENT a tag as a table row (`| `refactoring` | 4 |`) must turn the suite RED
+            suite fail=2 (expected RED) :: test at test/readme-tags.test.js:52:1
+PASS F7    control: a CORPUS-side change (add tag `refactoring` to entry 0) must turn the suite RED
+            suite fail=3 (expected RED — the doc must rot loudly when the corpus moves)
+PASS F9    control: a bogus name substituted at ANY of 8 documented positions turns the suite RED
+            8 positions probed, unwatched=[]
+PASS F10   INFO: is prose-list coverage keyed to the exact lead-in sentence?
+            YES — after rewording, the bogus tag went UNSEEN; the only failure came from a different assertion, so prose coverage IS keyed to that sentence. Not a gate failure (the shipped README is correct and watched) but a real limitation of the guard, filed as a residual. suite fail=1 firing=["README must correctly describe single-entry tag count"]
+PASS F8    control-of-the-controls: tree restored, suite green again at 65
+            tests=65 fail=0 tree=["README.md","src/args.js","test/readme-tags.test.js"]
+
+================ GATE: 30 pass / 0 fail ================

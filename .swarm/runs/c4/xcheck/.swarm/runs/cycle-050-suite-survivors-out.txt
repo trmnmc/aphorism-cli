@@ -1,0 +1,8 @@
+P0  unmutated copy — suite 80 pass / 0 fail  OK (copy machinery sound)
+
+M1  SURVIVES the suite — 80 pass / 0 fail
+     unseeded off-by-one — the last corpus entry is unreachable forever
+M3  SURVIVES the suite — 80 pass / 0 fail
+     unseeded selection heavily biased toward the front of the corpus
+M5  killed by the suite — 78 pass / 2 fail
+     every seed folds to one state — --seed stays DETERMINISTIC but reaches ONE entry

@@ -1,0 +1,11 @@
+PASS  CTRL-PRISTINE   unmutated copy 91 pass / 0 fail (91 tests)
+PASS  A   live tree test_cmd: 91 pass / 0 fail (91 tests)
+PASS  A2   test count is 91, expected 91 (85 at cycle 53 + 6)
+PASS  WITNESS-L7   --list --seed abc: pristine exit 2/0B stdout -> mutant exit 0/4528B stdout ;; --list --nosuchflag: pristine exit 2/0B stdout -> mutant exit 0/4528B stdout
+PASS  DENOM   pristine + skip-pattern: 85 tests (91 - 6 expected), 0 fail
+PASS  L7-KILL   --list swallows every usage error -> 85p/6f
+PASS  L7-NAMES   6 failing; seed-case named=true flag-case named=true
+PASS  L7-ATTR   same mutant, new tests removed -> 85p/0f (survives, so the kill is the new tests')
+PASS  POS-L5   --list --seed does a single seeded pick instead of listing -> 90p/1f (cycle 53's T-045 test still holds)
+PASS  H   pristine copy green on 3/3 consecutive runs
+GATE 10/10

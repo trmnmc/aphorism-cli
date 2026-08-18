@@ -1,0 +1,10 @@
+PASS  C1 backlog parses; all 12 LIVE items carry required fields  :: 29 items scanned, 9 fields each
+WARN  C1 historical: done item J-8 is missing [deps] — left UNMODIFIED on purpose; editing it would break the C4 non-destruction guarantee
+PASS  C2 PLAN gate: all 5 must-haves covered by a live item  :: K-1->N-1 K-2->N-2 K-3->N-3+N-4+N-5 K-4->N-6+N-7 K-5->N-8
+PASS  C3 no runnable verify command in any LIVE acceptance clause  :: scanned 29 clauses
+WARN  C3 historical: done item J-9 embeds a literal command in its acceptance — inert (never dispatchable) and left UNMODIFIED to preserve C4
+PASS  C4 all 20 pre-existing items byte-identical to HEAD  :: +9 new, 0 mutated, 0 dropped
+PASS  C5 control: gate DETECTS a removed item (must report K-1 uncovered)  :: control run reported uncovered=[K-1]
+PASS  C6 control: C3 detector DETECTS a re-poisoned live clause (must flag N-5)  :: control run flagged=[N-5]
+
+GATE PASS — 6/6 checks passed

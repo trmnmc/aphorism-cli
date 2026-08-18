@@ -1,0 +1,554 @@
+{
+  "pre_dispatch_sha": "e6c53b1e114a377bed3c6c90b40955bd1d65d493",
+  "method": "Arms built by `git clone --no-checkout` + detached checkout of the pre-dispatch SHA into /opt/swarm/.n4-scratch (sandbox blocked /tmp); live tree never copied, never modified. Suite forced to TAP: node --test --test-reporter=tap test/*.test.js (explicit file list). Every mutant additionally verified non-INERT by a pristine-vs-mutant CLI behaviour probe before the suite verdict was read. Raw data: harness-results.json / killers.json in the (discarded) scratch dir; regenerable from this file's mutation_site strings.",
+  "controls": {
+    "p0": {
+      "tests": 102,
+      "pass": 102,
+      "fail": 0
+    },
+    "inert": {
+      "tests": 102,
+      "pass": 102,
+      "fail": 0,
+      "note": "comment-only edit to src/select.js"
+    }
+  },
+  "clauses": [
+    {
+      "id": "D-01",
+      "source": "SPEC §Domain rules: seeded pick is deterministic: same seed + same filtered candidate set always yield the same aphorism — carried from cycle 3 (cycle-003-coverage-map.md row S1), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "S1",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "94p/8f"
+    },
+    {
+      "id": "D-02",
+      "source": "SPEC §Domain rules: determinism is per-seed: distinct seeds are not collapsed to one internal state / one aphorism — carried from cycle 3 (cycle-003-coverage-map.md row S5), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "S5",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "100p/2f"
+    },
+    {
+      "id": "D-05",
+      "source": "SPEC §Domain rules: --seed Infinity and -Infinity are accepted and deterministic — carried from cycle 3 (cycle-003-coverage-map.md row S2), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "S2",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "99p/3f"
+    },
+    {
+      "id": "D-06",
+      "source": "SPEC §Domain rules: without --seed, selection is uniform over the filtered set (every candidate reachable) — carried from cycle 3 (cycle-003-coverage-map.md row S3), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "S3",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "100p/2f"
+    },
+    {
+      "id": "D-07",
+      "source": "SPEC §Domain rules: without --seed, selection is uniform over the filtered set (no bias in the draw) — carried from cycle 3 (cycle-003-coverage-map.md row S4), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "S4",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "101p/1f"
+    },
+    {
+      "id": "D-08",
+      "source": "SPEC §Domain rules: --author matches by substring containment — carried from cycle 3 (cycle-003-coverage-map.md row F2), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "F2",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "98p/4f"
+    },
+    {
+      "id": "D-09",
+      "source": "SPEC §Domain rules: --author matches case-insensitively — carried from cycle 3 (cycle-003-coverage-map.md row F1), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "F1",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "101p/1f"
+    },
+    {
+      "id": "D-11",
+      "source": "SPEC §Domain rules: --tag matches a whole tag, not a substring (--tag desi does not match design) — carried from cycle 3 (cycle-003-coverage-map.md row F3), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "F3",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "100p/2f"
+    },
+    {
+      "id": "D-12",
+      "source": "SPEC §Domain rules: --tag matches case-insensitively — carried from cycle 3 (cycle-003-coverage-map.md row F4), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "F4",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "101p/1f"
+    },
+    {
+      "id": "D-14",
+      "source": "SPEC §Domain rules: supplying both --author and --tag narrows to the intersection (AND, not OR) — carried from cycle 3 (cycle-003-coverage-map.md row F5), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "F5",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "94p/8f"
+    },
+    {
+      "id": "D-15",
+      "source": "SPEC §Domain rules: empty candidate set after filtering exits 1, not 0 — carried from cycle 3 (cycle-003-coverage-map.md row E1), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "E1",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "98p/4f"
+    },
+    {
+      "id": "D-16",
+      "source": "SPEC §Domain rules: empty candidate set writes a human-readable message on stderr — carried from cycle 3 (cycle-003-coverage-map.md row E2), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "E2",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "99p/3f"
+    },
+    {
+      "id": "D-17",
+      "source": "SPEC §Domain rules: empty candidate set writes zero bytes on stdout — carried from cycle 3 (cycle-003-coverage-map.md row E3), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "E3",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "98p/4f"
+    },
+    {
+      "id": "D-18",
+      "source": "SPEC §Domain rules: --list prints every aphorism in the filtered set — carried from cycle 3 (cycle-003-coverage-map.md row L1), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "L1",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "95p/7f"
+    },
+    {
+      "id": "D-19",
+      "source": "SPEC §Domain rules: --list prints in corpus order — carried from cycle 3 (cycle-003-coverage-map.md row L2), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "L2",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "99p/3f"
+    },
+    {
+      "id": "D-20",
+      "source": "SPEC §Domain rules: --list prints one per line — carried from cycle 3 (cycle-003-coverage-map.md row L3), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "L3",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "95p/7f"
+    },
+    {
+      "id": "D-21",
+      "source": "SPEC §Domain rules: --list line form is <text> SPACE EM-DASH(U+2014) SPACE <author> — carried from cycle 3 (cycle-003-coverage-map.md row L4), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "L4",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "100p/2f"
+    },
+    {
+      "id": "D-22",
+      "source": "SPEC §Domain rules: --list accepts a valid --seed and ignores it; no random selection occurs — carried from cycle 3 (cycle-003-coverage-map.md row L5), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "L5",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "101p/1f"
+    },
+    {
+      "id": "D-23",
+      "source": "SPEC §Domain rules: --list exits 0 — carried from cycle 3 (cycle-003-coverage-map.md row L6), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "L6",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "95p/7f"
+    },
+    {
+      "id": "D-24",
+      "source": "SPEC §Domain rules: a seed that fails to parse is still a usage error (exit 2) under --list — carried from cycle 3 (cycle-003-coverage-map.md row L7), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "L7",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "96p/6f"
+    },
+    {
+      "id": "D-25",
+      "source": "SPEC §Domain rules: --json emits a single-line JSON object — carried from cycle 3 (cycle-003-coverage-map.md row J1), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "J1",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "101p/1f"
+    },
+    {
+      "id": "D-26",
+      "source": "SPEC §Domain rules: --json carries at minimum the keys text, author, tags — carried from cycle 3 (cycle-003-coverage-map.md row J2), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "J2",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "101p/1f"
+    },
+    {
+      "id": "D-27",
+      "source": "SPEC §Domain rules: --json composes with the filter flags — carried from cycle 3 (cycle-003-coverage-map.md row J3b), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "J3b",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "101p/1f"
+    },
+    {
+      "id": "D-28",
+      "source": "SPEC §Domain rules: --json composes with --seed — carried from cycle 3 (cycle-003-coverage-map.md row J3), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "J3",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "101p/1f"
+    },
+    {
+      "id": "D-29",
+      "source": "SPEC §Domain rules: --list --json emits one JSON object per line (NDJSON), corpus order — carried from cycle 3 (cycle-003-coverage-map.md row J4), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "J4",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "101p/1f"
+    },
+    {
+      "id": "D-30",
+      "source": "SPEC §Domain rules: exit code 0 on success — carried from cycle 3 (cycle-003-coverage-map.md row X0), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "X0",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "93p/9f"
+    },
+    {
+      "id": "D-31",
+      "source": "SPEC §Domain rules: exit code 2 on an unknown flag — carried from cycle 3 (cycle-003-coverage-map.md row X2a), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "X2a",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "97p/5f"
+    },
+    {
+      "id": "D-32",
+      "source": "SPEC §Domain rules: exit code 2 on a missing flag argument — carried from cycle 3 (cycle-003-coverage-map.md row X2b), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "X2b",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "99p/3f"
+    },
+    {
+      "id": "D-33",
+      "source": "SPEC §Domain rules: exit code 2 on a seed value that Number() parses to NaN — carried from cycle 3 (cycle-003-coverage-map.md row X2c), not re-measured",
+      "in_inherited_29": true,
+      "inherited_id": "X2c",
+      "mutation_site": "",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "97p/5f"
+    },
+    {
+      "id": "D-03",
+      "source": "SPEC §Domain rules, Selection: \"`--seed` accepts any value that Number() parses to a non-NaN number, including negative numbers\"",
+      "in_inherited_29": false,
+      "inherited_id": "",
+      "mutation_site": "src/args.js: looksLikeFlag body `return token === '-h' || token.startsWith('--');` -> `return token.startsWith('-');` (a negative seed like -5 is then misread as a flag, so --seed -5 becomes exit 2)",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "97p/5f",
+      "killed_by": [
+        "--seed <n> accepts a negative number",
+        "--seed Infinity / --seed -Infinity parse to numbers, not a usage error",
+        "+3 more"
+      ]
+    },
+    {
+      "id": "D-04",
+      "source": "SPEC §Domain rules, Selection: \"`--seed` accepts any value that Number() parses to a non-NaN number, including ... non-integers\"",
+      "in_inherited_29": false,
+      "inherited_id": "",
+      "mutation_site": "src/args.js: parseSeedValue `if (Number.isNaN(n)) return { ok: false };` -> `if (Number.isNaN(n) || (Number.isFinite(n) && !Number.isInteger(n))) return { ok: false };` (rejects 1.5 but leaves Infinity intact)",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "101p/1f",
+      "killed_by": [
+        "--json composes with --seed: the seeded JSON pick is reproducible AND is the same entry as the plain-text pick"
+      ]
+    },
+    {
+      "id": "D-10",
+      "source": "SPEC §Domain rules, Filtering: \"--author matches ... against the aphorism's `author` field (e.g., --author dijk matches Edsger W. Dijkstra)\"",
+      "in_inherited_29": false,
+      "inherited_id": "",
+      "mutation_site": "src/select.js: `entry.author.toLowerCase().includes(needle)` -> `entry.text.toLowerCase().includes(needle)` (author filter searches text field instead)",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "98p/4f",
+      "killed_by": [
+        "author filter is case-insensitive and narrows the list",
+        "filter: author and tag together narrow to the intersection (AND)",
+        "+2 more"
+      ]
+    },
+    {
+      "id": "D-13",
+      "source": "SPEC §Domain rules, Filtering: \"--tag matches a whole tag ... for membership in the aphorism's `tags` ARRAY\" — membership anywhere in the array, not only its first slot",
+      "in_inherited_29": false,
+      "inherited_id": "",
+      "mutation_site": "src/select.js: `entry.tags.some((t) => t.toLowerCase() === needle)` -> `entry.tags.slice(0, 1).some((t) => t.toLowerCase() === needle)` (only the first tag is consulted)",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "99p/3f",
+      "killed_by": [
+        "--list prints exactly one line per matching entry, no drops",
+        "--list preserves corpus order (first and last line match)",
+        "+1 more"
+      ]
+    },
+    {
+      "id": "D-34",
+      "source": "SPEC §Product must-haves: \"prints exactly one aphorism plus attribution to stdout, exit 0\" — the attribution must actually be present",
+      "in_inherited_29": false,
+      "inherited_id": "",
+      "mutation_site": "bin/aphorism.js: format() `return `${entry.text}\\n    — ${entry.author}`;` -> `return `${entry.text}`;` (attribution line dropped)",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "100p/2f",
+      "killed_by": [
+        "bare invocation prints one attributed aphorism and exits 0",
+        "plain single-pick output is TWO lines: text, newline, four-space indent, EM DASH, space, author"
+      ]
+    },
+    {
+      "id": "D-35",
+      "source": "README §Usage example output (four-space indent + EM DASH before the author) — the documented default-mode attribution format",
+      "in_inherited_29": false,
+      "inherited_id": "",
+      "mutation_site": "bin/aphorism.js: format() em dash -> ASCII hyphen: `\\n    — ${entry.author}` -> `\\n    - ${entry.author}`",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "100p/2f",
+      "killed_by": [
+        "plain single-pick output is TWO lines: text, newline, four-space indent, EM DASH, space, author",
+        "+1 more"
+      ]
+    },
+    {
+      "id": "D-36",
+      "source": "SPEC §Product must-haves lists --help among the flags; §Taste notes: \"--help fits on one screen\", errors-only on stderr — help text belongs on stdout with exit 0",
+      "in_inherited_29": false,
+      "inherited_id": "",
+      "mutation_site": "bin/aphorism.js: help branch `process.stdout.write(HELP...)` -> `process.stderr.write(HELP...)`",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "101p/1f",
+      "killed_by": [
+        "--help prints usage to stdout and exits 0"
+      ]
+    },
+    {
+      "id": "D-37",
+      "source": "README §Flags table: \"`--help`, `-h` — Usage summary\" — the -h alias is documented behaviour",
+      "in_inherited_29": false,
+      "inherited_id": "",
+      "mutation_site": "src/args.js: BOOL_FLAGS `'-h': 'help',` -> `'-x': 'help',` (-h becomes an unknown flag)",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "100p/2f",
+      "killed_by": [
+        "-h sets help: true",
+        "unknown short flag is a usage error"
+      ]
+    },
+    {
+      "id": "D-38",
+      "source": "SPEC §Taste notes: \"Errors go to stderr, never stdout\" — applies to the usage-error diagnostic, not only the no-match message",
+      "in_inherited_29": false,
+      "inherited_id": "",
+      "mutation_site": "bin/aphorism.js: usage-error branch `process.stderr.write(`aphorism: ${opts.error}\\n`);` -> `process.stdout.write(...)`",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "94p/8f",
+      "killed_by": [
+        "unknown flag is a usage error, exit 2, stdout clean",
+        "non-numeric seed is a usage error, exit 2",
+        "+6 more"
+      ]
+    },
+    {
+      "id": "D-39",
+      "source": "SPEC §Product must-haves: \"A curated corpus of >= 40 aphorisms as structured data (text, author, tags) — 50 entries\"",
+      "in_inherited_29": false,
+      "inherited_id": "",
+      "mutation_site": "src/corpus.js: `module.exports = { corpus };` -> `module.exports = { corpus: corpus.slice(0, 39) };`",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "96p/6f",
+      "killed_by": [
+        "corpus has at least 40 entries",
+        "README tag counts must match corpus",
+        "+4 more"
+      ]
+    },
+    {
+      "id": "D-40",
+      "source": "SPEC §Taste notes: \"no banner, no emoji, no box-drawing by default. Must survive `aphorism | cat` and `aphorism > file` unchanged\" — no ANSI escapes in piped output",
+      "in_inherited_29": false,
+      "inherited_id": "",
+      "mutation_site": "bin/aphorism.js: format() wraps the attribution in ANSI dim: `\\n    — ${author}` -> `\\n    \\u001b[2m— ${author}\\u001b[22m`",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "",
+      "suite": "100p/2f",
+      "killed_by": [
+        "output is pipe-safe — no ANSI escapes when not a TTY",
+        "+1 more"
+      ]
+    },
+    {
+      "id": "D-41",
+      "source": "SPEC §Exit codes enumerates bad usage as \"unknown flag, missing flag argument, or seed value that Number() parses to NaN\" — a bare positional argument is NOT in that list; implementation rejects it with exit 2",
+      "in_inherited_29": false,
+      "inherited_id": "",
+      "mutation_site": "src/args.js: `result.error = `unexpected argument: ${arg}`; return result;` -> `continue;` (positionals silently ignored)",
+      "verdict": "KILLED",
+      "classification": "n/a",
+      "reasoning": "KILLED so no HOLE/BOUNDARY call is required, but note: the suite (test \"a bare positional argument (not a flag) is a usage error\") decides a behaviour the SPEC exit-code list does not enumerate. The suite is stricter than the SPEC here.",
+      "suite": "101p/1f",
+      "killed_by": [
+        "a bare positional argument (not a flag) is a usage error"
+      ]
+    },
+    {
+      "id": "D-42",
+      "source": "SPEC §Domain rules, Filtering — describes `--author <name>` and `--tag <tag>` in the singular only; NOTHING in SPEC or README decides what a repeated occurrence of the same value flag means. Implementation: last occurrence wins.",
+      "in_inherited_29": false,
+      "inherited_id": "",
+      "mutation_site": "src/args.js: space-form value assignment `result[VALUE_FLAGS[arg]] = next;` -> `if (result[VALUE_FLAGS[arg]] === undefined) result[VALUE_FLAGS[arg]] = next;` (first occurrence wins instead of last)",
+      "verdict": "SURVIVED",
+      "classification": "BOUNDARY",
+      "reasoning": "The SPEC Domain rules spell every filter flag in the singular (\"--author matches by substring containment ... --tag matches a whole tag\") and never mention repetition; README's flag table is likewise singular. Nothing in the spec text decides whether `--tag humor --tag design` should mean last-wins, first-wins, intersection of both, or a usage error — last-wins is an artifact of assignment order in parseArgs, not a specified contract. Behaviour change is real and observable (pristine: `--tag humor --tag design --list` yields the 14-entry design list opening with the Fowler line; mutant: the 9-entry humor list opening with the Knuth line) yet the suite stays 102p/0f. Writing a test would freeze an undecided behaviour; the right response is to add this to J-7's human-ruling list (which already holds --help precedence and --seed -0) and document it. BOUNDARY.",
+      "suite": "102p/0f",
+      "killed_by": []
+    },
+    {
+      "id": "D-43",
+      "source": "SPEC §Domain rules, Selection: \"`--seed` accepts any value that Number() parses to a non-NaN number\" vs §Exit codes: \"2 bad usage (... missing flag argument ...)\" — empty/whitespace seed value",
+      "in_inherited_29": false,
+      "inherited_id": "",
+      "mutation_site": "",
+      "verdict": "NOT-PLANTED",
+      "classification": "n/a",
+      "reasoning": "The SPEC is internally contradictory for `--seed \"\"` / `--seed \"   \"`: Number(\"\") === 0 and Number(\"   \") === 0 (verified live), both non-NaN, so the Selection clause literally says accept them — but the implementation rejects both with exit 2 (\"flag --seed requires a numeric value\", verified live against the pristine tree) and at least two existing tests assert that rejection (`--list --seed=` and whitespace-only rows). Because the two spec clauses point in opposite directions there is no agreed spec meaning to plant a defect against: mutating toward the literal Selection reading would measure the suite's enforcement of the OPPOSITE reading, not protection of a decided behaviour. This is a spec-text ambiguity for the J-7 human-ruling list, not a measurable coverage cell.",
+      "suite": "",
+      "killed_by": []
+    }
+  ],
+  "tally": {
+    "derived": 43,
+    "new": 14,
+    "KILLED": 41,
+    "SURVIVED": 1,
+    "INERT": 0,
+    "NOT-PLANTED": 1,
+    "HOLE": 0,
+    "BOUNDARY": 1
+  }
+}

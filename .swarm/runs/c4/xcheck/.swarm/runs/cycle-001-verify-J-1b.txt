@@ -1,0 +1,25 @@
+==========================================================================
+J-1b VERIFICATION GATE
+==========================================================================
+PASS A patch: every required allowlist entry present verbatim
+PASS B patch: uses ABSOLUTE /opt/swarm paths, not the macOS root
+PASS C confirm: names the single command a human runs
+PASS D confirm: states the expected result of that command
+PASS E repro: shows the script denial as an executed observation
+PASS F repro: shows the settings-write denial too
+PASS G repro: includes the writable control that makes the denials meaningful
+PASS H honesty: states the script has NEVER been executed
+PASS I honesty: names the instrument as a re-implementation, not an execution
+PASS J scope: says the fix is not available from inside a run
+PASS K additionalDirectories gap is named
+--------------------------------------------------------------------------
+NEW handoff: 11/11
+
+NEGATIVE CONTROL — the 2026-08-15 handoff scored on the same arms:
+     also-present: C confirm: names the single command a human runs
+OLD handoff: 1/11  (a discriminating gate must score it strictly lower)
+
+settings.json still unpatched (the handoff is still owed): True
+additionalDirectories currently: []
+
+GATE: PASS

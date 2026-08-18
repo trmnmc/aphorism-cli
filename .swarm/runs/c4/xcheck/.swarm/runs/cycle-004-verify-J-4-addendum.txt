@@ -1,0 +1,155 @@
+=== J-4 GATE, CONDUCTOR ADDENDUM — check corrections and the residual real defects ===
+cycle 4, run #2 (2026-08-17). Companion to cycle-004-verify-J-4.txt (raw v1 output, GATE 10/16).
+
+The raw gate scored 10/16. FOUR of the six BAD cells were MY CHECK BEING WRONG, not the
+builder's work being wrong. Each is corrected below with the independent measurement that
+settled it. Two BAD cells are REAL DEFECTS and they carry the verdict. The v1 output is left
+in place unedited rather than re-run clean, because a gate that quietly rewrites its own
+failing cells is worthless as evidence.
+
+SEAL PROVENANCE. Every truth used below comes from /opt/swarm/runs/c067-truth.json, whose
+sha256 (077e6a26e0e5559e07a0488483e807b4efd5da8e95a34af7ef2a73fb5127a4eb) was committed to
+THIS repo at e06852b BEFORE either builder was dispatched, with the plaintext deleted for the
+whole dispatch window and rewritten from conductor context afterwards. `sha256sum -c` → OK.
+So the numbers this gate judges against are provably pre-dispatch, not reverse-engineered
+from the diff.
+
+
+--- CHECK CORRECTED (4 cells) ------------------------------------------------------------
+
+H2  README.md integers — 10 "unaccounted" were 8 benign + 2 TRUE-but-historical.
+    My benign filter missed: `fortune(6)` (a unix man-section number, README:5); "exit 2"
+    prose (README:49); the exit-code TABLE rows `0` and `2` (README:108,110); a filename
+    (`cycle-046-retag.mjs`, README:102); and the "2 or more / 0 tags" phrasing at README:55,
+    which IS a sealed truth (band_1to2 = [], so 0 tags sit at <=2; min tag count is 3).
+    The two that needed real work were README:87 — "replaces an earlier 37-tag one in which
+    21 tags matched exactly one aphorism". Those are claims about the PRE-retag corpus and
+    cannot be derived from the current one. Derived from git instead, walking every commit
+    that touched src/corpus.js and recomputing the tag map at each:
+        9f5ae03  tags=12  singletons=0     (current)
+        320486e  tags=37  singletons=21    (pre-retag)
+        b4c9b06  tags=37  singletons=21    (pre-retag)
+    BOTH HISTORICAL CLAIMS ARE TRUE, exactly. Cell PASSES. Note for the record: the builder
+    did not itself verify these two, and its derivation table does not list them — they are
+    true, but that is luck rather than method on its part.
+
+H3  Triage-doc prose integers — all 17 were entry INDICES and citation YEARS, not counts.
+    `#45`, `#38`, `#48`, `#3`, `#39`, `#0`, `#10`, `#27`, `#46` are corpus indices; 1963 and
+    1974 are cited publication years. My filter covered neither. But a WRONG index would be a
+    real false claim, and a serious one — this is KI-2's human work queue, so a bad index
+    sends a human to audit the wrong entry. Verified every one against src/corpus.js:
+        #0 Donald Knuth   #3 Phil Karlton     #10 Edsger W. Dijkstra  #27 Kent Beck
+        #38 David Wheeler #39 Grace Hopper    #45 Bjarne Stroustrup   #48 Alan Kay
+        #46 Bjarne Stroustrup  (the doc says #46 "leans on the same asserted FAQ" as #45 —
+                                and #46 is indeed also Stroustrup, so the cross-reference
+                                is sound, not just the index)
+    9/9 correct. Cell PASSES.
+
+H4a "two SWARM runs" STILL PRESENT — false positive. The live claim at REPORT.md:24 now reads
+    "This repo has been through **three** SWARM runs." The only surviving occurrence of the
+    old wording is at REPORT.md:746, inside the corrections list, as a QUOTATION of the text
+    that was corrected ("→ corrected in place to **three**"). My regex cannot distinguish a
+    quoted old claim from a live one. Correction is real. Cell PASSES.
+
+H6  3 "dishonest" audit-word hits — all three false positives, and two of them are the
+    OPPOSITE of dishonest:
+      REPORT.md:595 "re-audited with the KI-11 classifier" — about the DASHBOARD render, not
+        about corpus attributions at all. Different sense of the word.
+      REPORT.md:785 "neither file describes the corpus attributions as audited," — an honest
+        NEGATIVE statement. My filter required a hedge token on the same line and did not
+        count "neither ... as audited" as one.
+      REPORT.md:789 "that currently misdescribes the corpus as audited." — likewise negative.
+    Zero lines in the shipped repo describe the attributions as audited. Cell PASSES.
+
+
+--- REAL DEFECTS (these carry the verdict) ------------------------------------------------
+
+D-1  THE "TEST LINES" COUNT FAMILY IS FALSE AT THREE SITES, AND WAS NOT SWEPT.
+     The acceptance is "EVERY count claim in the three docs is re-derived from the corpus/
+     suite and shown true, or corrected". These are count claims, they are false, and they
+     appear in neither the builder's derivation table nor its corrections list.
+         REPORT.md:155  "1511 of 2101 test lines"
+         REPORT.md:170  "1511 of the repo's 2101 test lines"
+         REPORT.md:440  "2101 lines of tests"
+     Measured (`wc -l test/*.test.js`):
+         args.test.js 217 + cli.test.js 541 + readme-tags.test.js 1978 + select.test.js 298
+         = 3034 total, of which readme-tags.test.js is 1978.
+     So both numbers are stale at every site: 1511 -> 1978 and 2101 -> 3034. This is NOT the
+     concurrency race — the 467-line growth in readme-tags.test.js came from run #2's own
+     cycles 2 and 3 (J-2a and J-2b rewrote that file), i.e. it was already false when this
+     cycle began. J-6's +31 lines this cycle account for a small part of the total delta only.
+     CONTROL, so this is not a blanket accusation: the adjacent claim in the same table row,
+     "549 lines shipped (src/ + bin/)", is EXACTLY right (133+269+91+56 = 549). The sweep was
+     real; it was not exhaustive.
+
+D-2  THE ITEM INTRODUCED A CLAIM THAT IS FALSE AT CYCLE END.
+         REPORT.md:56  "node --test test/*.test.js    # 100 tests as of run #2 cycle 4"
+     Live count at cycle 4 close: 101 (J-6 added one test this same cycle). The builder
+     DISCLOSED this itself, unprompted, as a known race and explained why it left 100 rather
+     than chase a moving target — the disclosure is exemplary and is why this is a defect
+     rather than a dishonesty finding. But the claim is date-stamped to this exact cycle and
+     is wrong for this exact cycle, which is the one thing a currency marker cannot rescue.
+     The fix is one digit, and the lesson is that a doc reconciliation that runs CONCURRENTLY
+     with a test-adding item cannot pin a live suite count — it must either read the count at
+     the end (which a builder cannot do; it does not own the cycle) or state the claim without
+     a number.
+
+D-3  T-024a IS STILL ASSERTED AS BLOCKED AT TWO OF THREE SITES.
+     T-024a is `done` on the board (verified cycle 2, J-2a). The builder corrected ONE site
+     and its method there was exactly right — REPORT.md:328's table row keeps the historical
+     text and carries an appended correction note at :330, "_Correction carried by this
+     reconciliation (run #2, cycle 4)._ **T-024a is no longer...**". Two further sites assert
+     it as blocked with NO marker:
+         REPORT.md:182  "**Blocked at the attempts cap:** T-024a, after two independent
+                         re-shapes each measured a ..."
+         REPORT.md:362  "... and one child (T-024a) is blocked at the attempts cap"
+     Same class as D-1: the right method, applied to the first occurrence rather than to all
+     of them.
+
+
+--- MINOR, NOT GATE-FAILING (recorded so they are not lost) --------------------------------
+
+m-1  REPORT.md:32 describes run #1's improvement run as "in flight, stops 2026-08-16 11:24
+     UTC" in a dated history table. That run ended at cycle 56. Stale PHRASING in a
+     historical row rather than a false count; not charged.
+m-2  README.md:55 states the same fact twice — "0 tags appear exactly once and 0 tags sit on
+     exactly one entry". Both halves are TRUE, so this is not a false claim and the builder's
+     "README needed zero edits" verdict is defensible on the acceptance's own terms. Noted as
+     prose redundancy for whoever next edits that section.
+m-3  README:55's "12 tags appear on 2 or more entries" is true but weaker than the measurable
+     truth (the minimum tag count is 3). Not a defect.
+
+
+--- CELLS THAT PASSED ON FIRST AUTHORING, INCLUDING THE SHARPEST ONE ----------------------
+
+H1/H1b  Scope held exactly: only REPORT.md (J-4) and test/cli.test.js (J-6) changed;
+        `git diff --name-only -- src bin` is EMPTY. A docs item touched no product code.
+H4c     The five README-prose items really are `done` on the board, as the doc now says.
+H4e     Commit-count claims: none stale (real count 121).
+H5      The reviewable corrected-or-removed list exists with 8 enumerated entries.
+H7      KI-2 survives OPEN and HIGH.
+H8      THE SHARPEST PROBE, AND IT HELD. SPEC.md names one honest limit explicitly: the
+        prior run's cmd_parse claim was established by CODE READING and has NEVER been
+        executed. If the reconciliation had upgraded that to "verified" it would have failed
+        the item's central clause. One mention, ZERO overclaiming lines — the mention reads
+        "`cmd_parse` exits 2 on any validate..." with no verification verb attached.
+H9      FAILABILITY CONTROL: the H2 enumerator does catch a planted false prose count (77
+        inserted as "The corpus currently holds 77 curated entries") — so H2 passing is a
+        measurement, not an inert checker reporting silence.
+H10     test_cmd green on the shipped tree: 101 tests, 0 fail.
+
+
+--- VERDICT ------------------------------------------------------------------------------
+
+J-4 FAILS the gate on D-1, D-2 and D-3. Effective score with the four check corrections
+applied and the two real defects standing: 14/16.
+
+The failure is narrow and consistent in shape: every defect is the right method applied
+non-exhaustively (first occurrence corrected, later ones missed) plus one number that a
+concurrent item moved underneath it. Nothing the builder asserted is false; what it claimed
+to have swept, it had not swept completely. Its own disclosures were honest and one of them
+(D-2) is how that defect was found at all.
+
+Item -> todo, attempts 0 -> 1, routed one rung up (sonnet -> opus) per the escalation ladder.
+The next attempt gets D-1/D-2/D-3 named explicitly and should treat "every occurrence of a
+claim", not "every claim", as the unit of work.

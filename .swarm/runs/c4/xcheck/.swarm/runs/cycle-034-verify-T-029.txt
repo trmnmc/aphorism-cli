@@ -1,0 +1,103 @@
+CYCLE 34 — VERIFICATION GATE FOR T-029 (silent hole in the Attribution count extraction)
+Harness: .swarm/runs/cycle-034-gate.js   Raw: .swarm/runs/cycle-034-gate.json
+Baseline (pre-dispatch): .swarm/runs/cycle-034-baseline.txt
+Sealed prediction: .swarm/runs/cycle-034-precommit.md (sha256 sealed before dispatch)
+
+26 cells across 4 arms. Arms FIX (the builder's change), HEAD (as committed),
+and two arms I built MYSELF from FIX by collapsing the binding set to one
+element: F_FIRST (bindings.slice(0,1)) and F_LAST (bindings.slice(-1)).
+The positional arms exist because T-029's acceptance disqualifies both
+positional designs; building them turns that clause into a measurement.
+
+=== FULL SCORECARD (verdict per cell) ===
+cell  what it plants                                    HEAD   FIX    F_FIRST F_LAST
+G0    pristine control                                  GREEN  GREEN  GREEN   GREEN
+G1    HIGH: true 8, then contradictory 9 (later clause) GREEN* FAIL   GREEN*  FAIL
+G2    HIGH: false 9 first, true 8 second (mirror)       FAIL   FAIL   FAIL    GREEN*
+G3    HIGH: "8 are rated HIGH and 9 are rated HIGH"     GREEN* FAIL   GREEN*  FAIL
+G4    HIGH: single false 9                              FAIL   FAIL   -       -
+G5    HIGH marker deleted (parse miss)                  FAIL   FAIL   -       -
+G6    entries: true 50, then contradictory 51           GREEN* FAIL   GREEN*  FAIL
+G7    entries: single false 51                          FAIL   FAIL   -       -
+G8    HIGH: 9 then 10, NEITHER equals truth 8           FAIL   FAIL   -       -
+G9    every claim TRUE + "Of those, 3 HIGH entries..."  GREEN  FAIL!  -       -
+G10   R2: triage MEDIUM->HIGH *and* README 8->9         GREEN  GREEN  -       -
+G11   R2 stale half: triage moves, README does not      FAIL   FAIL   -       -
+G12   contradictory 9 with digit across a dash boundary GREEN* GREEN* -       -
+(* = SILENT: a self-contradicting or false README passes.  ! = new false rejection.)
+
+=== THE THREE SILENT HOLES, CLOSED, FAILABLE AND ATTRIBUTABLE (L-029) ===
+Each is RED under FIX and GREEN under HEAD (the "neutered" arm), i.e. proven twice.
+
+G1:FIX  RED 77/78 fail=1
+  - README Attribution section HIGH-risk count must match the triage doc table (C2)
+    msg: README Attribution section states the HIGH-risk count claim as 8 in one place,
+         but ALSO states it as 9 (in "...A later audit note records that 9 are rated
+         HIGH overall...") elsewhere -- these contradict each other; the true value is 8
+G3:FIX  RED 77/78 fail=1  (same test) msg names ...as 8 ... ALSO ... as 9 (in "...8 are
+         rated HIGH and 9 are rated HIGH...")  <- the two occurrences bound to 8 and 9,
+         not 8 and 8, so the per-occurrence digit window works as designed
+G6:FIX  RED 77/78 fail=1
+  - README Attribution section corpus-size claim must match corpus.length (C1)
+    msg: ...states the corpus-size ("entries") claim as 50 in one place, but ALSO states
+         it as 51 (in "...lists 51 entries in total...") -- ...the true value is 50
+G1/G3/G6:HEAD  GREEN 78/78 fail=0   <- the same READMEs pass with the fix removed
+
+Acceptance clause "the failure message must name the WRONG number": satisfied in all
+three, and in G8 where NEITHER binding is right the message switches form and lists both
+("states ... as 9 ..., and also as 10 ... -- NONE of these match the true value ... is 8").
+
+=== THE DISQUALIFICATION, MEASURED RATHER THAN ARGUED ===
+T-029 disqualifies "take the first match" AND "take the last match". Both were built from
+FIX with only the positional collapse changed, so the comparison machinery is identical:
+
+  F_FIRST  goes SILENT on G1, G3, G6  (and catches G2)   <- reproduces HEAD exactly
+  F_LAST   goes SILENT on G2          (and catches G1, G3, G6)
+  FIX      is RED on ALL FOUR
+
+Each positional design goes silent on precisely the cell the other catches. That is the
+mirror-image property the acceptance asserted, and it is what makes the fix's value
+"catches G1 AND G2 together" rather than "catches G1" -- no positional design can.
+
+=== NOT HARDCODED (c21/c22 R2 consistent-change method) ===
+G10: flip a MEDIUM row to HIGH in docs/corpus-attribution-triage.md AND update the README
+to 9 -> GREEN 78/78. A guard hardcoding 8 fails here. Stale half G11 (truth moves, README
+does not) -> RED naming "the HIGH-risk count claim is 9". Guard is truth-derived in both
+directions.
+
+=== MONOTONICITY: NO KILL WAS TRADED AWAY ===
+There is NO cell where HEAD is RED and FIX is GREEN. The fix strictly ADDS kills (G1, G3,
+G6) and removes none. This is the check cycle 28 rejected T-021 for failing.
+
+=== TWO FINDINGS FILED, NOT GLOSSED ===
+G9 (-> T-030, loud): "Of those, 3 HIGH entries name a primary source." is entirely TRUE
+prose, but "3 HIGH entries" carries BOTH marker tokens, so it binds 3 for C2 (truth 8) and
+3 for C1 (truth 50) -- 2 failures. GREEN on HEAD, so the fix BOUGHT this. Predicted in the
+sealed file, and disclosed by the builder unprompted. Loud, therefore the safe direction.
+NEW MECHANISM within the prose-anchor family: prior members failed to FIND a claim; this
+one manufactures a SPURIOUS claim out of unrelated prose.
+
+G12 (-> T-031, SILENT): "A later audit note records 9 - HIGH entries - in total." puts the
+digit and the marker on opposite sides of a dash, so the clause-scoped window binds
+nothing and the contradictory 9 is never examined. GREEN on FIX **and on HEAD** -- not a
+regression, a case the fix does not reach. Measured because the builder volunteered the
+concern; filing it as a suspicion would have left an unmeasured silent-class risk in the
+cycle whose whole purpose was closing a silent hole.
+
+=== FULL SUITE, RUN DIRECTLY IN THE TARGET (not in a harness copy) ===
+$ cd /opt/targets/aphorism-cli && node --test test/*.test.js
+ℹ tests 78
+ℹ pass 78
+ℹ fail 0
+
+=== SCOPE ===
+$ git -C /opt/targets/aphorism-cli status --porcelain
+ M test/readme-tags.test.js        <- the only tracked file touched; README, src/, bin/
+?? .swarm/runs/cycle-034-*            and docs/ untouched, as instructed
+KI-7 scratch control: /opt/targets/aphorism-cli/.swarm/scratch does not exist (PASS —
+first clean pass of this control since it started failing at cycle 21).
+collision-scan (step 6.6): NOT APPLICABLE — Node CLI, no browser surface, no classic
+scripts. Reported as not-run, not as passed.
+
+VERDICT: T-029 PASSES. Accepted on its acceptance clauses, all proven twice and
+non-positionally, with T-030 and T-031 filed from the gate's own findings.

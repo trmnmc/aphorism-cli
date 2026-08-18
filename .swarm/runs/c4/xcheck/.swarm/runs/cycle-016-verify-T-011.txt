@@ -1,0 +1,23 @@
+PASS A0  the date-seeded recipe line still exists in README  | line 38
+PASS A1  the line carries exactly ONE trailing comment (no added hedging clutter)  | # count: 1
+     comment under test: "same aphorism all day; seed refreshes at local midnight"
+PASS B1  every instant within one local day yields ONE seed  | distinct seeds: 1 (20260815)
+PASS B2  one seed yields ONE aphorism across 10 pulls  | distinct: 1
+PASS B3  negative control: UNSEEDED runs are not stable (so B2 can discriminate)  | distinct: 23/30
+PASS C1  the seed value changes across local midnight  | 20260814 -> 20260815
+PASS C2  those same instants do NOT cross a UTC boundary (so "local" is the correct word)  | UTC: 20260815 -> 20260815
+PASS C3  negative control: mid-day instants do NOT change the seed (C1 is not trivially true)  | 20260815 == 20260815
+PASS D1  MEASURED: consecutive days DO repeat, so an "aphorism changes daily" claim would be false  | 11/364 pairs repeat (3.02%)
+PASS D2  the change-clause names the SEED as what refreshes, not the aphorism  | clause: "seed refreshes at local midnight"
+PASS D3  negative control: the OLD comment FAILS D2 (subject omitted -> reads as the aphorism)  | old clause: "changes at local midnight"
+PASS E1  the entire change is 1 insertion / 1 deletion in README.md only  | "1\t1\tREADME.md"
+PASS E2  the COMMAND (everything left of #) is byte-identical to pre-wave  | unchanged
+PASS E3  every OTHER line of README.md is byte-identical to pre-wave  | 93 lines
+PASS E4  the Flags table is byte-identical  | unchanged
+PASS E5  no file outside README.md was touched  | README.md
+PASS F1  full suite green (exit 0 AND a PARSED fail count of 0)  | exit 0 | pass 59 | fail 0
+PASS F2  every test that RAN also passed (tests == pass, so a partial run cannot read as green)  | tests 59 | pass 59
+PASS F3  negative control: the repaired parser can see a non-zero fail count  | parsed 2
+PASS F4  negative control: a missing summary parses as undefined (fails loudly, not silently green)  | undefined
+
+=== 20 passed, 0 failed ===

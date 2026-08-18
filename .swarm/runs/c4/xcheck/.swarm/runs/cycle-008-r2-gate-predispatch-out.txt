@@ -1,0 +1,85 @@
+=== cycle-8 (run #2) J-9 gate ===
+base commit: cb4b1c2
+arms run this invocation: AB
+PRECONDITION README.md unchanged since pre-dispatch: YES
+arm A suite: {"verdict":"GREEN","pass":102,"fail":0}
+arm B suite: {"verdict":"GREEN","pass":102,"fail":0}
+
+[HOLD] P0 (control)  A=GREEN(102/0) B=GREEN(102/0)  expected A=GREEN B=GREEN
+        no mutation — the shipped README
+[BREAK] J1 (hole)  A=GREEN(102/0) B=GREEN(102/0)  expected A=GREEN B=RED
+        FALSE duplicate of recognised shape 2 after the opening paragraph: "9 tags appear on 2 or more entries." (true: 12)
+        ATTRIBUTION BREAK — failure output does NOT name the wrong number /\b9\b/
+[BREAK] J2 (hole)  A=GREEN(102/0) B=GREEN(102/0)  expected A=GREEN B=RED
+        FALSE duplicate of recognised shape 1: "The corpus contains 13 distinct tags." (true: 12)
+        ATTRIBUTION BREAK — failure output does NOT name the wrong number /\b13\b/
+[BREAK] J3 (hole)  A=GREEN(102/0) B=GREEN(102/0)  expected A=GREEN B=RED
+        FALSE duplicate of recognised shape 3: "In fact 4 tags sit on exactly one entry." (true: 0)
+        ATTRIBUTION BREAK — failure output does NOT name the wrong number /\b4\b/
+[BREAK] J4 (hole)  A=GREEN(102/0) B=GREEN(102/0)  expected A=GREEN B=RED
+        NEW — same shape-2 falsehood at the END of the section instead of after the opening: position independence
+[BREAK] J5 (hole)  A=GREEN(102/0) B=GREEN(102/0)  expected A=GREEN B=RED
+        NEW — shape-1 falsehood in a different sentence frame: "Note that 30 distinct tags remain after the fold." (true: 12)
+[BREAK] J6 (hole)  A=GREEN(102/0) B=GREEN(102/0)  expected A=GREEN B=RED
+        NEW — shape-3 falsehood in the "exactly once" phrasing: "Even so, 6 tags appear exactly once today." (true: 0)
+[HOLD] X1 (cost)  A=GREEN(102/0) B=GREEN(102/0)  expected A=GREEN B=GREEN
+        TRUE restatement, shape 1, same number: "All 12 distinct tags are listed below."
+[HOLD] X2 (cost)  A=GREEN(102/0) B=GREEN(102/0)  expected A=GREEN B=GREEN
+        TRUE second occurrence, shape 2, DIFFERENT threshold: "7 tags appear on 5 or more entries." (measured: 7)
+[HOLD] X3 (cost)  A=GREEN(102/0) B=GREEN(102/0)  expected A=GREEN B=GREEN
+        TRUE second occurrence, shape 2, another threshold: "2 tags appear on 10 or more entries." (measured: 2)
+[HOLD] X4 (cost)  A=GREEN(102/0) B=GREEN(102/0)  expected A=GREEN B=GREEN
+        TRUE restatement, shape 2, SAME number and threshold: "Put another way, 12 tags appear on 2 or more entries."
+[HOLD] N1 (regression)  A=RED(101/1) B=RED(101/1)  expected A=RED B=RED
+        c6/N1 kill preserved: stray FALSE unrecognised claim "9 tags have a robust pool (5+ entries):"
+        B failing: README Tag vocabulary section must contain no unrecognised count-claim digits (J-5) | README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)
+        A failing: README Tag vocabulary section must contain no unrecognised count-claim digits (J-5) | README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)
+[HOLD] N2 (regression)  A=RED(101/1) B=RED(101/1)  expected A=RED B=RED
+        c6/N2 kill preserved: same unrecognised claim before the closing "smallest pool" sentence
+        B failing: README Tag vocabulary section must contain no unrecognised count-claim digits (J-5) | README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)
+        A failing: README Tag vocabulary section must contain no unrecognised count-claim digits (J-5) | README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)
+[HOLD] N3 (regression)  A=RED(101/1) B=RED(101/1)  expected A=RED B=RED
+        c6/N3 kill preserved: "Only 5 tags appear on more than 10 entries." (unrecognised shape; truth 2)
+        B failing: README Tag vocabulary section must contain no unrecognised count-claim digits (J-5) | README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)
+        A failing: README Tag vocabulary section must contain no unrecognised count-claim digits (J-5) | README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)
+[HOLD] C1 (regression)  A=RED(101/1) B=RED(101/1)  expected A=RED B=RED
+        c6/C1: a false shape-2 claim inserted BEFORE the opening sentence (steals the first match)
+        B failing: README opening sentence must state correct multi-entry and single-entry tag counts | README opening sentence must state correct multi-entry and single-entry tag counts
+        A failing: README opening sentence must state correct multi-entry and single-entry tag counts | README opening sentence must state correct multi-entry and single-entry tag counts
+[HOLD] F1 (regression)  A=RED(101/1) B=RED(101/1)  expected A=RED B=RED
+        c6/F1: falsify the opening multi-entry count 12 -> 9
+        B failing: README opening sentence must state correct multi-entry and single-entry tag counts | README opening sentence must state correct multi-entry and single-entry tag counts
+        A failing: README opening sentence must state correct multi-entry and single-entry tag counts | README opening sentence must state correct multi-entry and single-entry tag counts
+[HOLD] F2 (regression)  A=RED(100/2) B=RED(100/2)  expected A=RED B=RED
+        c6/F2: falsify the single-entry count 0 -> 3 ("exactly once")
+        B failing: README must correctly describe single-entry tag count | README opening sentence must state correct multi-entry and single-entry tag counts | README must correctly describe single-entry tag count (+1)
+        A failing: README must correctly describe single-entry tag count | README opening sentence must state correct multi-entry and single-entry tag counts | README must correctly describe single-entry tag count (+1)
+[HOLD] F3 (regression)  A=RED(101/1) B=RED(101/1)  expected A=RED B=RED
+        c6/F3: falsify the distinct-tag total 12 -> 13
+        B failing: README must state total unique tags correctly | README must state total unique tags correctly
+        A failing: README must state total unique tags correctly | README must state total unique tags correctly
+[HOLD] F4 (regression)  A=RED(101/1) B=RED(101/1)  expected A=RED B=RED
+        c6/F4: falsify a band table cell `design` 14 -> 15
+        B failing: README tag counts must match corpus | README tag counts must match corpus
+        A failing: README tag counts must match corpus | README tag counts must match corpus
+[HOLD] F5 (regression)  A=RED(100/2) B=RED(100/2)  expected A=RED B=RED
+        c6/F5: delete a band table row entirely (`philosophy`)
+        B failing: every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band | every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T- | every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band (+1)
+        A failing: every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band | every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T- | every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band (+1)
+[HOLD] B1 (regression)  A=RED(101/1) B=RED(101/1)  expected A=RED B=RED
+        c6/B1: falsify a band heading boundary "(5+ entries)" -> "(6+ entries)"
+        B failing: every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band | every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+        A failing: every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band | every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+[HOLD] R1 (regression)  A=GREEN(102/0) B=GREEN(102/0)  expected A=GREEN B=GREEN
+        c6/R1: reword band heading English only, digits intact ("Robust pool" -> "Deep pool")
+[HOLD] R2 (regression)  A=GREEN(102/0) B=GREEN(102/0)  expected A=GREEN B=GREEN
+        c6/R2: reword the opening sentence English only, every number unchanged and still true
+[HOLD] R3 (regression)  A=GREEN(102/0) B=GREEN(102/0)  expected A=GREEN B=GREEN
+        c6/R3: a TRUE reworded band table heading ("Appears 3–4 times" -> "... times each")
+
+SCORE 18/24 cells hold; attribution 0/3
+  control: 1/1
+  hole: 0/6
+  cost: 4/4
+  regression: 13/13
+README precondition: OK

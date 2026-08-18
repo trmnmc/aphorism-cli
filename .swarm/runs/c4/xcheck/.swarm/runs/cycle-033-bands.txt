@@ -1,0 +1,4 @@
+HEAD / V0 pristine           -> [5,inf] rows=debugging,design,humor,simplicity   [2,4] rows=abstraction,complexity,culture,data,errors,language,management,performance,philosophy,process,readability,testing
+HEAD / V1 Node-18+ prose     -> [18,inf] rows=debugging,design,humor,simplicity   [2,4] rows=abstraction,complexity,culture,data,errors,language,management,performance,philosophy,process,readability,testing
+F_COLON / V0 pristine        -> [5,inf] rows=debugging,design,humor,simplicity   [2,4] rows=abstraction,complexity,culture,data,errors,language,management,performance,philosophy,process,readability,testing
+F_COLON / V1 Node-18+ prose  -> [5,inf] rows=debugging,design,humor,simplicity   [18,inf] rows=debugging,design,humor,simplicity   [2,4] rows=abstraction,complexity,culture,data,errors,language,management,performance,philosophy,process,readability,testing

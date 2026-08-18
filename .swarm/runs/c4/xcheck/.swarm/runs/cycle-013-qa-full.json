@@ -1,0 +1,46 @@
+{
+  "_note": "Raw return of cycle 13's QA-full pass. NOT a Workflow run: the Workflow tool is review-gated in a headless -p session, so qa-verify.js could not be dispatched and its three stages were run as DIRECT Agent calls (the documented failure-table fallback). Every field below is an AGENT CLAIM. The conductor's own evidence is cycle-013-verify-QA.js / .txt, authored after these returns landed and not seen by any agent.",
+  "runId": null,
+  "mode": "full",
+  "dispatch": "direct-agent-calls",
+  "cycle": 13,
+  "timestamp": 1786805147,
+  "agents_used": 2,
+  "dead_agents": [],
+  "stages": {
+    "author": {
+      "model": "fable",
+      "seat": "judgment (fable guard: exempt from the gear-1 demotion)",
+      "spec_only": true,
+      "spec_only_evidence": "agent return reported tool_uses: 0 — it opened no file, ran no command, and saw neither the target path nor any source. The answer key therefore cannot have inherited the code's bugs.",
+      "scenarios_file": ".swarm/runs/cycle-013-qa-scenarios.json",
+      "scenario_count": 6
+    },
+    "executor": {
+      "model": "sonnet",
+      "driver_written_by_agent": ".swarm/runs/cycle-013-qa-executor-driver.js",
+      "driver_output": ".swarm/runs/cycle-013-qa-executor-output.json",
+      "disclosed_deviation": "The executor was told to keep scratch under /tmp; the sandbox blocks /tmp writes, so it used /opt/swarm/runs/qa-scratch-tmp (gitignored, outside the product). It disclosed this unprompted rather than hiding it. Conductor confirmed the product tree was untouched (git diff --stat HEAD -- src bin test README.md docs was empty) and moved its two artifacts here before clearing the scratch dir."
+    },
+    "look": {
+      "status": "not-run",
+      "reason": "NOT APPLICABLE, reported as not-run rather than as passed. The live-look stage inspects a running product through a browser; aphorism-cli is a Node CLI with no server and no browser surface. Nothing was inspected, so nothing may be claimed. The cheap CLI analogue — that output survives a pipe unchanged — was folded into the conductor's own harness as check S7 instead."
+    }
+  },
+  "results": [
+    {"scenario_id": "S1", "status": "pass", "actual": "All 7 runs exit 0, stderr empty. --seed 42 --json byte-identical across runs; --seed Infinity --json byte-identical (Alan Perlis entry, not a crash and not 'undefined'); --seed -2.5 --json byte-identical (Dijkstra entry). Plain --seed 42 stdout contains the JSON run's text verbatim.", "violated_expectation": ""},
+    {"scenario_id": "S2", "status": "pass", "actual": "--list: exit 0, 50 lines, every line ' U+2014 ' shaped, no hyphen substitution, no header line. --list --seed 999 byte-identical to bare --list. --list --seed abc: exit 2, 0B stdout, stderr 'aphorism: flag --seed requires a numeric value'.", "violated_expectation": ""},
+    {"scenario_id": "S3", "status": "pass", "substitutions": {"T": "performance", "P": "performanc"}, "actual": "--tag performance returns exactly the 4 whole-tag matches in corpus order; --tag PERFORMANCE byte-identical; --tag performanc (S_P empty) exits 1 with 0B stdout and zero leakage of the 4 T-tagged entries — refutes a substring tag matcher.", "violated_expectation": ""},
+    {"scenario_id": "S4", "status": "pass", "substitutions": {"A": "ONAL", "T": "performance"}, "actual": "--author ONAL = 2 entries (case-flipped fragment of 'Donald' still matches -> substring + case-insensitive confirmed); --tag performance = 4; both flags together = 1 entry, exactly the intersection, and NOT the 5-entry union — refutes an OR implementation.", "violated_expectation": ""},
+    {"scenario_id": "S5", "status": "pass", "actual": "Probe strings verified against the live 50-entry harvest to match nothing. All three no-match shapes: exit 1, stdout exactly 0 bytes (not '{}', '[]' or 'null' even under --json), stderr 44B non-empty.", "violated_expectation": ""},
+    {"scenario_id": "S6", "status": "pass", "actual": "--frobnicate: exit 2, 0B stdout. Bare --seed: exit 2, 0B stdout. --seed 7 --json: exit 0, empty stderr, exactly one parseable line with string text, string author, array tags; repeat run byte-identical.", "violated_expectation": ""}
+  ],
+  "look_findings": [],
+  "taste": null,
+  "conductor_verdict": {
+    "accepted": true,
+    "basis": "NOT the executor's say-so. The conductor authored .swarm/runs/cycle-013-verify-QA.js after these returns landed and ran it itself: 27/27 checks, deliberately broader than the six scenarios (all 37 corpus tags swept for exact whole-tag semantics and case-insensitivity, all 37 discriminating tag prefixes swept for substring leakage, 40 discriminating author x tag pairs swept for AND-not-OR, 5 no-match shapes, 6 bad-usage shapes) and carrying 4 negative controls that prove the em-dash, byte-identity, substring-leak and AND/OR detectors actually fire. Full suite re-run by the conductor: 59/59.",
+    "divergences_found": 0,
+    "evidence": ".swarm/runs/cycle-013-verify-QA.txt"
+  }
+}

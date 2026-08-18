@@ -1,0 +1,77 @@
+cycle 49 — mutation arm for the end-to-end --tag gate
+
+P0   unmutated copy
+     expected red: (none)
+     actual red:   0 cells
+     PASS — every targeted cell caught its own mutation
+
+M1   corpus revives the retired tag 'testing' on one entry
+     expected red: B1:testing, B2:testing, B3:testing
+     actual red:   5 cells
+     collateral:   2 further cells also reddened
+     PASS — every targeted cell caught its own mutation
+
+M2   no-match message goes to stdout instead of stderr
+     expected red: B2:optimization, B3:optimization, B2:algorithms, B3:algorithms … (52 cells)
+     actual red:   55 cells
+     collateral:   3 further cells also reddened
+     PASS — every targeted cell caught its own mutation
+
+M3   no-match exits 0 — an empty success instead of an error
+     expected red: B1:optimization, B1:algorithms, B1:caching, B1:naming … (26 cells)
+     actual red:   29 cells
+     collateral:   3 further cells also reddened
+     PASS — every targeted cell caught its own mutation
+
+M4   --tag matches on substring instead of whole tag
+     expected red: C1, C2
+     actual red:   2 cells
+     PASS — every targeted cell caught its own mutation
+
+M5   --tag becomes case-SENSITIVE
+     expected red: A4:complexity, A4:debugging, A4:design, A4:humor … (12 cells)
+     actual red:   12 cells
+     PASS — every targeted cell caught its own mutation
+
+M6   --tag filter ignored entirely (every tag returns the whole corpus)
+     expected red: A2:complexity, A3:complexity, A2:debugging, A3:debugging … (23 cells)
+     actual red:   105 cells
+     collateral:   82 further cells also reddened
+     PASS — every targeted cell caught its own mutation
+
+M7   --list prints the right set in the WRONG (reversed) order
+     expected red: A3:complexity, A3:debugging, A3:design, A3:humor … (12 cells)
+     actual red:   12 cells
+     PASS — every targeted cell caught its own mutation
+
+M8   --list separator becomes a hyphen instead of the documented em dash
+     expected red: A3:complexity, A3:debugging, A3:design, A3:humor … (12 cells)
+     actual red:   12 cells
+     PASS — every targeted cell caught its own mutation
+
+M9   default (non-list) output ignores --tag, but --list still honours it
+     expected red: A2:complexity, A2:debugging, A2:design, A2:humor … (11 cells)
+     actual red:   11 cells
+     PASS — every targeted cell caught its own mutation
+
+M10  no-match stderr message reworded to something unhelpful
+     expected red: B3:optimization, B3:algorithms, B3:caching, B3:naming … (26 cells)
+     actual red:   26 cells
+     PASS — every targeted cell caught its own mutation
+
+M11  one name removed from the fold map (the retired list shrinks to 25)
+     expected red: S2
+     actual red:   1 cells
+     PASS — every targeted cell caught its own mutation
+
+M13  --list --json emits one JSON array instead of NDJSON, breaking the help recipe
+     expected red: C6
+     actual red:   1 cells
+     PASS — every targeted cell caught its own mutation
+
+M12  --list silently drops the last matching entry
+     expected red: A3:complexity, A3:debugging, A3:design, A3:humor … (12 cells)
+     actual red:   12 cells
+     PASS — every targeted cell caught its own mutation
+
+14/14 mutation checks passed

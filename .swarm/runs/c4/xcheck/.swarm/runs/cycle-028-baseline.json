@@ -1,0 +1,96 @@
+[
+  {
+    "id": "P0.PRISTINE",
+    "desc": "unmutated whole-repo copy must be green",
+    "r": {
+      "parsed": true,
+      "tests": 73,
+      "pass": 73,
+      "fail": 0,
+      "failing": []
+    },
+    "note": "if this is not N/N/0 every result below is meaningless"
+  },
+  {
+    "id": "B1.REFORMAT",
+    "desc": "drop backticks from the heading (honest markdown reformat, no claim made false)",
+    "r": {
+      "parsed": true,
+      "tests": 73,
+      "pass": 72,
+      "fail": 1,
+      "failing": [
+        "README `--list` format literal matches the shipped binary's actual --list output (T-017)"
+      ]
+    },
+    "note": "expected: FAILS today; note WHICH test is named"
+  },
+  {
+    "id": "B2.LITERAL",
+    "desc": "mutate the format literal separator, heading untouched",
+    "r": {
+      "parsed": true,
+      "tests": 73,
+      "pass": 72,
+      "fail": 1,
+      "failing": [
+        "README `--list` format literal matches the shipped binary's actual --list output (T-017)"
+      ]
+    },
+    "note": "expected: FAILS naming T-017 -- proves the guard is live"
+  },
+  {
+    "id": "B3.BOTH",
+    "desc": "reformatted heading AND mutated literal, at HEAD",
+    "r": {
+      "parsed": true,
+      "tests": 73,
+      "pass": 72,
+      "fail": 1,
+      "failing": [
+        "README `--list` format literal matches the shipped binary's actual --list output (T-017)"
+      ]
+    },
+    "note": "MASKING CHECK: if this has the same signature as B1, the literal mutation is masked by the parse failure and the acceptance clause \"still FAILS\" is satisfiable by a fix that never restores detection"
+  },
+  {
+    "id": "D1.DECOY",
+    "desc": "plant a decoy `<text> | <author>` literal in an EARLIER section, heading untouched",
+    "r": {
+      "parsed": true,
+      "tests": 73,
+      "pass": 73,
+      "fail": 0,
+      "failing": []
+    },
+    "note": "expected GREEN at HEAD (locator is section-scoped). A degenerate whole-README fix would turn this RED -- so this check separates the two readings and must be part of the gate."
+  },
+  {
+    "id": "D2.DECOY+REFORMAT",
+    "desc": "decoy literal AND reformatted heading",
+    "r": {
+      "parsed": true,
+      "tests": 73,
+      "pass": 72,
+      "fail": 1,
+      "failing": [
+        "README `--list` format literal matches the shipped binary's actual --list output (T-017)"
+      ]
+    },
+    "note": "the shape the FIXED tree must satisfy: GREEN. A degenerate fix cannot reach green here."
+  },
+  {
+    "id": "D3.LOUD",
+    "desc": "remove the format literal entirely, heading untouched",
+    "r": {
+      "parsed": true,
+      "tests": 73,
+      "pass": 72,
+      "fail": 1,
+      "failing": [
+        "README `--list` format literal matches the shipped binary's actual --list output (T-017)"
+      ]
+    },
+    "note": "expected: FAILS loud on the \"could not find a format literal\" assert, never a silent pass"
+  }
+]

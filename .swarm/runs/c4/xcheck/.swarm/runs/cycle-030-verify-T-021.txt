@@ -1,0 +1,106 @@
+CYCLE 30 VERIFICATION GATE — T-021 attempt 2
+arms: FIXED = working tree, HEAD = test/readme-tags.test.js reverted to HEAD
+
+A0  PRISTINE control
+    expect     GREEN
+    FIXED      78/78/0   reasons: (none)
+    HEAD       74/74/0   reasons: (none)
+    ==> PASS
+
+A1  heading backticks dropped (the item's false rejection)
+    expect     GREEN
+    FIXED      78/78/0   reasons: (none)
+    HEAD       74/73/1   reasons: HEADING-PARSE
+    ==> PASS
+
+A2  backticks dropped + real literal mutated
+    expect     RED / SEPARATOR-MISMATCH
+    FIXED      78/77/1   reasons: SEPARATOR-MISMATCH
+    HEAD       74/73/1   reasons: HEADING-PARSE
+    FIXED diag "  ---\n  duration_ms: 47.010165\n  type: 'test'\n  location: '/tmp/c030g-A2-FIXED-5TOqNT/test/readme-tags.test.js:1067:1'\n  failureType: 'testCodeFailure'\n  error: 'line 1 of `node bin/aphorism.js --list` does not match the README\\'s `--list` format literal `<text> - <author>`: binary printed \"Premature optimization is the root of all evil. — Donald Knuth\" but the README-derived expectation (corpus e"
+    ==> PASS
+
+A3  real literal mutated only (detection must not regress)
+    expect     RED / SEPARATOR-MISMATCH
+    FIXED      78/77/1   reasons: SEPARATOR-MISMATCH
+    HEAD       74/73/1   reasons: SEPARATOR-MISMATCH
+    FIXED diag "  ---\n  duration_ms: 60.446529\n  type: 'test'\n  location: '/tmp/c030g-A3-FIXED-hzmYv5/test/readme-tags.test.js:1067:1'\n  failureType: 'testCodeFailure'\n  error: 'line 1 of `node bin/aphorism.js --list` does not match the README\\'s `--list` format literal `<text> - <author>`: binary printed \"Premature optimization is the root of all evil. — Donald Knuth\" but the README-derived expectation (corpus e"
+    ==> PASS
+
+P1  decoy heading BEFORE real, decoy holds a good literal, real literal mutated
+    expect     RED
+    FIXED      78/77/1   reasons: AMBIGUITY
+    HEAD       74/73/1   reasons: SEPARATOR-MISMATCH
+    FIXED diag "  ---\n  duration_ms: 0.511388\n  type: 'test'\n  location: '/tmp/c030g-P1-FIXED-wKPPbr/test/readme-tags.test.js:1067:1'\n  failureType: 'testCodeFailure'\n  error: 'found 2 \"### \" headings that could each plausibly be the `--list` behaviour section (\"### Notes on `--list` behaviour\", \"### `--list` behaviour\") -- ambiguous, refusing to silently pick one'\n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'"
+    ==> PASS
+
+P2  decoy heading AFTER real, decoy holds a good literal, real literal mutated
+    expect     RED
+    FIXED      78/77/1   reasons: AMBIGUITY
+    HEAD       74/73/1   reasons: SEPARATOR-MISMATCH
+    FIXED diag "  ---\n  duration_ms: 0.535985\n  type: 'test'\n  location: '/tmp/c030g-P2-FIXED-x1LjfK/test/readme-tags.test.js:1067:1'\n  failureType: 'testCodeFailure'\n  error: 'found 2 \"### \" headings that could each plausibly be the `--list` behaviour section (\"### `--list` behaviour\", \"### More `--list` behaviour\") -- ambiguous, refusing to silently pick one'\n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  e"
+    ==> PASS
+
+P3  decoy naming a DIFFERENT flag (--list-only), real literal mutated
+    expect     RED / SEPARATOR-MISMATCH
+    FIXED      78/77/1   reasons: SEPARATOR-MISMATCH
+    HEAD       74/73/1   reasons: SEPARATOR-MISMATCH
+    FIXED diag "  ---\n  duration_ms: 47.43845\n  type: 'test'\n  location: '/tmp/c030g-P3-FIXED-xfCEZu/test/readme-tags.test.js:1067:1'\n  failureType: 'testCodeFailure'\n  error: 'line 1 of `node bin/aphorism.js --list` does not match the README\\'s `--list` format literal `<text> - <author>`: binary printed \"Premature optimization is the root of all evil. — Donald Knuth\" but the README-derived expectation (corpus en"
+    ==> PASS
+
+L1  section heading removed entirely
+    expect     RED
+    FIXED      78/77/1   reasons: HEADING-PARSE
+    HEAD       74/73/1   reasons: HEADING-PARSE
+    FIXED diag "  ---\n  duration_ms: 0.880039\n  type: 'test'\n  location: '/tmp/c030g-L1-FIXED-f6YCjX/test/readme-tags.test.js:1067:1'\n  failureType: 'testCodeFailure'\n  error: 'README must have a \"### \" heading naming the standalone `--list` token and the word \"behaviour\" (e.g. \"### `--list` behaviour\" or \"### --list behaviour\") -- none found'\n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: true\n  ac"
+    ==> PASS
+
+L2  format literal removed from the section
+    expect     RED / LITERAL-PARSE
+    FIXED      78/77/1   reasons: LITERAL-PARSE
+    HEAD       74/73/1   reasons: LITERAL-PARSE
+    FIXED diag "  ---\n  duration_ms: 0.469538\n  type: 'test'\n  location: '/tmp/c030g-L2-FIXED-52666z/test/readme-tags.test.js:1067:1'\n  failureType: 'testCodeFailure'\n  error: 'could not find a `<text>...<author>` format literal in the \"--list behaviour\" section -- this claim must fail loud, not pass silently, when it cannot be parsed'\n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: true\n  actual: ~\n"
+    ==> PASS
+
+D1  heading reworded to "behaviour of `--list`" (both tokens, new order)
+    expect     (informational)
+    FIXED      78/78/0   reasons: (none)
+    HEAD       74/73/1   reasons: HEADING-PARSE
+    ==> INFO
+
+D2  heading with trailing punctuation
+    expect     (informational)
+    FIXED      78/78/0   reasons: (none)
+    HEAD       74/73/1   reasons: HEADING-PARSE
+    ==> INFO
+
+D3  American spelling "behavior"
+    expect     (informational)
+    FIXED      78/77/1   reasons: HEADING-PARSE
+    HEAD       74/73/1   reasons: HEADING-PARSE
+    FIXED diag "  ---\n  duration_ms: 0.474465\n  type: 'test'\n  location: '/tmp/c030g-D3-FIXED-LOidD6/test/readme-tags.test.js:1067:1'\n  failureType: 'testCodeFailure'\n  error: 'README must have a \"### \" heading naming the standalone `--list` token and the word \"behaviour\" (e.g. \"### `--list` behaviour\" or \"### --list behaviour\") -- none found'\n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: true\n  ac"
+    ==> INFO
+
+N1  decoy heading present, README otherwise CORRECT
+    expect     (informational)
+    FIXED      78/77/1   reasons: AMBIGUITY
+    HEAD       74/74/0   reasons: (none)
+    FIXED diag "  ---\n  duration_ms: 0.563127\n  type: 'test'\n  location: '/tmp/c030g-N1-FIXED-xKVtcU/test/readme-tags.test.js:1067:1'\n  failureType: 'testCodeFailure'\n  error: 'found 2 \"### \" headings that could each plausibly be the `--list` behaviour section (\"### Notes on `--list` behaviour\", \"### `--list` behaviour\") -- ambiguous, refusing to silently pick one'\n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'"
+    ==> INFO
+
+--- summary ----------------------------------------------------------
+  PASS  A0   FIXED 78/78/0    HEAD 74/74/0     PRISTINE control
+  PASS  A1   FIXED 78/78/0    HEAD 74/73/1     heading backticks dropped (the item's false rejection)
+  PASS  A2   FIXED 78/77/1    HEAD 74/73/1     backticks dropped + real literal mutated
+  PASS  A3   FIXED 78/77/1    HEAD 74/73/1     real literal mutated only (detection must not regress)
+  PASS  P1   FIXED 78/77/1    HEAD 74/73/1     decoy heading BEFORE real, decoy holds a good literal, real literal mutated
+  PASS  P2   FIXED 78/77/1    HEAD 74/73/1     decoy heading AFTER real, decoy holds a good literal, real literal mutated
+  PASS  P3   FIXED 78/77/1    HEAD 74/73/1     decoy naming a DIFFERENT flag (--list-only), real literal mutated
+  PASS  L1   FIXED 78/77/1    HEAD 74/73/1     section heading removed entirely
+  PASS  L2   FIXED 78/77/1    HEAD 74/73/1     format literal removed from the section
+  INFO  D1   FIXED 78/78/0    HEAD 74/73/1     heading reworded to "behaviour of `--list`" (both tokens, new order)
+  INFO  D2   FIXED 78/78/0    HEAD 74/73/1     heading with trailing punctuation
+  INFO  D3   FIXED 78/77/1    HEAD 74/73/1     American spelling "behavior"
+  INFO  N1   FIXED 78/77/1    HEAD 74/74/0     decoy heading present, README otherwise CORRECT
+
+asserted checks: 9 pass / 0 fail

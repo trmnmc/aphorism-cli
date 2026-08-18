@@ -1,0 +1,24 @@
+id                                                         want   HEAD       ATTEMPT-1  PRESENCE(truth=want)   ADOPTED
+brief-1 subject-first, true                                8      50 X       8 OK       PRESENT(silent pass)   8 OK
+brief-2 subject-last, true                                 8      8 OK       50 X       PRESENT(silent pass)   8 OK
+brief-3 subject-first, wrong claim (9)                     9      50 X       9 OK       PRESENT(silent pass)   9 OK
+brief-4 subject-last, wrong claim (9)                      9      9 OK       50 X       PRESENT(silent pass)   9 OK
+shipped dashed, true                                       8      8 OK       8 OK       PRESENT(silent pass)   8 OK
+shipped dashed, wrong (9)                                  9      9 OK       9 OK       PRESENT(silent pass)   9 OK
+reworded subject-first, true                               8      50 X       8 OK       PRESENT(silent pass)   8 OK
+reworded subject-first, wrong (9)                          9      50 X       9 OK       PRESENT(silent pass)   9 OK
+reworded subject-last, true                                8      8 OK       50 X       PRESENT(silent pass)   8 OK
+reworded subject-last, wrong (9)                           9      9 OK       50 X       PRESENT(silent pass)   9 OK
+parenthetical, true                                        8      8 OK       8 OK       PRESENT(silent pass)   8 OK
+reworded, wrong corpus-size decoy (51), HIGH still true (8) 8      51 X       51 X       PRESENT(silent pass)   8 OK
+parse-miss: no HIGH marker at all                          PARSE-MISS PARSE-MISS OK PARSE-MISS OK n/a                    PARSE-MISS OK
+silent-hole: false claim (9) elsewhere + true 8 loosely near HIGH PARSE-MISS 8 X        9 X        n/a                    PARSE-MISS OK
+silent-hole: wrong count adjacent to a HIGH-risk mention, no "rated" PARSE-MISS 9 X        9 X        n/a                    PARSE-MISS OK
+
+score  HEAD=8/15  ATTEMPT-1=8/15  ADOPTED=15/15
+
+silent-hole probe (whole-section naive presence vs. adopted binder):
+  section states 9 are rated HIGH; true count is 8; a bystander "8" also
+  appears elsewhere in the section for an unrelated reason.
+  naive presence(8-anywhere-in-section): PRESENT(silent pass)
+  adopted boundRule(section): 9 (correctly reads the WRONG stated number, 9)

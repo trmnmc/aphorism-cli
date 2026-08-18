@@ -1,0 +1,68 @@
+CYCLE 21 VERIFICATION GATE — T-015
+conductor-authored at verification time; builder never saw these mutations
+
+PASS  CTRL-PRISTINE    unmutated copy: tests=68 pass=68 fail=0 (expect 68/68/0)
+PASS  CTRL-DENOM       skip-pattern against PRISTINE removes exactly the 2 new tests: tests=66 pass=66 fail=0 (expect 66/66/0 — the pre-cycle baseline)
+PASS  CTRL-SKIPSANE    unrelated mutation (37->38) still fails under the skip pattern: fail=1 (expect >0)
+
+PASS  A9.APPLIED       mutation present in the copy (a mutation that fails to apply makes SURVIVED vacuous)
+PASS  A9.FAILABLE      line 55 multi-entry count 16 -> 17 (off-by-one, up) -> KILLED, fail=1, failing test is one of the NEW ones: ["README opening sentence must state correct multi-entry and single-entry tag counts"]
+PASS  A9.ATTRIB        SAME mutation with the new tests filtered out must SURVIVE at the pre-cycle baseline: tests=66 pass=66 fail=0 (expect 66/66/0)
+PASS  V6.APPLIED       mutation present in the copy (a mutation that fails to apply makes SURVIVED vacuous)
+PASS  V6.FAILABLE      line 55 single-entry count 21 -> 20 (off-by-one, DOWN) -> KILLED, fail=1, failing test is one of the NEW ones: ["README opening sentence must state correct multi-entry and single-entry tag counts"]
+PASS  V6.ATTRIB        SAME mutation with the new tests filtered out must SURVIVE at the pre-cycle baseline: tests=66 pass=66 fail=0 (expect 66/66/0)
+PASS  A10.APPLIED      mutation present in the copy (a mutation that fails to apply makes SURVIVED vacuous)
+PASS  A10.FAILABLE     line 57 band cardinality 4 -> 3 (off-by-one, down) -> KILLED, fail=1, failing test is one of the NEW ones: ["README band table headings must state the correct count of tags in their band"]
+PASS  A10.ATTRIB       SAME mutation with the new tests filtered out must SURVIVE at the pre-cycle baseline: tests=66 pass=66 fail=0 (expect 66/66/0)
+PASS  A11.APPLIED      mutation present in the copy (a mutation that fails to apply makes SURVIVED vacuous)
+PASS  A11.FAILABLE     line 65 band cardinality 12 -> 13 (off-by-one, up) -> KILLED, fail=1, failing test is one of the NEW ones: ["README band table headings must state the correct count of tags in their band"]
+PASS  A11.ATTRIB       SAME mutation with the new tests filtered out must SURVIVE at the pre-cycle baseline: tests=66 pass=66 fail=0 (expect 66/66/0)
+
+PASS  R1.NOFALSEREJECT all four lead-ins reworded, every digit intact: tests=68 fail=0 (expect 68/0 — a reword must not false-reject)
+PASS  R1.STILLKILLS    reworded prose + wrong band cardinality (4->9) still KILLED by a new test: fail=1 failing=["README band table headings must state the correct count of tags in their band"]
+
+PASS  R2.APPLIED       corpus mutated: entry 1 (Beware of bugs in the above code; I have...) gains tag `performance`, taking it 4 -> 5
+PASS  R2.TRUTH         mutated-corpus truth re-derived: performance=5 ge5=5 band2-4=11 ge2=16 eq1=21 distinct=37
+PASS  R2.README        README updated to the mutated corpus truth
+PASS  R2.TRACKS        corpus + README changed CONSISTENTLY -> suite must be GREEN (a hardcoded 4/12 would fail here): tests=68 pass=68 fail=0
+PASS  R2.STALEKILLS    mutated corpus with a STALE README must be caught: fail=3 failing=["README tag counts must match corpus","every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band","README band table headings must state the correct count of tags in their band"]
+
+PASS  N1.LOUD          PROBE: whole line-55 claim sentence DELETED -> must fail LOUD (not pass quiet): fail=1 failing=["README opening sentence must state correct multi-entry and single-entry tag counts"]
+PASS  N2.PROBE         PROBE: entire "12 tags appear 2-4 times" band table removed from README
+      -> tests=68 pass=68 fail=0 verdict=SURVIVES
+PASS  N3.DISCRIM       line-81 phrasing mutated alone -> the PRE-EXISTING test fires and the new ones stay quiet (so the two statements of 21 are guarded independently, not by one regex catching both): failing=["README must correctly describe single-entry tag count"]
+
+PASS  SCOPE.FILES      git diff --name-only HEAD = "test/readme-tags.test.js" (expect test/readme-tags.test.js alone)
+PASS  SCOPE.ADDITIVE   purely additive: 116 insertions, 0 deletions (expect 0 deletions)
+PASS  SCOPE.PREFIX     every pre-existing byte is an unmodified PREFIX of the new file (no in-place edits to existing tests/helpers)
+FAIL  SCOPE.SCRATCH    builder scratch dir removed: false
+
+=== 28 pass / 1 fail ===
+gate scratch removed: true
+
+--- CONDUCTOR REMEDIATION NOTE (appended after the gate run; the gate itself was NOT re-run to a manufactured green) ---
+
+SCOPE.SCRATCH failed as authored and is recorded as FAILED, not re-labelled.
+What it did establish, measured after the failure:
+  find /opt/targets/aphorism-cli/.swarm/scratch -mindepth 1 | wc -l  ->  0
+So the directory existed but was EMPTY: the builder removed its mutation copies
+(.swarm/scratch/t015) and left the bare parent directory behind. No scratch CONTENT
+leaked anywhere, and `git status` in the target showed no untracked scratch files.
+This is the identical residue pattern recorded at cycle 9 (agent removed its copies,
+conductor removed the leftover empty directory) and is a housekeeping control, not one
+of T-015's four acceptance clauses -- all four passed FAILABLE and ATTRIBUTABLE.
+Conductor removed the empty directory: `rmdir` -> confirmed gone.
+
+--- WHAT THIS GATE DID NOT ESTABLISH ---
+
+1. N2 is a SURVIVOR, reported as such: deleting an ENTIRE band table (heading + rows)
+   from the README leaves the suite green at 68/68. The new guard checks the cardinality
+   stated by each band heading that is PRESENT; a band that stops being claimed at all is
+   invisible to it, exactly as row-level set-equality (T-014) was invisible to a deleted
+   row. Filed as T-019. It is NOT a defect in T-015's delivered work -- no acceptance
+   clause covers it and closing it needs a different mechanism (an expected-band-partition
+   check) -- but it is the same blindness class one level up, and it is the honest tail
+   of this item rather than something to leave unsaid.
+2. The suite still cannot verify the README's "Node 18+" claim (C7, cycle 19) -- that
+   needs a CI matrix and remains a human decision.
+3. Nothing here re-verifies the corpus attributions (KI-2, open, high, human-owned).

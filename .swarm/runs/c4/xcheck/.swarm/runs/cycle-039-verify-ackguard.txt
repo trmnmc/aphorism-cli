@@ -1,0 +1,9 @@
+C0   (baseline) ack=SILENT   pass=1 fail=0    AS RECORDED
+D1   T-034    ack=FIRES    pass=0 fail=1    AS RECORDED
+D3   T-036    ack=FIRES    pass=0 fail=1    AS RECORDED
+D4a  T-037    ack=SILENT   pass=1 fail=0    AS RECORDED
+D4b  T-037    ack=SILENT   pass=1 fail=0    AS RECORDED
+E3   T-038    ack=FIRES    pass=0 fail=1    AS RECORDED
+
+cells run: 6 | as recorded: 6 | diverged: 0
+README restored byte-identical to the pristine read: yes

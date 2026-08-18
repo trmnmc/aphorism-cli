@@ -1,0 +1,36 @@
+PASS  C1   refresh   cycles run states 47 complete
+PASS  C2   refresh   board total items
+PASS  C3   refresh   board done count
+PASS  C4   invariant board todo/blocked/dropped
+PASS  C5   refresh   done-by-kind line matches measured kinds
+PASS  C6   refresh   suite claim cites cycle 48 and the real count
+PASS  C7   invariant chartered must-haves = 12 and all done
+PASS  C8   refresh   hand-off no longer asserts "11 chartered" as a live claim
+PASS  C9   refresh   the 11-vs-12 contradiction is retracted in place, not silently fixed
+PASS  C10  refresh   hand-off done-item count matches board
+PASS  C11  refresh   KI-5 root cause: settings never migrated from macOS
+PASS  C12  refresh   KI-5 names the exactly-two allowlist entries
+PASS  C13  refresh   KI-5 carries the cell-3-vs-cell-4 discriminator
+PASS  C14  refresh   KI-5 second failure mode (cwd-relative, exit 127) recorded
+PASS  C15  refresh   KI-5 refusal count updated off 42
+PASS  C16  refresh   T-007 retag 37->12 is in the document
+PASS  C17  refresh   retag figures match the live corpus
+PASS  C18  refresh   the retag is flagged as a breaking change needing a human (T-040)
+PASS  C19  refresh   "zero agents is not zero product work" correction is recorded
+PASS  C20  refresh   zero-agent stretch stated as 39 through 47 (nine)
+PASS  C21  refresh   KI-16 recorded with the week_resets_at discriminator
+PASS  C22  refresh   KI-16 cites the conservative default the no-data path skips
+PASS  C23  refresh   cycle-48 probe corroboration: allowance measured 0
+PASS  C24  refresh   reserve figure matches live allocator
+PASS  C25  refresh   weekly/opus/elapsed match live allocator
+PASS  C26  refresh   weekly_heat arithmetic is correct, not asserted
+PASS  C27  refresh   opus_heat arithmetic is correct
+PASS  C28  refresh   cycle-47 blind read is EXCLUDED, not plotted as a reading
+PASS  C29  refresh   known-issue counts match state.json
+PASS  C30  refresh   below-the-line candidates are marked NOT in the gated set
+PASS  C31  invariant the gated DISTILL set really is exactly 5
+PASS  C32  refresh   stale cycle-42 board figures are gone
+PASS  C33  refresh   the hand-off-staleness finding is recorded with all four occurrences
+---
+33/33 cells green  (refresh-specific: 30/30)
+measured: board 42/54 done, suite 80/80 pass 0 fail, tags 12, KI 15 (8 open), allow 0%, reserve 21.83, heat 1.087

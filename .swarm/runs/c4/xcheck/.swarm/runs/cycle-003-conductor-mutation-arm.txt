@@ -1,0 +1,67 @@
+CONDUCTOR INDEPENDENT MUTATION ARM — cycle 3, item N-3
+archive commit: b627ed2eb547d8f06e73a8ac52cccb4031e3ba6c
+test_cmd:       node --test --test-reporter=tap test/*.test.js
+
+P0 CONTROL — pristine archive. The suite must be GREEN or every verdict below is void.
+  tests 102 / pass 102 / fail 0
+  P0 OK
+
+INERT CONTROL — a comment-only edit. The suite must stay GREEN.
+  tests 102 / pass 102 / fail 0
+  INERT OK — the harness does not die on everything
+
+SWEEP — conductor-authored mutants, one per sampled clause.
+
+C-A  KILLED    F2 — --author matches by SUBSTRING containment, case-insensitively
+     mutant:  --author becomes an exact whole-field match
+     witness: clause OBSERVED VIOLATED at the binary — the tree really is broken
+     suite:   98p / 4f
+     killed by: author filter is case-insensitive and narrows the list | --json composes with the filter flags: the JSON pick is always a member of the FILTERED set | filter: author match is case-insensitive | filter: author and tag together narrow to the intersection (AND)
+
+C-B  KILLED    F3 — --tag matches a WHOLE tag (--tag desi must not match design)
+     mutant:  --tag becomes a substring match
+     witness: clause OBSERVED VIOLATED at the binary — the tree really is broken
+     suite:   100p / 2f
+     killed by: --tag matches membership, not substring containment | --tag "" (bare empty-string value) matches nothing: whole-tag equality against the literal "" is not a filter no-op
+
+C-C  KILLED    S2 — non-finite seeds (Infinity) are accepted AND deterministic
+     mutant:  Infinity / -Infinity fall through to a random pick again (the I-1 hole, re-planted)
+     witness: clause OBSERVED VIOLATED at the binary — the tree really is broken
+     suite:   99p / 3f
+     killed by: --seed Infinity and --seed -Infinity (typed as CLI strings) are accepted and deterministic | pick: Infinity seed is deterministic and returns a valid member | pick: -Infinity seed is deterministic and returns a valid member
+
+C-D  KILLED    E1 — empty candidate set is exit 1, not an empty success
+     mutant:  a no-match becomes a silent success
+     witness: clause OBSERVED VIOLATED at the binary — the tree really is broken
+     suite:   98p / 4f
+     killed by: no match exits 1 with stderr only and zero bytes on stdout | --tag matches membership, not substring containment | --list with a filter that matches nothing is STILL exit 1, stderr only, stdout empty | --tag "" (bare empty-string value) matches nothing: whole-tag equality against the literal "" is not a filter no-op
+
+C-E  KILLED    L5 — --list accepts a valid --seed and IGNORES it (was a HOLE at cycle 52)
+     mutant:  --list --seed stops listing and does a single seeded pick instead
+     witness: clause OBSERVED VIOLATED at the binary — the tree really is broken
+     suite:   101p / 1f
+     killed by: --list accepts a valid --seed and IGNORES it: output is byte-identical across seeds
+
+C-F  KILLED    L7 — an unparseable seed is STILL a usage error under --list (was a HOLE at cycle 52)
+     mutant:  --list swallows every usage error, including an unparseable seed
+     witness: clause OBSERVED VIOLATED at the binary — the tree really is broken
+     suite:   96p / 6f
+     killed by: --list --seed abc is a usage error, exit 2, stdout empty, stderr carries the diagnostic | --seed abc --list (erroring flag BEFORE --list) is still a usage error, exit 2, stdout empty | --list --seed=  (empty seed value) is a usage error, exit 2, stdout empty | --list --seed "   " (whitespace-only seed value) is a usage error, exit 2, stdout empty (+2 more)
+
+C-G  KILLED    X2c — a seed that Number() parses to NaN is exit 2 (bad usage)
+     mutant:  --seed abc is accepted and falls back to a random pick
+     witness: clause OBSERVED VIOLATED at the binary — the tree really is broken
+     suite:   97p / 5f
+     killed by: non-numeric --seed is a usage error | non-numeric --seed= equals form is a usage error | non-numeric seed is a usage error, exit 2 | --list --seed abc is a usage error, exit 2, stdout empty, stderr carries the diagnostic (+1 more)
+
+================ CONDUCTOR ARM SUMMARY ================
+sampled clauses: 7
+  KILLED: 7  C-A C-B C-C C-D C-E C-F C-G
+P0 control:    PASS
+INERT control: PASS
+
+ARM VERDICT: every sampled clause is PROTECTED by the shipped suite
+
+What this arm does NOT establish: it samples 7 of 29 clauses. It cannot show the
+other 22 are protected, and a KILLED verdict shows the suite notices THIS mutation,
+not that it notices every way the clause could break.

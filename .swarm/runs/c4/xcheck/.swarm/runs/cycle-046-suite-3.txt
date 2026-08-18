@@ -1,0 +1,108 @@
+✔ zero args: no error, no filters set (4.298447ms)
+✔ --author <name> sets author string (0.345866ms)
+✔ --author=<name> equals form sets author string (0.251094ms)
+✔ --tag <tag> sets tag string (0.336628ms)
+✔ --tag=<tag> equals form sets tag string (0.346228ms)
+✔ combined --author X --tag Y sets both (0.266172ms)
+✔ --seed <n> parses as a number (0.556101ms)
+✔ --seed=<n> equals form parses as a number (0.255402ms)
+✔ --seed <n> accepts a negative number (0.347881ms)
+✔ --seed=<n> equals form accepts a negative number (0.460838ms)
+✔ non-numeric --seed is a usage error (0.486026ms)
+✔ non-numeric --seed= equals form is a usage error (0.286982ms)
+✔ --list sets list: true (0.184826ms)
+✔ --json sets json: true (0.632198ms)
+✔ --help sets help: true (0.152685ms)
+✔ -h sets help: true (0.146643ms)
+✔ unknown flag is a usage error (0.167803ms)
+✔ unknown short flag is a usage error (0.111785ms)
+✔ --author missing value at end of argv is a usage error (0.261373ms)
+✔ --tag missing value because next token is another flag is a usage error (0.196889ms)
+✔ --seed missing value at end of argv is a usage error (0.11964ms)
+✔ --author= with empty value is a usage error (0.121524ms)
+✔ a bare positional argument (not a flag) is a usage error (0.116765ms)
+✔ parseArgs never throws on malformed input (1.854951ms)
+✔ absent options are undefined/false, never null (0.170838ms)
+✔ HELP is a non-empty string mentioning every flag name (0.234141ms)
+✔ HELP fits comfortably on one 24-line terminal screen (0.151723ms)
+✔ bare invocation prints one attributed aphorism and exits 0 (45.481374ms)
+✔ --seed is deterministic across separate processes (96.35458ms)
+✔ different seeds do not all collapse to one aphorism (536.86383ms)
+✔ --json emits a single-line JSON object with text/author/tags (47.098919ms)
+✔ --list prints every entry in the filtered set (44.083602ms)
+✔ --help prints usage to stdout and exits 0 (51.007465ms)
+✔ no match exits 1 with stderr only and zero bytes on stdout (44.922837ms)
+✔ unknown flag is a usage error, exit 2, stdout clean (45.967991ms)
+✔ non-numeric seed is a usage error, exit 2 (43.259114ms)
+✔ author filter is case-insensitive and narrows the list (92.937691ms)
+✔ output is pipe-safe — no ANSI escapes when not a TTY (44.975791ms)
+✖ --tag matches membership, not substring containment (1.213016ms)
+✔ --list prints exactly one line per matching entry, no drops (42.400081ms)
+✔ --list preserves corpus order (first and last line match) (45.998951ms)
+✔ --json output is exactly one line, never pretty-printed (53.363081ms)
+✔ --list --json emits newline-delimited JSON, one object per line, in corpus order (45.886614ms)
+✔ README tags must exist in corpus (6.132249ms)
+✔ README tag counts must match corpus (0.485936ms)
+✔ README must state total unique tags correctly (0.351928ms)
+✔ README must correctly describe single-entry tag count (0.443213ms)
+✔ README must list all single-entry tags (0.375732ms)
+✔ README should acknowledge single-entry tag limitation (0.79468ms)
+✔ extractBandTablesFromReadme tolerates a prose sentence between a band heading and its table (T-025), without mis-attaching a table when the real one is missing (1.855192ms)
+✔ every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band (0.724015ms)
+✔ every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019) (3.22493ms)
+✔ README band table headings must state the correct count of tags in their band (0.812004ms)
+✔ README opening sentence must state correct multi-entry and single-entry tag counts (0.605567ms)
+✔ README Attribution section corpus-size claim must match corpus.length (C1) (2.807607ms)
+✔ README Attribution section HIGH-risk count must match the triage doc table (C2) (0.776415ms)
+✔ README Layout section paths must exist on disk (C6) (0.518448ms)
+✔ getListBehaviourSection tolerates a reformatted "--list behaviour" heading with no backticks (T-021) (1.047037ms)
+✔ getListBehaviourSection still fails on a SEPARATOR MISMATCH (not a heading-parse error) when a reformatted heading's literal is mutated (T-021) (1.078847ms)
+✔ getListBehaviourSection reports ambiguity loudly instead of taking the first of two qualifying headings (T-021) (1.298251ms)
+✔ getListBehaviourSection does not let "--list-only" satisfy the standalone `--list` token (T-021) (0.266884ms)
+✔ getListBehaviourSection tolerates the American spelling "behavior" in the heading (T-027) (0.268758ms)
+✔ getListBehaviourSection still fails on a SEPARATOR MISMATCH (not a heading-parse error) under an American-spelled heading (T-027) (0.164827ms)
+✔ README `--list` format literal matches the shipped binary's actual --list output (T-017) (47.07899ms)
+✔ corpus has at least 40 entries (1.40157ms)
+✔ every corpus entry has non-empty text, non-empty author, and an array of tags (2.041091ms)
+✔ filter: author match is case-insensitive (1.089687ms)
+✔ filter: tag match is case-insensitive (0.503349ms)
+✔ filter: author and tag together narrow to the intersection (AND) (0.328041ms)
+✔ filter: undefined/absent options do not filter (0.207499ms)
+✔ pick: same seed over the same candidates always returns the same element (0.58131ms)
+✔ pick: different seeds generally produce different results (0.312831ms)
+✔ pick: undefined seed picks a valid member (random mode) (0.204333ms)
+✔ pick: null seed also triggers random mode and returns a valid member (0.272976ms)
+✔ pick: throws RangeError on empty candidates array (0.824177ms)
+✔ pick: Infinity seed is deterministic and returns a valid member (0.264198ms)
+✔ pick: -Infinity seed is deterministic and returns a valid member (0.280962ms)
+✔ pick: NaN seed still uses the random branch and returns a valid member (0.143306ms)
+✔ pick: finite seed determinism is unchanged by the non-finite-seed fix (0.218762ms)
+✔ pick: single-element candidates always returns that element regardless of seed (0.226857ms)
+ℹ tests 80
+ℹ suites 0
+ℹ pass 79
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1392.150759
+
+✖ failing tests:
+
+test at test/cli.test.js:99:1
+✖ --tag matches membership, not substring containment (1.213016ms)
+  AssertionError [ERR_ASSERTION]: fixture assumption violated: corpus no longer has any tag containing "test" as a substring
+      at TestContext.<anonymous> (/opt/targets/aphorism-cli/test/cli.test.js:113:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

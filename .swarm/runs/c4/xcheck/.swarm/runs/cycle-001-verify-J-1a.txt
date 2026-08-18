@@ -1,0 +1,24 @@
+======================================================================
+J-1a VERIFICATION GATE
+======================================================================
+PASS A cap                  :: live file holds 20 lessons (cap 20)
+PASS B unique               :: 20 ids, 20 distinct
+PASS C lossless             :: live 20 + archive 16 = 36 vs pre-repair 36, multiset equal: True
+PASS D byte-identical       :: mutated survivors: none
+PASS E directives           :: 15 apply-bearing before, 15 after, lost: none
+PASS F archive inert        :: archived lessons carrying [apply:]: none
+PASS G next_id              :: before 42, after 42
+PASS H L-039 kept           :: L-039 in live file: True
+PASS I rationale complete   :: dropped ids absent from rationale: none
+----------------------------------------------------------------------
+gate 9/9
+
+NEGATIVE CONTROLS (must all read FAIL-AS-EXPECTED):
+A* cap on pre-repair   :: FAIL-AS-EXPECTED     36 lessons — must not be 20
+C* lossless with archive double-counted :: FAIL-AS-EXPECTED     must differ
+F* archive-inert on the full pre-repair set :: FAIL-AS-EXPECTED     must find directives
+controls behaving correctly: 3/3
+
+sha256 live    : 87e23b55f869037377e7b6600fa8e86d
+sha256 archive : cbe898b108877912f290cdb531bf4dd3
+sha256 backup  : 5c3c91ce341fdfbc04731073b69e296f

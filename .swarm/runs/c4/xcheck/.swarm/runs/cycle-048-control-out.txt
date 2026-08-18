@@ -1,0 +1,36 @@
+FAIL  C1   refresh   cycles run states 47 complete  <<< claim not found in document (cycles)
+FAIL  C2   refresh   board total items  <<< claim not found in document (total)
+FAIL  C3   refresh   board done count  <<< claim not found in document (done)
+PASS  C4   invariant board todo/blocked/dropped
+FAIL  C5   refresh   done-by-kind line matches measured kinds  <<< polish: claimed=0 measured=1
+FAIL  C6   refresh   suite claim cites cycle 48 and the real count  <<< does not cite 80 green at cycle 48
+PASS  C7   invariant chartered must-haves = 12 and all done
+FAIL  C8   refresh   hand-off no longer asserts "11 chartered" as a live claim  <<< hand-off still carries the 11 figure as a live claim
+FAIL  C9   refresh   the 11-vs-12 contradiction is retracted in place, not silently fixed  <<< no in-place retraction
+FAIL  C10  refresh   hand-off done-item count matches board  <<< claim not found in document (handoff done)
+FAIL  C11  refresh   KI-5 root cause: settings never migrated from macOS  <<< root cause absent
+FAIL  C12  refresh   KI-5 names the exactly-two allowlist entries  <<< the two-entry structural claim is absent
+FAIL  C13  refresh   KI-5 carries the cell-3-vs-cell-4 discriminator  <<< discriminator absent
+FAIL  C14  refresh   KI-5 second failure mode (cwd-relative, exit 127) recorded  <<< second failure mode absent
+FAIL  C15  refresh   KI-5 refusal count updated off 42  <<< still claims 42 cycles of refusal
+FAIL  C16  refresh   T-007 retag 37->12 is in the document  <<< retag not described
+FAIL  C17  refresh   retag figures match the live corpus  <<< singleton claim absent
+FAIL  C18  refresh   the retag is flagged as a breaking change needing a human (T-040)  <<< breaking-change flag or live T-040 missing (t040live=true)
+FAIL  C19  refresh   "zero agents is not zero product work" correction is recorded  <<< the self-correction is absent
+FAIL  C20  refresh   zero-agent stretch stated as 39 through 47 (nine)  <<< stretch not updated
+FAIL  C21  refresh   KI-16 recorded with the week_resets_at discriminator  <<< KI-16 or its discriminator absent
+FAIL  C22  refresh   KI-16 cites the conservative default the no-data path skips  <<< the fail-open argument is unsupported
+FAIL  C23  refresh   cycle-48 probe corroboration: allowance measured 0  <<< corroboration claim absent
+FAIL  C24  refresh   reserve figure matches live allocator  <<< claim not found in document (reserve)
+FAIL  C25  refresh   weekly/opus/elapsed match live allocator  <<< telemetry claim not found
+FAIL  C26  refresh   weekly_heat arithmetic is correct, not asserted  <<< heat claim not found
+FAIL  C27  refresh   opus_heat arithmetic is correct  <<< opus_heat claim not found
+FAIL  C28  refresh   cycle-47 blind read is EXCLUDED, not plotted as a reading  <<< blind read not excluded
+FAIL  C29  refresh   known-issue counts match state.json  <<< KI count claim not found
+FAIL  C30  refresh   below-the-line candidates are marked NOT in the gated set  <<< surplus candidates not fenced off
+PASS  C31  invariant the gated DISTILL set really is exactly 5
+FAIL  C32  refresh   stale cycle-42 board figures are gone  <<< cycle-42 board line still present
+FAIL  C33  refresh   the hand-off-staleness finding is recorded with all four occurrences  <<< staleness finding absent
+---
+3/33 cells green  (refresh-specific: 0/30)
+measured: board 42/54 done, suite 80/80 pass 0 fail, tags 12, KI 15 (8 open), allow 0%, reserve 21.83, heat 1.087

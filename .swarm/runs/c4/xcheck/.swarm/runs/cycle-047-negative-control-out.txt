@@ -1,0 +1,17 @@
+P0   unmutated copy            expect 0 red   got 0 red    PASS
+M1   C3    the exact regression this refresh exists to prevent: 12    red=[C3,C49] PASS (multi-cell)
+M2   C25   stale cycle count in the stats table                       red=[C25] PASS
+M3   C11   stats corpus line off by one                               red=[C11] PASS
+M4   C29   artifact count reverted to the cycle-41 figure             red=[C29] PASS
+M5   C35   known-issue open count inflated                            red=[C35] PASS
+M6   C42   allocator allowance understated (would hide the fail-ope   red=[C42] PASS
+M7   C38   notification count inflated                                red=[C38] PASS
+M8   C15   retired tag-name count understated                         red=[C15] PASS
+M9   C19   backlog done count stale                                   red=[C19] PASS
+M10  C16   pre-retag singleton count wrong                            red=[C16] PASS
+M11  C47   a done item smuggled back into the unfinished-work table   red=[C47,C48] PASS (multi-cell)
+M12  C31   test-line count stale                                      red=[C31] PASS
+M13  C23   headline cycle count stale — the failure mode this whole   red=[C23] PASS
+M14  C34   known-issue recorded count stale                           red=[C34] PASS
+
+negative control: ALL MUTATIONS CAUGHT BY THEIR OWN CELL

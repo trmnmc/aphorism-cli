@@ -1,0 +1,34 @@
+CONDUCTOR VERIFICATION GATE — cycle 3, items N-3 and N-7
+
+PASS  F1     FLOOR: the shipped suite is green at its known size
+        tests 102 / pass 102 / fail 0 (expected 102/102/0)
+PASS  F2     FLOOR: neither agent modified src/, test/ or bin/
+        src/, test/, bin/ all clean
+PASS  N3-a   N-3 deliverables: all three files exist and are non-trivial
+        map 15496 / out 10704 / instrument 20997
+PASS  N3-b   N-3 map covers all 29 clause IDs (structural, not prose)
+        all 29 clause IDs present as row labels
+PASS  N3-c   N-3 table carries one verdict per clause and they tally to exactly 29
+        KILLED 29 = 29 | headline "29 KILLED / 0 SURVIVED / 0 INERT / 0 NOT-PLANTED" agrees with the table
+PASS  N3-c2  CONTROL: the row tally DETECTS a dropped clause row and a lying headline
+        28 rows read as 28 (not 29), and "suite 94p/8f" is never mistaken for a verdict count — the check is not vacuous
+PASS  N3-d   CROSS-CHECK: builder verdicts agree with the conductor arm on all 7 sampled clauses
+        all 7 sampled clauses agree with my independent mutants
+PASS  N3-e   CONTROL: the cross-check DETECTS a fabricated verdict
+        a SURVIVED row for L7 is matched and flagged as disagreeing — the check is not vacuous
+PASS  N7-a   N-7 ledger exists and records commands with their output
+        18152 bytes; measuring commands present: true
+PASS  N7-b   N-7 ledger reports the conductor-measured ground truth
+        states corpus 50, tests 102, src 3, test files 4
+PASS  N7-c   REPORT.md CENSUS: no prose line was deleted (only digits may change)
+        0 original lines changed/removed, 0 of them carried NO digit
+PASS  N7-d   REPORT.md did not shrink materially
+        1228 lines before -> 1228 lines after (must not decrease)
+PASS  N7-e   CONTROL: the census DETECTS a deleted prose line
+        a removed digit-free line is caught — the census is not vacuous
+PASS  N7-f   CONVERSE CONTROL: the census stays GREEN when only a digit changes
+        a count correction passes while a prose deletion fails — the check discriminates
+PASS  N7-g   HISTORICAL CONTROL: a past-tense count was NOT rewritten to today's value
+        6 cycle-anchored count lines checked, 0 rewritten
+
+GATE PASS — 15/15 checks passed

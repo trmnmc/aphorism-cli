@@ -1,0 +1,10 @@
+
+--- P1_orphan_unrelated_rows (WRONG README) ---
+  HEAD 73/72/1   NEW 74/72/2
+  NEW fails: every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band | every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+  VERDICT: caught (loud) -- no silent hole
+
+--- P2_orphan_plausible_incomplete (WRONG README) ---
+  HEAD 73/72/1   NEW 74/72/2
+  NEW fails: every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band | every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+  VERDICT: caught (loud) -- no silent hole

@@ -1,0 +1,36 @@
+PRISTINE          pass=56 fail=0  -> GREEN
+SKIP-SANITY       ctrl mutation + all 4 new tests skipped: pass=48 fail=4 -> OK (pre-existing tests still run)
+                  caught by: bare invocation prints one attributed aphorism and exits 0, --seed is deterministic across separate processes, different seeds do not all collapse to one aphorism
+
+M07  (src/select.js)
+  FAILABLE      all active            pass=55 fail=1  named=True  -> PASS
+                failing: --tag matches membership, not substring containment
+  ATTRIBUTABLE  4 new tests skipped   pass=52 fail=0  -> PASS (mutation survives without this cycle's tests)
+  ISOLATED      only M07 skipped   pass=55 fail=0  -> clean
+
+M12  (bin/aphorism.js)
+  FAILABLE      all active            pass=54 fail=2  named=True  -> PASS
+                failing: --list prints exactly one line per matching entry, no drops; --list preserves corpus order (first and last line match)
+  ATTRIBUTABLE  4 new tests skipped   pass=52 fail=0  -> PASS (mutation survives without this cycle's tests)
+  ISOLATED      only M12 skipped   pass=54 fail=1  -> still caught by: --list preserves corpus order (first and last line match)
+
+M13  (bin/aphorism.js)
+  FAILABLE      all active            pass=55 fail=1  named=True  -> PASS
+                failing: --list preserves corpus order (first and last line match)
+  ATTRIBUTABLE  4 new tests skipped   pass=52 fail=0  -> PASS (mutation survives without this cycle's tests)
+  ISOLATED      only M13 skipped   pass=55 fail=0  -> clean
+
+M14  (bin/aphorism.js)
+  FAILABLE      all active            pass=55 fail=1  named=True  -> PASS
+                failing: --json output is exactly one line, never pretty-printed
+  ATTRIBUTABLE  4 new tests skipped   pass=52 fail=0  -> PASS (mutation survives without this cycle's tests)
+  ISOLATED      only M14 skipped   pass=55 fail=0  -> clean
+
+TREE AFTER HARNESS (product files must be unmodified):
+  M test/cli.test.js
+  ?? .swarm/runs/cycle-005-verify-I-2b.py
+  ?? .swarm/runs/cycle-005-verify-I-2b.txt
+
+FINAL test_cmd (node --test test/*.test.js): pass=56 fail=0
+
+GATE: PASS

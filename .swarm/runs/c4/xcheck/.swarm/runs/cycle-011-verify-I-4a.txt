@@ -1,0 +1,21 @@
+PASS  C1 product file inventory unchanged (10 tracked product files)  :: found 10
+PASS  C2 all non-edited product files byte-identical to HEAD  :: 8 files clean
+PASS  C3a every porcelain line has the expected XY<space> shape  :: 4 lines
+PASS  C3 exactly the two intended product paths are modified  :: changed: ["README.md","src/corpus.js"]
+PASS  C4 corpus data deep-equal to HEAD (no entry added/dropped/reordered/edited)  :: 50 entries
+PASS  C5 corpus.js bytes outside the header comment identical to HEAD
+PASS  C6 README bytes outside the inserted section identical to HEAD
+PASS  C7 the three false attribution claims are absent from corpus.js  :: hits: 0
+PASS  N1 [negative control] C7 check fires on the OLD HEAD text  :: hits on HEAD: 3
+PASS  C8 asserted "8 HIGH risk" matches the triage doc  :: measured 8
+PASS  C9 asserted "all 50 entries" matches corpus AND triage rows  :: corpus 50, rows 50
+PASS  C10 every HIGH-risk entry names a real person (i.e. is NOT hedged to Anonymous)  :: 1 of 50 hedged to Anonymous
+PASS  N2 [negative control] the count check rejects a wrong figure
+PASS  C11 the removed claim is measurably false (8 HIGH-risk entries name famous people, 1 hedged)  :: 8 HIGH named, 1 anonymous
+PASS  C12 corpus.js points at the triage doc
+PASS  C13 README points at the triage doc
+PASS  C14 the pointed-at document exists and is non-trivial  :: 17547 bytes
+PASS  N3 [negative control] pointer check rejects text without the path
+PASS  C15 CLI still runs; --seed 42 produces non-empty deterministic output  :: "Bad programmers worry about the code. Good programmers worry"
+
+19/19 checks passed

@@ -1,0 +1,17 @@
+lessons 31 · cap 20 · must shed 11
+
+WOULD DROP (in rule order):
+  L-028 [process] conf=med src=2026-08-14 moon
+  L-032 [process] conf=med src=2026-08-15 moon
+  L-033 [qa] conf=med src=2026-08-15 moon
+  L-003 [qa] conf=high src=2026-08-02 sushi-go-scorer  <-- carries [apply:]  <-- applied by 4 past run(s)
+  L-005 [process] conf=high src=2026-08-02 sushi-go-scorer
+  L-006 [qa] conf=high src=2026-08-02 sea-island  <-- carries [apply:]  <-- applied by 3 past run(s)
+  L-007 [qa] conf=high src=2026-08-02 sea-island  <-- carries [apply:]  <-- applied by 3 past run(s)
+  L-008 [prompt] conf=high src=2026-08-02 sea-island  <-- carries [apply:]  <-- applied by 4 past run(s)
+  L-009 [process] conf=high src=2026-08-02 sea-island
+  L-010 [process] conf=high src=2026-08-09 swarm-smoke-4
+  L-011 [qa] conf=high src=2026-08-09 prompt-spark  <-- carries [apply:]  <-- applied by 2 past run(s)
+
+11 dropped, of which 5 carry an [apply:] directive: L-003, L-006, L-007, L-008, L-011
+SURVIVORS: L-012, L-015, L-016, L-017, L-018, L-019, L-020, L-021, L-022, L-023, L-025, L-026, L-034, L-024, L-035, L-036, L-027, L-029, L-030, L-031

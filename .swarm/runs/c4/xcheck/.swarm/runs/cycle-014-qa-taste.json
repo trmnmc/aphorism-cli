@@ -1,0 +1,82 @@
+{
+  "runId": "qa-verify@2026-08-15T15:11:00+00:00",
+  "workflow_run_id": "wf_5b4a7d11-ff5",
+  "dispatch": "Workflow tool (SWARM/workflows/qa-verify.js) — PERMITTED this cycle, the first time in 13 cycles; prior cycles fell back to direct Agent calls",
+  "mode": "taste",
+  "scenarios": [],
+  "results": [],
+  "look": null,
+  "taste": {
+    "verdict": "wears-thin",
+    "minutes_used": 9,
+    "flows_exercised": [
+      "bare invocation core loop (32 pulls total: 12 first-time + 20 returning-user)",
+      "--help",
+      "--list (50 entries, corpus order)",
+      "--list --json NDJSON (parsed for tag/author distribution)",
+      "--seed determinism (same seed x3 identical, adjacent seeds diverge)",
+      "--seed as date (quote-of-the-day pattern, 3 consecutive dates)",
+      "--tag humor repeated x10 (pool of 9)",
+      "--tag naming / --tag caching repeated x4 each (singleton pools)",
+      "--author pike substring match",
+      "--author + --tag AND combination with --list",
+      "--json single-line output",
+      "empty match (exit 1, stderr only, stdout empty)",
+      "bad seed value (exit 2)",
+      "unknown flag (exit 2)",
+      "pipe hygiene (cat -A: no ANSI codes, UTF-8 em dash, single trailing newline)"
+    ],
+    "boredom_findings": [
+      {
+        "where": "--tag filtering (the returning user's main tool)",
+        "after_n_uses": 2,
+        "what_gets_stale": "23 of the 37 tags contain exactly one quote, so the second pull of --tag naming, --tag caching, --tag optimization, etc. prints the identical quote as the first, forever — I pulled --tag naming and --tag caching four times each and got the same Phil Karlton line all eight times. Filtering by topic, the natural returning-user move, silently collapses the product's one pleasure (a surprising pick) into a deterministic echo. Even the best pool (--tag humor, 9 entries) produced a back-to-back repeat within 10 pulls.",
+        "suggestion": "Content repair, in scope for an improvement run: consolidate the tag taxonomy so every tag the corpus advertises has at least 3-4 entries — fold singletons (naming+caching -> naming, optimization -> performance, yagni -> pragmatism) and retag existing quotes rather than adding features.",
+        "severity": "notable",
+        "conductor_verdict": "SUBSTANCE CONFIRMED, HEADLINE NUMBER REFUTED. Singleton tags are 21, not 23 (harness C1c). 30 of 37 tags hold <=2 entries (C1d) and the naming/caching echo reproduces exactly as described, 8/8 pulls, 1 distinct output (C2a, C2b). Filed as T-007.",
+        "backlog_item": "T-007"
+      },
+      {
+        "where": "bare invocation core loop / corpus depth",
+        "after_n_uses": 3,
+        "what_gets_stale": "First exact back-to-back repeat at use 3 (same Kent Beck line twice in a row); 18 distinct across 20 bare pulls. With 50 entries and stateless uniform picks, a .bashrc/MOTD user (the README's own suggested home) starts recycling within days. Compounding it: the 50 are the most famous programming quotes in existence (cache invalidation, billion-dollar mistake, nine women/nine months, premature optimization), so the audience arrives pre-saturated — the quote at use 10 is good, but it is one they can already recite.",
+        "suggestion": "Deepen the corpus with lesser-known lines from the same canon authors (Perlis alone published 130 epigrams; Dijkstra's EWDs are full of uncollected ones) — pure content work, no rotation state or new flags needed, keeping the curation bar and attribution-triage discipline the README already shows.",
+        "severity": "notable",
+        "conductor_verdict": "CONFIRMED ON STRONGER EVIDENCE THAN THE AGENT HAD. Its 'first repeat at use 3' is a single-session anecdote and is NOT reproducible as stated; the underlying claim is, and was re-measured over 3000 sessions: mean first repeat at use 9.60 against the closed-form birthday value 9.54, 60.1% of users hit a repeat by use 10 (C3a, C3b), with the picker proven uniform so the cause is corpus size and not a selection bug (C3c). Filed as T-008 with a KI-2 conflict flag.",
+        "backlog_item": "T-008"
+      },
+      {
+        "where": "tag discoverability (--help, README)",
+        "after_n_uses": 15,
+        "what_gets_stale": "When I wanted a topic pull mid-session there was no way to learn the tag vocabulary short of --list --json piped through a JSON parser: --help and the README name the --tag flag but never the tags, so guessing costs exit-1 misses (--tag testing works, --tag bugs does not — the corpus spells it 'debugging'). The trial-and-error loop wears out fast.",
+        "suggestion": "Doc-only fix, squarely in scope: list the valid tags (or at least the well-populated ones) in the README flag table or under a short 'Tags' heading.",
+        "severity": "minor",
+        "conductor_verdict": "CONFIRMED. --help is 10 lines naming zero tags (C4a); README names 2 of 37 and only as inline examples (C4b); --tag bugs exits 1 while --tag debugging exits 0 (C4c). Filed as T-009.",
+        "backlog_item": "T-009"
+      },
+      {
+        "where": "returning-user rhythm / README usage examples",
+        "after_n_uses": 40,
+        "what_gets_stale": "The strongest antidote to samey-ness already works — --seed 20260815 vs 20260816 vs 20260817 gave three different stable quotes, a perfect no-state quote-of-the-day — but nothing surfaces it. The README's --seed example (--tag simplicity --seed 42) reads like a test fixture, not a reason to come back tomorrow.",
+        "suggestion": "Add the one-liner recipe to the README usage examples: node bin/aphorism.js --seed $(date +%Y%m%d) — 'today's aphorism, same all day, new tomorrow'. Documentation only, and it converts the seed flag from a debugging tool into the product's daily hook.",
+        "severity": "minor",
+        "conductor_verdict": "CONFIRMED, including the positive half. The date-seed recipe genuinely works: 3 consecutive dates each stable over 3 runs, 3 distinct quotes (C5a, C5b); README carries only the fixture-shaped example and no date recipe (C5c). Filed as T-010 — best value-per-effort item on the board.",
+        "backlog_item": "T-010"
+      }
+    ],
+    "screenshots": [],
+    "server_log_tail": "Note: this product is a CLI, not a server — `PORT=8137 node bin/aphorism.js` prints one aphorism and exits; nothing ever listens on 8137 (verified with lsof before, during, and after the session; port left clear). Captured output of the harness-mandated invocation (.swarm/runs/taste-server.log): \"The most effective debugging tool is still careful thought, coupled with judiciously placed print statements.\\n    — Brian Kernighan\""
+  },
+  "agents_used": 1,
+  "dead_agents": [],
+  "timestamp": "2026-08-15T15:11:00+00:00",
+  "conductor_notes": {
+    "model": "fable (judgment seat — the fable guard exempts the taste seat from the gear-1 demotion)",
+    "tokens": 26513,
+    "tool_calls": 28,
+    "duration_ms": 178762,
+    "brief_mismatch": "qa-verify.js builds serverBrief/browseBrief for a web target and this is a CLI, so the agent was told to start a dev server on port 8137 and poll it with curl. It correctly recognised the mismatch, ran the invocation anyway to satisfy the instruction, confirmed with lsof that nothing listens, and said so plainly instead of fabricating a server session. The workflow contract has no CLI-shaped brief; that is a tool gap, journaled per hard rule 5 rather than fixed mid-run.",
+    "conductor_arg_error": "The spec_digest the conductor passed stated that --author is a whole-value match. SPEC.md Domain rules line 106 say --author matches by SUBSTRING containment, case-insensitively (--tag is the whole-value one). The agent was handed a false digest on that point. It did not damage the pass — the agent exercised --author pike against the real binary and observed the true substring behaviour — but the error is the conductor's and is recorded rather than quietly corrected.",
+    "verification": "17/17 conductor checks incl. 3 negative controls — .swarm/runs/cycle-014-verify-taste.js / .txt. Suite 59/59, product tree untouched (C6)."
+  }
+}

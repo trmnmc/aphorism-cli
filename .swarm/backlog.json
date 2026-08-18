@@ -324,7 +324,7 @@
     },
     {
       "id": "J-7",
-      "title": "Two CLI behaviours are unspecified and a human should rule on them (from J-6)",
+      "title": "Four CLI behaviours are unspecified and a human should rule on them (from J-6 + N-4)",
       "kind": "docs",
       "status": "todo",
       "priority": 7,
@@ -339,7 +339,7 @@
       ],
       "packages": [],
       "acceptance": "A human rules on two behaviours the Domain rules do not currently decide, and the ruling is written into SPEC.md as an explicit clause either way. (1) --help vs usage-error precedence when both appear in argv: the shipped behaviour is that the usage error WINS in both argv orders (measured: `--help --seed abc` and `--seed abc --help` both exit 2 with \"aphorism: flag --seed requires a numeric value\" on stderr). (2) Whether `--seed -0` and `--seed 0` are THE SAME SEED: they are `===` in JavaScript, but toUint32Seed folds the IEEE-754 bit pattern including the sign bit, so they select DIFFERENT aphorisms (measured: seed 0 -> Kernighan \"most effective debugging tool\"; seed -0 -> Saint-Exupery \"Perfection is achieved\"). Either behaviour is defensible; the SPEC decides neither.",
-      "notes": "FILED AT CYCLE 4 from J-6, which measured both and correctly declined to pin either with a test. This is a SPEC decision, not a swarm task, and it is filed the way T-040 is: a human ratifies or reverses, and the item is not dispatchable until they do.\n\nWHY NO TEST WAS ADDED, and why that was right: the Domain rules resolve exactly ONE flag-vs-error precedence question explicitly — for --list (\"A seed that fails to parse is still a usage error under --list\"). The existence of that carve-out is evidence the author does not treat \"usage-error trumps other flags\" as self-evidently general; where they meant it to generalise, they said so. They never said it for --help. An assertion pinning today s behaviour would therefore be a future false rejection rather than coverage — which is the failure mode J-6 exists to avoid. Same logic for -0/0: the rule guarantees determinism PER SEED VALUE and says nothing about whether -0 and 0 are one value or two.\n\nNOTE FOR WHOEVER RULES ON (2): if the answer is \"they are the same seed\", that is a PRODUCT bug in toUint32Seed and closing it is a src/ change, which this run s non-goals fence off. If the answer is \"they are distinguishable bit patterns, by design\", the fix is one SPEC sentence and nothing else. The cheap ruling and the expensive one are not symmetric, so rule before anyone writes code.\n\nHONEST NOTE ON (1) FROM THE BUILDER, disclosed before any gate looked: its \"does not map\" call on case 1 rests on an INFERENCE from the --list carve-out (silence implies deliberate scoping) rather than on direct textual statement. A reasonable reviewer could read the Exit-codes clause as unconditional and call the current behaviour a hole rather than an unspecified choice. The disagreement is recorded rather than resolved."
+      "notes": "FILED AT CYCLE 4 from J-6, which measured both and correctly declined to pin either with a test. This is a SPEC decision, not a swarm task, and it is filed the way T-040 is: a human ratifies or reverses, and the item is not dispatchable until they do.\n\nWHY NO TEST WAS ADDED, and why that was right: the Domain rules resolve exactly ONE flag-vs-error precedence question explicitly — for --list (\"A seed that fails to parse is still a usage error under --list\"). The existence of that carve-out is evidence the author does not treat \"usage-error trumps other flags\" as self-evidently general; where they meant it to generalise, they said so. They never said it for --help. An assertion pinning today s behaviour would therefore be a future false rejection rather than coverage — which is the failure mode J-6 exists to avoid. Same logic for -0/0: the rule guarantees determinism PER SEED VALUE and says nothing about whether -0 and 0 are one value or two.\n\nNOTE FOR WHOEVER RULES ON (2): if the answer is \"they are the same seed\", that is a PRODUCT bug in toUint32Seed and closing it is a src/ change, which this run s non-goals fence off. If the answer is \"they are distinguishable bit patterns, by design\", the fix is one SPEC sentence and nothing else. The cheap ruling and the expensive one are not symmetric, so rule before anyone writes code.\n\nHONEST NOTE ON (1) FROM THE BUILDER, disclosed before any gate looked: its \"does not map\" call on case 1 rests on an INFERENCE from the --list carve-out (silence implies deliberate scoping) rather than on direct textual statement. A reasonable reviewer could read the Exit-codes clause as unconditional and call the current behaviour a hole rather than an unspecified choice. The disagreement is recorded rather than resolved. | CYCLE 4: N-4 added TWO more rulings to this item, both measured. (3) REPEATED --tag/--author (D-42): shipped behaviour is last-occurrence-wins and it is UNPROTECTED - conductor reproduced it independently (--tag humor --tag design --list prints the 14-entry design list; a first-wins mutant prints the 9-entry humor list; the suite stays 102p/0f on both). SPEC spells every filter flag in the singular and never mentions repetition, so last-wins is an artifact of assignment order in parseArgs, not a contract. (4) EMPTY/WHITESPACE --seed (D-43): SPEC Selection says --seed accepts any value that Number() parses to a non-NaN number, and Number(\"\")===0 is non-NaN, so the literal reading says ACCEPT; the implementation rejects with exit 2 and SPEC Exit-codes calls a missing flag argument bad usage. The two clauses point opposite ways, so there is no decided behaviour to test against - a human must pick one."
     },
     {
       "id": "J-8",
@@ -452,11 +452,11 @@
     },
     {
       "kind": "qa",
-      "status": "todo",
+      "status": "done",
       "priority": 4,
-      "effort": "S",
+      "effort": "M",
       "value": "M",
-      "model": "sonnet",
+      "model": "fable",
       "deps": [
         "N-3"
       ],
@@ -471,11 +471,13 @@
       "covers": "K-3",
       "title": "Classify every measured survivor as HOLE or BOUNDARY before any test is written",
       "acceptance": "Every survivor N-3 measured is classified exactly once as HOLE (a real gap in the suite) or BOUNDARY (behaviour the SPEC does not decide), with the reasoning written per survivor and traced to the specific Domain-rule clause text that does or does not decide it. A BOUNDARY is DOCUMENTED and explicitly NOT hardened -- per L-033, hardening an indiscriminable observable produces a check that false-rejects honest output. If N-3 measured zero survivors, this item closes as vacuously satisfied with that stated plainly, and N-5 closes with zero tests added.",
-      "notes": "Gate on L-033: classification strictly PRECEDES any test authoring."
+      "notes": "Gate on L-033: classification strictly PRECEDES any test authoring. | CYCLE 4: closed NOT as vacuous. N-3 measured zero survivors, so the literal charter was an empty set; the item was re-scoped (decision recorded) to test the COMPLETENESS of the inherited 29-clause enumeration, which cycle 3 flagged as unverified. Result: 43 clauses derived independently from SPEC text, 29 mapping to the inherited map (carried KILLED), 14 NEW. Of the 14: 12 KILLED, 1 SURVIVED (D-42, classified BOUNDARY), 1 NOT-PLANTED (D-43, spec self-contradictory). 0 HOLE. Conductor independently re-planted 4 rows (D-42, D-43, D-13, D-38) in his own pristine archive; all four verdicts reproduced.",
+      "closed_cycle": 4,
+      "route_class": "core"
     },
     {
       "kind": "fix",
-      "status": "todo",
+      "status": "done",
       "priority": 5,
       "effort": "M",
       "value": "M",
@@ -493,17 +495,19 @@
       "id": "N-5",
       "covers": "K-3",
       "title": "Add tests ONLY for survivors classified HOLE, each proven failable, attributable and converse-controlled",
-      "acceptance": "For each survivor classified HOLE by N-4, and for NO other reason, one test is added that satisfies three independent proofs: FAILABLE -- it fails against the specific mutation that survived; ATTRIBUTABLE (L-029) -- removing just this test lets that mutation survive again, so the kill belongs to this test and not to some other assertion already in the suite; and CONVERSE-CONTROLLED (L-044) -- a paired control mutation that the spec permits leaves the suite GREEN, ruling out a check that merely dies on every edit. The project's own test suite, run by the conductor at verification time, is green with zero failures afterwards. ZERO NEW TESTS is an explicitly valid completion of this item when N-4 found no HOLE, and is reported as the measured result rather than as a gap. No test traces to \"the suite looks thin\" -- that is the churn the kickoff stress-test named and the SPEC lists as a non-goal."
+      "acceptance": "For each survivor classified HOLE by N-4, and for NO other reason, one test is added that satisfies three independent proofs: FAILABLE -- it fails against the specific mutation that survived; ATTRIBUTABLE (L-029) -- removing just this test lets that mutation survive again, so the kill belongs to this test and not to some other assertion already in the suite; and CONVERSE-CONTROLLED (L-044) -- a paired control mutation that the spec permits leaves the suite GREEN, ruling out a check that merely dies on every edit. The project's own test suite, run by the conductor at verification time, is green with zero failures afterwards. ZERO NEW TESTS is an explicitly valid completion of this item when N-4 found no HOLE, and is reported as the measured result rather than as a gap. No test traces to \"the suite looks thin\" -- that is the churn the kickoff stress-test named and the SPEC lists as a non-goal.",
+      "closed_cycle": 4,
+      "notes": " | CYCLE 4: closes with ZERO tests added, which SPEC K-3 names as a valid result. N-4 classified 0 survivors as HOLE (the single survivor D-42 is BOUNDARY - spec-undecided repeated-flag semantics, and L-033 forbids hardening an undecided observable). Evidence is the cycle-4 gate: F2 shows test/ untouched by any agent, F1 shows the suite unchanged at 102/102. Writing a test here would freeze behaviour the spec never decided."
     },
     {
       "kind": "docs",
-      "status": "todo",
+      "status": "done",
       "priority": 4,
       "effort": "M",
       "value": "H",
-      "model": "sonnet",
+      "model": "haiku",
       "deps": [],
-      "attempts": 0,
+      "attempts": 1,
       "filed_cycle": 1,
       "files_hint": [
         "REPORT.md"
@@ -514,7 +518,8 @@
       "covers": "K-4",
       "title": "Restructure REPORT.md so its FIRST SCREEN answers shipped / machine-verified / open -- deleting nothing",
       "acceptance": "REPORT.md opens with a first screen (roughly 50 lines) that answers three questions for a maintainer who reads nothing else: what SHIPPED, what is MACHINE-VERIFIED and by which command, and what is OPEN and who owns it. Every byte of the existing forensic detail survives below that screen or in an appendix in the same file -- nothing deleted, no citation dropped, no cycle number orphaned, and the run-1 and run-2 sections still readable as their own runs. Verified by a before/after content census, not by an assurance that nothing was lost. The current file is ~98 KB for a three-file CLI, which is the specific complaint K-4 exists to answer.",
-      "notes": "APPEND-AND-REORDER, never rewrite: run #2 recorded a decision that REPORT.md and RETRO.md are appended to and never overwritten, and that holds here. The first screen is NEW text placed above; the history moves down intact. ADDED cycle 3 (from N-7): REPORT.md:24-27 states \"This repo has been through three SWARM runs.\" That count is AMBIGUOUS while run #3 is in flight — REPORT.md used the in-flight convention for run #2. The restructure MUST resolve it explicitly (state what the number counts), not silently re-number it."
+      "notes": "APPEND-AND-REORDER, never rewrite: run #2 recorded a decision that REPORT.md and RETRO.md are appended to and never overwritten, and that holds here. The first screen is NEW text placed above; the history moves down intact. ADDED cycle 3 (from N-7): REPORT.md:24-27 states \"This repo has been through three SWARM runs.\" That count is AMBIGUOUS while run #3 is in flight — REPORT.md used the in-flight convention for run #2. The restructure MUST resolve it explicitly (state what the number counts), not silently re-number it. | CYCLE 4: the agent delivery FAILED the no-false-claim clause and is recorded as attempts=1. Structure was right (22 lines, additive, all 1226 pre-existing lines byte-identical), but two claims overreached: (a) the mutation-coverage bullet reported \"29/29 killed, 0 survived\" with no lower-bound caveat, which reads as far stronger coverage than N-4 established in this same cycle; (b) \"test suite has only been run on Node v24.19.0\" is a historical claim neither agent nor conductor can verify. The conductor repaired both lines himself and re-ran the sealed gate; the repaired text is what is verified. Closed done-by-conductor-repair, not done-as-delivered.",
+      "closed_cycle": 4
     },
     {
       "kind": "fix",
@@ -581,6 +586,27 @@
       "title": "Settle or bound KI-26: does the watchdog actually RECOVER, or is only its timer firing?",
       "acceptance": "The distinction KI-26 turns on is resolved into one of two honest states, with evidence either way. Either runs/watchdog.log carries a record of an actual relaunch decision (staleness detected, PID identity-checked, session respawned) and the log lines are quoted -- or it does not, and the finding is recorded as \"the timer fires; recovery remains UNPROVEN\" with the precise reason: a firing timer proves scheduling and nothing about the recovery path. NO DRILL is run: deliberately staling this run's own heartbeat to trigger a relaunch would risk the live run and could stack a duplicate conductor, which runs/incident-duplicate-conductor.md records as having happened before. Bounding the claim is the deliverable; a fabricated pass is not available, and neither is an untested assumption that it works.",
       "notes": "READ-ONLY on SWARM/bin per hard rule 5 -- this item observes the watchdog, it never edits it. Any defect found is journaled and reported, never live-patched."
+    },
+    {
+      "id": "N-10",
+      "kind": "docs",
+      "status": "todo",
+      "priority": 6,
+      "effort": "S",
+      "value": "M",
+      "model": "haiku",
+      "deps": [],
+      "attempts": 0,
+      "filed_cycle": 4,
+      "files_hint": [
+        ".swarm/SPEC.md"
+      ],
+      "packages": [],
+      "owner": "conductor",
+      "covers": "K-5",
+      "title": "Document the two spec gaps N-4 measured, as gaps, without deciding them",
+      "acceptance": "SPEC.md gains an explicit \"undecided behaviours\" note naming (a) repeated --tag/--author and (b) empty/whitespace --seed, each stating what the shipped binary currently does, which SPEC clauses conflict, and that no test pins it. It must NOT invent a ruling - that is J-7 and it is human-owned. Verified by reading SPEC.md for both entries and confirming no test file changed.",
+      "notes": "From N-4 (cycle 4). Distinct from J-7: J-7 is the human RULING, N-10 is the honest record of the gap while it is unruled."
     }
   ]
 }

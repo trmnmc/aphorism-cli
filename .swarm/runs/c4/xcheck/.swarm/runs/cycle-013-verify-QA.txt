@@ -1,0 +1,29 @@
+PASS  H1 harvest parses as NDJSON, exit 0, stderr empty  :: exit 0, 50 objects, stderr 0B
+PASS  H2 corpus size >= 40 (spec floor)  :: 50 entries
+PASS  H3 every harvested entry has text:string, author:string, tags:array  :: 50 checked
+PASS  S1a every seed deterministic over 8 runs, exit 0, stderr empty (incl. Infinity/-Infinity/-2.5)  :: 6 seeds x 8 runs identical
+PASS  S1b [anti-degeneracy] distinct seeds do NOT all collapse to one entry  :: 6 distinct outputs across 6 seeds
+PASS  S1c unseeded selection actually varies (not a disguised constant)  :: 22 distinct outputs in 25 unseeded runs
+PASS  S1d cross-format: plain --seed 42 stdout contains the JSON run text verbatim  :: exit 0, contains=true
+PASS  S2a --list exit 0, stderr empty, one line per corpus entry  :: exit 0, 50 lines vs 50 entries
+PASS  S2b every --list line is "<text> U+2014 <author>" with both parts non-empty  :: 0 malformed lines
+PASS  S2c [negative control] em-dash detector rejects hyphen and en-dash variants  :: hyphen and U+2013 both rejected
+PASS  S2d --list lines carry the harvest text+author, in corpus order  :: all 50 lines reconstructed from harvest
+PASS  S2e --list ignores a VALID seed: byte-identical to bare --list  :: exit 0, identical=true
+PASS  S2f [negative control] byte-identity detector distinguishes different strings  :: perturbed copy correctly reported different
+PASS  S2g --list with an UNPARSEABLE seed is still a usage error: exit 2, 0B stdout, stderr set  :: exit 2, stdout 0B, stderr 47B
+PASS  S3a --tag returns EXACTLY the whole-tag match set, in corpus order, for every tag  :: 37/37 tags exact
+PASS  S3b --tag is case-insensitive for every tag (flipped case byte-identical)  :: 37/37 tags case-insensitive
+PASS  S3c [discriminator] a proper PREFIX of a real tag never matches the longer tag  :: 37 discriminating prefixes swept, zero leaks
+PASS  S3d [negative control] the leak detector fires on a simulated substring matcher  :: simulated .includes() over-matches where whole-tag does not
+PASS  S4a --author + --tag is the INTERSECTION (AND), never the union, across many pairs  :: 40 discriminating pairs swept, zero wrong
+PASS  S4b [negative control] the AND/OR detector distinguishes intersection from union  :: a synthetic union is correctly reported as != intersection
+PASS  S4c --author matches by case-insensitive SUBSTRING (case-flipped fragment still matches)  :: fragment "ONAL" -> 2 entries, exact match
+PASS  S5a [assumption, tested not assumed] the probe strings match nothing in the harvest  :: author probe 0 hits, tag probe 0 hits
+PASS  S5b empty candidate set = exit 1 + stderr + ZERO stdout bytes, in all 5 shapes  :: 5/5 correct (no "{}", "[]", "null" leak)
+PASS  S6a bad usage = exit 2 + stderr + ZERO stdout bytes, in all 6 shapes  :: 6/6 correct
+PASS  S6b --json emits exactly ONE line, parseable, with text/author/tags of the right types  :: 1 line(s), exit 0
+PASS  S6c --help exits 0 and fits one screen (taste note), stdout only  :: exit 0, 10 lines, stderr 0B
+PASS  S7 taste: output survives a pipe unchanged (no tty-conditional decoration)  :: piped identical to direct = true
+
+27/27 checks passed

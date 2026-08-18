@@ -1,0 +1,6 @@
+HEAD / doc-fixed, Node 18+ prose           -> [18,inf] rows=debugging,design,humor,simplicity   [2,4] rows=language,performance
+HEAD / doc-fixed, MIS-ATTACH hazard        -> [2,4] rows=language,performance
+F_MD / doc-fixed, Node 18+ prose           -> [5,inf] rows=debugging,design,humor,simplicity   [18,inf] rows=debugging,design,humor,simplicity   [2,4] rows=language,performance
+F_MD / doc-fixed, MIS-ATTACH hazard        -> [2,4] rows=language,performance
+F_MD2 / doc-fixed, Node 18+ prose          -> [5,inf] rows=debugging,design,humor,simplicity   [2,4] rows=language,performance
+F_MD2 / doc-fixed, MIS-ATTACH hazard       -> [2,4] rows=language,performance

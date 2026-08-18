@@ -1,0 +1,23 @@
+  PASS  CTRL-PRISTINE      unmutated copy: tests=72 pass=72 fail=0
+  PASS  CTRL-DENOM         skip-pattern removes exactly the 1 new test: 71/71/0 (want 71/71/0)
+  PASS  CTRL-SKIPSANE      unrelated README mutation still fails under the same pattern: fail=1
+  PASS  C5.FAILABLE        README literal -> "<text> | <author>": fail=1, failing=["README `--list` format literal matches the shipped binary's actual --list output (T-017)"]
+  PASS  C5.ATTRIB          same mutation, new test filtered -> 71/71/0 (pre-cycle baseline)
+  PASS  C5b.FAILABLE       README literal loses the spaces around the em dash: fail=1, failing=["README `--list` format literal matches the shipped binary's actual --list output (T-017)"]
+  PASS  C5b.ATTRIB         same mutation, new test filtered -> 71/71/0
+  PASS  B1.BINARY-SEP      binary joins with " -- ", README pristine: fail=2, T-017 among failures=true
+  ----     B1 also failed: ["--list preserves corpus order (first and last line match)"]
+  PASS  B2.BINARY-ORDER    binary reverses --list order (format intact): fail=3, T-017 among failures=true
+  PASS  B3.BINARY-LENGTH   binary drops the last --list line: fail=4, T-017 among failures=true
+  FAIL  TRACKS.CORPUS      corpus text changed (binary + expectation both follow) -> T-017 alone: 4/4/0
+  PASS  R1.NOFALSEREJECT   prose gloss reworded, literal + binary intact: 72/72/0
+  PASS  R1.STILLKILLS      reworded prose + mutated literal: fail=1, failing=["README `--list` format literal matches the shipped binary's actual --list output (T-017)"]
+  PASS  R5.NOHEADING       "--list behaviour" heading deleted: fail=1, T-017 among failures=true
+  PASS  R5.NOLITERAL       backtick literal replaced by prose: fail=1, T-017 among failures=true
+  ----  PROBE.N1 heading backticks dropped (honest reformat): fail=1, T-017 among failures=true -> FALSE REJECTION, fails LOUD -- file as a LOW backlog item
+  PASS  SCOPE.INSERTONLY   git diff --numstat on the builder's file: +95 -0 (deletions must be 0)
+  PASS  SCOPE.ONEFILE      changed paths outside the conductor's own .swarm/: ["test/readme-tags.test.js"]
+  ----     conductor-owned paths in the same tree: [".swarm/runs/cycle-023-verify-T-017.js",".swarm/runs/cycle-023-verify-T-017.txt"]
+  PASS  SCOPE.SCRATCH      stray scratch/tmp/bak entries at repo root: []
+
+  === 17 pass / 1 fail ===

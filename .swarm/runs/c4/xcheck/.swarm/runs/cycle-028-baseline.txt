@@ -1,0 +1,40 @@
+=== CYCLE 28 PRE-DISPATCH BASELINE (T-021) ===
+Run BEFORE the builder was dispatched. Re-measures the defect at the current
+73-test suite rather than inheriting cycle 23's figure.
+
+[P0.PRISTINE] unmutated whole-repo copy must be green
+   -> 73/73/0
+
+[B1.REFORMAT] drop backticks from the heading (honest markdown reformat, no claim made false)
+   -> 73/72/1
+      FAIL: README `--list` format literal matches the shipped binary's actual --list output (T-017)
+
+[B2.LITERAL] mutate the format literal separator, heading untouched
+   -> 73/72/1
+      FAIL: README `--list` format literal matches the shipped binary's actual --list output (T-017)
+
+[B3.BOTH] reformatted heading AND mutated literal, at HEAD
+   -> 73/72/1
+      FAIL: README `--list` format literal matches the shipped binary's actual --list output (T-017)
+   *** THE MASKING FINDING: B3 is IDENTICAL to B1 by test name. The literal
+       mutation is masked by the heading parse failure, so T-021's acceptance
+       clause "a mutated literal under that same reformatted heading still
+       FAILS" is ALREADY satisfied at HEAD -- and would be satisfied by a fix
+       that never restores real detection. Test-name attribution cannot settle
+       this item; the gate must attribute by ASSERTION MESSAGE. ***
+
+[D1.DECOY] plant a decoy `<text> | <author>` literal in an EARLIER section, heading untouched
+   -> 73/73/0
+   Green at HEAD because the locator is section-scoped. A degenerate
+   "search the whole README" fix would turn this RED, so this check
+   separates the two readings and was carried into the gate.
+
+[D2.DECOY+REFORMAT] decoy literal AND reformatted heading
+   -> 73/72/1
+   The shape the fixed tree must turn green. A degenerate fix cannot.
+
+[D3.LOUD] remove the format literal entirely, heading untouched
+   -> 73/72/1
+   Loud on the "could not find a format literal" assert, never a silent pass.
+
+=== baseline complete ===

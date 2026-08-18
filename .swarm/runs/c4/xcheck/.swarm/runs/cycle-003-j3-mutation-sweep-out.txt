@@ -1,0 +1,40 @@
+P0 — pristine copy control.
+
+  suite: 74 pass / 0 fail  OK
+  P0 OK -- verdicts below are meaningful.
+
+
+D1-FMT  KILLED
+  rule: plain single-pick output form (README.md "## Usage" example: text, NEWLINE, four-space indent, EM DASH, space, author) — the seam between src/select.js's chosen entry and bin/aphorism.js's format()
+  mutant: the plain (non-list, non-json) single-pick output collapses onto ONE line (loses the newline + 4-space indent before the attribution) instead of matching the two-line form README.md documents
+  witness on mutant: VIOLATION CONFIRMED
+  suite: 73 pass / 1 fail
+  killed by: plain single-pick output is TWO lines: text, newline, four-space indent, EM DASH, space, author
+
+D2-SEED0  KILLED
+  rule: seed determinism holds for EVERY seed Number() parses to non-NaN, including the falsy boundary value 0 — not exercised by any existing determinism test (cycle-52/54 used 42, 7, -5, Infinity, -Infinity, 12345, but never 0)
+  mutant: the classic `x || fallback` falsy-zero trap at the bin/aphorism.js -> src/select.js seam: `--seed 0` is treated as "no seed" and silently falls back to a random pick
+  witness on mutant: VIOLATION CONFIRMED
+  suite: 73 pass / 1 fail
+  killed by: --json composes with --seed: the seeded JSON pick is reproducible AND is the same entry as the plain-text pick
+
+D3-SEEDINF-STR  KILLED
+  rule: --seed accepts any value Number() parses to a non-NaN number, including Infinity / -Infinity — the CLI-STRING form of this rule, at the args.js seam. The existing Infinity/-Infinity tests (select.test.js) call pick(candidates, Infinity) with the already-parsed JS value directly; none ever send the STRING "Infinity" through parseArgs/the shipped binary
+  mutant: `--seed Infinity` and `--seed -Infinity` typed on the actual command line become usage errors (exit 2) instead of deterministic picks, even though the Domain rule explicitly names Infinity/-Infinity as accepted seed values
+  witness on mutant: VIOLATION CONFIRMED
+  suite: 72 pass / 2 fail
+  killed by: --seed Infinity / --seed -Infinity parse to numbers, not a usage error | --seed Infinity and --seed -Infinity (typed as CLI strings) are accepted and deterministic
+
+D4-EMPTY-LIST  KILLED
+  rule: compound of two rules that each have their OWN single-mutant test but were never tested TOGETHER: "empty candidate set after filtering is exit 1, stderr only, zero bytes on stdout" (tested only without --list) AND "--list prints the filtered set" (tested only with a non-empty filtered set) — the empty+list combination itself is untested
+  mutant: --list crossed with a filter that matches nothing now prints an empty line and exits 0 instead of erroring — the empty-set check runs AFTER the list branch, so an empty filtered set under --list is misreported as a (trivial) success
+  witness on mutant: VIOLATION CONFIRMED
+  suite: 73 pass / 1 fail
+  killed by: --list with a filter that matches nothing is STILL exit 1, stderr only, stdout empty
+
+================ MAP ================
+KILLED: 4  D1-FMT D2-SEED0 D3-SEEDINF-STR D4-EMPTY-LIST
+SURVIVED: 0  
+INERT: 0  
+NOT-PLANTED: 0  
+ANOMALOUS: 0  

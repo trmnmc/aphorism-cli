@@ -1,0 +1,80 @@
+cycle 38 — VERIFICATION EVIDENCE — T-035
+=========================================
+Gate authored BEFORE dispatch and sealed: .swarm/runs/cycle-038-gate-T-035.md
+sha256 committed at 6851541 pre-dispatch; plaintext deleted for the whole dispatch
+window; restored after the builder returned; `sha256sum -c` -> OK.
+
+Every cell judged on the FAILING TEST NAME under --test-reporter=tap, never on suite
+colour (cycle 36 proved neighbouring count guards mask a silent cell with red).
+ack = test named "README should acknowledge single-entry tag limitation".
+HEAD = test/readme-tags.test.js at 6851541 (== d7aff20). WORK = builder's return.
+Harness: /opt/swarm/runs/c38-gate.py + c38-gate2.py. README sha256-verified restored.
+
+MAIN GATE — 12 cells x 2 arms
+-----------------------------
+cell | HEAD ack | WORK ack | HEAD p/f | WORK p/f | what
+-----|----------|----------|----------|----------|--------------------------------
+C0   | silent   | silent   | 21/0     | 21/0     | pristine README (control)
+A1   | silent   | FIRED    | 19/2     | 18/3     | ACCEPTANCE cell the ITEM named
+A2   | FIRED    | FIRED    | 18/3     | 18/3     | concept absent (ANTI-DELETION)
+A3   | FIRED    | FIRED    | 18/3     | 18/3     | ack moved to ## Layout
+D1   | silent   | FIRED    | 19/2     | 18/3     | decoy, no domain noun
+D2   | silent   | FIRED    | 19/2     | 18/3     | decoy + "tag"  -> KILLED
+D3   | silent   | silent   | 19/2     | 19/2     | decoy + tag + entry -> SURVIVES
+D4   | silent   | silent   | 19/2     | 19/2     | decoy + tag + entry -> SURVIVES
+D5   | silent   | FIRED    | 20/1     | 19/2     | honest trim (cost cell)
+D6   | FIRED    | FIRED    | 18/3     | 18/3     | T-034 wording (unchanged)
+D7   | FIRED    | FIRED    | 15/6     | 15/6     | heading rename (T-036, unchanged)
+R1   | silent   | silent   | 80/0     | 80/0     | FULL suite, pristine README
+
+ADDENDUM — isolating the cost (c38-gate2.py)
+--------------------------------------------
+E2   | silent   | silent   | 21/0     | 21/0     | delete L83 only -> clean, no cost
+E1   | silent   | silent   | 20/1     | 20/1     | reword marker clause -> no cost
+E3   | silent   | FIRED    | 20/1     | 19/2     | honest 2-sentence split
+
+VERDICT: PASS — HOLE NARROWED, NOT CLOSED. Item -> done.
+--------------------------------------------------------
+A1 is a kill attributable to this change and to nothing else: SILENT on HEAD, FIRED on
+WORK. Removing the change lets the mutation survive. That is L-029's two directions.
+
+GENERALITY IS PROVEN, not assumed. D1 and D2 were authored after the builder returned
+and appear nowhere in the dispatch prompt; both are real kills. D2 REFUTES sealed
+prediction P3: "Each aphorism carries exactly one primary tag." carries a domain noun
+and a marker and is still correctly rejected, because the fix requires entry/entries
+specifically, not merely any domain noun.
+
+THE SILENT DIRECTION IS NARROWED, NOT CLOSED — sealed prediction P2 CONFIRMED.
+D3 ("Tags are listed in alphabetical order, one entry per line.") and D4 ("A tag name
+is a single-entry token with no spaces.") are in-section decoys that carry tag-word AND
+entry-word AND a marker in one sentence. Both are SILENT on BOTH arms. The defect named
+in T-035's TITLE — an in-section decoy satisfies the guard — is therefore still true in
+a narrower shape. The item passes anyway, on the rule written into the sealed gate: it
+passes if the builder closes the residual OR documents it at the assertion site with a
+measurement. The builder did the latter, unprompted, BEFORE any gate ran, with a worked
+example of exactly this class ("The install script writes exactly one entry per tag to
+the local cache file, once per run."). Ninth consecutive cycle an honest builder
+uncertainty note became a tracked item. Filed as T-037.
+
+COST IS REAL BUT BOUNDED, and the bound is measured rather than asserted. E3 splits the
+distribution paragraph into two honest sentences, every number unchanged, so that no
+single sentence carries all three required tokens: ack FIRES on WORK, silent on HEAD.
+But the opening-sentence guard ALREADY fails that same README at HEAD (20/1 -> 19/2:
+the pre-existing failure is the constant, the ack test is the added voice). E1 and E2
+are the controls that make this a bound rather than an excuse: an honest reword that
+keeps "entries" in the sentence (E1) and a plain deletion of the third acknowledgement
+sentence (E2) both cost NOTHING — E2 is 21/0 green on both arms. NO honest README was
+found that WORK rejects and that no other guard already rejects. Same arithmetic cycle
+37 applied to D3/T-036. Filed as T-038 at priority 3 with that arithmetic attached.
+
+SCOPE / CONTROLS
+----------------
+git status at gate time: only test/readme-tags.test.js modified (+77/-25) plus the
+restored sealed gate file. README.md byte-identical to HEAD, verified by
+`git diff --exit-code README.md` and again by sha256 after every harness run.
+src/, bin/, docs/, other test files untouched. Test count unchanged: one test body
+edited, 80/80 both arms.
+KI-7 scratch control: PASSES a fifth consecutive time — the builder created
+.swarm/scratch-c38/, used it, and removed the directory itself; nothing untracked.
+collision-scan (cycle.md step 6.6): NOT APPLICABLE — Node CLI, no browser surface.
+Reported as not-run, never as passed.

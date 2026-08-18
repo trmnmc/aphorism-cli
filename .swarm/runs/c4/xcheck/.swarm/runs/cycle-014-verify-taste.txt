@@ -1,0 +1,20 @@
+PASS  C1a corpus is 50 entries  :: 50 entries
+PASS  C1b agent claim "37 distinct tags" holds  :: actual 37
+PASS  C1c agent claim "23 of 37 tags hold exactly one quote" is REFUTED  :: actual singletons = 21
+PASS  C1d the finding survives on corrected numbers: a MAJORITY of tags are <=2 entries  :: 30/37 tags hold <=2 (21 hold exactly 1)
+PASS  C2a agent claim: --tag naming x4 + --tag caching x4 = ONE identical output  :: distinct outputs = 1
+PASS  C2b and that output is the Phil Karlton line the agent named  :: There are only two hard things in computer science: cache invali
+PASS  C2c [negative control] a MULTI-entry tag is NOT a fixed echo  :: humor pool = 9, distinct over 25 pulls = 8
+PASS  C3a empirical first-repeat matches the closed-form birthday value  :: empirical mean 9.60 vs analytic 9.54
+PASS  C3b a majority of users meet a repeat within 10 uses (the agent's "wears thin by ten")  :: P(repeat by use 10) = 60.1%
+PASS  C3c [negative control] the picker is UNIFORM, so the repeat rate is corpus size, not a picker bug  :: min 931 max 1085 expected 1000
+PASS  C4a agent claim: --help names --tag but never names a single tag  :: help is 10 lines, 0 tag names
+PASS  C4b agent claim: README does not publish the tag vocabulary  :: README names 2 of 37 tags (simplicity,debugging) — as examples, not a list
+aphorism: no aphorism matches those filters
+PASS  C4c agent claim: --tag bugs is an exit-1 miss while --tag debugging works  :: bugs -> exit 1, debugging -> exit 0 (5 entries)
+PASS  C5a agent claim: --seed <date> is stable within a day  :: 3 dates x 3 runs each
+PASS  C5b agent claim: consecutive dates give DIFFERENT quotes  :: 3/3 distinct
+PASS  C5c the README --seed example is the fixture-shaped one the agent criticised  :: README shows "--tag simplicity --seed 42", no date recipe present
+PASS  C6 the taste agent modified NO product file  :: git diff vs HEAD over product paths is empty
+
+17/17 checks passed

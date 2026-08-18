@@ -1,0 +1,61 @@
+=== CYCLE 28 GATE: T-021 ===
+(conductor-authored at verification time; the builder never saw this harness)
+
+PASS  [C0.PRISTINE] unmutated copy of the WORKED tree is green
+        got=73/73/0  want=73/73/0  :: if this fails, every result below is meaningless
+PASS  [C1.NEGATIVE] harness can produce a RED (mutated literal, heading untouched)
+        got=73/72/1|SEPARATOR-MISMATCH  want=73/72/1|SEPARATOR-MISMATCH  :: also proves the guard is still LIVE on the literal after the fix
+PASS  [C2.REVERT-SOUND] HEAD test file on an UNMUTATED README is green
+        got=73/73/0  want=73/73/0  :: so a red in any A*b check below measures the fix, not the swap
+PASS  [A1.GREEN] T-021 case: backticks dropped from the heading -> suite GREEN
+        got=73/73/0  want=73/73/0  :: the false rejection is removed
+PASS  [A1b.ATTRIB] same README against HEAD test file -> REJECTED
+        got=73/72/1|HEADING-PARSE  want=73/72/1|HEADING-PARSE  :: attributes A1 to this fix rather than to anything else
+PASS  [A2.RED-REASON] reformatted heading + mutated literal -> fails as SEPARATOR-MISMATCH
+        got=73/72/1|SEPARATOR-MISMATCH  want=73/72/1|SEPARATOR-MISMATCH  :: at HEAD this same input failed as HEADING-PARSE (baseline B3) -- detection is genuinely restored, not merely still-red
+PASS  [A2b.MASK-PROOF] the SAME input at HEAD fails as HEADING-PARSE (the masking)
+        got=73/72/1|HEADING-PARSE  want=73/72/1|HEADING-PARSE  :: identical test-name signature to A2, different cause -- this is exactly why the acceptance clause as written could not have settled this item
+PASS  [D1.DECOY] decoy literal in an EARLIER section, heading untouched -> GREEN
+        got=73/73/0  want=73/73/0  :: a whole-README search would hit the decoy and go red
+PASS  [D2.DECOY+REFORMAT] decoy literal AND reformatted heading -> GREEN
+        got=73/73/0  want=73/73/0  :: the shape a degenerate fix provably cannot reach; section scope survived the fix
+PASS  [L1.NO-SECTION] heading with NEITHER token -> loud HEADING-PARSE assert
+        got=73/72/1|HEADING-PARSE  want=73/72/1|HEADING-PARSE  :: a parse miss must never pass silently
+PASS  [L2.NO-LITERAL] format literal removed -> loud LITERAL-PARSE assert
+        got=73/72/1|LITERAL-PARSE  want=73/72/1|LITERAL-PARSE  :: second helper kept its loudness
+PASS  [B1.REVERSE-ORDER] builder said untested: "### behaviour of --list" -> GREEN
+        got=73/73/0  want=73/73/0  :: tokens in either order, as it reasoned but did not run
+PASS  [B2.CASE] builder said deliberate: capitalised "Behaviour" -> still REJECTED loud
+        got=73/72/1|HEADING-PARSE  want=73/72/1|HEADING-PARSE  :: scope was backtick tolerance only; case tolerance was NOT requested and is not silently added
+PASS  [B3.SPELLING] builder said deliberate: American "behavior" -> still REJECTED loud
+        got=73/72/1|HEADING-PARSE  want=73/72/1|HEADING-PARSE  :: same reasoning as B2
+PASS  [B4.MISPICK] builder's own adversarial case: an EARLIER heading carrying both tokens
+        got=73/72/1  want=73/72/1  :: FIRST-MATCH-WINS means the decoy heading is picked and the real section is missed.
+PASS  [B4b.MISPICK-ATTRIB] the SAME decoy-heading README against HEAD test file
+        got=73/73/0  want=73/73/0  :: HEAD matched the exact backticked heading, so it skipped the decoy. HEAD green + fix red => the mis-pick is INTRODUCED by this fix.
+PASS  [S1.SCOPE] exactly one tracked file changed
+        got=test/readme-tags.test.js  want=test/readme-tags.test.js
+PASS  [S2.README] README.md byte-identical to HEAD
+        got=true  want=true
+PASS  [S3.PRODUCT] every product file byte-identical to HEAD
+        got=true  want=true
+PASS  [S4.NO-WEAKEN] assertion count not reduced
+        got=true  want=true  :: HEAD=35 now=35
+PASS  [S5.TESTCOUNT] no test added or removed (this item changes a helper only)
+        got=14  want=14
+PASS  [S6.SCRATCH] builder scratch directory removed
+        got=false  want=false  :: KI-7 standing control
+
+=== 22 pass / 0 fail ===
+
+CONDUCTOR VERDICT: 22/22 is NOT an acceptance. Checks B4/B4b surfaced a
+newly-introduced mis-pick surface; probe cycle-028-probe-B4.txt establishes
+that the mis-pick is SILENT rather than loud, and the item was therefore
+rejected and the work reverted. See that file and state.json decisions[]
+cycle 28.
+
+HARNESS NOTE, recorded rather than back-edited: the `reason` classifier is
+meaningful ONLY on a red run. Its SEPARATOR-MISMATCH branch keys on text
+that also appears in the passing test's NAME, so green runs report that
+reason spuriously. No check above was affected -- every check asserting on
+`reason` also asserts a red signature.

@@ -1,0 +1,58 @@
+=== I-6 GATE, ARM: ACCEPTANCE -- report under test: /opt/targets/aphorism-cli/REPORT.md ===
+PASS C1   REPORT claims 80 pass / 0 fail; re-run the suite and compare
+        measured pass=80 fail=0; report claims 80/0 present=true
+PASS C2   corpus figures recomputed from source
+        {"entries":50,"authors":24,"tags":37,"singles":21,"ge5":4,"band":12} literal present=true
+PASS C3   shipped vs test line counts
+        src+bin=549 test=2051 readme-tags=1511 literals: 549=true 2051=true 1511=true
+PASS C4   commit counts and remote sync
+        total=95 since=91 status="## master...origin/master" synced=true
+PASS C5   v0.1-overnight exists locally and is absent from origin
+        local=true remote_tags=""
+PASS C6   backlog counts (with I-6 transitioned to done)
+        total=53 {"done":41,"dropped":4,"blocked":2,"todo":6}
+PASS C7   decisions count and stable (cycles 1-40) .swarm/runs artifact count
+        decisions=79 runs_files_excl_c41=196 exclusion_disclosed=true
+PASS C8   every I-item in the backlog appears in REPORT with its verified cycle
+        I-items=I-1,I-2a,I-2b,I-2c,I-3,I-7,I-8,I-4,I-4a,I-4b,I-5,I-6 missing_from_report=none
+PASS C9   each claimed I-item cycle has its evidence artifact; I-5 flagged as partial
+        problems=none I5_labelled_partial=true
+PASS C10  KI ids/severities match state.json; any KI absent from state.json is labelled
+        named=14 in_state=13 not_in_state=KI-1 severity_mismatch=none unlabelled_provenance=none state_KIs_unmentioned=none
+PASS C11  quoted allocator figures match runs/allocator.json
+        allocator weekly=93 opus=97 allow=0 human=0
+PASS C12  review-fix declined at cycle 14; QA/taste cycles match state.json
+        journal_records_decline=true qa={"last_full_qa_cycle":13,"last_look_cycle":0,"last_taste_cycle":14}
+PASS C13  discriminator: report is about the improvement run, not the SMOKE run
+        missing_current=none stale_present=none
+--- 13/13 checks passed ---
+VERDICT: ACCEPTANCE ARM GREEN
+=== I-6 GATE, ARM: NEGATIVE -- report under test: /opt/targets/aphorism-cli/.swarm/runs/cycle-041-stale-REPORT.md ===
+FAIL C1   REPORT claims 80 pass / 0 fail; re-run the suite and compare
+        measured pass=80 fail=0; report claims 80/0 present=false
+FAIL C2   corpus figures recomputed from source
+        {"entries":50,"authors":24,"tags":37,"singles":21,"ge5":4,"band":12} literal present=false
+FAIL C3   shipped vs test line counts
+        src+bin=549 test=2051 readme-tags=1511 literals: 549=false 2051=false 1511=false
+FAIL C4   commit counts and remote sync
+        total=95 since=91 status="## master...origin/master" synced=true
+FAIL C5   v0.1-overnight exists locally and is absent from origin
+        local=true remote_tags=""
+FAIL C6   backlog counts (with I-6 transitioned to done)
+        total=53 {"done":41,"dropped":4,"blocked":2,"todo":6}
+FAIL C7   decisions count and stable (cycles 1-40) .swarm/runs artifact count
+        decisions=79 runs_files_excl_c41=196 exclusion_disclosed=false
+FAIL C8   every I-item in the backlog appears in REPORT with its verified cycle
+        I-items=I-1,I-2a,I-2b,I-2c,I-3,I-7,I-8,I-4,I-4a,I-4b,I-5,I-6 missing_from_report=I-1,I-2a,I-2b,I-2c,I-3,I-7,I-8,I-4,I-4a,I-4b,I-5,I-6
+FAIL C9   each claimed I-item cycle has its evidence artifact; I-5 flagged as partial
+        problems=I-1:cycle-not-stated I-2a:cycle-not-stated I-2b:cycle-not-stated I-2c:cycle-not-stated I-3:cycle-not-stated I-7:cycle-not-stated I-8:cycle-not-stated I-4b:cycle-not-stated I-4a:cycle-not-stated I5_labelled_partial=false
+FAIL C10  KI ids/severities match state.json; any KI absent from state.json is labelled
+        named=3 in_state=2 not_in_state=KI-1 severity_mismatch=none unlabelled_provenance=KI-1 state_KIs_unmentioned=KI-4,KI-5,KI-6,KI-7,KI-8,KI-9,KI-10,KI-11,KI-12,KI-13,KI-14
+FAIL C11  quoted allocator figures match runs/allocator.json
+        allocator weekly=93 opus=97 allow=0 human=0
+FAIL C12  review-fix declined at cycle 14; QA/taste cycles match state.json
+        journal_records_decline=true qa={"last_full_qa_cycle":13,"last_look_cycle":0,"last_taste_cycle":14}
+FAIL C13  discriminator: report is about the improvement run, not the SMOKE run
+        missing_current=**Cycles completed: 40** | cycle 41 in flight | 1511 of the repo | KI-14 stale_present=**Cycles completed:** 1 | 48 pass / 0 fail | | Tests | 48 pass / 0 fail |
+--- 0/13 checks passed ---
+VERDICT: NEGATIVE CONTROL BEHAVED -- the stale report FAILS this gate (13 checks)

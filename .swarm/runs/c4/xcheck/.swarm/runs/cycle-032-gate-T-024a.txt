@@ -1,0 +1,26 @@
+CONDUCTOR GATE — T-024a attempt 2 — cycle 32
+truth: corpus.length=50, HIGH rows=8. FIXED = working tree, HEAD = git show HEAD.
+
+cell truth  FIXED C1          FIXED C2            HEAD C1           HEAD C2             verdict
+------------------------------------------------------------------------------------------------------------------------
+H0   TRUE   GREEN             GREEN               GREEN             GREEN               both correct
+H1   TRUE   GREEN             PARSE-MISS          GREEN             GREEN               HEAD correct, FIXED wrong  <-- REGRESSION
+H2   TRUE   GREEN             PARSE-MISS          GREEN             GREEN               HEAD correct, FIXED wrong  <-- REGRESSION
+H3   TRUE   PARSE-MISS        GREEN               GREEN             GREEN               HEAD correct, FIXED wrong  <-- REGRESSION
+H4   TRUE   GREEN             GREEN               GREEN             MISMATCH(read 50)   FIXED correct, HEAD wrong  <-- improvement
+H5   WRONG(9)GREEN             PARSE-MISS (loud, unnamed)GREEN             MISMATCH(read 9)    both correct
+H6   WRONG(9)GREEN             MISMATCH(read 9)    GREEN             MISMATCH(read 9)    both correct
+H7   WRONG(9)GREEN             GREEN               GREEN             GREEN               both wrong
+H8   WRONG(51)MISMATCH(read 51) GREEN               MISMATCH(read 51) GREEN               both correct
+------------------------------------------------------------------------------------------------------------------------
+SCORE   FIXED 5/9   HEAD 7/9
+
+  H0  control: shipped README, untouched
+  H1  TRUE, natural rewording of the HIGH aside without the word "rated" ("fall into the HIGH band")
+  H2  TRUE, a noun between the count and the predicate ("8 entries are rated HIGH")
+  H3  TRUE, an adjective between the count and the "entries" marker ("50 corpus entries") — C1 under test
+  H4  TRUE, subject-first partitive ("8 of the 50 entries are rated HIGH")
+  H5  WRONG HIGH (9) in the same natural non-"rated" wording as H1
+  H6  WRONG HIGH (9) in template shape, with a TRUE bystander 8 later in the same clause
+  H7  SILENT-HOLE PROBE (the converse cycle 31 said still needed authoring): TWO bound HIGH claims, one TRUE (8) and one FALSE (9)
+  H8  control kill: WRONG entries count (51), shipped shape

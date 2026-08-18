@@ -1,0 +1,13 @@
+CYCLE 21 PRE-DISPATCH BASELINE — blindness of HEAD to Tag-vocabulary numeric claims
+target: /opt/targets/aphorism-cli
+
+CTRL-PRISTINE  parsed=true  tests=66 pass=66 fail=0
+
+A9    SURVIVED  tests=66 pass=66 fail=0  :: line 55: "16 tags appear on 2 or more entries" -> 15
+V6    SURVIVED  tests=66 pass=66 fail=0  :: line 55: "the remaining 21 appear on exactly one entry" -> 22
+A10   SURVIVED  tests=66 pass=66 fail=0  :: line 57: "4 tags have a robust pool (5+ entries)" -> 6
+A11   SURVIVED  tests=66 pass=66 fail=0  :: line 65: "12 tags appear 2–4 times" -> 11
+V6b   KILLED    tests=66 pass=65 fail=1  :: CONTROL line 81: "The remaining 21 tags appear exactly once" -> 22 (expected KILLED)
+C0    KILLED    tests=66 pass=65 fail=1  :: CONTROL line 55: "37 distinct tags" -> 38 (expected KILLED)
+
+baseline test count: 66

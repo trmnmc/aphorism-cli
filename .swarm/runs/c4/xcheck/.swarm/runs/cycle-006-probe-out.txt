@@ -1,0 +1,12 @@
+=== cycle-6 follow-up probe (residual holes; NOT J-5's verdict) ===
+[P0] GREEN (102/0)
+      control — live tree, unmutated
+[D1] GREEN (102/0)  claim is FALSE (corpus: 12)
+      DUPLICATE of a recognised shape, false, placed AFTER the opening sentence so it cannot steal first-match: "9 tags appear on 2 or more entries."
+[D2] GREEN (102/0)  claim is FALSE (corpus: 12)
+      DUPLICATE of the distinct-total shape, false: "The corpus contains 13 distinct tags."
+[D3] RED (101/1)  claim is FALSE (band table holds 7 rows)
+      builder-disclosed gap: the SAME false claim spelled in WORDS — "Nine tags have a robust pool (5+ entries)."
+      caught by: README Tag vocabulary section must contain no unrecognised count-claim digits (J-5) | README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)
+[D4] GREEN (102/0)  claim is FALSE (corpus: 0)
+      DUPLICATE of the exactly-one shape, false: "In fact 4 tags sit on exactly one entry."
