@@ -1,0 +1,18 @@
+PASS  C1   N-1(c) patch block holds EXACTLY the 9 required allowlist entries
+PASS  C2   N-1(b) all six unlisted helpers named in the root cause
+PASS  C3   N-1(b) settings.json facts present: 36 allow entries, additionalDirectories == []
+PASS  C4   N-1(d) confirm command present in a fenced block, ABSOLUTE path
+PASS  C5   N-1(g) cwd fragility: failing form, working form, and the logged cycle-2 reproduction
+PASS  C6   N-1(e) honest limit: cmd_parse exit-2 claim is read-only, never executed
+PASS  C7   N-1(f) no run in any permission mode can close this from the inside
+PASS  C8   N-1(a) denial count stated + >=3 reproduction rows in the table
+PASS  C9   N-2(2) ledger line parses to the documented field grammar
+PASS  C10  N-2(2) note marks the line a hand-edit AND records the held-out ids
+PASS  C11  N-2 JOIN: ledger applied ids == exactly the learnings.md lessons carrying [apply:]
+PASS  C12  N-2(1) learnings.md intact: 20 lessons, no dup ids, next_id > max id
+PASS  K1   CONTROL: C1 DETECTS a patch block with one entry deleted
+PASS  K2   CONTROL: C11 join DETECTS a ledger line missing one applied id
+PASS  K3   CONTROL: C11 join DETECTS a lesson losing its [apply:] directive
+PASS  K4   CONTROL: C4 DETECTS the confirm command downgraded to a relative path
+PASS  K5   CONVERSE CONTROL: an unrelated edit leaves C1/C4/C5 GREEN (not a snapshot test)
+GATE PASS — 17/17 checks passed

@@ -10453,3 +10453,136 @@ string does not match the entry either. The working invocation is `cd /opt/swarm
 bin/swarm-notify.sh ...` in a single command, and N-1's patch must say so explicitly rather
 than only listing the missing entries — otherwise a human adds six lines and leaves the
 seventh, cwd-fragile, one in place.
+
+## cycle 2 — 2026-08-18T04:29Z — N-1 + N-2 (inline, conductor-owned) — VALUE
+
+TARGET: /opt/targets/aphorism-cli · phase BUILD · gear 1 -> **2** (k_cap 2) · 2 items verified
+
+PICK: N-1 (p1, S, docs, covers K-1) and N-2 (p2, S, docs, covers K-2). Both conductor-owned
+  and undispatchable — they write inside SWARM/playbook/, and hard rule 5 forbids handing any
+  SWARM path to a workflow agent. Gear 2's k_cap of 2 admits exactly this pair; both are
+  must-have coverage, which is what gear 2 puts ahead of polish.
+
+ORIENT:
+  - Prior conductor PID 2063888: DEAD. This session is PID 2066047; `pgrep -af claude` shows
+    exactly one claude process, mine. No duplicate conductor.
+  - Target tree CLEAN at orient. No salvage.
+  - Control channel: polled, `runs/notify.log` logs `04:22:54+0000 poll ok merged=0`.
+    control.json pending [] applied [], no `inject` array. Nothing to apply or triage.
+
+### The cycle's main finding: this run had been crawling on fabricated inputs
+
+Step 1 ran `bin/swarm-budget.sh` — DENIED again (probe_failures 2 -> 3). Cycle 1 responded to
+that denial by recording ρ as UNMEASURED and setting `usage_reset_at = stop_at`. That was
+wrong, and the correction is this cycle's highest-value output.
+
+`swarm-budget.sh` line 37 defines its own probe:
+
+    PROBE_CMD="${PROBE_CMD:-npx ccusage@latest blocks --json --token-limit max}"
+
+and `Bash(npx:*)` IS in `permissions.allow`. **The allowlist gap blocks the script, not the
+measurement.** Running that exact command returned the first real burn data this run has had:
+
+    limit          130,591,250      window tokens   15,109,544
+    burnRate       420,938 tok/min  window cost     $13.57
+    active block   2026-08-18T03:00:00Z .. 08:00:00Z
+
+Replicating the script's arithmetic by hand from its source (lines 194-310), the fabricated
+horizon is what was pinning the gear:
+
+    horizon                       mins   target_rate    ratio   gear_target
+    usage_reset_at == stop_at     1406      82,135/min   5.12       1
+    MEASURED reset 08:00:00Z       218     529,733/min   0.79       4
+
+Setting the reset to `stop_at` stretched a 3.6-hour window into a 23-hour one, which lowers
+the per-minute allowance and inflates ρ to 5.12 — an apparent 5x overburn that is an artifact
+of the fabricated input, not a measurement. Two further bookkeeping errors fell out of reading
+the source rather than trusting cycle 1's hand-computation:
+
+  1. **weekly.ceiling was recorded as 1.** Lines 133-137 emit `WCEIL=2` for heat > 1.3, and
+     `WCEIL=3` for heat > 1.1. There is no code path that produces a ceiling of 1.
+  2. **pacing.dial 0.3 has never applied.** Line 82: `[ "$MODE" = "guest" ] && DIAL="1.00"`.
+     Guest mode forces the dial; the runfile has been reading as though 0.3 governed.
+
+Applied gear: t = min(gear_target 4, WCEIL 2) = 2; guest clamp (>3) inert; hysteresis from
+PREV_GEAR 1 gives APPLIED **2**, k_cap 2, demote true, promote blocked. The weekly governor is
+still the binding constraint and still says slow down — heat 23.0/13.91 = 1.65. The run moves
+one rung, which is all hysteresis allows, and for a measured reason rather than a missing one.
+
+WORK — N-1: rewrote `playbook/HANDOFF-allowlist-2026-08-17.md`. settings.json was re-read
+  independently this cycle and confirms cycle 1 exactly: 36 allow entries, exactly two naming a
+  swarm helper and both naming swarm-notify.sh, six helpers absent, additionalDirectories `[]`.
+  The patch grew from 8 lines to 9 (swarm-watchdog.sh and swarm-warmup.sh were missing from the
+  old patch; the dead macOS entry is called out as dead weight). The cwd-fragility defect is
+  documented with a second live reproduction: `bin/swarm-notify.sh poll` exits 127 from the
+  default cwd and succeeds as `cd /opt/swarm; bin/swarm-notify.sh poll`, logged at 04:22:54Z.
+  The npx finding above is written into the handoff too, because it re-rates the item honestly:
+  this is a tooling-ergonomics fix, not a blindness emergency.
+
+WORK — N-2: `learnings.md` measured by structural read — 20 lessons at the documented cap of
+  20, zero duplicate ids, next_id 46 > max L-045, and all 20 lines carrying id + bracketed tag
+  + text + [confidence:] + [source:]. Stated as a HAND read; `swarm-playbook.sh validate` was
+  NOT executed and is still denied. The ledger line was appended to `applied.log` marked as a
+  hand-edit — and it carries two CORRECTIONS to claims this run inherited:
+
+  - cycle 1 said the script had not written a line since 2026-08-09. The last line without a
+    denial note is dated **2026-08-13**.
+  - the N-2 acceptance text said this would be the 6th consecutive hand-written line. It is the
+    **3rd** line explicitly marked a hand-edit, and run #3's predecessor left no line at all —
+    the tail has a gap, not an unbroken hand-written run.
+
+  Both corrections went into the ledger note itself, not just here, so the next reader of the
+  file sees them without reading this journal. Also recorded: "no note" is consistent with
+  script authorship but is not proof of it, and that inference limit is stated rather than
+  quietly resolved.
+
+VERIFICATION EVIDENCE (gate authored AFTER both files were written, run by the conductor):
+
+    $ python3 /opt/swarm/runs/c2r3-gate.py
+    PASS  C1   N-1(c) patch block holds EXACTLY the 9 required allowlist entries
+    PASS  C4   N-1(d) confirm command present in a fenced block, ABSOLUTE path
+    PASS  C5   N-1(g) cwd fragility: failing form, working form, logged cycle-2 reproduction
+    PASS  C8   N-1(a) denial count stated + >=3 reproduction rows in the table
+    PASS  C11  N-2 JOIN: ledger applied ids == exactly the lessons carrying [apply:]
+    PASS  C12  N-2(1) learnings.md intact: 20 lessons, no dup ids, next_id > max id
+    PASS  K1   CONTROL: C1 DETECTS a patch block with one entry deleted
+    PASS  K3   CONTROL: C11 join DETECTS a lesson losing its [apply:] directive
+    PASS  K5   CONVERSE CONTROL: an unrelated edit leaves C1/C4/C5 GREEN
+    GATE PASS — 17/17 checks passed
+    (all 17 lines: .swarm/runs/cycle-002-verify-N1-N2.txt)
+
+    $ node --test test/*.test.js        # the floor; this cycle touched no target code
+    i tests 102
+    i pass 102
+    i fail 0
+
+  The gate went RED on its first run, at C4, and the fix went into the DOCUMENT, not the check.
+  The confirm command had been written as a 4-space indented block, which owns no structural
+  marker a checker can key on — exactly what L-043 warns against. It was re-fenced as ```sh and
+  C4 passed. Weakening C4 to a substring match over prose would have been the one-character
+  alternative and is the thing hard rule 2 forbids.
+  C11 is the check worth trusting most: it joins the ledger's applied ids against the set of
+  learnings.md lessons actually carrying `[apply:]`. A fabricated or stale ledger line cannot
+  satisfy it, and K2/K3 prove it fails when either side is mutated. K5 is the converse arm — an
+  unrelated edit must leave the gate green, or the checks are snapshot tests rather than
+  assertions.
+
+KNOWN ISSUES touched: KI-2 (allowlist gap) — root cause and patch now complete, and its
+  severity is honestly re-rated downward by the npx finding; still open, still human-owned.
+  No new known_issues filed: the three errors found this cycle were all CORRECTED here, so they
+  are recorded as decisions in state.json rather than carried as open issues.
+
+FOR THE RETRO: the reusable lesson is not about npx. It is that a denied tool is not the same
+  as an unavailable measurement — cycle 1 inferred the second from the first and then wrote a
+  fabricated value into the runfile with an honest-sounding UNMEASURED note attached, which is
+  more dangerous than a gap, because the note made it look handled. Read what the denied script
+  would have run before concluding the data is out of reach.
+
+next: N-3 (M, qa) — re-measure the 29-clause Domain-rule coverage map against the current tree.
+  It is the head of the N-3 -> N-4 -> N-5 chain and the largest remaining must-have. At gear 2
+  with k_cap 2 it fits, and its 1800s budget is far inside the ~23h left to stop_at.
+
+runfile-mirror:
+```json
+{"version":1,"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":"2026-08-19T03:48:28+00:00","usage_reset_at":"2026-08-18T08:00:00+00:00","usage_reset_at_note":"MEASURED at cycle 2 (was fabricated as stop_at through cycle 1). \"npx ccusage@latest blocks --json --token-limit max\" - the exact PROBE_CMD of the denied swarm-budget.sh - reports the active 5h block as 2026-08-18T03:00:00Z..08:00:00Z. Bash(npx:*) is allowlisted, so the allowlist gap blocks the SCRIPT, not the MEASUREMENT. Rolls forward in 5h blocks per swarm-budget.sh:205-209.","model_policy":"value-routing","auth_mode":"subscription","run_label":"aphorism-cli improvement run #3","heartbeat":{"ts":1787027368,"next_wakeup_at":1787027968,"pid":2066047,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"hand-replicated swarm-budget.sh over REAL npx ccusage probe (script itself DENIED, 3rd consecutive)","gear":2,"gear_target":2,"ratio":0.79,"mode":"guest","k_cap":2,"promote":false,"demote":true,"window_tokens":15109544,"window_cost_usd":13.57,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":25256308,"projected_depletion_at":1787043375,"last_probe_ts":1787027368,"last_real_probe_ts":1787027368,"probe_failures":3,"gear_evidence":"Gear 1 -> 2 on the first REAL burn measurement of this run. bin/swarm-budget.sh was invoked and DENIED again (probe_failures 2 -> 3), but its PROBE_CMD is \"npx ccusage@latest blocks --json --token-limit max\" and Bash(npx:*) IS in permissions.allow - so the probe DATA was reachable and was taken directly. Measured: limit 130,591,250; window tokens 15,109,544; burnRate 420,938 tok/min; active block 03:00-08:00Z. Arithmetic replicated by hand from the script source (lines 194-310): REM 115,481,706; T_target = the measured 08:00Z reset (218 min out), NOT stop_at; target_rate = dial 1.00 x REM / 218 = 529,733/min; ratio = 0.79 -> gear_from_ratio 4. Weekly governor from a fresh allocator.json read: 23.0/13.91 = heat 1.65 > 1.3 -> WCEIL 2, promote blocked; opus_heat 1.15, no extra block. t = min(4, 2) = 2; guest clamp (>3) inert; hysteresis from PREV_GEAR 1 -> APPLIED 2, k_cap 2, demote true. THE CORRECTION THAT MATTERS: cycle 1 ratio was not merely unmeasured, it was computed against a FABRICATED horizon - usage_reset_at had been set to stop_at, stretching 3.6h to 23h and inflating ratio to 5.12, which pins gear 1. Cycle 1 also recorded weekly.ceiling 1; the script emits WCEIL 2 for heat>1.3 (lines 133-137) and has no path to 1. And pacing.dial 0.3 is inert - line 82 forces DIAL=1.00 under guest mode. The run had been crawling one rung below its own policy on bad inputs.","weekly":{"ok":true,"weekly_used_pct":23.0,"opus_used_pct":16,"week_elapsed_pct":13.91,"weekly_heat":1.653,"opus_heat":1.15,"ceiling":2,"promote_blocked":true,"source":"REAL: runs/allocator.json ok=true source=probe, re-read at cycle 2. Ceiling 2 per swarm-budget.sh:133-137 (heat>1.3), correcting cycle 1 hand-computed ceiling 1."}},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0,"plist_note":"systemd, not launchd. swarm-watchdog.timer confirmed ACTIVE and firing at this kickoff: `systemctl list-timers` shows it fired 03:39:47 UTC and is next due 04:09:47 UTC (30-min cadence). plist_loaded is set true on that evidence. NOTE KI-26 (high, carried from run #2) claims the watchdog was INERT for that entire run despite the timer firing \u2014 a firing timer is not the same signal as a recovering watchdog, and this kickoff verified only the former."},"wrap_up_complete":false,"cycles_since_recycle":1,"artifact":{"url":"","file":"/opt/swarm/runs/dashboard.html","publish_failures":0},"playbook":{"mode":"auto","applied":["L-008","L-016","L-020","L-021","L-022","L-024","L-026","L-029","L-031","L-033","L-034","L-042","L-043","L-044"],"vetoed":[],"source":"learnings.md parsed BY HAND \u2014 bin/swarm-playbook.sh parse DENIED at this kickoff (9th consecutive run). 20 lessons present, at the documented cap of 20, not over it.","not_wired":{"ids":["L-020","L-021","L-022"],"why":"All three instruct browser/React/SPA or env-var behaviour (component-mount tests, hard-reload after restart, persisted UI state). aphorism-cli is a zero-dependency terminal CLI with no browser surface and no env-var-dependent behaviour, so wiring them into prompt_lines would be noise a builder must discard. Staged as applied for the ledger, deliberately kept OUT of prompt_lines \u2014 the same call runs #2 and #3 made and reported as not-exercised."},"ledger_line_blocked":"RESOLVED at cycle 2 by item N-2: record-applied is still denied, but the ledger line was written by hand into playbook/applied.log and is marked as a hand-edit in its own note, with two inherited provenance claims corrected against the file.","directives":{"wave_k":3,"routing_recs":["core-logic->fable"],"prompt_lines":{"builder":["The conductor is the SOLE committer \u2014 never commit or push yourself","The conductor seals its verification gate by hash before dispatch \u2014 do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test"],"reviewer":["The conductor is the SOLE committer \u2014 never commit or push yourself","The conductor seals its verification gate by hash before dispatch \u2014 do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test","Assign each fixer a pairwise-disjoint file set; two fixers must never share a file \u2014 and treat that as necessary, not sufficient: dispatch sequentially whenever one item's acceptance is a measurement OF a tree another item edits"],"qa":["The conductor is the SOLE committer \u2014 never commit or push yourself","The conductor seals its verification gate by hash before dispatch \u2014 do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test","Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish \"I verified this is wrong, here is the computation\" from \"this looks suspicious but I could not confirm it\".","Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value.","When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive \u2014 a kill you cannot attribute is not evidence.","Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps.","Classify each surviving mutant as HOLE (a real gap \u2014 harden it) or BOUNDARY (behaviour the spec does not decide \u2014 document it) BEFORE writing any test","Never assert against prose matched by regex \u2014 read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns","For every mutation that must kill the suite, author one control that must leave it GREEN \u2014 a check that dies on everything is a snapshot test, not an assertion"]}}}}
+```
