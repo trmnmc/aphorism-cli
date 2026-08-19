@@ -394,9 +394,9 @@
   "window_tokens_attributed": 0
  },
  "last_cycle": {
-  "n": 6,
-  "work": "Q-4 conductor-inline measurement — the notify-denial diagnosis",
-  "outcome": "3 denial diagnoses (#32/#33/#34) REFUTED against runs/notify.log (11 invocations, 11 ok, 0 failures); real invocation-form rule measured on 2 scripts x 2 dimensions; owed cycle-5 phase-change push DELIVERED; KI-37 filed; M-3 re-tested and STANDS; gate 11P/0F with 5 controls; suite 118/118/0 unmoved",
-  "commit": null
+  "n": 7,
+  "work": "QA-full pass for run #4 (spec-blind author + conductor executor + fable live-look)",
+  "outcome": "The premise that would have SKIPPED this gate was measured FALSE: run #3 review-fix c13 IS byte-identical to HEAD, but run #3 QA-full c6 and TASTE c9 both DIFFER. 32/32 spec-blind scenarios PASS, 0 divergences; 4 UNDECIDED-BY-SPEC cases recorded not scored. 3 findings, all conductor-verified (gate 15P/0F, 5 controls), 0 discarded, 0 severity claims measured false. Q-5/Q-6/Q-7 filed; 0 code changes and 0 is correct — all three dispositions are documentary. Instrument defect found before use (git archive stamps commit-date mtimes). suite 118/118/0 unmoved.",
+  "commit": "d5803d1f6d55aa6081f6b42e3ccfdfd65c89c1d8"
  }
 }
