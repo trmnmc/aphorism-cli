@@ -14287,3 +14287,13 @@ mid-run.
 
 Carried forward from cycle 2's addendum and still unanswered: `heartbeat.next_wakeup_at`
 versus the pacer's own 5-minute cadence, and which of the two is the contract.
+
+`SWARM push failed` — the SWARM repo's own commit for this cycle (c6c7463, the dashboard
+notify repair plus the cycle-3 artifacts) is durable on disk but did NOT reach
+git@github.com:trmnmc/SWARM.git: `ERROR: The key you are authenticating with has been
+marked as read only.` Per hard rule 1 a push failure is journaled and never blocks the
+cycle. This is a credentials condition on the VPS deploy key, not a defect this run
+introduced, and it affects only the SWARM repo — the TARGET repo pushed clean this cycle
+(39b6818..132ed1b and 132ed1b..9ddc480 on master). For the morning report: the droplet's
+SWARM deploy key needs write scope, or SWARM commits accumulate locally until a session
+with a writable credential pushes them.
