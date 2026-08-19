@@ -13784,3 +13784,50 @@ runfile-mirror:
 ```json
 {"version":1,"targets":[{"path":"/opt/targets/aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":"2026-08-20T14:05:09Z","usage_reset_at":"2026-08-19T18:00:00Z","model_policy":"value-routing","auth_mode":"subscription","heartbeat":{"ts":1787150471,"next_wakeup_at":1787150561,"pid":2486877,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"probe","gear":2,"gear_target":2,"ratio":0.5,"mode":"guest","k_cap":2,"promote":false,"demote":true,"window_tokens":7666544,"window_cost_usd":7.562846,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":19581015,"projected_depletion_at":1787174798,"last_probe_ts":1787149755,"last_real_probe_ts":1787149755,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":100,"opus_used_pct":100,"week_elapsed_pct":34.2,"weekly_heat":2.92,"opus_heat":2.92,"ceiling":2,"promote_blocked":true}},"playbook":{"mode":"auto","applied":["L-008","L-016","L-024","L-026","L-029","L-031","L-033","L-034","L-038","L-042","L-043","L-044","L-046"],"vetoed":[],"note":"staged by DIRECT READ of playbook/learnings.md — bin/swarm-playbook.sh parse was DENIED by the harness allowlist at this kickoff (denial #30, see must-have M-3). The applied.log ledger line must therefore be hand-written and must say so.","directives":{"wave_k":2,"routing_recs":["core-logic->fable"],"prompt_lines":{"builder":["The conductor is the SOLE committer — never commit or push yourself","The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test"],"reviewer":["The conductor is the SOLE committer — never commit or push yourself","Assign each fixer a pairwise-disjoint file set; two fixers must never share a file","The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test"],"qa":["The conductor is the SOLE committer — never commit or push yourself","Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'.","Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value.","Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps.","Classify each surviving mutant as HOLE (a real gap - harden it) or BOUNDARY (behaviour the spec does not decide - document it) BEFORE writing any test","When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence.","For every mutation that must kill the suite, author one control that must leave it GREEN — a check that dies on everything is a snapshot test, not an assertion","Never assert against prose matched by regex — read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns"]}}},"watchdog":{"mode":"normal","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0},"wrap_up_complete":false,"cycles_since_recycle":1,"artifact":{"file":"/opt/swarm/runs/dashboard.html","publish_failures":0}}
 ```
+
+### cycle 1 addendum | dashboard render | KI-11's ROOT CAUSE found, and closed in the renderer
+
+KI-11 has sat open since run #3 as a symptom with no cause: "SWARM/runs/dashboard.html
+carries THREE copies of the cycle-37 timeline tick; two of them sit INSIDE HTML comment
+regions." This cycle reproduced it on the first render and found why.
+
+MEASURED, first render of this cycle (naive `replaceAll` per the template's own header,
+which says the placeholders are substituted "sed-style, global, every occurrence"):
+  grep -n 'class="tick' runs/dashboard.html   -> 4 occurrences from a loop that emitted 1
+    line  21  inside the HTML header comment that DOCUMENTS {{TIMELINE_HTML}}
+    line 237  inside the .timeline region comment that documents the per-tick shape
+    line 240  the template's own literal example tick (correct, not a leak)
+    line 247  the real strip (correct)
+
+ROOT CAUSE: the template documents its own placeholders USING THE PLACEHOLDER TOKENS,
+inside comments. Global substitution fills the documentation as well as the slot. It was
+never a duplicated loop — which is why "three copies" was so hard to place from the
+symptom. The template is not wrong to document its contract, and it is fenced read-only
+mid-run by hard rule 5 regardless, so the RENDERER is where this gets fixed: it now
+refuses to substitute inside comment regions.
+
+AND THE FIRST FIX WAS INCOMPLETE, which is the part worth writing down. Skipping only
+`<!-- -->` still left a full copy of the stat tiles and the station rows inside the two
+CSS `/* */` region notes at .stats and .stations. Comments here come in two dialects and
+the first correction caught one. That was found by MEASURING the corrected render rather
+than by trusting that the fix had worked — the same discipline that caught C4 an hour
+earlier, applied to the fix instead of to the instrument.
+
+VERIFICATION EVIDENCE (self-checks now part of every render this run makes):
+  node /opt/swarm/runs/run4-render-dashboard.mjs
+    naive render         29223 bytes   4 tick occurrences, 1 emitted     DEFECT REPRODUCED
+    HTML-comments only   24119 bytes   1 live tick, stats+stations still leaking into CSS
+    both dialects        22787 bytes
+      tick self-check: 1 live tick(s) for 1 completed cycle(s) — OK
+      comment-leak self-check: 0 leaks (KI-11 class closed in both dialects)
+      unfilled placeholders: 0
+  The 6,436-byte drop between the naive and the corrected render IS the duplicated
+  content, which is a second, independent reading of the same defect.
+
+SCOPE, stated honestly: this closes the KI-11 CLASS for every render THIS run makes,
+because this run renders through its own script under SWARM/runs/ (the one place hard
+rule 5 permits writing). It does NOT fix the template, and a future run that renders by
+hand or with a naive substitution will reproduce it. The durable fix is either a
+`bin/`-level renderer or a template that documents its placeholders without spelling the
+tokens — both are SWARM tool changes, fenced during a run, and so belong in the morning
+report rather than in a live edit. Filed accordingly, with the cause attached this time.
