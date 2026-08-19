@@ -1,0 +1,32 @@
+=== N-5 SEALED GATE — REPORT.md ===
+
+PASS A0   a "## What is open" section exists
+          found_at=2808
+PASS A1   every blocked + declined item id appears in the section
+          expected=J-7,R-1,T-006,T-040,TS-1,TS-2,TS-3 missing=none
+FAIL A2   R-1 is described as DECLINED with a reason, not as pending work
+          declined_word=true stale_phrase=true len=525
+FAIL A3   every BLOCKED item names a human as next actor
+          without_human=TS-1,TS-2
+PASS A4   no blocked item is re-described as agent-pickable work
+          agent_worded=none
+FAIL A5a  every blocked item carries substantive settling evidence (>=80 chars)
+          short=TS-1:7,TS-2:7
+PASS A5b  settling evidence is item-specific, not boilerplate (<60-char shared run)
+          longest_shared=19 at=J-7/T-006
+FAIL A6   every count asserted in the section agrees with backlog.json NOW
+          claimed={"done":5,"inflight":2,"blocked":6} truth={done:5,inflight:1,blocked:6} inflight 2!=1
+FAIL A7   settling evidence is present here, not deferred to another document
+          punt_phrase=true
+PASS A8   the hand-off is on the first screen (REPORT.md itself, <=160 lines)
+          report_lines=73
+PASS A9   no item id present pre-dispatch was dropped from REPORT.md
+          pre=10 lost=none
+PASS C1   suite green and >=118 tests
+          tests=118 pass=118 fail=0 exit=0
+PASS C2   src/ bin/ test/ .github/ untouched (N-5 is docs-only)
+          porcelain=""
+PASS C3   zero runtime dependencies
+          no manifest, no lockfile, no node_modules present=[]
+
+9 PASS / 5 FAIL of 14
