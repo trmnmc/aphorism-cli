@@ -3,7 +3,7 @@ PASS  M2-a  every pre-move REPORT.md line survives the move
 PASS  M2-b  CONTROL: the audit DETECTS a planted deletion (must-die)
         planted removal of "still open and high, and no attribution was checked against " -> detected
 PASS  M2-c  REPORT.md first screen answers shipped / verified / open
-        192 lines total; headings=["What ships","What is machine-verified","What is open","Blocked on a human ruling","Declined","How run #4 ended, and what only a human can finish","Full history"]; {"shipped":true,"verified":true,"open":true}
+        200 lines total; headings=["What ships","What is machine-verified","What is open","Blocked on a human ruling","Declined","How run #4 ended, and what only a human can finish","Full history"]; {"shipped":true,"verified":true,"open":true}
 PASS  M5-a  suite green at >= 118 tests
         tests=119 fail=0
 PASS  M5-b  src/corpus.js byte-identical since run start

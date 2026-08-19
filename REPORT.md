@@ -2,14 +2,14 @@
 
 A tiny, zero-dependency Node.js CLI that prints one attributed programming aphorism —
 `fortune(6)` for programmers, quiet and pipeable. This page is the current status in one
-screen. The complete forensic history behind it — four SWARM runs, 1578 lines, every
-correction and every dated claim, moved verbatim rather than summarized — lives in
+screen. The complete forensic history — four SWARM runs, 1578 lines, every correction and
+every dated claim, moved verbatim rather than summarized — is in
 [`docs/report-history.md`](docs/report-history.md).
 
 ## What ships
 
 - **Run it:** `node bin/aphorism.js` — no install step, no `package.json`, zero runtime
-  dependencies. Node plus this repo is the whole requirement.
+  dependencies; Node plus this repo is the whole requirement.
 - **Corpus:** 50 curated aphorisms in `src/corpus.js` (text, author, tags) — 24 distinct
   authors, 12 tags, smallest pool 3 entries / largest 14.
 - **Flags:** `--author <name>` (substring match, case-insensitive), `--tag <tag>`
@@ -114,10 +114,9 @@ be lifted at a kickoff, by a human.
   indistinguishable from an empty result. *Next actor:* a human, the repo owner, at the next
   kickoff (adding a `--tags` flag is a new flag, this run's locked non-goal). *Settles when:*
   the owner rules on whether discovery belongs in `--help` output or behind a new flag.
-  Conductor-measured at cycle 9, not asserted: `--tags` exits 2 and `--help` never mentions
-  it; `--help` delegates discovery to the pipeline
-  `node bin/aphorism.js --list --json | jq -r '.tags[]' | sort -u`; and an unknown tag
-  produces byte-identical stderr and exit status to a genuinely empty intersection of two
+  Conductor-measured at cycle 9, not asserted: `--tags` exits 2 and `--help` never mentions it,
+  delegating discovery to `node bin/aphorism.js --list --json | jq -r '.tags[]' | sort -u`;
+  and an unknown tag produces byte-identical stderr and exit status to an empty intersection of two
   *valid* filters. Filed **minor**, not a bug: the message is generic across the whole
   no-match class rather than misleading about tags specifically, which is defensible unix
   behaviour.
@@ -129,16 +128,15 @@ be lifted at a kickoff, by a human.
   property the guard exists to protect is already covered, twice, by two sibling count
   guards that re-derive their expected value from `src/corpus.js` and fail CLOSED — the
   opposite of the direction the original guard was found to fail in (silent on a stripped
-  acknowledgement). Reshaping would have added a third guard over an already-covered
-  property. Stated rather than hidden: those two covering guards are prose regexes bound to
-  a corpus-derived count, not the structural document marker R-1's acceptance asked for, and
+  acknowledgement). Reshaping would have added a third guard over an already-covered property.
+  Stated rather than hidden: those two covering guards are prose regexes bound to a
+  corpus-derived count, not the structural document marker R-1's acceptance asked for, and
   the original guard's separate false-rejection defect (an honest reword can make it fire)
   is untouched by this decline. *Re-opens if:* a human ruling on T-040 reintroduces
   single-entry tags, or README's phrasing moves away from the literal count phrase.
 
-Fuller background, prior attempts and exact citations for every item above live in
-`.swarm/backlog.json`'s own notes; items open before this run are also covered in
-[`docs/report-history.md`](docs/report-history.md).
+Fuller background and exact citations for every item above live in `.swarm/backlog.json`'s
+own notes; items open before this run are also in [`docs/report-history.md`](docs/report-history.md).
 
 ## How run #4 ended, and what only a human can finish
 
@@ -158,23 +156,33 @@ cycles' claims.
 
 **Machine-checked** (re-run by the conductor at close, not taken from an agent): the 119-test
 suite green; the 4-version Actions matrix green; `src/corpus.js` byte-identical since the run
-began; `bin/` and `src/` untouched for the entire run — the run's whole footprint is
+began; `bin/` and `src/` untouched for the entire run — its whole footprint is
 `.github/workflows/test.yml`, `README.md`, `REPORT.md`, `docs/report-history.md` and
-`test/readme-tags.test.js`; zero runtime dependencies; every line of the pre-move 1578-line
-REPORT.md still present after the move to the appendix.
+`test/readme-tags.test.js`; zero dependencies; every line of the pre-move 1578-line REPORT.md
+still present after the move.
 
-**Reported as not-run, never as passed:** the SWARM playbook helper `bin/swarm-playbook.sh`
-was re-executed at cycle 12 and **denied again** by the harness. The cause is now structural
-rather than suspected — `/opt/swarm/.claude/settings.json` was read directly this cycle and
-carries no entry for that script in any form. The ledger stays at **denial #31** (a second
-reproduction inside the same run does not advance the count) and the exact patch a human
-would apply is in `SWARM/playbook/HANDOFF-allowlist-2026-08-17.md`.
+**Reported as not-run, never as passed:** `bin/swarm-playbook.sh` was re-executed at cycle 12
+and **denied again**. The cause is now structural rather than suspected —
+`/opt/swarm/.claude/settings.json` was read directly and carries no entry for that script in
+any form. The ledger stays at **denial #31** (a second reproduction inside one run does not
+advance it); the exact patch is in `SWARM/playbook/HANDOFF-allowlist-2026-08-17.md`.
 
 **Only a human can finish:** every one of the seven open items above. Three need a ruling
 (T-006 corpus attributions, T-040 retag consequences, J-7's seven undecided CLI behaviours);
 four need a locked non-goal lifted at a kickoff (TS-1, TS-2, TS-3, TS-6). No machine check
 substitutes for any of them — corpus attribution in particular needs primary sources this
 CLI is designed never to reach, and it remains the repo's highest-severity open issue.
+
+**Two infrastructure items a human must clear** (neither affects the shipped CLI). First,
+the watchdog timer is **still armed** — disarming needs root, so
+`sudo systemctl disable --now swarm-watchdog.timer` clears it; harmless as it stands, but
+reported as not-done rather than done. Second, and larger: that watchdog also treats
+"`REPORT.md` exists" as run-complete, which on an *improvement* run is true from cycle 0
+because the previous run wrote it. `runs/watchdog.log` shows `all-done / reports-present` on
+every firing from 14:16Z — eleven minutes after kickoff — through the close, so **this run
+had no crash recovery for its entire duration while looking healthy throughout.** Not fixed
+here (SWARM's `bin/` is read-only during a run); the fix is to key that guard on the current
+run's report rather than on the filename.
 
 **Standing finding for whoever schedules the next run:** this was the fourth consecutive run
 under a brief forbidding the only changes the product's own taste instrument — three separate

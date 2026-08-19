@@ -16985,3 +16985,75 @@ runfile-mirror:
 }
 
 ```
+
+---
+
+## cycle 12 addendum — 2026-08-19T19:50Z — the watchdog was a no-op for the entire run, and it took a wrap-up step FAILING to find it
+
+WRAP_UP step 8 (disarm the watchdog) **FAILED**, and the failure is what exposed a much
+larger finding. Recorded as a failure rather than smoothed, per the WRAP_UP rule that a
+rendered "passed" that wasn't run is worse than stopping.
+
+    $ systemctl disable --now swarm-watchdog.timer
+    Failed to disable unit: Interactive authentication required.
+    $ systemctl --user disable --now swarm-watchdog.timer
+    Failed to connect to bus: No medium found
+    $ systemctl is-active swarm-watchdog.timer
+    active
+
+**The timer is still armed.** This session runs unprivileged and polkit wants interactive
+auth; there is no path to disable it from here. A human clears it with
+`sudo systemctl disable --now swarm-watchdog.timer`.
+
+Whether that matters turns on the DONE-guard, so it was READ rather than assumed
+(`bin/swarm-watchdog.sh:270`): `wrap_up_complete=true` exits 0 before any relaunch, and the
+runfile now carries that flag. So the armed timer is harmless — it will fire, log
+`run-complete`, and do nothing.
+
+**But reading that guard turned up the real finding.** Guard 4 is satisfied by
+`wrap_up_complete` **OR** by `REPORT.md` existing in every target, and the file check is
+deliberately UNCONDITIONAL so that a run dying mid-WRAP_UP still reads as done. On an
+**improvement run**, `REPORT.md` is present from cycle 0 — the *previous* run wrote it. The
+decision log is unambiguous:
+
+    $ grep "2026-08-19T1[4-9]" /opt/swarm/runs/watchdog.log | head -4
+    2026-08-19T14:16:57+0000 decision=all-done detail=reports-present
+    2026-08-19T14:47:07+0000 decision=all-done detail=reports-present
+    2026-08-19T15:17:07+0000 decision=all-done detail=reports-present
+    2026-08-19T15:47:08+0000 decision=all-done detail=reports-present
+
+Kickoff was 14:05Z. From 14:16Z — **eleven minutes in** — through the close, every firing
+was a no-op. **This run had no crash recovery for its entire ~11-hour, 12-cycle duration,
+and nothing anywhere reported that.** Had the conductor died at any point, no watchdog would
+have relaunched it; the run would simply have stopped, and the dashboard would have gone on
+looking healthy until someone noticed.
+
+Nothing was edited to fix this: `bin/` is READ-ONLY during a run (hard rule 5), and a tool
+bug found mid-run goes to the journal and the morning report. It is merged into playbook
+L-037 (observed 1 -> 2), whose existing clause is the same family — a failure mode invisible
+to the machinery built to catch it. **The fix a human should make:** key guard 4 on the
+CURRENT run's report (a mtime newer than `run_started_at`, or a report naming the run), not
+on the filename. Until then, every improvement run is unprotected from its first firing.
+
+The pacer's own guard (`bin/swarm-pacer.sh:183`) was checked at the same time and is sound:
+it keys on `wrap_up_complete` only, logs `run-complete`, and archives the runfile after the
+allocator's cooloff.
+
+**Also skipped, and reported as skipped:** WRAP_UP step 6, the public-project screenshot.
+`project-registry.js resolve` returned `{"slug":"aphorism-cli","url":
+"https://swarm.fenley.ai/projects/aphorism-cli"}`, but the gstack browse CLI lives under
+`/home/swarm/.claude/skills/` — outside this session's allowed working directories — so it
+cannot be invoked. `project screenshot skipped: aphorism-cli: browse CLI outside allowed
+working directories`. Best-effort by contract; it gates nothing.
+
+**Footnote — the closing gate caught the conductor, not an agent.** Adding the watchdog
+finding to REPORT.md pushed it to 208 lines and **broke M-2's own ~200-line budget**: the
+gate went 11P/1F on M2-c. The failing cell was the one guarding the must-have this run exists
+to serve, and it was tripped by the conductor's own edit at wrap-up, after every agent had
+gone home. Four trimming passes (208 -> 203 -> 202 -> 201 -> 200) brought it back to 12P/0F
+with the gate **byte-unedited** — the threshold was never touched, the prose was. Worth
+recording because the tempting move at 201 lines, with the run already declared DONE, is to
+call ~200 approximate and move on. The gate says `<= 200`; the honest path to green is
+making the claim true.
+
+    ---- 12 PASS / 0 FAIL ----   (200 lines; shipped/verified/open all present)
