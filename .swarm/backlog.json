@@ -40,7 +40,7 @@
    "attempts": 0,
    "blocked_reason": "Locked SPEC.md non-goal for run #3: 'corpus expansion'. Same lock as TS-1.",
    "owner": "human (repo owner, at the next kickoff)",
-   "notes": "From the cycle-9 TASTE pass, finding 3 (minor). CONDUCTOR-MEASURED: 24 distinct authors over 50 entries, but Dijkstra 7 + Perlis 5 + Pike 5 = 17/50 = 34% of the corpus in three voices. The agent's claim that 'a third of the corpus is three voices' verified exactly.",
+   "notes": "From the cycle-9 TASTE pass, finding 3 (minor). CONDUCTOR-MEASURED: 24 distinct authors over 50 entries, but Dijkstra 7 + Perlis 5 + Pike 5 = 17/50 = 34% of the corpus in three voices. The agent's claim that 'a third of the corpus is three voices' verified exactly. || RE-DERIVED INDEPENDENTLY at run #4 cycle 9 and CORROBORATED; folded here, not filed as new backlog. The fresh taste agent reached the Dijkstra concentration from the opposite direction (it counted `--author dijkstra --list` rather than tallying `--list --json`) and got 7/50 = 14%, which the conductor re-measured exactly (gate cell A2, with must-die control C1 asserting 8 to prove the cell discriminates). It also adds a curation observation TS-3 did not make: the pool is not merely concentrated by AUTHOR but uniformly canonical by SELECTION — every entry is a line a working developer can finish from its first three words, with no deep cuts, so the corpus reads as an anthology rather than a discovery. That sharpens the remedy: added entries should be less-anthologized lines, not merely different names.",
    "covers": [
     "M-4"
    ]
@@ -110,7 +110,7 @@
    "attempts": 0,
    "blocked_reason": "Locked SPEC.md non-goal for run #3: 'corpus expansion'. The swarm cannot lift its own locked non-goal mid-run -- that is exactly the drift the spec lock exists to prevent -- so this is filed blocked rather than todo. NOT dropped, NOT quietly re-scoped.",
    "owner": "human (repo owner, at the next kickoff)",
-   "notes": "From the cycle-9 TASTE pass, finding 1 (notable) -- the headline taste finding of run #3. CONDUCTOR-MEASURED, and the agent's figure was CONSERVATIVE: the corpus is 50 entries, so under uniform draws the MEDIAN first exact repeat lands at draw 9 and P(repeat by draw 12) = 76.2%. The agent reported feeling it at use 12; the arithmetic says most users feel it sooner. Severity 'notable' rather than 'fundamental' was CHECKED, not rubber-stamped: the SHAPE of the product (one quiet attributed line, pipeable, stderr-clean) held across 32 runs and is genuinely good; it is the POOL that runs out. The daily --seed MOTD pattern (7 distinct aphorisms across a simulated week) partially masks the repeat and is the product's strongest idea.",
+   "notes": "From the cycle-9 TASTE pass, finding 1 (notable) -- the headline taste finding of run #3. CONDUCTOR-MEASURED, and the agent's figure was CONSERVATIVE: the corpus is 50 entries, so under uniform draws the MEDIAN first exact repeat lands at draw 9 and P(repeat by draw 12) = 76.2%. The agent reported feeling it at use 12; the arithmetic says most users feel it sooner. Severity 'notable' rather than 'fundamental' was CHECKED, not rubber-stamped: the SHAPE of the product (one quiet attributed line, pipeable, stderr-clean) held across 32 runs and is genuinely good; it is the POOL that runs out. The daily --seed MOTD pattern (7 distinct aphorisms across a simulated week) partially masks the repeat and is the product's strongest idea. || RE-DERIVED INDEPENDENTLY at run #4 cycle 9 by a fresh taste agent that had never seen TS-1, and CORROBORATED — recorded here rather than filed as new backlog (the cycle-6 dedupe rule: an independent instrument re-deriving a known gap is corroboration, not new work). Two things are genuinely NEW. (a) A SECOND FRAME: TS-1 measured within-SESSION repeat (median first repeat at draw 9). The new agent measured the DAILY-MOTD frame the spec actually pitches — P(at least one repeat across 7 daily draws) = 1-(50/50)(49/50)...(44/50) = 35.56%, so roughly a third of users see a rerun in their first week. Conductor recomputed independently: 35.56% vs the agent's 35.6% (gate cell B1, with must-die control C2). (b) A DIFFERENT REMEDY: TS-1 assumes the fix is corpus GROWTH; the new agent points out that a recency guard (never repeat the immediately-previous pick) or a first-class --daily flag would kill the worst case WITHOUT expanding the corpus — a remedy that does not require lifting the corpus-expansion non-goal, though it does require lifting the rotation non-goal. Conductor live-measured 200 default draws: 50/50 distinct, 4 immediate back-to-back repeats against a uniform expectation of 3.98 — so the draw is uniform and the defect is DESIGN (no rotation), not a biased RNG. Gate cells C3/C4/C5/C6/C7.",
    "covers": [
     "M-4"
    ]
@@ -362,6 +362,44 @@
    "acceptance": "The gap is RECORDED, not silently repaired. Exit 3 was introduced at run #3 cycle 8; the SPEC Domain rule still reads \"Exit codes: 0 success, 1 no match, 2 bad usage\" (gate A10, read structurally from the bullet). Amending a Domain rule is a SPEC change and this run may not make one: the Domain-rules header calls those clauses the regression floor and the 29-clause coverage map is measured against them. So the correct disposition is an \"Undecided behaviours\" entry in the D-42/D-43/D-44 grammar (shipped behaviour / why the SPEC does not decide it / status) routed to J-7 for a human ruling — and J-7's count, which run #3 cycle 14 had to reconcile across six REPORT.md sites, must be re-derived from the backlog rather than hardcoded.",
    "notes": "Conductor finding, not an agent claim — surfaced by gate A10 and corroborated by the coverage-map chronology: the 43-clause enumeration was derived at run #3 cycle 4, four cycles BEFORE the stderr handler and exit 3 landed at run #3 cycle 8, so no clause ever covered exit 3. The TEST suite does cover it (test/pipe.test.js:86 and :160, both exercising /dev/full, skipped 0 in the 118/118 run) — this is a SPEC and README gap, not a test hole, which is why it adds no tests (M-5).\n\n|| RUN #4 CYCLE 8 VERIFIED. D-45 recorded in SPEC.md § Undecided behaviours in the exact D-42/D-43/D-44 grammar, and routed to J-7 as its SIXTH ruling. THE DOMAIN RULE DID NOT MOVE - gate cell B5 hashes the whole logical Exit-codes bullet against its pre-dispatch seal (4545c0eb...) and it matched, with control C6 proving the hash actually dies on a mutation. That is the load-bearing check: the item exists to RECORD the gap, and repairing the regression floor is the one thing it was forbidden to do. B1 (4 entries, incl D-45), B2 (all three grammar bullets), B6 (REPORT count word re-derived from backlog.json at run time - \"six\" = \"six\", with control C7 proving B6 is not satisfied by ANY number word), B7 (the sixth behaviour enumerated in substance) all PASS. B3/B4 FAILED and were adjudicated 8/8 as INSTRUMENT DEFECTS in run4-cycle-008-B3B4-adj.mjs with the sealed gate left byte-unedited: both cells read only the FIRST SOURCE LINE of a bullet, and the builder wrapped its D-45 bullets at ~90 columns while the three pre-existing entries are single unwrapped lines. Same root cause as a bug this gate own pre-seal baseline had ALREADY caught and repaired for B5 - and the repair was not propagated. The adjudication carries a no-regression column (the fixed reader still reads the unwrapped D-42/D-43/D-44), two must-die columns, and two MUST-NOT-OVERREACH columns proving the whole-bullet reader cannot absorb a neighbouring bullet - the failure mode that produced instrument defects #17/#18 at run #3 cycle 4. Conductor also verified the count arithmetic by reading: the bullet enumerates 6 behaviours, \"the last four\" = D-42/D-43/D-44/D-45 (correct after this edit), \"the first two\" remain backlog-only, 2+4=6 matches the backlog title. Suite unmoved: 118/118/0.",
    "verified_cycle": 8
+  },
+  {
+   "id": "TS-5",
+   "title": "SPEC taste notes promise a dim attribution, and nothing in the product styles it",
+   "kind": "docs",
+   "priority": 8,
+   "value": "M",
+   "effort": "S",
+   "status": "todo",
+   "deps": [],
+   "files_hint": [
+    ".swarm/SPEC.md"
+   ],
+   "acceptance": "The discrepancy is RECORDED, not silently resolved in either direction. SPEC.md gains an Undecided-behaviours entry (next id D-46) in the established three-bullet grammar, stating: the taste notes assert \"Attribution is dim, not loud\"; the shipped product emits zero ANSI on every path and distinguishes the attribution ONLY by a four-space indent and an em-dash; so either the note overstates what ships or the product under-delivers its own aesthetic, and which one is a human ruling. The entry routes the ruling to J-7, and J-7 grows from six behaviours to seven with every J-7 count site updated to agree with the backlog. Do NOT add styling and do NOT rewrite the Taste notes section — both are out of scope for this run (NO_COLOR is a locked non-goal, and the SPEC header states the product spec is unchanged this run).",
+   "packages": [],
+   "model": "sonnet",
+   "attempts": 0,
+   "notes": "From the run #4 cycle-9 TASTE pass, finding 3 (minor). NEW — not covered by TS-1/TS-2/TS-3, which are all about the corpus. CONDUCTOR-VERIFIED, gate cells D1/D2/D3 with must-die control C8: no isTTY branch and no escape sequence exists anywhere in bin/aphorism.js, src/args.js or src/select.js, and `--seed 7` output carries zero ESC bytes, so the attribution is byte-identical in weight to the aphorism on a TTY. The indent measured as '    — Alan Kay'. WHY THIS IS THE MOST INTERESTING FINDING OF THE PASS: it is the only one of the four that is not a corpus-depth complaint, and it is a claim the SPEC makes about ITSELF that the implementation does not honor. Run #4's whole brief is settling unsupported claims (M-1, M-3), and this taste pass found one in the spec's own taste notes — a place no correctness gate was ever going to look, because every test that exists asserts the pipe stays byte-clean, which is exactly what a no-styling implementation trivially satisfies.",
+   "covers": []
+  },
+  {
+   "id": "TS-6",
+   "title": "The --tag vocabulary is undiscoverable without jq, and an unknown tag is indistinguishable from an empty result",
+   "kind": "polish",
+   "priority": 6,
+   "value": "M",
+   "effort": "S",
+   "status": "blocked",
+   "deps": [],
+   "files_hint": [
+    "README.md"
+   ],
+   "acceptance": "BLOCKED ON A HUMAN SCOPE DECISION, not on engineering. The agent's remedy is a `--tags` flag, and 'any new flag' is a locked non-goal of this run; naming the valid tags on stderr also changes shipped behaviour. To unblock, the owner lifts the new-flag non-goal at a future kickoff. Until then only the DOCUMENTARY half is in scope, the same split TS-2 already carries: README and --help may list the twelve tag names inline instead of delegating discovery to a `--list --json | jq -r .tags[] | sort -u` pipeline.",
+   "packages": [],
+   "model": "sonnet",
+   "attempts": 0,
+   "notes": "From the run #4 cycle-9 TASTE pass, finding 4 (minor). Adjacent to TS-2 but DISTINCT: TS-2 is about tag pool SIZE (five pools hold <= 4 entries), this is about the tag vocabulary being unDISCOVERABLE. CONDUCTOR-VERIFIED, gate cells E1/E2/E4 plus adjudication columns C/D/E/F: no --tags flag exists (`--tags` exits 2, --help never mentions it); --help does delegate discovery to a jq pipeline (measured line: `node bin/aphorism.js --list --json | jq -r '.tags[]' | sort -u`); and an unknown tag produces byte-identical stderr and exit status to a genuinely empty intersection of two VALID filters (`--tag performance --author \"Martin Fowler\"`), both exit 1 + 'aphorism: no aphorism matches those filters' + empty stdout. An unknown AUTHOR is indistinguishable too. The message is not merely generic across tags — it is generic across the entire no-match class, which is defensible unix behaviour and is why this is filed minor rather than as a bug.",
+   "covers": []
   }
  ]
 }

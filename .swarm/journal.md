@@ -15665,3 +15665,352 @@ runfile-mirror:
  }
 }
 ```
+
+## cycle 9 — QA → POLISH — the TASTE gate paid, and it landed on a non-goal wall
+
+work: TASTE pass (`qa-verify` semantics, `mode: "taste"`), dispatched as ONE DIRECT fable
+Agent call rather than `workflows/qa-verify.js` — headless pacer-spawned `-p` cycle,
+Workflow tool review-gated, the documented SKILL.md RESUME fallback (same basis as run #3
+c6/8/9/10/13/14 and run #4 c2/3/4/5/7/8). The taste seat is ONE agent by contract, so the
+direct call maps onto the script contract exactly.
+gear 1 (guest, weekly ceiling 2, rho=4.50, demote=true, promote=false), k_cap 1.
+clock: 19.7h to stop_at at cycle open — no time pressure on any decision below.
+control channel: `poll` clean, `pending: []`, `inject: []` — nothing to apply.
+outcome: **verdict wears-thin, 4 findings, 0 fundamental.** Backlog todo 1 → 2, blocked 6 → 7.
+
+### THE BUDGET PROBE, AND A GEAR-1 OVERRIDE RECORDED AS ONE
+
+The probe dropped the gear from 2 to 1: rho 4.50, tokens/hour 27.2M, projected window
+depletion ~62 min out, weekly and opus both at 100% used against 36.5% of the week elapsed.
+Gear 1's work-choice guidance is "haiku-priced useful work … S-effort sonnet builds only".
+A fable judgment agent is the opposite of that, so the override is recorded rather than
+slipped through (decision entry, cycle 9, kind `pacing`). The reasoning:
+
+  - The taste seat is FABLE-GUARDED. cycle.md and workflows.md both state that pacing
+    demotions never demote judgment seats. The rules do not offer "run taste on haiku";
+    the honest choices were pay it at fable or defer it.
+  - It is exactly ONE agent — the smallest work type in the catalogue, fitting gear 1's
+    wave cap of 1 exactly. There is no cheaper way to discharge this gate.
+  - Depletion ~1h out meant deferring the last owed gate risked pushing it into a
+    depleted window or a limp episode, with 19.7h of clock still to spend after it.
+
+Gear 1 governs what a cycle burns, not whether the run's last outstanding gate gets paid.
+
+Two probe denials re-confirmed the cycle-6 measured allowlist rule, and they are logged
+because M-3 is a live must-have: `RUNFILE=… bin/swarm-budget.sh` DENIED and
+`RUNFILE=… /opt/swarm/bin/swarm-budget.sh` DENIED, while the bare
+`/opt/swarm/bin/swarm-budget.sh` RAN. The env-var prefix defeats the prefix match, exactly
+as cycle 6 measured. Nothing new; the rule reproduces.
+
+### WHY TASTE AND NOT Q-6
+
+TASTE was the one pre-POLISH gate run #4 still owed (review-fix c5, QA-full c7). Cycle 8
+handed it off explicitly and cycle 7 had already MEASURED that its delta is real rather
+than vacuous — `src/args.js` and `test/readme-tags.test.js` differ from the run #3 cycle-9
+taste tree. Q-6 is a README fix that will still be there afterwards; a gate deferred past a
+window depletion may not be.
+
+### THE GATE, AUTHORED AFTER THE AGENT RETURNED
+
+    file      SWARM/runs/run4-c009-taste-gate.mjs   (copied into .swarm/runs/ after the
+              run, sha256 db99355b… verified byte-identical across the copy)
+    result    24 PASS / 1 FAIL of 25 cells
+
+Authored AFTER the return, deliberately, and that is the right order for a taste pass
+specifically: you cannot know which findings to reproduce until the findings exist. The
+seal-before-dispatch discipline this run uses for build waves exists because a builder who
+can see the check can code to the check. A taste agent produces judgments, not code, and
+the gate's job is to reproduce them — so there is nothing for the agent to code to. Six of
+the 25 cells are controls (C1, C2, C8, C9, C10, C11), four of them must-die.
+
+### VERIFICATION EVIDENCE
+
+    PASS  A0   INVOKER SANITY: default draw, non-empty stdout, exit 0   (exit=0 bytes=74)
+    PASS  A1   corpus is exactly 50 entries                             (lines=50)
+    PASS  A2   CLAIM "Dijkstra is 7 of 50 = 14%"                        (count=7 pct=14.0%)
+    PASS  C1   CONTROL must-die: the same cell asserting 8 must FAIL
+    PASS  B1   CLAIM "P(repeat in 7 daily draws)=35.6%" recomputed      (conductor=35.56%)
+    PASS  C2   CONTROL must-die: same arithmetic over 3 draws != 35.6%  (3-draw P=5.92%)
+    PASS  C3   CLAIM "no anti-repeat memory": immediate repeats DO occur in 200 live draws
+               immediate repeats=4 (uniform expectation 3.98); P(0 | no memory)=1.8%
+    PASS  C4   the draw is UNIFORM, not degenerate                      (distinct=50/50)
+    PASS  C5   CLAIM "30 draws -> 23 distinct" matches theory           (theory=22.73)
+    PASS  C6   no persisted draw state: source performs no filesystem write
+    PASS  C7   no cache dir created by 200 runs
+    PASS  D1   CLAIM "no TTY styling path at all"   (no isTTY, no escape sequences)
+    PASS  D2   CLAIM "attribution at full weight"   (ESC bytes present=false)
+    PASS  C8   CONTROL must-die: asserting ANSI IS present must FAIL
+    PASS  D3   CLAIM "attribution line is indented"  ("    — Alan Kay")
+    PASS  E1   CLAIM "no --tags flag exists"        (exit=2, help never mentions it)
+    PASS  C9   CONTROL must-stay-green: --json accepted, exit 0
+    PASS  E2   CLAIM unknown tag -> exit 1, stdout empty, generic stderr
+    FAIL  E3   CLAIM unknown tag indistinguishable from empty intersection  <- instrument defect
+    PASS  E4   CLAIM "--help delegates tag discovery to jq"
+    PASS  E5   CLAIM "--help fits one screen"       (lines=13; agent said 12)
+    PASS  C10  CONTROL must-stay-green: --seed deterministic
+    PASS  C11  CONTROL must-die: two DIFFERENT seeds must not be assumed equal
+    PASS  G1   SCOPE: the taste agent mutated nothing (working tree clean)
+    PASS  G2   SUITE: tests=118 pass=118 fail=0
+
+    === 24 PASS / 1 FAIL of 25 cells ===
+    observed sequence stats: N=200 distinct=50 immediate_repeats=4
+
+test_cmd, run by the conductor (not the agent's self-report):
+
+    ℹ tests 118
+    ℹ pass 118
+    ℹ fail 0
+
+### THE ONE FAIL — INSTRUMENT DEFECT #21
+
+E3 asked whether the no-match message distinguishes an UNKNOWN tag from an EMPTY
+INTERSECTION of two individually-valid filters. It chose `--tag humor --author knuth` as
+its empty-intersection arm. That pair is NOT empty — Knuth's second corpus entry is tagged
+`["debugging","humor"]` — so the arm exited 0 with empty stderr and the equality test
+correctly reported unequal. It failed CLOSED, which is what you want from a wrong
+instrument, and its own note printed the evidence that the CLAIM was true while the CELL
+was wrong.
+
+The defect is a species this repo has recorded before in a different costume: **the cell
+chose its test data from memory rather than from the data.** Cycle 8's B3/B4 read bullets
+by a remembered layout; this read a corpus by a remembered tagging. Adjudicated 7/7 in
+`.swarm/runs/run4-c009-E3-adj.mjs`, with the replacement arm selected BY SEARCHING THE
+CORPUS for a genuinely empty pair (`--tag performance --author "Martin Fowler"`, tag=5
+entries, author=1 entry, intersection=0) rather than by picking another plausible one:
+
+    PASS  A  DEFECT REPRODUCED: E3's arm is not an empty intersection (exit=0, stderr="")
+    PASS  B  ARM IS VALID: tag performance=5, author Fowler=1, intersection=0  (from data)
+    PASS  C  FIXED CELL: both give exit 1 + "aphorism: no aphorism matches those filters"
+    PASS  D  MUST-DIE: an unknown AUTHOR is also indistinguishable — claim generalises
+    PASS  E  MUST-DIE: a DIFFERENT error differs (bad flag -> exit 2, "unknown flag")
+    PASS  F  MUST-NOT-OVERREACH: a MATCHING pair is not swept in as "no match"
+    PASS  G  BLAST RADIUS: E3 is the only multi-filter cell, so no sibling shares the defect
+
+Sealed gate left BYTE-UNEDITED (run #3 c4/c12/c14 precedent: rewriting a gate after it has
+run destroys the evidence of what it measured). Column G is the cycle-8 lesson applied
+rather than re-learned — a defect found in one cell is evidence about every cell, so the
+blast radius was MEASURED, and this time it genuinely was confined to one.
+
+### THE AGENT'S FIGURES, CHECKED
+
+Every checkable number the agent produced was re-derived. Three held and one did not:
+
+    P(repeat in 7 daily draws) = 35.6%    CORRECT   conductor recomputed 35.56%
+    Dijkstra 7 of 50 = 14%                CORRECT   measured exactly
+    30 draws -> 23 distinct               CONSISTENT with uniform theory 22.73
+    "--help is 12 lines"                  OFF BY ONE — measured 13
+
+The off-by-one changed no verdict (E5 asks only that help fit a screen) and is recorded
+because agent self-reports about their own observations are claims like any other — the
+fifth such correction on this repo, and by far the smallest.
+
+A DISCRIMINATOR the agent did not run, added because "the pool repeats" and "the RNG is
+broken" produce identical complaints: 200 conductor-run default draws gave 50/50 distinct
+values and 4 immediate back-to-back repeats against a uniform expectation of 3.98. The
+draw is uniform. The finding is about DESIGN — there is no rotation — and not about a
+biased selector. C3's power was computed rather than assumed: P(zero immediate repeats in
+200 draws | no memory) = 0.98^199 = 1.8%, so the cell has ~98% power against the
+"memory secretly exists" hypothesis.
+
+The agent honored read-only: `git status --porcelain` was empty after its run (G1).
+
+### ROUTING — TWO CORROBORATIONS, TWO NEW ITEMS
+
+Two of the four findings are RE-DERIVATIONS of run #3's cycle-9 taste findings by an agent
+that had never seen them. Per the cycle-6 dedupe rule — an independent instrument
+re-deriving a known gap is corroboration, not new backlog — they were folded into the
+existing items' notes rather than filed as new work:
+
+  - F1 (no anti-repeat memory) → **TS-1**. Genuinely new inside it: a SECOND FRAME (TS-1
+    measured within-session repeat; this measured the daily-MOTD frame the spec actually
+    pitches, 35.56% of users see a rerun within a week) and a DIFFERENT REMEDY (a recency
+    guard or `--daily` flag kills the worst case without expanding the corpus).
+  - F2 (canon-only curation, Dijkstra 14%) → **TS-3**, reached from the opposite direction
+    (`--author dijkstra --list` rather than tallying `--list --json`). New inside it: the
+    pool is concentrated not just by AUTHOR but by SELECTION — no deep cuts, so it reads
+    as an anthology rather than a discovery.
+
+Two are new:
+
+  - **TS-5** (todo, docs, S) — the SPEC taste notes promise "Attribution is dim, not loud"
+    and nothing in the product styles it. This is the most interesting finding of the pass
+    and the only one that is not a corpus complaint: it is a claim the SPEC makes about
+    ITSELF that the implementation does not honor. No correctness gate was ever going to
+    find it, because every test that exists asserts the pipe stays byte-clean — which a
+    no-styling implementation satisfies trivially. In-scope disposition is the DOCUMENTARY
+    half only: record it as Undecided behaviour D-46 and route the ruling to J-7 (six → seven).
+  - **TS-6** (blocked, polish, S) — the tag vocabulary is undiscoverable without a jq
+    pipeline, and an unknown tag is byte-identical to an empty intersection. Distinct from
+    TS-2, which is about pool SIZE rather than discoverability.
+
+### THE RESULT THAT MATTERS MORE THAN THE FOUR FINDINGS
+
+**The taste pass hit a non-goal wall.** F1 needs rotation. F2 needs corpus expansion. F4
+needs a new flag. F3's actual fix needs colour output. Rotation, corpus expansion, "any new
+flag" and NO_COLOR are ALL locked non-goals of run #4, set by the allocator's trickle brief.
+Of four findings, exactly one has an in-scope half, and it is the documentary half.
+
+So the swarm's independent taste seat — which never read the kickoff — arrived at the same
+place the kickoff taste judge did, and the same place run #3's cycle-9 taste pass did. From
+`SPEC.md`, recorded at kickoff as DISSENT and not overridden:
+
+    "a fourth consecutive run producing zero user-visible value on a repo whose top
+     product improvement (no-repeat rotation) stays deferred suggests the right call is
+     to fold M-1 through M-4 into a half-night and spend the rest shipping the rotation —
+     or point the allocator at a different repo."
+
+That was one judge's opinion at kickoff. It is now a measured finding, reproduced twice by
+independent instruments across two runs. The conductor is NOT lifting a non-goal for itself
+— the brief is the operator's to change, and that constraint is exactly as binding as it
+was at kickoff. What changes is the morning report's obligation: this stops being reported
+as a kickoff opinion and starts being reported as evidence. The allocator has now spent
+four consecutive runs on a repo whose own taste instrument says the remaining value sits
+behind a wall those runs are forbidden to cross, and that is an allocator-level decision no
+cycle of this run can make.
+
+### PHASE
+
+All three pre-POLISH gates are now paid for run #4 (review-fix c5, QA-full c7, TASTE c9),
+each verified against its own journal block rather than against a cycle marker. Phase
+BUILD → POLISH.
+
+One marker hazard, recorded because this repo has been bitten by it twice: `last_taste_cycle`
+is now **9**, which is CORRECT for run #4 — and was also the stale run #3 value that cycles
+5, 6, 7 and 8 each had to warn readers not to trust. The two runs collided on the same cycle
+number by coincidence. The field is right for the first time since run #3 ended, and anyone
+who trusted it during cycles 1-8 was wrong throughout and is accidentally right now. The
+load-bearing evidence is this journal block and `.swarm/runs/cycle-009-taste.json`, not the
+integer. A run label inside the marker would fix the class; that is a SWARM state-spec
+change and therefore out of scope mid-run (hard rule 5) — carried to the morning report.
+
+### HAND-OFF
+
+Backlog todo is **Q-6** (`--author` is diacritic-sensitive; README.md; conductor-reproduced
+at cycle 7) and **TS-5** (record D-46, route to J-7; .swarm/SPEC.md). Their `files_hint` sets
+are disjoint, so they can share a wave if the gear cap ever allows two again; at gear 1 the
+cap is 1, so expect one per cycle. Q-6 is the older finding and the natural next pick.
+
+No gate is owed. Nothing is in flight. The seven blocked survivors are all human-owned.
+
+runfile-mirror:
+
+```json
+{
+ "version": 1,
+ "targets": [
+  {
+   "path": "/opt/targets/aphorism-cli",
+   "status": "active",
+   "weight": 1
+  }
+ ],
+ "rotation_cursor": 0,
+ "rotation_schedule": [
+  0
+ ],
+ "stop_at": "2026-08-20T14:05:09Z",
+ "usage_reset_at": "2026-08-19T18:00:00Z",
+ "model_policy": "value-routing",
+ "auth_mode": "subscription",
+ "heartbeat": {
+  "ts": 1787164475,
+  "next_wakeup_at": 1787164565,
+  "pid": 2572882,
+  "limp": false,
+  "degraded_tiers": []
+ },
+ "pacing": {
+  "mode": "guest",
+  "dial": 0.3
+ },
+ "budget": {
+  "source": "probe",
+  "gear": 1,
+  "gear_target": 1,
+  "ratio": 4.5,
+  "mode": "guest",
+  "k_cap": 1,
+  "promote": false,
+  "demote": true,
+  "window_tokens": 115884536,
+  "window_cost_usd": 94.11976589999992,
+  "api_cap_usd": null,
+  "api_spend_usd": 0,
+  "tokens_per_hour": 27218062,
+  "projected_depletion_at": 1787167368,
+  "last_probe_ts": 1787164475,
+  "last_real_probe_ts": 1787164475,
+  "probe_failures": 0,
+  "weekly": {
+   "ok": true,
+   "weekly_used_pct": 100,
+   "opus_used_pct": 100,
+   "week_elapsed_pct": 36.51,
+   "weekly_heat": 2.74,
+   "opus_heat": 2.74,
+   "ceiling": 2,
+   "promote_blocked": true
+  }
+ },
+ "playbook": {
+  "mode": "auto",
+  "applied": [
+   "L-008",
+   "L-016",
+   "L-024",
+   "L-026",
+   "L-029",
+   "L-031",
+   "L-033",
+   "L-034",
+   "L-038",
+   "L-042",
+   "L-043",
+   "L-044",
+   "L-046"
+  ],
+  "vetoed": [],
+  "note": "staged by DIRECT READ of playbook/learnings.md at kickoff. CORRECTED at cycle 6: bin/swarm-playbook.sh is genuinely NOT allowlisted in any form (re-executed and DENIED this cycle, gate A2), so the hand-written applied.log ledger line stands. But the SAME cycle refuted the adjacent claims about bin/swarm-notify.sh — that helper IS allowlisted under its absolute path and has logged 11/11 ok all run. See journal cycle 6.",
+  "directives": {
+   "wave_k": 2,
+   "routing_recs": [
+    "core-logic->fable"
+   ],
+   "prompt_lines": {
+    "builder": [
+     "The conductor is the SOLE committer — never commit or push yourself",
+     "The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test"
+    ],
+    "reviewer": [
+     "The conductor is the SOLE committer — never commit or push yourself",
+     "Assign each fixer a pairwise-disjoint file set; two fixers must never share a file",
+     "The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test"
+    ],
+    "qa": [
+     "The conductor is the SOLE committer — never commit or push yourself",
+     "Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'.",
+     "Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value.",
+     "Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps.",
+     "Classify each surviving mutant as HOLE (a real gap - harden it) or BOUNDARY (behaviour the spec does not decide - document it) BEFORE writing any test",
+     "When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence.",
+     "For every mutation that must kill the suite, author one control that must leave it GREEN — a check that dies on everything is a snapshot test, not an assertion",
+     "Never assert against prose matched by regex — read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns"
+    ]
+   }
+  }
+ },
+ "watchdog": {
+  "mode": "normal",
+  "plist_loaded": true,
+  "lockfile": "/opt/swarm/runs/watchdog.lock",
+  "relaunch_attempts": 0
+ },
+ "wrap_up_complete": false,
+ "cycles_since_recycle": 9,
+ "artifact": {
+  "url": "",
+  "file": "/opt/swarm/runs/dashboard.html",
+  "publish_failures": 0
+ }
+}
+```
