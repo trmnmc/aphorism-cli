@@ -13584,3 +13584,108 @@ improvement run all night — the bug that cost this run its safety net is the t
 its unstoppable timer harmless.
 
 **RUN COMPLETE.** No further wakeups; `next_wakeup_at` is 0 and `wrap_up_complete` is true.
+
+<!-- RUN BOUNDARY: IMPROVEMENT RUN #4 — kickoff 2026-08-19T14:05:17Z, stop 2026-08-20T14:05:09Z.
+     Allocator auto-kickoff (source=allocator, mode=guest, dial=0.30, posture=trickle).
+     Cycle counters restart at 1 below; every "cycle N" above this line belongs to an
+     earlier run. Nothing above is edited or removed by this run. -->
+
+## kickoff | 2026-08-19T14:05:17Z | aphorism-cli | PLAN
+work: KICKOFF — improvement run #4 scaffolded on an existing repo (guard 1d improvement-run path: existing repo REUSED, no dir creation, no git init, no gh repo create)
+mode: allocator auto-kickoff — hints {mode: guest, dial: 0.30, stop_at: 1787234709}, brief "TRICKLE POSTURE: housekeeping only — harden tests, fix playbook items, polish docs — no new features. Haiku-priced work types; no new features." Interactive Q&A SKIPPED per guard 1d; the hints file is the authorization and was deleted after consumption. Stress-test, prior-art scout and taste judge all RAN (non-interactive).
+
+STRESS-TEST: verdict RESHAPE, confidence 7.
+  attack that landed: three prior runs under this identical brief each closed every
+    must-have; 7 backlog items are open and 6 are BLOCKED on human rulings an agent must
+    not make; a fourth identical run is churn — the exact failure mode run #3's own
+    non-goals named.
+  defence that held: those runs exhausted their FRAMING, not the space. Two facts
+    measured at THIS kickoff were available to none of them.
+  reshaped: re-aimed from "harden tests / polish docs" (both closed under prior framings)
+    onto two claims the repo makes and cannot support — the Node-18 support floor
+    (settleable by a free GitHub Actions matrix: the repo is PUBLIC and this session's gh
+    token carries the `workflow` scope; three runs called it permanently unverifiable) and
+    REPORT.md's readability (it GREW 98 KB -> 127 KB during the run whose must-have was
+    "readable in one screen", because "nothing deleted" was read as "nothing moved").
+    Test COUNT is explicitly not a target.
+
+PRIOR-ART SCOUT: 2 searches, both confirming the standing exclusion rather than changing
+  it. Off-the-shelf static Node-engine verification = eslint-plugin-n (a dependency);
+  off-the-shelf mutation testing = Stryker (a dependency). Both are scope changes on a
+  zero-dependency repo, not housekeeping. A GitHub Actions workflow file is neither — it
+  adds nothing to require() and nothing to install. Stance: BUILD (in-repo CI only).
+
+TASTE JUDGE (fresh subagent, spec text only): use-twice 3 / product-not-demo 8 /
+  scope-fits-night 9 / one-memorable-thing 5.
+  verdict: "As housekeeping this is the most honestly-scoped spec of the four runs and
+  will close cleanly, but that's the trap: it hinges on use-twice, and a fourth
+  consecutive run producing zero user-visible value on a repo whose top product
+  improvement (no-repeat rotation) stays deferred suggests the right call is to fold M-1
+  through M-4 into a half-night and spend the rest shipping the rotation — or point the
+  allocator at a different repo."
+  DISPOSITION: recorded as DISSENT, not overridden, and surfaced in the goodnight push.
+  The judge is right and the conductor may not act on it — rotation is a new user-visible
+  feature, excluded by the allocator brief, and the brief is the operator's to change.
+
+PLAYBOOK: bin/swarm-playbook.sh parse was DENIED by the harness allowlist. The kickoff
+  step-5 SWARM/.claude/settings.json write that would fix it was ALSO DENIED. That is
+  denial #30, and the first time BOTH halves were measured live in the same session.
+  Directives were therefore staged by DIRECT READ of playbook/learnings.md (apply_mode
+  auto, 20 lessons): 13 applied — L-008, L-016, L-024, L-026, L-029, L-031, L-033, L-034,
+  L-038, L-042, L-043, L-044, L-046. The applied.log ledger line must be HAND-WRITTEN at
+  cycle 1 and must say so. Tracked as must-have M-3.
+
+VERIFICATION EVIDENCE:
+  baseline test_cmd (conductor-run, not claimed): node --test test/*.test.js
+    -> tests 118 / pass 118 / fail 0 / duration_ms 4745.9 (node v24.19.0)  PASS
+  playbook script reachability: /opt/swarm/bin/swarm-playbook.sh parse
+    -> "This command requires approval" (harness denial, no stdout)  FAIL (denial #30)
+  settings.json allowlist write (kickoff step 5, sanctioned): Edit .claude/settings.json
+    -> "Claude requested permissions to write ... but you haven't granted it yet"  FAIL
+  kickoff state split audit (node runs/kickoff-split.mjs, conductor-authored):
+    known_issues: 31 before -> 31 reachable after, lost=0
+    decisions:    41 before -> 41 archived, live=8, ok=true
+    backlog:      41 before -> 41 reachable after (live 7 + archived 34), lost=0
+    AUDIT PASS — nothing lost  PASS
+  budget probe: /opt/swarm/bin/swarm-budget.sh
+    -> gear 2, ratio 0.61, mode guest, k_cap 2, demote true, probe_ok true
+       weekly: used 100% at 33.98% elapsed, heat 2.94, ceiling G2, promote_blocked
+    NOTE: the weekly governor is HOT — the envelope is fully spent a third of the way
+    into the week. This run is clamped to gear 2 and will stay there.
+
+kickoff hygiene: state.json 136 KB -> 34 KB and backlog.json 144 KB -> 20 KB, by MOVING
+  (never deleting) the accumulated record into committed files — .swarm/known-issues.json
+  (all 31, full text), .swarm/decisions.json (all 41), .swarm/backlog-archive-runs1-3.json
+  (34 closed items). Full-fidelity pre-split copies kept as *.pre-run4-1787148317. The
+  audit above is the proof, and it is the same discipline M-2 will apply to REPORT.md.
+
+commit: (this cycle)
+next wakeup: 1787151017
+
+kickoff step 11 (headless zero-prompt assert): NOT RUN, reported as not-run.
+  `claude` is not on the Bash allowlist, so a session cannot spawn the assert from inside
+  itself — `cd /opt/swarm && claude -p "/swarm status ..."` was DENIED. This is the same
+  family as M-3 and is added to the handoff's remaining-ask list.
+  What IS true, and is evidence rather than inference: THIS session is itself a
+  zero-prompt `claude -p` session — spawned by bin/swarm-pacer.sh as
+  `claude -p /swarm "improve existing target ..." --permission-mode acceptEdits --add-dir
+  /opt/targets` (PID 2484515, read from `pgrep -af claude`) — and it reached kickoff and
+  wrote every state file without a single interactive prompt. The permission scope the
+  assert exists to validate is therefore demonstrated by this run's own existence.
+  The assert itself is still NOT-RUN and is not claimed as passed.
+
+M-3 progress at kickoff (recorded now because the evidence was in hand):
+  - DISCRIMINATOR (L-024): writing a scratch file with a nonsense name into
+    /opt/swarm/.claude/ is refused as "a sensitive file", while writes to /opt/swarm/runs/
+    and /opt/swarm/playbook/ in the SAME session succeed (5 files written). So the guard is
+    the .claude/ DIRECTORY, not settings.json specifically, and it is the harness refusing
+    to let a session edit its own permission config — the guard working as designed, not a
+    config omission. This item can never close from inside a run.
+  - CORRECTION: today's allow[] already contains Bash(/opt/swarm/bin/swarm-budget.sh:*) and
+    Bash(/opt/swarm/bin/swarm-notify.sh:*). A human applied part of the handoff's patch
+    since 2026-08-18. swarm-budget.sh RAN this session and returned a real probe. The
+    handoff's claim that "there is no entry, in any form, for swarm-budget.sh" was true when
+    written and is FALSE today; the remaining ask is 5 lines, not 9.
+  - HANDOFF-allowlist-2026-08-17.md updated with all of the above, run #3's text preserved
+    verbatim below the update rather than rewritten.
+  - playbook/applied.log line hand-written and marked as a hand-edit.
