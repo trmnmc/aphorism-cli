@@ -1,0 +1,68 @@
+
+PASS  G1    GREEN SUITE green, tests >= 118, fail 0 (conductor-run, not agent-reported)
+                  tests=118 pass=118 fail=0 exit=0
+PASS  G2    GREEN DEFAULT RUN still works
+                  exit=0 bytes=85
+FAIL  Q1    RED   MUTATING the README number kills the suite (the claim is guarded at all)
+                  README 24->23; tests=118 pass=118 fail=0
+FAIL  Q2    RED   MUTATING the corpus kills the suite (the figure is RE-DERIVED, not a literal)
+                  authors 25 vs README 24 (replaced "Donald Knuth"); tests=118 fail=0
+PASS  Q3a   GREEN ATTRIBUTION: with the PRE-work test file, the README mutation SURVIVES
+                  tests=118 pass=118 fail=0 exit=0
+PASS  Q3b   GREEN ATTRIBUTION: with the PRE-work test file, the corpus mutation SURVIVES
+                  tests=118 pass=118 fail=0 exit=0
+PASS  Q4    GREEN CONVERSE CONTROL: a benign reword keeping the number must NOT trip the suite
+                  tests=118 pass=118 fail=0 exit=0
+FAIL  Q5    RED   test/readme-tags.test.js declares at least one test name absent from the sealed version
+                  pre=27 post=27 added=0
+PASS  Q6    GREEN SCOPE: README.md byte-identical to the seal (Q-8 is a guard, not a correction)
+                  identical
+PASS  Q7    GREEN SCOPE: src/corpus.js byte-identical to the seal
+                  identical
+FAIL  T1    RED   SPEC § Undecided behaviours gains an entry headed D-46
+                  no D-46 entry
+FAIL  T2    RED   D-46 uses the established three-bullet grammar
+                  shipped=false why=false status=false
+FAIL  T3    RED   D-46 states BOTH halves of the discrepancy (the taste note AND the shipped mechanism)
+                  quote=false noColour=false indent=false dash=false
+FAIL  T4    RED   D-46 routes the ruling to J-7 in its Status bullet
+                  no Status bullet
+FAIL  T5    RED   REPORT.md's J-7 bullet counts SEVEN behaviours, not six
+                  seven=false six=true :: - **J-7** — six CLI behaviours the SPEC leaves undecided. *Next actor:* a human.
+FAIL  T6    RED   REPORT.md's J-7 enumeration gained the seventh behaviour (the attribution discrepancy)
+                  enumeration not extended
+FAIL  T7    RED   The section comment no longer claims every entry is carried forward verbatim from run #3
+                  staleClaim=true commentKept=true
+PASS  T8    GREEN SCOPE: SPEC § Taste notes byte-identical (the run may not rewrite it)
+                  identical
+PASS  T9    GREEN SCOPE: SPEC § Domain rules byte-identical (the regression floor)
+                  identical
+PASS  T10   GREEN SCOPE: entries D-42..D-45 byte-identical (only an ADDITION is in scope)
+                  all four identical
+PASS  S1    GREEN SCOPE: every changed path is one of the three the wave was given
+                  changed=[]
+PASS  S2    GREEN SCOPE: nothing under src/ bin/ .github/ changed
+                  none
+PASS  S3    GREEN SCOPE: docs/report-history.md byte-identical — an archive is not rewritten
+                  identical
+PASS  C1    GREEN MUST-DIE: the D-46 reader does not fire on a SPEC that lacks D-46
+                  reader stayed dead
+PASS  C2    GREEN MUST-STAY-GREEN: the D-46 reader DOES fire on a SPEC that has it
+                  fired
+PASS  C3    GREEN MUST-DIE: the suite parser is not a rubber stamp (a planted failure is seen)
+                  tests=119 fail=1 exit=1
+PASS  C4    GREEN MUST-DIE: the README mutation applier really changes the file
+                  24->23
+PASS  C5    GREEN MUST-DIE: the corpus mutation really moves the distinct-author count
+                  24 -> 25
+PASS  C6    GREEN MUST-NOT-OVERREACH: T5's reader is scoped to the J-7 bullet, not the whole REPORT
+                  scoped correctly (neighbouring "six" ignored, continuation captured)
+PASS  C7    GREEN MUST-STAY-GREEN: every byte-identity reader can read its subject at all
+                  sealed sizes=8790,8563,20082,127422,8570
+PASS  C8    GREEN MUST-DIE: the changed-path reader is not blind (it sees a planted untracked file)
+                  saw=true cleanedUp=true
+
+=== 21 PASS / 10 FAIL of 31 cells ===
+
+--- BASELINE DISCRIMINATION CHECK (a baseline that only checks its controls ships a false PASS) ---
+  BASELINE SOUND — every RED cell is red and every GREEN cell is green.
