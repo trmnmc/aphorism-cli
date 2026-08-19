@@ -1,0 +1,83 @@
+{
+  "cycle": 5,
+  "run": "improvement run #4",
+  "work_type": "review-fix",
+  "timestamp": 1787156396,
+  "dispatch": "DIRECT Agent calls, not workflows/review-fix.js — headless pacer-spawned `-p` cycle, the Workflow tool is review-gated, and direct Agent dispatch is the documented SKILL.md fallback (same basis as run #3 cycles 6/8/9/10/13/14 and run #4 cycles 2/3/4).",
+  "scope": {
+    "reviewed": [".github/workflows/test.yml", "README.md", "REPORT.md", "docs/report-history.md"],
+    "excluded": ["src/", "bin/", "test/"],
+    "exclusion_basis": "MEASURED, not assumed: `git diff --stat 7f00cf0 HEAD -- src bin test` is empty, so the product code is byte-identical to the tree run #3 cycle 13's review-fix pass reviewed and returned clean. Re-reviewing identical bytes would be reviewing bookkeeping.",
+    "why_owed": "cycle.md step 4 places ONE review-fix, ONE QA and ONE TASTE pass after BUILD and before POLISH/VALUE_LOOP. All five of run #4's must-haves closed at cycle 4 and run #4 had run none of the three. state.json's qa markers (last_full_qa_cycle 6, last_taste_cycle 9) are RUN #3 cycle numbers carried forward — reading them as this run's evidence is the exact bookkeeping-decay error run #3 cycle 12 caught and filed."
+  },
+  "stages": {
+    "stage_1_reviewers": [
+      {"lens": "A", "model": "sonnet", "table_model": "opus", "routing_note": "gear-2 demotion applied; reviewers are not fable-guarded judgment seats", "scope": [".github/workflows/test.yml", "README.md"], "findings": 1, "checked_and_clean": 20},
+      {"lens": "B", "model": "sonnet", "table_model": "opus", "routing_note": "same", "scope": ["REPORT.md", "docs/report-history.md"], "findings": 1, "checked_and_clean": 24}
+    ],
+    "stage_2_verifiers": [
+      {"finding": "A-1", "model": "opus", "table_model": "fable", "routing_note": "ROUTING DEVIATION — the verifier seat is a judgment seat and the fable guard exempts it from demotion in every gear. It was dispatched on opus by conductor error, one rung below the table. Recorded, not hidden. Mitigation: the conductor independently re-derived every decisive fact of A-1 against the live GitHub API before accepting it.", "reproduced": true, "severity_moved": "high -> medium", "reviewer_overreach": "none found"},
+      {"finding": "B-1", "model": "fable", "table_model": "fable", "parts": {"B-1a": {"reproduced": true, "severity": "medium", "note": "verifier found the defect WORSE than the reviewer claimed — cycle 4 measured the class once, so the wrapper claim is flatly false, not merely a misplaced example"}, "B-1b": {"reproduced": false, "severity": "n/a", "note": "REFUTED and DISCARDED per contract — the total of eight IS traceable across runs #3 and #4"}}}
+    ],
+    "stage_3_fixers": [
+      {"finding": "A-1", "file": "README.md", "model": "sonnet", "outcome": "accepted as delivered", "self_reported_limitation": "the fixer's Bash access was denied mid-task, so it could not verify the two conductor-supplied facts itself and said so rather than claiming it had"},
+      {"finding": "B-1a", "file": "REPORT.md", "model": "sonnet", "table_model_after_gear2_demotion": "haiku", "routing_note": "gear-2 docs demotion sonnet->haiku REFUSED for the third time this run — see decisions", "outcome": "accepted after a one-token conductor repair", "conductor_repair": "the fixer wrote 'once this cycle'; changed to 'once at cycle 4'. A relative cycle reference inside a document that outlives the cycle is the very decay class the sentence is about."}
+    ]
+  },
+  "findings": [
+    {
+      "id": "A-1",
+      "severity": "medium",
+      "file": "README.md",
+      "line": 159,
+      "expected": "README's Node-support citation should be a true claim about which Actions run it cites.",
+      "found": "It asserted 'The most recent full matrix — Actions run 32267338333, commit 44702fb'. That run is the OLDEST of the repository's 8 workflow runs. The sentence was already false when committed: it was introduced by 132ed1b at 15:37:19Z, and runs 32267864422 and 32267943098 had COMPLETED successfully at 15:04:57Z and 15:05:44Z — about 31 minutes earlier.",
+      "reproduced": true,
+      "reproduced_by": ["reviewer A", "adversarial verifier", "conductor (independently, against the live API)"],
+      "fixed": true
+    },
+    {
+      "id": "B-1a",
+      "severity": "medium",
+      "file": "REPORT.md",
+      "line": 50,
+      "expected": "A claim about how many times a decay class recurred, and in which cycles, should match its own enumerated examples.",
+      "found": "'measured eight times now, including twice in this cycle alone: ... and once at cycle 3 in the same way.' The paragraph is dated to cycle 4, so 'this cycle' is cycle 4, yet the second of the two supporting examples is dated cycle 3. The journal's cycle-4 block records exactly ONE measurement of this class, so the wrapper claim is false, not merely self-contradictory.",
+      "reproduced": true,
+      "fixed": true
+    },
+    {
+      "id": "B-1b",
+      "severity": "low",
+      "file": "REPORT.md",
+      "expected": "The running total of eight should be traceable from the run's own record.",
+      "found": "The verifier traced all eight across runs #3 and #4 and REFUTED the reviewer's claim that it was untraceable.",
+      "reproduced": false,
+      "fixed": false,
+      "disposition": "DISCARDED per the review-fix contract — an unreproduced finding is not fixed. Kept in this array rather than dropped."
+    }
+  ],
+  "residual_surfaced_by_verification": {
+    "what": "The journal's own ordinal labels for this decay class are mutually inconsistent: run #4 cycle 3's block says 'SIXTH' while enumerating only four run-#3 priors, compressing run #3's self-stated five; cycle 4's block says 'Eighth'; no occurrence is ever labelled seventh.",
+    "severity": "low",
+    "disposition": "NOT fixed by editing the journal — it is an append-only historical record. The cycle-5 journal block carries the reconciliation, which is this repo's established mechanism (run #3 cycle 12 corrected a false summary the same way). Also filed as KI-36 so it is not lost to a reader of state.json alone."
+  },
+  "verification": {
+    "gate": "SWARM/runs/run4-cycle-005-gate.mjs",
+    "gate_sha256": "8a3ff4f53c31b15112b86585cecb578df8b0e1889f5d9257f4c548adc6d7da42",
+    "gate_held": "under SWARM/runs/ for the entire dispatch window — hard rule 5 makes it structurally unreachable to a fixer rather than merely forbidden to it (run #3 cycle-14 decision). Re-hashed byte-identical after the run.",
+    "pre_dispatch_baseline": "16 PASS / 4 FAIL on the unfixed tree; the 4 FAILs (R1, R5, P1, P4) are exactly the two findings' scope",
+    "post_fix": "19 PASS / 1 FAIL of 20",
+    "remaining_fail": "C4 — a control that went SILENT, adjudicated 13/13 in run4-cycle-005-C4G5-adj.mjs",
+    "test_cmd": "tests 118 / suites 0 / pass 118 / fail 0 / duration_ms 4923.42562",
+    "collision_scan": "applicable: false — a CLI ships no classic browser scripts"
+  },
+  "instrument_defects": {
+    "pre_seal": 2,
+    "post_seal": 2,
+    "conductor_side": 1,
+    "detail": "Pre-seal, found by the gate's own baseline and repaired before sealing: (1) unbounded recursion — control cells re-invoked the gate, which re-ran the controls; (2) a matcher blind to markdown line-wrapping, which read the false REPORT sentence as ABSENT (failing OPEN) and an intact example as DELETED. Post-seal, adjudicated with the gate left byte-unedited: C4 (the control's mutation path kept the raw-text bug the assertion path had been fixed for, so it certified P2 while testing nothing) and G5 (diffed committed history while the fixes were uncommitted, so it passed vacuously and would have passed had a fixer rewritten .github/). One further wrong instrument was the conductor's own: the adjudication artifact's column K trimmed the whole `git status --porcelain` block before slicing, which strips the leading space off the FIRST line only and shifted one path by one character — caught because column K disagreed with column H, which measures the same fact by a different command."
+  },
+  "sole_committer_honored": "git status --porcelain after both fixers showed exactly ' M README.md' and ' M REPORT.md' — no staged changes, no branches, nothing else touched. Corroborated by columns H, K and L of the adjudication artifact.",
+  "outcome": "2 reproduced findings fixed and conductor-verified; 1 finding refuted and discarded; 1 residual filed. Suite unmoved at 118/118/0 — for a review-fix pass over documents that is the honest outcome, not a null one."
+}

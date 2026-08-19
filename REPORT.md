@@ -48,10 +48,10 @@ Per `.swarm/backlog.json` **as of the close of run #4 cycle 4**: 13 tracked item
 (N-1, N-2, N-3, N-5, N-6, N-7), nothing in flight, 6 blocked on a human ruling, and 1
 declined (R-1). Any bare count on this page is a snapshot dated to this cycle and goes
 stale the moment the run closes its next item — measured eight times now, including twice
-in this cycle alone: once when this paragraph was first written mid-cycle and falsified by
-the very commit that shipped it, and once at cycle 3 in the same way. The item names below
-stay true longer than the arithmetic; the counts are re-derived from `backlog.json` at each
-cycle's verification gate rather than trusted.
+across the run's last two cycles alone: once at cycle 4, when this paragraph was first
+written mid-cycle and falsified by the very commit that shipped it, and once at cycle 3 in
+the same way. The item names below stay true longer than the arithmetic; the counts are
+re-derived from `backlog.json` at each cycle's verification gate rather than trusted.
 
 ### Blocked on a human ruling
 
