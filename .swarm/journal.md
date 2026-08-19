@@ -14232,3 +14232,58 @@ next: N-5 — the M-4 hand-off item, now unblocked, and it edits REPORT.md, whic
   on this run's own record rather than a reshape.
 commit: (this cycle)
 runfile-mirror: written to runs/current.json and current.json.bak this cycle
+
+### cycle 3 addendum — the dashboard was publishing a false statement, and the shape of the bug is the finding
+
+Found at step 8 while spot-checking the rendered page, not by any self-check the renderer
+runs. `SWARM/runs/dashboard.html` carried the meta line:
+
+    notify off · control idle
+
+while `SWARM/.ntfy.json` exists, is well-formed, and notifications are configured and ON —
+`bin/swarm-notify.sh poll` had already run clean earlier in this same cycle.
+
+The cause is one key name. The renderer read `.ntfy.json`'s `.topic`; the file's keys are
+`notify_topic` and `control_topic`. `undefined.slice(-4)` threw, a bare
+`catch (e) { /* absent files -> the default above */ }` swallowed it, and the default it
+fell back to was the string **"notify off"**.
+
+**A check that could not run rendered as a definite NEGATIVE.** That is the thing worth
+writing down, and it is the same rule this run keeps meeting from new directions: hard rule
+2's "a check you could not run is reported as not-run, never as passed" has a mirror image —
+never as FAILED either, when the failure is the instrument's and not the system's. The
+comment on the catch even states the assumption out loud ("absent files"), and the assumption
+was wrong: the file was present and readable. A fallback that encodes one guess about why an
+exception happened will state that guess as fact every other time.
+
+It is also the third distinct thing this cycle that was silently wrong while a green
+self-check sat next to it. The renderer's two self-checks — tick count and comment-leak —
+both reported OK on the false render, because neither is about the meta line. C4 was green
+across a parser that could not read its own input. B5 was green across an audit it had
+stopped testing. Three greens, three blind spots, one cycle.
+
+Repaired in `SWARM/runs/run4-render-dashboard.mjs` (hard rule 5 permits `runs/`; the
+template stays untouched and is not at fault — it is the renderer's job to read the config
+it was given). The fix reads `notify_topic` with `topic` as a legacy fallback, and the catch
+now renders **`notify unknown · control unreadable`** and logs the exception rather than
+asserting "off". Controlled across four states, because a repair that cannot distinguish its
+cases is not a repair:
+
+    PASS config absent             -> notify off
+    PASS config present, good key  -> notify on (…0d89)
+    PASS config present, OLD key   -> notify on (…9999)     legacy `.topic` still works
+    PASS config present, NO key    -> notify unknown         <- this row used to say "off"
+    4/4
+
+Live render after the fix: `notify on (…0d89) · control: 0 pending · last: none`, and the
+tick and comment-leak self-checks still pass (3 ticks / 3 cycles, 0 leaks).
+
+FOR THE MORNING REPORT, as a SWARM tool question rather than a target defect: the
+`{{NOTIFY_LINE}}` contract is specified in `reference/cycle.md` step 8 and implemented
+independently by each run's renderer. This one got the key name wrong for three cycles and
+no layer caught it. A shared helper — or a one-line contract test shipped beside the
+template — would have. Recorded, not acted on: `bin/` and `templates/` are fenced read-only
+mid-run.
+
+Carried forward from cycle 2's addendum and still unanswered: `heartbeat.next_wakeup_at`
+versus the pacer's own 5-minute cadence, and which of the two is the contract.
