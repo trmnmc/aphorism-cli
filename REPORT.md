@@ -26,13 +26,18 @@ correction and every dated claim, moved verbatim rather than summarized — live
 
 ## What is machine-verified
 
-- **Test suite:** `node --test test/*.test.js` — **118 tests, 118 pass, 0 fail**,
-  re-run directly against the shipped tree while writing this report (2026-08-19).
-  3496 lines of tests across 5 files (`args`, `cli`, `pipe`, `readme-tags`, `select`).
+- **Test suite:** `node --test test/*.test.js` — **119 tests, 119 pass, 0 fail**,
+  re-run by the conductor against the shipped tree at the run's closing gate
+  (2026-08-19, run #4 cycle 12). 3557 lines of tests across 5 files (`args`, `cli`,
+  `pipe`, `readme-tags`, `select`).
 - **Node support floor:** README.md cites a real GitHub Actions matrix run —
   [run 32267338333](https://github.com/trmnmc/aphorism-cli/actions/runs/32267338333),
   commit `44702fb` — reporting 118 tests / 118 pass / 0 fail on Node v18.20.8, v20.20.2,
-  v22.23.2 and v24.19.0. README frames this honestly as **verified-at-18**, not
+  v22.23.2 and v24.19.0. The 118 there is correct for that commit; the suite has since
+  grown to 119, and the matrix has stayed 4/4 green on every commit after it (checked at
+  the closing gate against
+  [run 32293231112](https://github.com/trmnmc/aphorism-cli/actions/runs/32293231112)).
+  README frames the floor honestly as **verified-at-18**, not
   proven-minimal: nothing tests Node 16 or 17, so whether the CLI runs there is unknown,
   not ruled out.
 - **Reported as not run, never as passed:** the SWARM playbook helper
@@ -44,19 +49,23 @@ correction and every dated claim, moved verbatim rather than summarized — live
 
 ## What is open
 
-Per `.swarm/backlog.json` **as of the close of run #4 cycle 4**: 13 tracked items — 6 done
-(N-1, N-2, N-3, N-5, N-6, N-7), nothing in flight, 6 blocked on a human ruling, and 1
-declined (R-1). Any bare count on this page is a snapshot dated to this cycle and goes
-stale the moment the run closes its next item — measured eight times now, including twice
-across the run's last two cycles alone: once at cycle 4, when this paragraph was first
-written mid-cycle and falsified by the very commit that shipped it, and once at cycle 3 in
-the same way. The item names below stay true longer than the arithmetic; the counts are
-re-derived from `backlog.json` at each cycle's verification gate rather than trusted.
+Per `.swarm/backlog.json` **at the close of run #4** (cycle 12, the run's last): 19 tracked
+items — 11 done, **nothing in flight**, 7 blocked on a human ruling, and 1 declined (R-1).
+This is the final count for the run, not a mid-cycle snapshot: the run ended because the
+todo column reached zero, so there is no next item to falsify it. That distinction is worth
+stating, because the count in this paragraph was falsified twice while the run was live —
+at cycle 3 and again at cycle 4, when it was written mid-cycle and invalidated by the very
+commit that shipped it. The item names below stay true longer than the arithmetic either
+way; every count here was re-derived from `backlog.json` by the closing gate rather than
+carried forward.
 
 ### Blocked on a human ruling
 
-The six items below are blocked because a person, not an agent, must decide. None is
-re-described as work a builder could pick up.
+The seven items below are blocked because a person, not an agent, must decide. None is
+re-described as work a builder could pick up. **No agent action can unblock any of them** —
+which is why the run ended here rather than continuing: four of the seven (TS-1, TS-2,
+TS-3, TS-6) are blocked on the owner lifting a SPEC-locked non-goal, and that lock can only
+be lifted at a kickoff, by a human.
 
 - **T-006** — corpus attribution audit. *Next actor:* a human (no one in this run can
   reach a primary source; network access is a product non-goal). *Settles when:* all 50
@@ -101,6 +110,17 @@ re-described as work a builder could pick up.
   corpus in three voices. *Next actor:* a human, the repo owner, at the next kickoff (same
   scope decision as TS-1). *Settles when:* corpus expansion is permitted and new entries
   diversify author and era rather than deepen the three already-dominant voices.
+- **TS-6** — the `--tag` vocabulary is undiscoverable without `jq`, and an unknown tag is
+  indistinguishable from an empty result. *Next actor:* a human, the repo owner, at the next
+  kickoff (adding a `--tags` flag is a new flag, this run's locked non-goal). *Settles when:*
+  the owner rules on whether discovery belongs in `--help` output or behind a new flag.
+  Conductor-measured at cycle 9, not asserted: `--tags` exits 2 and `--help` never mentions
+  it; `--help` delegates discovery to the pipeline
+  `node bin/aphorism.js --list --json | jq -r '.tags[]' | sort -u`; and an unknown tag
+  produces byte-identical stderr and exit status to a genuinely empty intersection of two
+  *valid* filters. Filed **minor**, not a bug: the message is generic across the whole
+  no-match class rather than misleading about tags specifically, which is defensible unix
+  behaviour.
 
 ### Declined
 
@@ -119,6 +139,48 @@ re-described as work a builder could pick up.
 Fuller background, prior attempts and exact citations for every item above live in
 `.swarm/backlog.json`'s own notes; items open before this run are also covered in
 [`docs/report-history.md`](docs/report-history.md).
+
+## How run #4 ended, and what only a human can finish
+
+**Run #4 closed at cycle 12 of a clock that had ~18.5 hours left.** That is deliberate and
+it is the honest outcome, not a crash: the todo column reached zero at cycle 11, all five of
+the run's must-haves closed, and no remaining candidate passed the value ratchet — *would
+the target user notice, and would they still care ten minutes later?* Everything that clears
+that bar (corpus expansion, no-repeat rotation, a `--tags` flag) is a non-goal this run's own
+brief locked; everything permitted is more documentation about documentation, which is the
+precise churn must-have M-2 spent the run undoing. The clock was handed back with the reason
+recorded rather than spent.
+
+The closing gate re-derived the definition of done from the tree — 12 cells, **12 PASS / 0
+FAIL**, including two must-die controls proving the audit can report failure
+(`.swarm/runs/run4-cycle-012-donegate.mjs`, output alongside it). It did not read prior
+cycles' claims.
+
+**Machine-checked** (re-run by the conductor at close, not taken from an agent): the 119-test
+suite green; the 4-version Actions matrix green; `src/corpus.js` byte-identical since the run
+began; `bin/` and `src/` untouched for the entire run — the run's whole footprint is
+`.github/workflows/test.yml`, `README.md`, `REPORT.md`, `docs/report-history.md` and
+`test/readme-tags.test.js`; zero runtime dependencies; every line of the pre-move 1578-line
+REPORT.md still present after the move to the appendix.
+
+**Reported as not-run, never as passed:** the SWARM playbook helper `bin/swarm-playbook.sh`
+was re-executed at cycle 12 and **denied again** by the harness. The cause is now structural
+rather than suspected — `/opt/swarm/.claude/settings.json` was read directly this cycle and
+carries no entry for that script in any form. The ledger stays at **denial #31** (a second
+reproduction inside the same run does not advance the count) and the exact patch a human
+would apply is in `SWARM/playbook/HANDOFF-allowlist-2026-08-17.md`.
+
+**Only a human can finish:** every one of the seven open items above. Three need a ruling
+(T-006 corpus attributions, T-040 retag consequences, J-7's seven undecided CLI behaviours);
+four need a locked non-goal lifted at a kickoff (TS-1, TS-2, TS-3, TS-6). No machine check
+substitutes for any of them — corpus attribution in particular needs primary sources this
+CLI is designed never to reach, and it remains the repo's highest-severity open issue.
+
+**Standing finding for whoever schedules the next run:** this was the fourth consecutive run
+under a brief forbidding the only changes the product's own taste instrument — three separate
+taste judges now — says would matter. It ran out of permitted work with most of its clock
+unspent. The lever is the brief, not the machinery: permit the no-repeat rotation, or permit
+corpus expansion paired with the attribution audit, and there is real work here again.
 
 ## Full history
 

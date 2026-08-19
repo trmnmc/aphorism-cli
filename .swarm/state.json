@@ -1,468 +1,473 @@
 {
- "idea": "zero-dependency Node CLI printing a random attributed programming aphorism — improvement run #3: measure, repair, document; no new features",
- "project_dir": "/opt/targets/aphorism-cli",
- "created_at": "2026-08-14T00:00:00+00:00",
- "run_label": "improvement run #4",
- "run_started_at": "2026-08-19T14:05:17Z",
- "phase": "POLISH",
- "cycle": 11,
- "run_cmd": "node bin/aphorism.js",
- "test_cmd": "node --test test/*.test.js",
- "spec_digest": [
-  "IMPROVEMENT RUN #4 on a shipped zero-dep Node CLI — settle two unsupported claims; no new features",
-  "must: Node floor settled by REAL Actions matrix output or corrected in README; not-run reported as not-run (M-1)",
-  "must: REPORT.md first screen answers shipped/verified/open, history MOVED not deleted, audit pasted (M-2)",
-  "must: allowlist gap proven closed by executing the denied script, else denial #30 + exact patch handed off (M-3)",
-  "must: every open item gets a named actor + settling evidence, KI-35 fixed (M-4); suite green >= 118, no unmeasured test (M-5)",
-  "non-goals: corpus expansion, rotation, any new flag, any dependency, any deleted citation"
- ],
- "baseline_2026_08_19": {
-  "test_cmd_output": "tests 118 / pass 118 / fail 0 / duration_ms 4745.9 (node v24.19.0)",
-  "report_md_bytes": 127404,
-  "report_md_lines": 1578,
-  "readme_md_bytes": 6022,
-  "corpus_sha256": null,
-  "playbook_denials": 30
- },
- "decisions": [
-  {
-   "cycle": 12,
-   "kind": "scope",
-   "what": "Re-ran the DONE decision that V-7 was opened to inform. It comes back NOT DONE -- for a reason that has nothing to do with the documents.",
-   "why": "V-7's own result argued FOR done: the sweep found the decay bounded and cheap -- two stale claims in REPORT.md's run #3 hand-off and one ASCII-folded author in docs/, all repaired, every live assertion green. What blocks done is what the same sweep turned up in the run's own bookkeeping: REVIEW-FIX, one of the three passes cycle.md step 4 makes mandatory before POLISH, HAS NEVER RUN in run #3, and the cycle-9 QA note asserting it ran at cycle 5 is false against cycle 5's and cycle 6's own journal blocks. The gate is not owed vacuously: this run shipped real product code at cycles 7, 8 and 10 (bin/aphorism.js +44 lines, src/args.js, src/corpus.js), which is exactly the condition cycle 6 named when it deferred the pass and instructed a later cycle to scope it to src/ bin/ test/ rather than to the run's diff. Cycle 8 declared this target DONE and was wrong four times over -- cycles 9, 10, 11 and 12 each produced verified value -- and every one of those cycles traces to running a gate that had never been run, or to the chain such a gate started. Declaring done while a mandatory gate sits unrun, on the strength of a note claiming it ran, would be reasoning from the bookkeeping instead of from the tree. That is the exact error V-7 was chartered to correct."
+  "idea": "zero-dependency Node CLI printing a random attributed programming aphorism — improvement run #3: measure, repair, document; no new features",
+  "project_dir": "/opt/targets/aphorism-cli",
+  "created_at": "2026-08-14T00:00:00+00:00",
+  "run_label": "improvement run #4",
+  "run_started_at": "2026-08-19T14:05:17Z",
+  "phase": "DONE",
+  "cycle": 12,
+  "run_cmd": "node bin/aphorism.js",
+  "test_cmd": "node --test test/*.test.js",
+  "spec_digest": [
+    "IMPROVEMENT RUN #4 on a shipped zero-dep Node CLI — settle two unsupported claims; no new features",
+    "must: Node floor settled by REAL Actions matrix output or corrected in README; not-run reported as not-run (M-1)",
+    "must: REPORT.md first screen answers shipped/verified/open, history MOVED not deleted, audit pasted (M-2)",
+    "must: allowlist gap proven closed by executing the denied script, else denial #30 + exact patch handed off (M-3)",
+    "must: every open item gets a named actor + settling evidence, KI-35 fixed (M-4); suite green >= 118, no unmeasured test (M-5)",
+    "non-goals: corpus expansion, rotation, any new flag, any dependency, any deleted citation"
+  ],
+  "baseline_2026_08_19": {
+    "test_cmd_output": "tests 118 / pass 118 / fail 0 / duration_ms 4745.9 (node v24.19.0)",
+    "report_md_bytes": 127404,
+    "report_md_lines": 1578,
+    "readme_md_bytes": 6022,
+    "corpus_sha256": null,
+    "playbook_denials": 30
   },
-  {
-   "cycle": 13,
-   "kind": "scope",
-   "what": "Rule the empty-flag-value asymmetry (D-44) UNDECIDED and document it, rather than fix it in src/args.js.",
-   "why": "Reviewer-found, verifier-reproduced, conductor-re-measured: --author '' exits 0 and matches the whole 50-entry corpus while --author= exits 2; --tag '' exits 1 while --tag= exits 2. Two clauses the SPEC does state point opposite ways (substring containment must match everything on an empty needle; Exit-codes calls a missing argument bad usage) and no clause names empty values or distinguishes the two syntaxes. Structurally identical to the D-43 precedent, which was left human-owned. Independently decisive even if a human later rules 'reject': either direction changes shipped user-visible CLI behaviour, which this run's non-goals forbid. Routed to J-7 as its fifth ruling."
+  "decisions": [
+    {
+      "cycle": 12,
+      "kind": "scope",
+      "what": "Re-ran the DONE decision that V-7 was opened to inform. It comes back NOT DONE -- for a reason that has nothing to do with the documents.",
+      "why": "V-7's own result argued FOR done: the sweep found the decay bounded and cheap -- two stale claims in REPORT.md's run #3 hand-off and one ASCII-folded author in docs/, all repaired, every live assertion green. What blocks done is what the same sweep turned up in the run's own bookkeeping: REVIEW-FIX, one of the three passes cycle.md step 4 makes mandatory before POLISH, HAS NEVER RUN in run #3, and the cycle-9 QA note asserting it ran at cycle 5 is false against cycle 5's and cycle 6's own journal blocks. The gate is not owed vacuously: this run shipped real product code at cycles 7, 8 and 10 (bin/aphorism.js +44 lines, src/args.js, src/corpus.js), which is exactly the condition cycle 6 named when it deferred the pass and instructed a later cycle to scope it to src/ bin/ test/ rather than to the run's diff. Cycle 8 declared this target DONE and was wrong four times over -- cycles 9, 10, 11 and 12 each produced verified value -- and every one of those cycles traces to running a gate that had never been run, or to the chain such a gate started. Declaring done while a mandatory gate sits unrun, on the strength of a note claiming it ran, would be reasoning from the bookkeeping instead of from the tree. That is the exact error V-7 was chartered to correct."
+    },
+    {
+      "cycle": 13,
+      "kind": "scope",
+      "what": "Rule the empty-flag-value asymmetry (D-44) UNDECIDED and document it, rather than fix it in src/args.js.",
+      "why": "Reviewer-found, verifier-reproduced, conductor-re-measured: --author '' exits 0 and matches the whole 50-entry corpus while --author= exits 2; --tag '' exits 1 while --tag= exits 2. Two clauses the SPEC does state point opposite ways (substring containment must match everything on an empty needle; Exit-codes calls a missing argument bad usage) and no clause names empty values or distinguishes the two syntaxes. Structurally identical to the D-43 precedent, which was left human-owned. Independently decisive even if a human later rules 'reject': either direction changes shipped user-visible CLI behaviour, which this run's non-goals forbid. Routed to J-7 as its fifth ruling."
+    },
+    {
+      "cycle": 13,
+      "kind": "scope",
+      "what": "Repair the overclaiming test name by RENAMING the test, not by narrowing its matcher — and leave the matcher byte-identical under a sealed hash.",
+      "why": "The guard named 'README should acknowledge single-entry tag limitation' is a token co-occurrence check; the verifier reproduced both that an unrelated decoy sentence passes it and that a sentence DENYING the property passes it, against a green 118/118 baseline, with a control proving the test can still die. The comment block above it records three prior narrowings that produced two new false rejections while the silent hole survived, and names the structural reshape (T-024) as the right answer — M-effort, out of this run's scope. A fourth narrowing would reintroduce a bug class this repo has already paid for three times. Making the NAME true costs nothing, removes the false claim a maintainer actually reads, and leaves the reshape honestly available as R-1. Separately measured and recorded on the test: the corpus now has 12 distinct tags and ZERO on exactly one entry, so the guard's premise no longer holds at all."
+    },
+    {
+      "cycle": 14,
+      "kind": "method",
+      "what": "Held the sealed gate OUTSIDE the target repo for the duration of the dispatch window, instead of committing it into the target before dispatch as cycle 13 did.",
+      "why": "Cycle 13 committed its gate into the target repo before dispatching and kept builders out of it with a prompt line — \"do not attempt to locate, read or infer the check\". That is an instruction, and an instruction is only as strong as the agent's compliance with it. Hard rule 5 says workflow agents receive target paths only and never SWARM paths, so a gate held under SWARM/runs/ is STRUCTURALLY unreachable to a builder rather than merely forbidden to it. The tamper-evidence property that motivated cycle 13's in-repo commit is fully preserved: the sha256 and the pre-dispatch baseline were committed to the target at 6c9d6a3 before any agent ran, and the gate file itself was copied in after verification and re-hashed to f3fb4648..., matching the seal exactly. Strictly stronger at zero cost, and recorded because it deviates from the practice the immediately preceding cycle established."
+    },
+    {
+      "cycle": 14,
+      "kind": "verification",
+      "what": "Closed R-2 done-by-conductor-repair, not done-as-delivered: the 13/13 gate passed with a false claim sitting inside the very paragraph the item was repairing.",
+      "why": "The builder dated its own edit 'extended by R-2 (run #3, cycle 6)'. R-2 ran at cycle 14. That is a false provenance claim written into the one paragraph in REPORT.md whose entire job is dating claims correctly — the exact overclaiming failure mode the cycle-4 N-6 record predicted for a haiku agent on this document. The gate did not catch it and was not wrong not to: its cells check behaviour COUNTS against the backlog, and cycle attribution is a different claim class. It was found by READING THE DIFF, which is the answer to the question a gate cannot answer for itself. The repair is one token; re-dispatching at attempts+1 for one token would have spent a cycle, and the cycle-4 N-6 precedent for exactly this situation is conductor repair with the agent attempt recorded as imperfect, which is what is recorded here and on the item. NOTE THE SHAPE, because it is new for this run: the eight prior instrument defects were all the gate being WRONG. This is the gate being RIGHT AND INSUFFICIENT — thirteen green cells over a document containing a falsehood none of them was aimed at. A sealed gate bounds what you checked, never what is true."
+    },
+    {
+      "cycle": 14,
+      "kind": "scope",
+      "what": "Scored R-1 against the two-question ratchet as cycle 13 instructed. It FAILS, and both of its available dispositions are human-owned — but the DONE call is deliberately NOT made this cycle.",
+      "why": "RATCHET: 'would the target user notice?' — no. R-1 reshapes an internal test guard; someone running `aphorism` in a terminal sees nothing either way. That is a no on question one, and cycle.md says a no on either question means do not build it. The premise is gone too: cycle 13 measured 12 distinct tags and ZERO on exactly one entry, so the single-entry-tag limitation the guard exists to protect does not currently exist, and cycle 13 already removed the false CLAIM by renaming the test. What remains is a correctly-named vacuous guard. Its own note raises RETIREMENT as possibly more honest than reshaping — but retiring a guard is deleting a claim, and T-040's pending human ruling could reintroduce single-entry tags, so retirement is human-owned as well. WHY DONE IS STILL NOT DECLARED: this run has run the DONE decision three times (cycles 8, 11, 12) and cycle 8 was wrong four times over. Cycle 13's handoff asked the next cycle to score R-1 and then judge; scoring it is this cycle's obligation and is discharged here. Making the judgment in the same breath, on a board I have only just changed, is how cycle 8 got it wrong. The next cycle re-runs it against a settled tree with this score already on the record."
+    },
+    {
+      "cycle": 15,
+      "kind": "scope",
+      "what": "Declared the target DONE and entered WRAP_UP, handing ~17.7 hours of clock back unspent.",
+      "why": "Cycle 14 scored R-1 against the ratchet and deliberately withheld the judgment for a cycle looking at a settled tree; this is that cycle, and the board did not move (zero agents, zero product code, nothing filed). WHAT MAKES THIS DIFFERENT FROM CYCLE 8, which declared done and was wrong four times over: every one of those four errors traces to a mandatory gate that had never run while the bookkeeping said it had. That root is measured absent -- review-fix paid at cycle 13, QA full at 6, TASTE at 9, POLISH at 10, each confirmed against its own journal block rather than a summary note, and cycle 12 already caught the one false summary in that family. THE LOAD-BEARING MEASUREMENT is K4a/K4b of the cycle-15 gate: K-4 governs three document surfaces, and the honest question is not whether they were true once but which have MOVED since the last full sweep and whether each mover is covered by a gate re-run against today's tree. By diff, since cycle 12's V-7 sweep (c64fc09) README.md and docs/ have not moved at all, and the single mover is REPORT.md -- covered by the cycle-14 gate, which re-verified 13 PASS / 0 FAIL today against a file still hash-matching its pre-dispatch seal, and which derives its true count from backlog.json at run time so it cannot go stale the way the claims it checks did. ON THE REGRESS, which is real: every cycle writes claims and creates a fresh unread diff, so a run can audit itself forever. What terminates it is structural rather than a feeling -- the two surfaces that could still be silently wrong have not moved since a full sweep, the one that moved re-verifies, and WRAP_UP writes the last documents with no cycle following to write more. Nothing on the board passes the two-question ratchet: R-1 fails Q1, TS-1/2/3 are a locked non-goal the swarm cannot lift for itself, and T-006/T-040/J-7 each require a human by their own acceptance clause."
+    },
+    {
+      "cycle": 15,
+      "kind": "verification",
+      "what": "The cycle-15 DONE gate was NOT commit-reveal sealed, and its 3 FAILs were adjudicated by hand with the file left unedited.",
+      "why": "ON NOT SEALING: the seal exists to stop a builder coding to the check (hard rule 2). This cycle dispatched zero agents, so there was nobody to hide it from, and sealing would have been ceremony rather than evidence. What the gate does hold to is INDEPENDENCE -- every cell re-derives its expected value from the tree, the shipped corpus module or backlog.json at run time, never from a journal note or a prior cycle's summary. ON THE THREE FAILS, all adjudicated rather than edited away, per the cycle-4 and cycle-12 precedent that rewriting a gate after it has run destroys the evidence of what it measured: P1 asserted a one-line default run, but the shipped format is two lines (aphorism, then an indented em-dash attribution), which SPEC's 'one aphorism plus attribution' satisfies -- I imported the --list one-line shape into a different surface, and verified rather than assumed that this is not a regression (the whole-run diff of bin/aphorism.js touches only the EPIPE/stderr handler, zero deletions, no format line). S1 hardcoded a six-file test list naming corpus.test.js and pick.test.js, which DO NOT EXIST; node --test ran the four that did, EXITED 0, and reported 100 pass / 0 fail -- green but silently incomplete, the same family as cycle 12's A6 and cycle 14's OBS-1 but with the worse property that an under-measuring instrument still exits 0. The real test_cmd is 118/118/0, run directly. B1 is a CORRECT fail against the wrong surface: T-006's acceptance genuinely lacks the word human, but K-5 requires the restatement in REPORT.md's hand-off, and REPORT.md:395 supplies it in a four-column table whose last column reads human. These are the 11th and 12th instrument defects of the run; the standing lesson is unchanged and was again decisive -- a gate is a program and needs its own baseline, not confidence."
+    },
+    {
+      "cycle": 1,
+      "kind": "verification",
+      "what": "The cycle-1 gate's C4 cell FAILED against a suite that was green the whole time. Adjudicated as an instrument defect and repaired ADDITIVELY - the gate file is left byte-unedited and the repair is a separate artifact carrying its own four-column measurement.",
+      "why": "C4 parsed `^# tests (\\d+)`, the TAP reporter's shape. Node 24 emitted the SPEC reporter - `ℹ tests 118` - so the cell read tests=0 against a tree that measures 118/118/0 when test_cmd is run directly. This repo has a standing precedent (cycles 4, 12, 14 of run #3) that a gate is not rewritten after it has run, because rewriting it destroys the evidence of what it measured; the repair therefore lives in run4-cycle-001-C4fix.mjs and the original FAIL stays on the record. WHAT MAKES THIS DEFECT DIFFERENT FROM THE WORST ONE THIS REPO HAS FILED, and the reason it is worth one line rather than an alarm: run #3 cycle 15's S1 defect under-measured and still EXITED 0 - green and silently incomplete. This cell required tests >= 118, so an unparsed count could only fail CLOSED. A parser that cannot read its input reported that it could not, which is the behaviour you want from an instrument that is wrong. THE REPAIR IS MEASURED, NOT ASSERTED, in four columns: the unfixed parser must still MISS on the real output (A - defect reproduced), the fixed parser must recover 118/0 on that same real output (B), must still read synthetic TAP (C - no regression on the format the old parser did handle), and must report fail=3 on synthetic failing output (D - not a rubber stamp). All four came out as expected. This is the 14th instrument defect in this repo's recorded history and the standing lesson is unchanged: a gate is a program and needs its own baseline, not confidence."
+    },
+    {
+      "cycle": 1,
+      "kind": "method",
+      "what": "REFUSED the gear-2 mechanical demotion of N-2 (the REPORT.md split) from sonnet to haiku, and recorded the refusal rather than taking it silently.",
+      "why": "Gear pacing demotes docs/polish items sonnet->haiku, and N-2 is kind=docs. But this repo has MEASURED that exact routing failing on this exact file, twice: run #3 cycle 4 (record N-6) predicted an overclaiming failure mode for a haiku agent on REPORT.md, and run #3 cycle 14 caught a haiku agent writing a false provenance date into REPORT.md - inside the one paragraph whose entire job is dating claims correctly. N-2 is the highest-risk item of this run by construction: its acceptance is that every non-whitespace line survives a MOVE verbatim, so the failure mode is silent paraphrase, which is precisely what the two measured incidents were. A demotion rule exists to save budget on work where the cheap tier is adequate; here the cheap tier has a two-incident record on the same file. Recorded because it overrides a mechanical rule, and a silent override is how a run starts quietly deciding things it never wrote down."
+    },
+    {
+      "cycle": 1,
+      "kind": "scope",
+      "what": "Split M-1 into a builder half (N-1, the workflow file) and a conductor half (N-7, pushing it and reading the REAL Actions output), instead of filing one item.",
+      "why": "The plan agent flagged this and it is right. A builder can write a correct matrix workflow; it cannot observe a GitHub Actions run, because only this session holds the gh token and only the conductor pushes (hard rule 1). Filing M-1 as a single builder item would leave the builder holding an acceptance clause it can only satisfy by fabricating a result - and M-1's whole purpose is to kill an unverified claim, so producing a new one to close it would be self-defeating. N-1's notes therefore forbid it from touching README.md's floor claim at all. MEASURED AT THIS CYCLE, and the reason M-1 is attemptable at all after three runs called it permanently unverifiable: the repo is PUBLIC, and `gh auth status` reports token scopes gist, read:org, repo, workflow. The prior runs' reasoning was about the VPS holding one Node runtime - true, and about the wrong machine."
+    },
+    {
+      "cycle": 2,
+      "kind": "verification",
+      "what": "The sealed gate's A3 cell FAILED a workflow file that satisfies N-1's acceptance clause. A3 required the push trigger to NAME `master`; the builder wrote a bare `push:`, which fires on every branch including master and therefore cannot mis-name it. A3 encoded a MEANS where the acceptance states an END.",
+      "how_settled": "The gate was left BYTE-UNEDITED (sha256 46e6da99... unchanged after the run, re-verified). A separate 5-column artifact measured the repair: A UNFIXED cell misses on the real file; B FIXED cell recovers truth; C CONTROL a `branches:[main]`-only workflow is STILL rejected; D CONTROL a workflow with no push trigger is STILL rejected; E CONTROL an explicit `branches:[master]` still accepted. 5/5. Columns C and D are what make it a repair and not a loosening. The DECISIVE evidence was not the parser at all: the push produced a real run on master.",
+      "instrument_defect_number": 15
+    },
+    {
+      "cycle": 2,
+      "kind": "scope",
+      "what": "N-7 (settle the README floor) was NOT closed this cycle even though its evidence was obtained this cycle.",
+      "why": "cycle.md step 5 permits ONE work type per cycle; this cycle's was the build wave. Editing README.md on the strength of fresh evidence without a sealed gate of its own would trade this run's central discipline for an hour of clock the run does not need - stop_at is ~23h out. The evidence is recorded verbatim in N-7's notes so the next cycle opens with it in hand."
+    },
+    {
+      "cycle": 2,
+      "kind": "routing",
+      "what": "Builders were dispatched as DIRECT Agent calls (sonnet for N-1, haiku for N-3), not via workflows/build-wave.js.",
+      "why": "Headless pacer-spawned `-p` cycle: the Workflow tool is review-gated, and direct Agent dispatch is the documented SKILL.md fallback. Same basis as run #3 cycles 6, 8, 9, 10, 13, 14. No worktrees, so the two agents were given strictly disjoint file scopes (.github/workflows/test.yml vs .swarm/runs/NAMING.md) and `git status` after the wave confirmed exactly those two paths and nothing else."
+    },
+    {
+      "cycle": 4,
+      "kind": "scope",
+      "what": "DECLINED R-1 on this run's own measurement, and measured the thing the inherited ratchet score never asked.",
+      "why": "M-4 permits exactly two outcomes for R-1 and this is the second. Run #3 cycle 14 already scored it FAIL on question one of the ratchet, but a decline resting only on an inherited score is a decision reasoning from bookkeeping, which is the exact error this repo has filed against itself repeatedly. WHAT WAS ACTUALLY MEASURED, and it reframes the item: the cycle-39 record established the guard is SILENT on D4a/D4b (acknowledgement stripped, in-section decoy left behind) — but it established that by ISOLATING the guard via --test-name-pattern, explicitly so neighbouring count guards 'can neither supply nor mask the verdict'. That correctly answers 'is the guard broken' and never asks 'is the PROPERTY unprotected', which is what R-1's value actually depends on. Asked directly (run4-cycle-004-r1probe.mjs, 7/7, arms built by git archive 60c71d3 rather than by copying a live tree): the FULL SUITE goes RED 116/2 on both D4a and D4b while the target guard stays silent on both, exactly as recorded. The kill is ATTRIBUTED, not incidental (run4-cycle-004-r1attrib.mjs + a 4/4 adjudication of its one instrument defect): skipping exactly the two count guards lets both mutations SURVIVE, the removed set was verified BY NAME rather than by count, the target guard was verified still present in those runs so the survival is not self-fulfilling, a non-matching skip pattern removes nothing, and a benign reword leaves the suite green so the red arms are not an instrument that dies on everything. DECISIVE PROPERTY: those two guards re-derive from src/corpus.js at run time and FAIL CLOSED on an absent acknowledgement — the precise direction the target guard fails OPEN. A reshape would add a third guard over a covered property and would require README to own a NEW structural marker, i.e. editing a shipped document to satisfy a test. RESIDUAL STATED, NOT HIDDEN: the two covering guards are prose regexes bound to a corpus-derived number, not the structural markers R-1's acceptance asks for, so coverage is behavioural rather than architectural; and the guard's OTHER recorded defect, the D1/D3/E3 false-rejection direction, is untouched by this decline. Re-open if a T-040 ruling reintroduces single-entry tags."
+    },
+    {
+      "cycle": 4,
+      "kind": "verification",
+      "what": "The anti-staleness cell A6 CAUGHT the decay class in the act — the first time a gate on this repo has, rather than a human catching it by reading.",
+      "why": "This repo has now measured eight times that a count claim goes stale the moment the run closes its next item; at cycle 3 the defect was caught by the conductor reading 73 lines, and the journal recorded that no cell of the gate covered it. So this cycle's gate got a cell that re-derives every asserted count from backlog.json AT RUN TIME. The sequence is the evidence: the gate passed A6 12/14 with N-5 still open; N-5 was then marked done; the SAME gate, byte-unchanged, immediately returned A6 FAIL with 'claimed done 5 != truth 6, inflight 1 != 0'. The document was falsified by the very commit that shipped it, exactly as at cycle 3 — but this time the instrument said so instead of a person noticing. Repaired to 6 done / nothing in flight / 6 blocked / 1 declined, and the prose now says counts are re-derived at each cycle's gate rather than trusted. LESSON WORTH CARRYING: the fix for a decay class is not more careful writing, it is a cell that derives the claim from the source at verification time. Careful writing was tried at cycle 3 and produced the same defect."
+    },
+    {
+      "cycle": 4,
+      "kind": "verification",
+      "what": "Both sealed-gate FAILs (A2, A4) were adjudicated as instrument defects sharing ONE root cause, with the gate left byte-unedited — and a REAL defect the gate never asked about was found by reading.",
+      "why": "INSTRUMENT DEFECTS #17 and #18, adjudicated 11/11 in run4-cycle-004-A2A4-adj.mjs. Both trace to one heuristic: the gate sliced an item's 'entry' from the FIRST occurrence of its id to the next id. R-1's first mention is in the summary paragraph ('...and 1 declined (R-1)'), so its slice began AFTER the word 'declined' and could not structurally contain the answer A2 asked for; TS-3 is the LAST blocked id, so its slice ran through the '### Declined' heading and absorbed R-1's legitimate 'ruled by this run's own conductor', which A4 then attributed to TS-3. A third bluntness: A4's /this run/ alternative fired on T-006's 'no one in this run can reach a primary source' — a clause that REINFORCES human ownership. The repair reads bullets structurally and tests the actor's HEAD clause, with controls in BOTH directions: the stale wording is still rejected, a deleted R-1 bullet is still rejected, an invitation to a builder still FIRES, an agent named in the actor field still FIRES, and an agent assignment HIDDEN inside a parenthetical still FIRES (control K, added specifically to guard the narrowing that made column I pass). THE ADJUDICATION ARTIFACT ITSELF WAS WRONG TWICE BEFORE IT WAS RIGHT, and that is worth recording: its bullet regex ended with a bare `$` under the `m` flag, so every bullet was truncated at its first line (~85 chars) and the actor field was never in scope — caught because columns F and I are the same predicate with opposite expectations and could not both pass. Its column J, the control meant to catch exactly that, was a length threshold weak enough to pass on the truncated output; it now requires the structural markers a complete bullet owns. AND THE SHAPE THAT MATTERS MOST, because it is the cycle-14 lesson recurring: the gate was RIGHT AND INSUFFICIENT. Twelve green cells sat over a REPORT.md that told a human to look at 'SPEC.md line 144' for the retag example — the example is at line 206; line 144 is unrelated prose. The builder did not invent it, it is transcribed verbatim from T-040's acceptance clause in backlog.json, so the staleness is inherited and is the KI-23 drift class. No cell asked whether a cited line number resolves. Found by reading, repaired to cite the rule rather than the line, with the drift noted in place."
+    },
+    {
+      "cycle": 4,
+      "kind": "routing",
+      "what": "REFUSED the gear-2 docs demotion of N-5 from sonnet to haiku for the second time this run, and re-verified rather than re-asserted the basis.",
+      "why": "Cycle 1 refused the identical demotion for N-2 on two measured haiku overclaims on REPORT.md (run #3 cycle 4's N-6 prediction, run #3 cycle 14's false provenance date). The evidence has since GROWN rather than merely persisted: run #4 cycle 2 measured a third, a haiku builder reporting it wrote '75 lines (under 80-line target)' for a file that is 22 lines. N-5 edits the same file, and its failure mode is silent paraphrase of facts the document exists to state precisely. Recorded rather than taken silently because it overrides a mechanical rule, and a silent override is how a run starts quietly deciding things it never wrote down. The refusal was vindicated in a specific, checkable way: every corpus-derived figure the sonnet builder wrote was re-derived by the conductor and came back EXACT — 50 entries, 12 distinct tags, 5 tags at <=4 entries with the right per-tag counts, Dijkstra 7 + Perlis 5 + Pike 5 = 17/50 = 34.0%, median first repeat at draw 9, P(repeat by 12) = 76.18%, and the triage table's 8 HIGH / 16 MEDIUM / 26 LOW over 50 rows. The builder also volunteered a distinction the task did not ask for — that backlog.json names a specific actor ('repo owner, at the next kickoff') only for TS-1/2/3 and a generic 'human' for T-006/T-040/J-7 — and preserved it rather than inventing uniform specificity. That is the opposite of the overclaiming failure mode the demotion would have risked."
+    },
+    {
+      "cycle": 4,
+      "kind": "method",
+      "what": "A conductor cross-check produced a FALSE finding, and it was killed by measuring properly instead of by filing it.",
+      "why": "Recorded because near-misses of this shape are how a run inflates its own output. Spot-checking the builder's '8 HIGH / 16 MEDIUM / 26 LOW of 50' for the attribution triage, a quick `grep -oiE '(HIGH|MEDIUM|LOW)'` over docs/corpus-attribution-triage.md returned 12 / 21 / 28 — a flat contradiction, and 61 items against a 50-entry corpus. The arithmetic not summing to 50 is what stopped the finding from being filed: the grep was counting the words wherever they appeared, including the Method-and-limits prose and the 2026-08-18 correction note, not table rows. Counting rows matching /^\\|\\s*\\d+\\s*\\|/ gives exactly 50 rows and 8 / 16 / 26, confirming the builder. The instrument was mine and it was wrong; the builder was right. This is the third wrong instrument of the cycle after the gate's own two pre-seal bugs, and the standing lesson holds in a direction worth naming explicitly: the discipline of demanding evidence applies to the CONDUCTOR'S evidence too, and a cross-check that disagrees with a builder is a claim, not a verdict."
+    },
+    {
+      "cycle": 5,
+      "kind": "scope",
+      "what": "Ran REVIEW-FIX rather than re-running the DONE decision cycle 4 handed forward, and scoped it to what run #4 actually SHIPPED rather than to src/ bin/ test/.",
+      "why": "Cycle 4's hand-off asked the next cycle to re-run the DONE decision. cycle.md step 4 outranks a prior cycle's suggestion: it places ONE review-fix, ONE QA and ONE TASTE pass after BUILD and before POLISH/VALUE_LOOP, and run #4 had run NONE of the three. The trap this avoids is the one this repo has already paid for: run #3 cycle 8 declared DONE and was wrong four times over, and every one of those errors traced to a mandatory gate that had never run while the bookkeeping said it had. state.json's qa markers (last_full_qa_cycle 6, last_taste_cycle 9) are RUN #3 numbers carried forward; reading them as this run's evidence is exactly the error run #3 cycle 12 caught. ON THE SCOPE, measured not assumed: git diff --stat 7f00cf0 HEAD -- src bin test is EMPTY, so the product code is byte-identical to the tree run #3 cycle 13 reviewed clean, and pointing reviewers at it would have been reviewing bookkeeping — the mirror image of the error run #3 cycle 6 warned against. What run #4 actually shipped is one new executable artifact (.github/workflows/test.yml) and three documents, none of which any adversarial reader had ever seen. The pass returned 2 findings, both reproduced, both fixed, and the suite did not move: 118/118/0 before and after."
+    },
+    {
+      "cycle": 5,
+      "kind": "verification",
+      "what": "The gate came back 19/20 and the one FAIL is a CONTROL that went SILENT — a species this repo had not recorded before.",
+      "why": "C4 exists to prove cell P2 (both historical examples survive) is not vacuous, by deleting the cycle-3 example and checking P2 dies. Its mutation regex matched literal single spaces against RAW text, but the live document wraps as 'at cycle 3 in\\nthe same way', so the mutation was a NO-OP and C4 reported 'P2 PASS' — the control certified the cell while testing nothing at all. SAME ROOT CAUSE as a bug the PRE-SEAL baseline had already caught in the assertion path: I fixed the assertions to read whitespace-normalised text and left the MUTATION path reading raw text. Adjudicated 13/13 in run4-cycle-005-C4G5-adj.mjs with the gate left BYTE-UNEDITED, including both arms (deleting the cycle-3 example kills P2; deleting the cycle-4 example also kills it), a control that P2 still PASSES untouched, and a control that a benign rewrap — same words, 124 newlines to 120 — leaves P2 GREEN, so the repair is not a loosening. THE SECOND POST-SEAL DEFECT IS THE WORSE ONE and it PASSED: G5 asserts only README.md and REPORT.md changed since the seal, but it diffed f9c286d..HEAD while the fixers' work was still UNCOMMITTED, so it compared committed history to itself, reported changed=[] and would have passed identically had a fixer rewritten .github/workflows/test.yml. C4 failed LOUDLY and told me it was broken; G5 failed SILENTLY and read as green. That is the distinction worth carrying."
+    },
+    {
+      "cycle": 5,
+      "kind": "routing",
+      "what": "REFUSED the gear-2 docs demotion of the REPORT.md fixer from sonnet to haiku for the THIRD time this run — and separately recorded a routing ERROR of my own on the A-1 verifier seat.",
+      "why": "THE REFUSAL: cycles 1 and 4 refused the identical demotion on this identical file, on three measured haiku overclaims (run #3 cycle 4's N-6 prediction, run #3 cycle 14's false provenance date written into the one paragraph whose job is dating claims correctly, run #4 cycle 2's '75 lines' report for a 22-line file). B-1a's failure mode is silent imprecision about cycle attribution — the exact class. The refusal was partly vindicated and partly not: the sonnet fixer preserved every required element and disclosed its own blocked Bash access rather than claiming verification it had not done, but it still wrote 'once this cycle' where the durable form is 'once at cycle 4', which the conductor repaired in one token. THE ERROR, recorded because a silent one is worse: A-1's adversarial verifier was dispatched on OPUS, but verifier seats are judgment seats and the fable guard exempts them from demotion in every gear. That is one rung below the table, by my mistake, not by policy. It did not change the outcome — the verifier reproduced the finding, found no reviewer overreach, and volunteered the one mitigating fact that argued the severity DOWN from high to medium — and the conductor independently re-derived every decisive fact against the live GitHub API before accepting it. B-1's verifier was correctly on fable."
+    },
+    {
+      "cycle": 8,
+      "kind": "routing",
+      "what": "OVERRODE the routing table itself to hold Q-7 at sonnet. This is NOT the gear-2 demotion refusal cycles 1, 4 and 5 recorded — the TABLE routes this item to haiku on its own, before any pacing rule is applied.",
+      "why": "reference/workflows.md sends `kind` docs/polish at effort S to haiku, and Q-7 is filed docs/S. But that row states its own intent — \"formatting, scaffolding, boilerplate\" — and Q-7 is none of those: it writes a new SPEC entry in an existing three-bullet grammar, and reconciles a COUNT claim across REPORT.md by re-deriving it from backlog.json rather than copying a number. Precision about counts and provenance in exactly this document family is the failure mode this repo has now MEASURED four times on haiku agents: run #3 cycle 4 (record N-6) predicted it, run #3 cycle 14 caught a false provenance date written into the one paragraph whose job is dating claims correctly, run #4 cycle 2 caught a builder reporting it wrote \"75 lines\" for a 22-line file, and cycles 1/4/5 each refused the adjacent demotion on that record. Recorded because it overrides a mechanical rule in the PROMOTE direction under a gear that sets promote=false, which is a stronger override than the three refusals were, and a silent override is how a run starts quietly deciding things it never wrote down. VINDICATED SPECIFICALLY, not merely in outcome: the builder re-derived the count word from backlog.json rather than taking the number from its prompt (gate B6 confirms REPORT and backlog agree), and it reconciled the DEPENDENT claim the prompt only flagged — \"documents the last three\" -> \"the last four\" — keeping 2 + 4 = 6 internally consistent. It also volunteered that the four REPORT.md line numbers cited in J-7 notes (~1062/~1230/~1244/~1300) no longer exist, the file being 124 lines after the cycle-3 move, and established that by grepping the whole file instead of trusting the stale citations."
+    },
+    {
+      "cycle": 8,
+      "kind": "verification",
+      "what": "Adjudicated the sealed gate B3/B4 FAILs as INSTRUMENT DEFECTS #19 and #20 with the gate left byte-unedited — and the root cause is one this same gate had ALREADY caught and repaired in itself before sealing.",
+      "why": "B3 and B4 read a markdown bullet by taking the first SOURCE LINE matching its label. The builder wrapped its D-45 bullets at ~90 columns while the three pre-existing entries D-42/D-43/D-44 are single unwrapped lines, so \"J-7\" and \"stdout\"/\"stderr\" sat on continuation lines that were structurally out of scope. WHAT MAKES THIS WORTH RECORDING RATHER THAN JUST FIXING: the pre-seal baseline had already found the IDENTICAL defect in cell B5, where the Domain-rules Exit-codes bullet also wraps across two lines and the seal covered only half of it. I repaired B5 and did NOT propagate the repair to the two sibling cells that read bullets the same way. A defect found in one cell of a gate is evidence about every cell of that gate, and I treated it as evidence about one. Adjudicated 8/8 in run4-cycle-008-B3B4-adj.mjs: column A reproduces the miss on the real document, B recovers truth, C proves no regression on the unwrapped format the old reader DID handle, D and E are must-die controls, F and G are MUST-NOT-OVERREACH controls proving the whole-bullet reader cannot absorb a neighbouring bullet — the exact failure mode that produced instrument defects #17/#18 at run #3 cycle 4, so the repair is measured against the bug the repair itself risks introducing. Column H measures the blast radius rather than asserting it: B2 presence regexes scan the whole body and are wrap-immune, so no other cell shares the defect. Both cells failed CLOSED, which is the behaviour you want from a wrong instrument."
+    },
+    {
+      "cycle": 8,
+      "kind": "verification",
+      "what": "The gate own pre-dispatch baseline caught cell A2 passing VACUOUSLY against the unfixed document — a false PASS, not a false FAIL — and A2 was reshaped before sealing.",
+      "why": "A2 was a bag-of-words over the whole \"## Exit codes\" section: stderr AND 3 AND a failure token. Whitespace-normalising that section glues the entire markdown TABLE into one punctuation-free blob, so the sentence splitter produced a single unit carrying tokens harvested from three different rows, and the SHIPPED, UNFIXED row satisfied it — that row names stderr as the DIAGNOSTIC DESTINATION, not as a failing stream. This is the KI-12 / R-1 failure class exactly: a claim satisfied by co-occurrence inside a span no one intended as a sentence. Two repairs, both pre-seal: the unit pool now treats each table row as its OWN unit and never merges neighbours, and A2 was reshaped from a section-wide bag of words into a demand for SUBSTANCE inside the exit-3 row itself. Control C8 was added to pin it — it feeds the sealed cell the literal shipped-unfixed row and requires it to stay dead, so the specific text that fooled A2 can never satisfy it again. THE GENERAL POINT, which is why this is a decision and not a footnote: this run instrument defects have overwhelmingly been false FAILs, which announce themselves. This one was a false PASS, and only a DISCRIMINATING baseline — one that asserts which cells must be RED before the work exists — could have surfaced it. A baseline that merely checked its controls would have shipped it green."
+    },
+    {
+      "cycle": 9,
+      "kind": "scope",
+      "what": "The taste pass returned four findings and this run's locked non-goals forbid acting on essentially all of them — recorded as the cycle's real result rather than buried under the two backlog items it did produce.",
+      "why": "F1 (no anti-repeat memory) needs rotation; F2 (canon-only, Dijkstra 14%) needs corpus expansion; F4 (no --tags) needs a new flag. Rotation, corpus expansion and 'any new flag' are all LOCKED non-goals of run #4, set by the allocator's trickle brief. F3 is the only one with an in-scope half, and only its DOCUMENTARY half (record the discrepancy; the styling fix itself needs NO_COLOR, also a locked non-goal). So the swarm's independent taste seat, which had never read the kickoff, arrived at the same place the kickoff taste judge did and the same place run #3's cycle-9 taste pass did: the product's ceiling is the corpus and the draw, and this run may not touch either. THIS CORROBORATES THE DISSENT RECORDED IN SPEC.md AT KICKOFF — 'a fourth consecutive run producing zero user-visible value on a repo whose top product improvement (no-repeat rotation) stays deferred suggests the right call is to point the allocator at a different repo.' That dissent was recorded and not overridden because the brief is the operator's to change, not the swarm's, and that remains true: the conductor is not lifting a non-goal for itself. What the conductor CAN do is stop treating the dissent as a kickoff opinion and start treating it as a measured, twice-independently-reproduced finding, and say so in the morning report where the operator will read it.",
+      "consequence": "No non-goal lifted. TS-1 and TS-3 gain measured corroboration and stay blocked on the human scope decision. TS-5 filed as todo (the in-scope documentary half of F3). TS-6 filed blocked. The morning report must carry the corroboration prominently: the allocator has now spent four consecutive runs on a repo whose own taste instrument says the remaining value is behind a non-goal wall, and that is an allocator-level decision no cycle of this run can make."
+    },
+    {
+      "cycle": 9,
+      "kind": "pacing",
+      "what": "Paid the fable TASTE gate in gear 1 (crawl), which the gear table describes as haiku-priced work.",
+      "why": "The budget probe returned gear 1 (rho 4.50, guest mode, weekly ceiling 2, k_cap 1) and gear 1's work-choice guidance is 'haiku-priced useful work ... S-effort sonnet builds only'. A fable judgment agent is the opposite of haiku-priced, so this is an explicit override and is recorded as one rather than slipped through. Three reasons it is the right call. (1) The taste seat is fable-GUARDED: cycle.md and workflows.md both state pacing demotions never demote judgment seats, so the rules do not offer 'run taste on haiku' as an option — the honest choices were pay it at fable or defer it. (2) It is exactly ONE agent, which is the smallest work type in the catalogue and fits gear 1's wave cap of 1 precisely; no cheaper way to discharge this gate exists. (3) The probe put projected window depletion about an hour out, so deferring the last owed gate risked pushing it into a depleted window or a limp episode, with 19.7h of clock still to spend afterwards. Gear 1 governs what a cycle burns, not whether the run's last outstanding gate gets paid.",
+      "consequence": "Gate paid. All three pre-POLISH gates are now discharged for run #4 and no further judgment-seat spend is owed this run."
+    },
+    {
+      "cycle": 10,
+      "kind": "verification",
+      "what": "The sealed gate S3 cell FAILED against a working tree that satisfies the scope constraint exactly. INSTRUMENT DEFECT #22, adjudicated 11/11 with the gate left BYTE-UNEDITED.",
+      "why": "S3 asks whether README.md is the only changed tracked file. It read `git status --porcelain`, applied .trim() TO THE WHOLE OUTPUT, then sliced 3 characters off each line to skip the two status columns and their separator. But porcelain first column is a SPACE for an unstaged modification (\" M README.md\"), and the whole-output trim ate it, so the slice started one character late and the cell reported the changed path as \"EADME.md\". WHY THE PRE-DISPATCH BASELINE DID NOT CATCH IT, which is the part worth carrying: the baseline ran against a CLEAN tree, so porcelain emitted nothing, so no line was ever sliced and the cell passed VACUOUSLY. A discriminating baseline asserts which cells must be RED before the work exists — it did that, correctly, for B1-B4 — but it can still only exercise the code paths the WORLD hands it, and a clean tree hands a status reader no lines at all. That is a new species for this run: the prior defects were cells that were wrong on data they saw; this cell was never given data. It failed CLOSED, which is the right direction. The underlying claim was verified INDEPENDENTLY of the cell: `git status --porcelain | cat -A` by hand returned exactly \" M README.md$\". Adjudicated in .swarm/runs/run4-c010-S3-adj.mjs with must-die (E), must-not-overreach (F, G) and must-stay-dead (I) columns, plus a blast-radius pair.",
+      "instrument_defect_number": 22
+    },
+    {
+      "cycle": 10,
+      "kind": "verification",
+      "what": "The gate was RIGHT AND INSUFFICIENT again, and the gap was found by READING THE DIFF: the delivered README gained a count claim (\"24 distinct authors\") in the one section that no digit-hygiene guard reaches.",
+      "why": "Twenty green cells, every one of them aimed at whether the documentation claim is TRUE, and none at whether it will STAY true. This repo has filed the decay class eight times and has a measured answer to it — run #4 cycle 4 A6 cell, which re-derives every asserted count from its source AT RUN TIME and caught the decay in the act. The Q-6 gate had no such cell because Q-6 acceptance is about a reader understanding, not about a number; the number arrived as a side effect of the builder choosing (correctly, and in this README own voice) to prefer a measured figure to an adjective. MEASURED RATHER THAN ASSUMED, and the discriminator matters: this README is unusually well defended against precisely this — test/readme-tags.test.js carries J-5 (\"no unrecognised count-claim digits\") and C7 (\"no digit runs outside the counts table\") — but both are SECTION-SCOPED to Tag vocabulary and Attribution, and the new text landed under `## Flags`. The proof that it is genuinely unguarded rather than merely unnamed is that the suite is GREEN at 118/118 with the new \"24\" in place; had either guard reached that section it would have fired. Filed as Q-8 rather than fixed, because cycle.md step 5 permits ONE work type per cycle — the cycle-2 precedent for evidence obtained inside a build wave."
+    },
+    {
+      "cycle": 10,
+      "kind": "routing",
+      "what": "Corrected Q-6 model from the backlog haiku to sonnet at pick time. This is the routing TABLE being applied, not an override of it — and it is the opposite direction from the three gear-demotion refusals this run recorded.",
+      "why": "cycle.md step 4 says routing is PICK-TIME, not plan-time, and workflows.md sends `kind` docs/polish at effort S to haiku while sending \"all other build/fix items (S/M effort)\" to sonnet. Q-6 is kind=fix, so the table routes it to sonnet and the backlog haiku was a stale PLAN-time assignment. Gear 1 sets demote=true, but the demotion rule drops sonnet to haiku for docs/polish items ONLY, and never lets build/fix fall below sonnet — so pacing does not reach this item either. Recorded because cycles 1, 4 and 5 each recorded a REFUSAL of a haiku demotion on this repo document family, and it would be easy to read this as a fourth. It is not: no rule had to be overridden here, and saying so keeps the three genuine overrides legible as overrides."
+    },
+    {
+      "cycle": 11,
+      "kind": "scope",
+      "what": "Declined to update the eleven stale J-7 behaviour counts in docs/report-history.md while raising the live count from six to seven.",
+      "why": "That file is the ARCHIVE of what earlier reports said, moved out of REPORT.md under this run's own M-2 (\"history MOVED not deleted\"). A count that was true when written is not a defect; rewriting it would falsify the record of what was believed when, which is the one thing an archive exists to prevent. The live count sites — REPORT.md's J-7 bullet and the J-7 backlog record — were both updated in this cycle, and a gate cell pins the archive byte-identical so the decision is enforced rather than merely intended."
+    },
+    {
+      "kind": "process",
+      "cycle": 11,
+      "what": "Stop instructing builders to build scratch/mutation arms under /tmp. The instruction is unfollowable and this cycle proved it.",
+      "why": "The Q-8 builder disclosed that shell cp/mkdir were denied outright for /tmp, so it built its mutation arms INSIDE the repo (.scratch-mutation-test*/) using fs.cpSync instead. The likely cause is structural rather than incidental: /opt/targets/aphorism-cli is an additionalDirectories entry and /tmp is not, so a subagent cannot write there. The agent cleaned up and gate cell S1 came back clean, but the repo has NO .gitignore, so for the duration of the wave a `git add -A` would have committed two full scratch trees. The near-miss was caught only because S1 runs BEFORE the commit. Future builder prompts should name an in-repo scratch path and require its removal, rather than naming a path the sandbox will refuse."
+    },
+    {
+      "cycle": 12,
+      "kind": "scope",
+      "what": "Target DONE. The run definition-of-done was re-derived from the tree by a 12-cell conductor gate (run4-cycle-012-donegate.mjs, 12 PASS / 0 FAIL, 2 must-die controls) rather than trusted from prior cycles. VALUE_LOOP found no candidate clearing the two-question ratchet: every change a user would notice (corpus expansion, no-repeat rotation, a new flag) is a SPEC-locked non-goal for this run, and everything permitted is documentation about documentation - the exact churn M-2 spent this run undoing. Backlog todo 0; all 7 survivors human-owned. ~18.5h left on the clock, handed back with the reason on the record rather than spent. M-3 closes on its handoff branch, never as a pass: the denied script was re-executed this cycle and DENIED again (same run, so the ledger stays at denial #31)."
+    }
+  ],
+  "decisions_archive": ".swarm/decisions.json (all 41, full text — moved at kickoff, nothing dropped)",
+  "known_issues": [
+    {
+      "id": "KI-2",
+      "severity": "high",
+      "status": "open",
+      "title": "corpus attributions are unaudited — entry shape is machine-verified but no check available to this run can confirm each of the 50 quotes is "
+    },
+    {
+      "id": "KI-5",
+      "severity": "medium",
+      "status": "partially resolved cycle 1 of run #2",
+      "title": "SWARM playbook (SWARM/playbook/learnings.md) is over its documented cap: 31 lessons against a cap of 20"
+    },
+    {
+      "id": "KI-6",
+      "severity": "low",
+      "status": "open",
+      "title": "Subagents in this VPS -p session are sandboxed to the session --add-dir list (/opt/swarm, /opt/targets/aphorism-cli)"
+    },
+    {
+      "id": "KI-7",
+      "severity": "low",
+      "status": "mitigated, control passing 5 consecutive cycles",
+      "title": "Subagent scratch files land in the SWARM root (/opt/swarm) unless the dispatch prompt names an explicit scratch path"
+    },
+    {
+      "id": "KI-8",
+      "severity": "high",
+      "status": "mitigated in practice, root cause open",
+      "title": "The conductor's sealed pre-dispatch baseline is READABLE BY THE BUILDER IT IS MEANT TO BE SEALED FROM"
+    },
+    {
+      "id": "KI-9",
+      "severity": "medium",
+      "status": "RESOLVED at cycle 2 of run #2 — by removal, which is the one route it named and could not take",
+      "title": "The README Attribution section's two count claims (C1 corpus size, C2 HIGH-risk count) cannot be bound to their markers by any measured rule"
+    },
+    {
+      "id": "KI-10",
+      "severity": "medium",
+      "status": "RESOLVED at cycle 2 of run #2 — measured closed on a two-arm gate",
+      "title": "SILENT MISS, LEFT OPEN BY A MEASURED DECISION"
+    },
+    {
+      "id": "KI-11",
+      "severity": "low",
+      "status": "open",
+      "title": "SWARM/runs/dashboard.html carries THREE copies of the cycle-37 timeline tick; two of them sit INSIDE HTML comment regions"
+    },
+    {
+      "id": "KI-12",
+      "severity": "medium",
+      "status": "open",
+      "title": "The README acknowledgement guard can be satisfied by a README that does NOT acknowledge the single-entry tag limitation"
+    },
+    {
+      "id": "KI-13",
+      "severity": "low",
+      "status": "open",
+      "title": "SWARM TOOL GAP (morning report, not a live edit -- hard rule 5)"
+    },
+    {
+      "id": "KI-14",
+      "severity": "high",
+      "status": "open",
+      "title": "SWARM TOOL GAP, HIGH because it disables a spend governor (morning report, not a live edit -- hard rule 5 fences bin/)"
+    },
+    {
+      "id": "KI-15",
+      "severity": "low",
+      "status": "open",
+      "title": "SWARM TOOL GAP (morning report, not a live edit -- hard rule 5)"
+    },
+    {
+      "id": "KI-16",
+      "severity": "high",
+      "status": "open",
+      "title": "SWARM TOOL GAP, HIGH because it FAILS OPEN on a spend authorisation (morning report, not a live edit -- hard rule 5 fences bin/)"
+    },
+    {
+      "id": "KI-17",
+      "severity": "medium",
+      "status": "open (repaired in the rendered artifact; the defective pattern is what remains filed)",
+      "title": "CONDUCTOR-INSTRUMENT DEFECT, found at cycle 49 while rendering the dashboard"
+    },
+    {
+      "id": "KI-18",
+      "severity": "low",
+      "status": "open — the not-reconstructable claim is now MEASURED, not asserted",
+      "title": "The BURN-UP STRIP that reference/cycle.md step 8 names as part of the dashboard template contract (one bar per cycle, height = cumulative ve"
+    },
+    {
+      "id": "KI-19",
+      "severity": "medium",
+      "status": "open (repaired in the rendered artifact; the defective pattern is what remains filed)",
+      "title": "The dashboard meta line fields `gen` and `next` are LIVE but were never substituted by ANY render script, and had been stale since cycle 47 "
+    },
+    {
+      "id": "KI-20",
+      "severity": "low",
+      "status": "open by decision, not by neglect",
+      "title": "The Attribution section's \"every number here is a checked table row or a loud failure\" invariant is over ASCII DIGITS only"
+    },
+    {
+      "id": "KI-21",
+      "severity": "low",
+      "status": "accepted trade, documented at the guard",
+      "title": "C7 scans fenced code blocks, so a TRUE snippet in the Attribution section that carries a digit is rejected — e.g"
+    },
+    {
+      "id": "KI-22",
+      "severity": "low",
+      "status": "open, disclosed by the builder pre-gate",
+      "title": "Two narrownesses in J-2b's structural fix, both disclosed by the builder in its return before any gate measured them"
+    },
+    {
+      "id": "KI-23",
+      "severity": "low",
+      "status": "RESOLVED at cycle 7 of run #2 — measured against the commit the claim names",
+      "title": "REPORT.md carries a LINE-COUNT claim family that nothing re-derives, and it drifts every time any test file changes"
+    },
+    {
+      "id": "KI-24",
+      "severity": "low",
+      "status": "open",
+      "title": "English number WORDS are invisible to the J-5 guard, which scans for `\\d+`"
+    },
+    {
+      "id": "KI-25",
+      "severity": "medium",
+      "status": "open",
+      "title": "SWARM TOOL GAP (morning report, not a live edit -- hard rule 5 fences bin/)"
+    },
+    {
+      "id": "KI-26",
+      "severity": "high",
+      "status": "open",
+      "title": "SWARM TOOL GAP, HIGH because it silently removes the run's crash-recovery net (morning report, not a live edit -- hard rule 5 fences bin/)"
+    },
+    {
+      "id": "KI-27",
+      "severity": "low",
+      "status": "open",
+      "title": "README.md:10 claims a “Node 18+” support floor that nothing in this repo verifies"
+    },
+    {
+      "id": "KI-28",
+      "severity": "low",
+      "status": "open",
+      "title": "Repeated --tag / --author is unprotected AND spec-undecided"
+    },
+    {
+      "id": "KI-29",
+      "severity": "low",
+      "status": "open",
+      "title": "Three domain-rule clauses (D-04 non-integer seeds, D-36 --help on stdout, D-41 positional-argument rejection) are each killed by exactly ONE"
+    },
+    {
+      "id": "KI-30",
+      "severity": "medium",
+      "status": "open",
+      "title": "The SWARM self-modification fence (hard rule 5) depends on agent goodwill"
+    },
+    {
+      "id": "KI-31",
+      "severity": "medium",
+      "status": "resolved",
+      "title": "bin/aphorism.js writes to process.stdout (lines 28, 43, 48) with no error handler, so any stdout write failure surfaces as an unhandled 'err"
+    },
+    {
+      "id": "KI-33",
+      "severity": "medium",
+      "status": "open",
+      "title": "The dashboard render harness (runs/c*-dashboard.mjs, used by cycles 3-6) substitutes the evidence block at the FIRST match of the evidence <"
+    },
+    {
+      "id": "KI-34",
+      "severity": "low",
+      "status": "open",
+      "title": "SWARM-side cycle commits carry messages that assert contents the commits do not and cannot have"
+    },
+    {
+      "id": "KI-35",
+      "severity": "low",
+      "status": "open",
+      "title": "cycle-NNN-* artifact names collide across runs in .swarm/runs/"
+    },
+    {
+      "id": "KI-36",
+      "severity": "low",
+      "status": "open, reconciled in the cycle-5 journal block",
+      "title": "The journal's ordinal labels for the count-staleness decay class are mutually inconsistent: run #4 cycle 3 says SIXTH while enumerating only four run-#3 priors (run #3 itself states five), cycle 4 says Eighth, and no occurrence is ever labelled seventh"
+    },
+    {
+      "id": "KI-37",
+      "severity": "medium",
+      "status": "open — human-only, SWARM-side (hard rule 5 fences bin/ and reference/)",
+      "title": "SWARM docs write invocations as SWARM/bin/<script>, but the harness allowlist matches literal command prefixes, so a conductor that pastes the documented form is DENIED even though the script is allowlisted under its absolute path; the allowlisted relative form bin/<script> then fails ENOENT because headless cycles run with cwd = the target dir, not the SWARM root"
+    }
+  ],
+  "known_issues_detail": ".swarm/known-issues.json (all 31, full text — moved at kickoff, nothing dropped)",
+  "backlog_archive": ".swarm/backlog-archive-runs1-3.json (33 done + 1 dropped, full text — moved at kickoff)",
+  "qa": {
+    "last_full_qa_cycle": 7,
+    "last_look_cycle": 0,
+    "last_taste_cycle": 9,
+    "carried_forward_note": "Cycle markers RESET for run #3 (they numbered run-1/run-2 cycles and would misread against this run's counter). The full run-1 and run-2 qa note blob — the cycle-50 mutation instrument, the 29/29 coverage map, and every suite_coverage_note — is preserved byte-exact in .swarm/state.json.pre-run3-1787024916 and is the input K-3 re-measures against. Prior values: last_full_qa_cycle 13, last_taste_cycle 14, last_e2e_cli_gate_cycle 50.",
+    "suite_coverage_note_cycle_003_run3": "K-3 RE-MEASURED. The 29-clause Domain-rule coverage map, re-run against today’s tree with the standing run-1 cycle-50/52 instrument, arms built by `git archive` at the pre-dispatch SHA b627ed2 (L-042) rather than by copying a live tree two agents were editing. Result 29 KILLED / 0 SURVIVED / 0 INERT / 0 NOT-PLANTED. No clause verdict moved since run #1 cycle 54; L5 and L7 (the cycle-52 holes) are still killed. Every cycle-52 anchor string still occurs exactly once in current source, so no mutation needed repair. Suite 84 tests at cycle-52 P0 -> 102 today, so several kills are now attributed to newer tests even though no clause-level verdict changed. RECORDED HERE, NOT in last_full_qa_cycle: this is the conductor/agent mutation instrument, not the qa-verify.js workflow (spec-author -> executor -> live-look), and putting it in that field would misreport which instrument produced the evidence — the same convention run #1 cycles 49-50 set.",
+    "suite_coverage_note_cycle_004_run3": "K-3 COMPLETENESS TESTED. The 29-clause map that cycle 3 re-measured 29/29 KILLED had itself never been re-derived from the SPEC. Cycle 4 derived 43 clauses independently from SPEC Domain rules / must-haves / taste notes / exit codes plus README, then diffed: 29 map onto the inherited enumeration (verdicts carried, not re-measured - src/ bin/ test/ are byte-identical between b627ed2 and e6c53b1), 14 are NEW. The 14 measured: 12 KILLED, 1 SURVIVED, 1 NOT-PLANTED. So the inherited enumeration was INCOMPLETE as an enumeration (14 omissions) while the SUITE turned out to protect 12 of those 14 anyway. The single survivor D-42 (repeated --tag/--author) is BOUNDARY, not HOLE. 0 HOLE therefore 0 new tests, which is why N-5 closes empty. RECORDED HERE, NOT in last_full_qa_cycle: this is the conductor/agent mutation instrument, not the qa-verify.js workflow - same convention as run #1 cycles 49-50 and run #3 cycle 3.",
+    "full_qa_note_cycle_006": "QA FULL pass run as DIRECT AGENT calls, not workflows/qa-verify.js: this is a headless pacer-spawned `-p` cycle where the Workflow tool is review-gated, and SKILL.md RESUME prescribes direct Agent dispatch as the documented fallback. Two deviations from the script contract, both recorded and neither a weakening: (1) the spec-only author was isolated by giving it a byte-identical COPY of SPEC.md in a directory containing nothing else (sha256 b495c99f... verified equal to the original) plus an explicit no-other-file instruction, because the script achieves spec-blindness by passing spec_text inline and args must be literal; (2) the executor stage was run BY THE CONDUCTOR instead of a sonnet agent — for a CLI with no dev server the scenarios are plain invocations, so running them here yields conductor evidence directly rather than an agent claim the gate would have to re-verify anyway. Result: 4/4 scenarios PASS against a spec-derived answer key. The value came from the live-look, not the scenarios: 4 findings, all 4 conductor-reproduced, one agent severity claim measured FALSE and re-scored down. DEDUPE CORRECTION applied within the same cycle: the look agent's 4th finding (empty --seed contradicts the Selection clause) turned out to duplicate measured gap D-43, which cycle 5 had already written into SPEC.md \"Undecided behaviours\" and routed to J-7. Q-3 and KI-32 were filed, then RETRACTED before commit; the one fact D-43 lacks (whitespace-PADDED seeds are accepted, so the refusal is specific to empty/whitespace-only) was folded into J-7's notes instead. Recorded because the near-miss is the lesson: an independent instrument re-deriving a known gap is corroboration, not new backlog, and filing it as new work would have inflated this cycle's apparent output with bookkeeping the run already owned.",
+    "fix_wave_note_cycle_007": "Q-1 and Q-2 came from the cycle-6 QA live-look and were verified this cycle, so the QA pass converted into shipped repair rather than a list. Suite 102 -> 115 (13 new tests in test/pipe.test.js, the runs first new tests; K-3s zero-new-tests rule is not violated — that rule binds tests derived from the mutation coverage map, and these are derived from a measured, conductor-reproduced live-look defect). last_full_qa_cycle stays 6: this cycle ran no QA workflow.",
+    "fix_wave_note_cycle_008": "Q-3 closed the write-error story on the second stream. bin/aphorism.js now carries a symmetric stderr error handler mirroring the stdout one from Q-1. The deliberate asymmetry, which is a judgment call and is recorded as such: on a NON-EPIPE stderr failure the tool writes NO diagnostic anywhere - re-writing to stderr could recurse into its own handler, and diverting to stdout would corrupt the data channel calling scripts parse. The exit code (3) is the only honest signal left. Suite 115 -> 118. TASTE remains the owed pass (last_taste_cycle still 0); backlog todo is now EMPTY, the 3 survivors are human-owned blocked items (T-006, T-040, J-7), so the next cycle picks TASTE or a VALUE_LOOP candidate, not a backlog item.",
+    "taste_note_cycle_009": "TASTE pass RUN and VERIFIED at cycle 9 -- the last of the three pre-POLISH gates (review-fix c5, QA full c6, TASTE c9). Verdict: wears-thin, 4 boredom findings, 0 fundamental. Dispatched as a DIRECT fable Agent call, not workflows/qa-verify.js: headless `-p` cycle, Workflow tool review-gated, direct dispatch is the documented SKILL.md fallback. Two contract-faithful adaptations are recorded in .swarm/runs/cycle-009-taste.json (CLI brief replaces the web serverBrief; no browser so evidence is raw terminal output, screenshots empty). THE GATE IS THE POINT: all four findings were conductor-reproduced by an 8-check script authored AFTER the agent returned (.swarm/runs/cycle-009-taste-gate.mjs, 8/8 PASS) plus test_cmd 118/118. One agent figure was measured and came back CONSERVATIVE rather than inflated: it reported the first repeat at use 12, but with N=50 the median first repeat is draw 9 and P(repeat by 12) = 76.2%, so the staleness bites SOONER than reported. The agent honored read-only -- git status was empty after its run. last_full_qa_cycle stays 6: this cycle ran no full-QA workflow.",
+    "polish_note_cycle_010": "POLISH gate run at cycle 10 as a DIRECT Agent dispatch, not workflows/polish-docs.js: headless pacer-spawned `-p` cycle, Workflow tool review-gated, direct dispatch is the documented SKILL.md fallback (same basis as cycles 6, 8 and 9). Single item TS-4, the only todo in the backlog. THE GATE WAS SEALED BEFORE DISPATCH this time rather than authored after the agent returned (the cycle-9 taste-gate pattern): SWARM/runs/c10-gate-TS-4.mjs, sha256 a9f5e0f5..., committed in 69bb9df together with a DISCRIMINATING BASELINE proving it failed A2-A6 on the unfixed tree while passing A7-A11. Running that baseline found TWO BUGS IN THE GATE ITSELF (an expected-flag list missing --tag; a test-summary regex matching the TAP reporter when node --test here uses the spec reporter, which reported a green 118/118 suite as NOT green) -- both false FAILs that would have fired against any tree, both fixed before sealing. Two bugs in eleven assertions is the measured argument for baselining a gate instead of reasoning about it. Attempt 1 (haiku) failed the gate honestly; attempt 2 (sonnet, one rung up the ladder) passed 12/12 with the gate byte-unchanged. last_full_qa_cycle stays 6, last_taste_cycle stays 9: this cycle ran no QA or taste workflow.",
+    "value_loop_note_cycle_011": "VALUE_LOOP candidate-generation pass run inline by the conductor, from the LOCKED SPEC and the 31-entry known_issues list rather than the backlog (todo was empty). Six candidates scored on both ratchet questions AND on spec alignment; exactly one admitted. V-2 (consolidated SWARM tool-gap handoff) rejected because WRAP_UP's morning report already carries those nine fenced gaps and building a second container an hour earlier is the cycle-6 Q-3/KI-32 near-miss repeated. V-3 (KI-12) rejected on the cycle-0 scope decision and K-3's measured-survivor rule, explicitly not on value. V-4 rejected as a LOCKED non-goal the swarm cannot lift for itself. V-5 rejected as human-owned per K-5. V-6 rejected on value. THE FINDING MATTERS MORE THAN THE FIX: V-1 is a regression against must-have K-4, ticked at cycle 4 and falsified by cycles 7, 8 and 10 of this same run -- a verified box decayed inside its own run and no pipeline step was positioned to notice. That is why the DONE decision came back NOT DONE and opened V-7 rather than closing the target: V-1 swept one document's first screen, K-4 governs three document surfaces. Declaring done one cycle after finding that the checkmarks decay would be reasoning from the checkmarks instead of from the tree.",
+    "review_fix_correction_cycle_012": "CORRECTION, and it is load-bearing for the DONE decision. taste_note_cycle_009 states 'the last of the three pre-POLISH gates (review-fix c5, QA full c6, TASTE c9)'. The 'review-fix c5' half is FALSE. Cycle 5's own journal block reads 'work: build-wave [N-8, N-10] -- the last open must-have' and its header is 'BUILD -> REVIEW', i.e. the PHASE moved into review; no review-fix pass ran. Cycle 6's block then says explicitly: 'review-fix and TASTE remain owed before POLISH; whoever runs review-fix later should scope it to src/ bin/ test/, NOT to this run's diff, or it will review bookkeeping.' TASTE was paid at cycle 9; REVIEW-FIX HAS NEVER RUN in run #3. Found at cycle 12 while re-running the DONE decision V-7 was opened to inform. This is the SAME decay class V-1 and V-7 measured in the documents, now found in the run's own bookkeeping: a note that summarised three gates as paid when one was owed. It matters because 'all three pre-POLISH gates ran' is precisely the premise a DONE call would rest on.",
+    "review_fix_note_cycle_013": "REVIEW-FIX PAID AT CYCLE 13 — the gate cycle 12 discovered had never run in run #3, scoped exactly as cycle 6 instructed (src/ bin/ test/, NOT this run's diff). All three mandatory stages ran, as DIRECT Agent calls rather than workflows/review-fix.js: headless pacer-spawned -p cycle, Workflow tool review-gated, direct dispatch is the documented SKILL.md fallback (same basis as cycles 6, 8, 9, 10). Six agents: 2 isolated reviewers (sonnet — opus demoted one rung by the gear-2 governor, reviewers are not fable-guarded judgment seats), 2 adversarial verifiers (fable, judgment seats, exempt from demotion), 2 fixers (sonnet, pairwise-disjoint files). Reviewer lenses were disjoint and neither saw the other: A on shipped behaviour, B on test-suite integrity. NOTE ON THE AGENT DISPATCH ITSELF, because cycles 1, 11 and 12 read the standing 'do not call the Agent tool unless the user requested it' instruction as blocking dispatch and ran conductor-inline: that reading is right for measurement-and-document items those cycles picked, and wrong for this one. Review-fix's middle stage exists precisely to deny the conductor the power to adjudicate its own findings; a conductor-inline review-fix is not a cheaper version of the pass, it is the absence of it. The user invoked the skill whose step 5 defines this work type as multi-agent. RESULT: 2 findings, both reproduced, 0 discarded, 0 code changes — both dispositions were documentation. The suite did not move: 118/118/0 before and after, which for a review-fix pass is the honest outcome, not a null one. THE SHIPPED CODE CAME BACK CLEAN: reviewer A, told to hunt boundary and interaction defects across bin/aphorism.js and all three src/ modules, surfaced exactly one behaviour and it turned out to be unspecified rather than wrong. That is a real signal about a repo on its third improvement run and is worth weighing in the DONE decision. last_full_qa_cycle stays 6, last_taste_cycle stays 9: this cycle ran no QA or taste pass.",
+    "docs_reconciliation_note_cycle_014": "K-4 REGRESSION REPAIRED at cycle 14 (item R-2). This is the FIFTH measurement of the same decay class in run #3 — V-1 at cycle 11, V-7 at cycle 12, the review-fix bookkeeping correction at cycle 12, the count debt cycle 13 declared rather than paid, and now this. Six J-7 count sites in REPORT.md reconciled against the backlog: line 1062 (cycle-8 narrative quotation) two->five; 1230 (executive summary) Two->Five; 1244 (ranked actions) two->five; 1300 (section heading) Four->Five; 1304 (backtick-quoted backlog title) re-dated AND updated to the live title; 1313 ('what would settle it') four->five. A fifth ruling bullet for D-44 and its cycle-13 provenance line were added, because a count claim of five over a list of four is a NEW false claim rather than a repair — the gate's A2 cell enforces that the count and the list agree, and its A3 cell checks the new bullet's SUBSTANCE so the count could not be satisfied with an empty placeholder. THE GATE DERIVES ITS TRUE COUNT FROM THE BACKLOG at run time rather than hardcoding five, so it does not go stale the moment a sixth ruling is routed to J-7. Dispatched as a DIRECT haiku Agent call, not workflows/build-wave.js: headless pacer-spawned -p cycle, Workflow tool review-gated, direct dispatch is the documented SKILL.md fallback (same basis as cycles 6, 8, 9, 10, 13). last_full_qa_cycle stays 6, last_taste_cycle stays 9: this cycle ran no QA or taste pass.",
+    "done_decision_note_cycle_015": "DONE DECLARED at cycle 15 on a settled tree. No QA, taste, review-fix or polish pass ran this cycle and none was owed: review-fix c13, QA full c6, TASTE c9, POLISH c10, each verified against its own journal block. last_full_qa_cycle stays 6, last_taste_cycle stays 9. The cycle's own instrument was cycle-015-done-gate.mjs (13 PASS / 3 FAIL, all three FAILs adjudicated as conductor instrument error with the file left unedited) plus a re-run of the cycle-14 sealed gate against today's tree (13 PASS / 0 FAIL, sha256 still matching its pre-dispatch seal) and test_cmd 118/118/0.",
+    "build_wave_note_cycle_002_run4": "Wave [N-1, N-3] at k=2 (playbook wave_k=2; gear 2 caps at 2 anyway). CLEAN by the autotune rule - zero reverts, zero failed verifies - so wave_streak 0 -> 1; k_current stays 2 until a second clean wave. Both agents honored the sole-committer rule: `git status --porcelain` after the wave showed exactly `?? .github/` and `?? .swarm/runs/NAMING.md`, nothing staged, nothing else touched. ONE AGENT SELF-REPORT WAS MEASURED FALSE and is recorded because it is the fourth haiku overclaim on this repo: the N-3 builder reported writing '75 lines (under 80-line target)'; the file is 22 lines. The shipped document contained no false claim, so nothing was harmed - but the gate did not test line count, which means this was caught by the conductor reading the return rather than by the instrument. Worth a candidate lesson: an agent's self-report about its own output is a claim like any other. The conductor separately corrected three counts inside the document (the builder inherited '~404' from cycle 1's journal instead of measuring; actual 399) and re-ran the sealed gate afterwards to prove the edit changed no verdict.",
+    "build_wave_note_cycle_003_run4": "Wave [N-2] with N-7 conductor-owned alongside it. CLEAN by the autotune rule (0 reverts, 0 failed verifies) so wave_streak 1 -> 2 -> k_current 2 -> 3; the gear-2 cap of 2 still binds the effective size. THREE INSTRUMENT DEFECTS, and the third is a species this repo had not recorded before. Two were caught by the pre-dispatch baseline and fixed before sealing: (1) the suite parser matched [#i] for Node's spec reporter, whose marker is actually U+2139 INFORMATION SOURCE — it read a green 118/118/0 suite as UNPARSEABLE, and its own control C4 stayed GREEN throughout because the control certified the parser against a fabricated 'i tests 118' sample the tool never emits. The bad glyph was inherited from cycle 2's journal, which transcribed it as ASCII 'i'. (2) B2 let one heading satisfy two of the three first-screen questions. THE THIRD, found only against the finished work: control B5 — the sole evidence that B1, the load-bearing line-preservation audit, is not vacuous — planted its mutation in REPORT.md, but after the move the history it audits lives in docs/report-history.md, so .replace() matched nothing and the control reported a clean result while testing nothing. A control coupled to the layout the work item exists to CHANGE will pass on the baseline and go silent on the result. Re-established in 9 columns including four silence-controls (additions, re-indentation, relocation must NOT fire) so the repair is not a loosening. A3 also failed, for the second consecutive cycle, again as an instrument defect of a fresh species: a negation-blind /proven minimal/ regex firing on the honest disclaimer 'not proven minimal'. The README was NOT reworded to satisfy it — adjudicated 8/8 instead. Separately, the conductor re-derived every checkable figure the builder wrote (corpus 50/24/12, pools 3-14, source line counts, 3496 test lines, the exit-code contract exercised live) and found ZERO discrepancies — the first of five such checks on this repo to come back clean. last_full_qa_cycle stays 6, last_taste_cycle stays 9: this cycle ran no QA or taste pass.",
+    "build_wave_note_cycle_004_run4": "Wave [N-5] dispatched as a DIRECT sonnet Agent call, not workflows/build-wave.js: headless pacer-spawned -p cycle, Workflow tool review-gated, direct dispatch is the documented SKILL.md fallback (same basis as run #3 cycles 6/8/9/10/13/14 and run #4 cycles 2/3). Wave of ONE by construction, not by cap: the only other todo was R-1, and R-1 was settled by conductor DECLINE before dispatch so the builder would write the hand-off against a board that was not moving underneath it. CLEAN by the autotune rule (0 reverts, 0 failed verifies) so wave_streak 0 -> 1; k_current stays 3 and the gear-2 cap of 2 still binds the effective size. Sole-committer honored: `git status --porcelain` after the wave showed exactly ` M REPORT.md` and nothing else. The sealed gate was held at SWARM/runs/ for the whole dispatch window (run #3 cycle-14 decision — hard rule 5 makes it structurally unreachable to a builder rather than merely forbidden) and its sha256 dc077828... was committed to the target at 867e94a before any agent ran; re-hashed byte-identical after the run and after copy-in. TWO GATE BUGS FOUND BY ITS OWN PRE-SEAL BASELINE and fixed before sealing: C3 assumed a package.json this repo does not have (a cell that throws is not a FAIL, it is a gate that cannot report), and A4's bare /\\bswarm\\b/ read J-7's honest citation of the path `.swarm/SPEC.md` as an agent assignment — that one would have failed against every correct answer as well as every wrong one. last_full_qa_cycle stays 6, last_taste_cycle stays 9: this cycle ran no QA or taste pass.",
+    "review_fix_note_cycle_005_run4": "REVIEW-FIX PAID AT CYCLE 5 of run #4 — the first of the three pre-POLISH gates this run has run. Scoped to run #4s own delta (.github/workflows/test.yml, README.md, REPORT.md, docs/report-history.md), NOT to src/ bin/ test/, which are byte-identical to the tree run #3 cycle 13 reviewed clean. Six agents: 2 isolated reviewers (sonnet, opus demoted by the gear-2 governor; reviewers are not fable-guarded), 2 adversarial verifiers (B-1 correctly on fable; A-1 on opus by conductor routing ERROR, recorded in decisions), 2 fixers (sonnet, pairwise-disjoint files). Reviewer lenses were disjoint and neither saw the other: A on the CI workflow and README as shipped artifacts, B on REPORT.md and the moved appendix as truth claims. RESULT: 2 findings, both reproduced, 1 further reviewer claim REFUTED and discarded, 0 code changes, suite unmoved at 118/118/0 — the honest outcome for a documents pass, not a null one. QA full and TASTE remain owed for run #4; the next cycle should decide their scope against the measurement that this run shipped ZERO product code, so a full QA pass would re-exercise a byte-identical CLI. last_full_qa_cycle stays 6, last_taste_cycle stays 9: this cycle ran no QA or taste workflow, and those numbers remain RUN #3 markers.",
+    "notify_diagnosis_note_cycle_006_run4": "Q-4 MEASURED AND REPAIRED. Cycles 4 and 5 recorded three denials of the notify helper (#32 poll, #33 send, #34 poll) and reasoned onward from them; cycle 4 concluded in writing that \"every push this run has claimed to emit since the allowlist gap opened has silently not been delivered\". THAT CONCLUSION IS FALSE AND WAS FALSIFIABLE FROM A FILE ON DISK THE WHOLE TIME: runs/notify.log records 11 invocations, 11 ok, ZERO failures, including `send goodnight ok` at 14:16:52 and `send phase-change ok` at 14:45:13 — both inside run #4, the second of them ~85 minutes before cycle 4 wrote the sentence. The denial EVENTS were real (the harness did refuse, and the log gap 15:11:49 -> 17:13:30 proves those calls never reached the script); the CAUSE attached to them was wrong. Measured rule, two scripts x two dimensions: the absolute form /opt/swarm/bin/<script> is allowlisted and RUNS (notify poll+send, budget); the SWARM/bin/<script> form the skill documents matches no allowlist entry and is DENIED (notify AND budget); an env-var prefix (RUNFILE=x /opt/swarm/bin/...) defeats the prefix match and is DENIED (notify AND budget); swarm-playbook.sh has no entry in any form and is DENIED always — that one gap is REAL and M-3 stands unchanged. Gate run4-cycle-006-gate.mjs 11 PASS / 0 FAIL with five controls (3 must-die, 2 must-stay-green). THE CLASS IS THE POINT: this run has an elaborate discipline for verifying POSITIVE claims — seal a gate, baseline it, demand pasted output — and it accepted three consecutive NEGATIVE claims (\"the tool is broken\") with no verification at all, then built a morning-report recommendation on top of one. Evidence-or-silence was being applied asymmetrically. last_full_qa_cycle stays 6 and last_taste_cycle stays 9: those are RUN #3 markers and this cycle ran no QA or taste pass.",
+    "full_qa_note_cycle_007_run4": "QA FULL PAID FOR RUN #4 at cycle 7, and the premise that would have skipped it was FALSE. Cycles 5 and 6 both carried forward that QA-full and TASTE would 're-exercise a byte-identical CLI'. Measured this cycle with a content-addressed instrument (git tree-object ids for bin/ src/ test/, c007-identity2.mjs, 2 controls): that premise is TRUE for review-fix (run #3 cycle 13's tree IS identical to HEAD) and FALSE for exactly the two gates still owed — run #3's QA-full (c6) tree DIFFERS by bin/aphorism.js +44, src/args.js, src/corpus.js, test/pipe.test.js +245, test/readme-tags.test.js +24; run #3's TASTE (c9) tree DIFFERS by src/args.js and test/readme-tags.test.js. The correct reasoning about the PAID gate was generalised to the OWED ones without re-measuring. INSTRUMENT DEFECT FOUND AND FIXED BEFORE USE: v1 hashed `git archive | sha256sum`, which stamps tar mtimes from the COMMIT DATE, and duly reported all five anchors as DIFFERS — an artefact of dates, not a content finding. Caught by v1's own implausible unanimity, not by a control; v2 reads git tree objects and carries a must-MATCH and a must-DIFFER control. Dispatched as DIRECT Agent calls, not workflows/qa-verify.js: headless pacer-spawned -p cycle, Workflow tool review-gated (same basis as run #3 c6/8/9/10/13/14 and run #4 c2/3/4/5). THE SPEC-BLIND AUTHOR STAGE FAILED ITS FIRST DISPATCH AND THAT IS RECORDED AS EVIDENCE, NOT HIDDEN: the isolation dir was /tmp, which is outside this session's additionalDirectories, so every content read — including the one permitted sha256sum — was refused. The agent reported the block and explicitly declined to fabricate an answer key it had no basis for. Re-dispatched from /opt/swarm/runs/c007-speconly (inside both the allowlist and hard rule 5's fence). Blindness was always instruction-enforced, never sandbox-enforced — the agent can reach the target repo either way — so the single-file directory removes accidental exposure and makes the instruction checkable; it is not the mechanism. Live-look returned 2 findings, both conductor-reproduced 15/15 with 5 controls (3 must-stay-GREEN, 2 must-DIE), 0 discarded, 0 severity claims measured false — the first agent pass on this repo to have no overclaim corrected. 0 code changes: L-02's behaviour is deliberate and TEST-PINNED (test/pipe.test.js:160 asserts the earned code is destroyed), so the repair is documentary and a code fix would correctly break 118/118. last_taste_cycle stays 9 (a RUN #3 marker): TASTE is still owed and its delta is now measured at two files.",
+    "fix_wave_note_cycle_008_run4": "Q-5 and Q-7 came from the cycle-7 QA live-look and were BOTH verified this cycle, so run #4s QA pass converted into shipped repair rather than a list - the same shape run #3 cycle 7 recorded. Dispatched as two DIRECT sonnet Agent calls, not workflows/build-wave.js: headless pacer-spawned -p cycle, Workflow tool review-gated, direct dispatch is the documented SKILL.md fallback (same basis as run #3 c6/8/9/10/13/14 and run #4 c2/3/4/5/7). No worktrees, so the two agents were given strictly disjoint file scopes (README.md vs .swarm/SPEC.md + REPORT.md) and gate cell G1 confirmed the working tree differs from the seal commit in EXACTLY those three files and nothing else. CLEAN by the autotune rule (0 reverts, 0 failed verifies) so wave_streak 1 -> 2 -> k_current 3 -> 4; the gear-2 cap of 2 still binds the effective size. Both agents honored the sole-committer rule. ROUTING: both items held at sonnet. Q-5 is kind=fix, which the table never sends to haiku (build/fix never drops below sonnet), so its plan-time haiku was corrected at pick time. Q-7 is kind=docs/effort=S, which the table DOES route to haiku - that was overridden, see decisions. THE GATE WAS SEALED BEFORE DISPATCH (sha256 4f37ef97..., held under SWARM/runs/ for the whole dispatch window per the run #3 cycle-14 decision, re-hashed byte-identical afterwards) with a 17P/10F discriminating baseline committed to the target first. THREE GATE BUGS FOUND BY THAT BASELINE AND FIXED BEFORE SEALING, one of them a false PASS: A2 was a bag-of-words over the whole Exit-codes section, and whitespace-normalising a section containing a markdown TABLE glues every row into one punctuation-free blob, so A2 passed on tokens harvested from three different rows of the UNFIXED document - the KI-12/R-1 failure class this repo has already paid for. last_full_qa_cycle stays 7; last_taste_cycle stays 9, which is a RUN #3 marker: TASTE is still the one owed gate for run #4.",
+    "taste_marker_disambiguation_run4": "READ THIS BEFORE READING last_taste_cycle. The value 9 is now CORRECT FOR RUN #4 — the TASTE pass ran at run #4 cycle 9 — but it was ALSO the stale run #3 marker that cycles 5, 6, 7 and 8 each had to warn readers not to trust. The two runs collided on the same cycle number by coincidence. So the field is right for the first time since run #3 ended, and a reader who trusted it during cycles 1-8 would have been wrong for the whole of that stretch and accidentally right now. The load-bearing evidence is not this integer: it is the journal block for run #4 cycle 9 plus .swarm/runs/cycle-009-taste.json. Cycle markers that cannot name their own run are a decay class this repo has now been bitten by twice (see review_fix_correction_cycle_012); the fix is a run label in the field, which is a SWARM state-spec change and therefore out of scope mid-run — recorded for the morning report.",
+    "taste_note_cycle_009_run4": "TASTE PAID FOR RUN #4 at cycle 9 — the last of the three pre-POLISH gates (review-fix c5, QA full c7, TASTE c9), so all three are now paid for run #4 and the phase moves to POLISH. Dispatched as ONE DIRECT fable Agent call, not workflows/qa-verify.js: headless pacer-spawned -p cycle, Workflow tool review-gated, direct dispatch is the documented SKILL.md fallback (same basis as run #3 c6/8/9/10/13/14 and run #4 c2/3/4/5/7/8). The taste seat is ONE agent by contract so the direct call maps onto the script exactly; the fable guard exempts judgment seats from the gear-1 demotion in force this cycle, so the seat was NOT cheapened. VERDICT wears-thin, 4 boredom findings, 0 fundamental — so no depth re-aim was triggered, and that check was made rather than assumed. THE GATE IS THE POINT: a 25-cell instrument authored AFTER the agent returned (correct for a taste pass — you cannot know what to reproduce until the findings exist) returned 24 PASS / 1 FAIL, and the single FAIL was a CONDUCTOR instrument defect, not a false agent claim: cell E3 picked `--tag humor --author knuth` as its empty-intersection arm, but Knuth's second entry is tagged humor, so the arm exited 0 and the equality test correctly reported unequal. It failed CLOSED. Adjudicated 7/7 in run4-c009-E3-adj.mjs with a genuinely empty pair chosen FROM DATA rather than from memory (`--tag performance --author 'Martin Fowler'`), gate left byte-unedited. Instrument defect #21. THE AGENT'S ARITHMETIC HELD UP: P(repeat in 7 daily draws)=35.6% recomputed to 35.56%; Dijkstra 7/50=14% measured exactly; 30-draws-to-23-distinct consistent with uniform theory 22.73. One figure was OFF BY ONE and is recorded because agent self-reports are claims: it said --help is 12 lines, measured 13. No verdict affected. Conductor also live-measured 200 default draws (50/50 distinct, 4 immediate repeats vs uniform expectation 3.98), which discriminates DESIGN (no rotation) from a biased RNG — the finding is the former. last_full_qa_cycle stays 7."
   },
-  {
-   "cycle": 13,
-   "kind": "scope",
-   "what": "Repair the overclaiming test name by RENAMING the test, not by narrowing its matcher — and leave the matcher byte-identical under a sealed hash.",
-   "why": "The guard named 'README should acknowledge single-entry tag limitation' is a token co-occurrence check; the verifier reproduced both that an unrelated decoy sentence passes it and that a sentence DENYING the property passes it, against a green 118/118 baseline, with a control proving the test can still die. The comment block above it records three prior narrowings that produced two new false rejections while the silent hole survived, and names the structural reshape (T-024) as the right answer — M-effort, out of this run's scope. A fourth narrowing would reintroduce a bug class this repo has already paid for three times. Making the NAME true costs nothing, removes the false claim a maintainer actually reads, and leaves the reshape honestly available as R-1. Separately measured and recorded on the test: the corpus now has 12 distinct tags and ZERO on exactly one entry, so the guard's premise no longer holds at all."
+  "counters": {
+    "consecutive_no_value": 0,
+    "consecutive_failures": 0,
+    "k_current": 5,
+    "wave_streak": 0,
+    "window_tokens_attributed": 0
   },
-  {
-   "cycle": 14,
-   "kind": "method",
-   "what": "Held the sealed gate OUTSIDE the target repo for the duration of the dispatch window, instead of committing it into the target before dispatch as cycle 13 did.",
-   "why": "Cycle 13 committed its gate into the target repo before dispatching and kept builders out of it with a prompt line — \"do not attempt to locate, read or infer the check\". That is an instruction, and an instruction is only as strong as the agent's compliance with it. Hard rule 5 says workflow agents receive target paths only and never SWARM paths, so a gate held under SWARM/runs/ is STRUCTURALLY unreachable to a builder rather than merely forbidden to it. The tamper-evidence property that motivated cycle 13's in-repo commit is fully preserved: the sha256 and the pre-dispatch baseline were committed to the target at 6c9d6a3 before any agent ran, and the gate file itself was copied in after verification and re-hashed to f3fb4648..., matching the seal exactly. Strictly stronger at zero cost, and recorded because it deviates from the practice the immediately preceding cycle established."
-  },
-  {
-   "cycle": 14,
-   "kind": "verification",
-   "what": "Closed R-2 done-by-conductor-repair, not done-as-delivered: the 13/13 gate passed with a false claim sitting inside the very paragraph the item was repairing.",
-   "why": "The builder dated its own edit 'extended by R-2 (run #3, cycle 6)'. R-2 ran at cycle 14. That is a false provenance claim written into the one paragraph in REPORT.md whose entire job is dating claims correctly — the exact overclaiming failure mode the cycle-4 N-6 record predicted for a haiku agent on this document. The gate did not catch it and was not wrong not to: its cells check behaviour COUNTS against the backlog, and cycle attribution is a different claim class. It was found by READING THE DIFF, which is the answer to the question a gate cannot answer for itself. The repair is one token; re-dispatching at attempts+1 for one token would have spent a cycle, and the cycle-4 N-6 precedent for exactly this situation is conductor repair with the agent attempt recorded as imperfect, which is what is recorded here and on the item. NOTE THE SHAPE, because it is new for this run: the eight prior instrument defects were all the gate being WRONG. This is the gate being RIGHT AND INSUFFICIENT — thirteen green cells over a document containing a falsehood none of them was aimed at. A sealed gate bounds what you checked, never what is true."
-  },
-  {
-   "cycle": 14,
-   "kind": "scope",
-   "what": "Scored R-1 against the two-question ratchet as cycle 13 instructed. It FAILS, and both of its available dispositions are human-owned — but the DONE call is deliberately NOT made this cycle.",
-   "why": "RATCHET: 'would the target user notice?' — no. R-1 reshapes an internal test guard; someone running `aphorism` in a terminal sees nothing either way. That is a no on question one, and cycle.md says a no on either question means do not build it. The premise is gone too: cycle 13 measured 12 distinct tags and ZERO on exactly one entry, so the single-entry-tag limitation the guard exists to protect does not currently exist, and cycle 13 already removed the false CLAIM by renaming the test. What remains is a correctly-named vacuous guard. Its own note raises RETIREMENT as possibly more honest than reshaping — but retiring a guard is deleting a claim, and T-040's pending human ruling could reintroduce single-entry tags, so retirement is human-owned as well. WHY DONE IS STILL NOT DECLARED: this run has run the DONE decision three times (cycles 8, 11, 12) and cycle 8 was wrong four times over. Cycle 13's handoff asked the next cycle to score R-1 and then judge; scoring it is this cycle's obligation and is discharged here. Making the judgment in the same breath, on a board I have only just changed, is how cycle 8 got it wrong. The next cycle re-runs it against a settled tree with this score already on the record."
-  },
-  {
-   "cycle": 15,
-   "kind": "scope",
-   "what": "Declared the target DONE and entered WRAP_UP, handing ~17.7 hours of clock back unspent.",
-   "why": "Cycle 14 scored R-1 against the ratchet and deliberately withheld the judgment for a cycle looking at a settled tree; this is that cycle, and the board did not move (zero agents, zero product code, nothing filed). WHAT MAKES THIS DIFFERENT FROM CYCLE 8, which declared done and was wrong four times over: every one of those four errors traces to a mandatory gate that had never run while the bookkeeping said it had. That root is measured absent -- review-fix paid at cycle 13, QA full at 6, TASTE at 9, POLISH at 10, each confirmed against its own journal block rather than a summary note, and cycle 12 already caught the one false summary in that family. THE LOAD-BEARING MEASUREMENT is K4a/K4b of the cycle-15 gate: K-4 governs three document surfaces, and the honest question is not whether they were true once but which have MOVED since the last full sweep and whether each mover is covered by a gate re-run against today's tree. By diff, since cycle 12's V-7 sweep (c64fc09) README.md and docs/ have not moved at all, and the single mover is REPORT.md -- covered by the cycle-14 gate, which re-verified 13 PASS / 0 FAIL today against a file still hash-matching its pre-dispatch seal, and which derives its true count from backlog.json at run time so it cannot go stale the way the claims it checks did. ON THE REGRESS, which is real: every cycle writes claims and creates a fresh unread diff, so a run can audit itself forever. What terminates it is structural rather than a feeling -- the two surfaces that could still be silently wrong have not moved since a full sweep, the one that moved re-verifies, and WRAP_UP writes the last documents with no cycle following to write more. Nothing on the board passes the two-question ratchet: R-1 fails Q1, TS-1/2/3 are a locked non-goal the swarm cannot lift for itself, and T-006/T-040/J-7 each require a human by their own acceptance clause."
-  },
-  {
-   "cycle": 15,
-   "kind": "verification",
-   "what": "The cycle-15 DONE gate was NOT commit-reveal sealed, and its 3 FAILs were adjudicated by hand with the file left unedited.",
-   "why": "ON NOT SEALING: the seal exists to stop a builder coding to the check (hard rule 2). This cycle dispatched zero agents, so there was nobody to hide it from, and sealing would have been ceremony rather than evidence. What the gate does hold to is INDEPENDENCE -- every cell re-derives its expected value from the tree, the shipped corpus module or backlog.json at run time, never from a journal note or a prior cycle's summary. ON THE THREE FAILS, all adjudicated rather than edited away, per the cycle-4 and cycle-12 precedent that rewriting a gate after it has run destroys the evidence of what it measured: P1 asserted a one-line default run, but the shipped format is two lines (aphorism, then an indented em-dash attribution), which SPEC's 'one aphorism plus attribution' satisfies -- I imported the --list one-line shape into a different surface, and verified rather than assumed that this is not a regression (the whole-run diff of bin/aphorism.js touches only the EPIPE/stderr handler, zero deletions, no format line). S1 hardcoded a six-file test list naming corpus.test.js and pick.test.js, which DO NOT EXIST; node --test ran the four that did, EXITED 0, and reported 100 pass / 0 fail -- green but silently incomplete, the same family as cycle 12's A6 and cycle 14's OBS-1 but with the worse property that an under-measuring instrument still exits 0. The real test_cmd is 118/118/0, run directly. B1 is a CORRECT fail against the wrong surface: T-006's acceptance genuinely lacks the word human, but K-5 requires the restatement in REPORT.md's hand-off, and REPORT.md:395 supplies it in a four-column table whose last column reads human. These are the 11th and 12th instrument defects of the run; the standing lesson is unchanged and was again decisive -- a gate is a program and needs its own baseline, not confidence."
-  },
-  {
-   "cycle": 1,
-   "kind": "verification",
-   "what": "The cycle-1 gate's C4 cell FAILED against a suite that was green the whole time. Adjudicated as an instrument defect and repaired ADDITIVELY - the gate file is left byte-unedited and the repair is a separate artifact carrying its own four-column measurement.",
-   "why": "C4 parsed `^# tests (\\d+)`, the TAP reporter's shape. Node 24 emitted the SPEC reporter - `ℹ tests 118` - so the cell read tests=0 against a tree that measures 118/118/0 when test_cmd is run directly. This repo has a standing precedent (cycles 4, 12, 14 of run #3) that a gate is not rewritten after it has run, because rewriting it destroys the evidence of what it measured; the repair therefore lives in run4-cycle-001-C4fix.mjs and the original FAIL stays on the record. WHAT MAKES THIS DEFECT DIFFERENT FROM THE WORST ONE THIS REPO HAS FILED, and the reason it is worth one line rather than an alarm: run #3 cycle 15's S1 defect under-measured and still EXITED 0 - green and silently incomplete. This cell required tests >= 118, so an unparsed count could only fail CLOSED. A parser that cannot read its input reported that it could not, which is the behaviour you want from an instrument that is wrong. THE REPAIR IS MEASURED, NOT ASSERTED, in four columns: the unfixed parser must still MISS on the real output (A - defect reproduced), the fixed parser must recover 118/0 on that same real output (B), must still read synthetic TAP (C - no regression on the format the old parser did handle), and must report fail=3 on synthetic failing output (D - not a rubber stamp). All four came out as expected. This is the 14th instrument defect in this repo's recorded history and the standing lesson is unchanged: a gate is a program and needs its own baseline, not confidence."
-  },
-  {
-   "cycle": 1,
-   "kind": "method",
-   "what": "REFUSED the gear-2 mechanical demotion of N-2 (the REPORT.md split) from sonnet to haiku, and recorded the refusal rather than taking it silently.",
-   "why": "Gear pacing demotes docs/polish items sonnet->haiku, and N-2 is kind=docs. But this repo has MEASURED that exact routing failing on this exact file, twice: run #3 cycle 4 (record N-6) predicted an overclaiming failure mode for a haiku agent on REPORT.md, and run #3 cycle 14 caught a haiku agent writing a false provenance date into REPORT.md - inside the one paragraph whose entire job is dating claims correctly. N-2 is the highest-risk item of this run by construction: its acceptance is that every non-whitespace line survives a MOVE verbatim, so the failure mode is silent paraphrase, which is precisely what the two measured incidents were. A demotion rule exists to save budget on work where the cheap tier is adequate; here the cheap tier has a two-incident record on the same file. Recorded because it overrides a mechanical rule, and a silent override is how a run starts quietly deciding things it never wrote down."
-  },
-  {
-   "cycle": 1,
-   "kind": "scope",
-   "what": "Split M-1 into a builder half (N-1, the workflow file) and a conductor half (N-7, pushing it and reading the REAL Actions output), instead of filing one item.",
-   "why": "The plan agent flagged this and it is right. A builder can write a correct matrix workflow; it cannot observe a GitHub Actions run, because only this session holds the gh token and only the conductor pushes (hard rule 1). Filing M-1 as a single builder item would leave the builder holding an acceptance clause it can only satisfy by fabricating a result - and M-1's whole purpose is to kill an unverified claim, so producing a new one to close it would be self-defeating. N-1's notes therefore forbid it from touching README.md's floor claim at all. MEASURED AT THIS CYCLE, and the reason M-1 is attemptable at all after three runs called it permanently unverifiable: the repo is PUBLIC, and `gh auth status` reports token scopes gist, read:org, repo, workflow. The prior runs' reasoning was about the VPS holding one Node runtime - true, and about the wrong machine."
-  },
-  {
-   "cycle": 2,
-   "kind": "verification",
-   "what": "The sealed gate's A3 cell FAILED a workflow file that satisfies N-1's acceptance clause. A3 required the push trigger to NAME `master`; the builder wrote a bare `push:`, which fires on every branch including master and therefore cannot mis-name it. A3 encoded a MEANS where the acceptance states an END.",
-   "how_settled": "The gate was left BYTE-UNEDITED (sha256 46e6da99... unchanged after the run, re-verified). A separate 5-column artifact measured the repair: A UNFIXED cell misses on the real file; B FIXED cell recovers truth; C CONTROL a `branches:[main]`-only workflow is STILL rejected; D CONTROL a workflow with no push trigger is STILL rejected; E CONTROL an explicit `branches:[master]` still accepted. 5/5. Columns C and D are what make it a repair and not a loosening. The DECISIVE evidence was not the parser at all: the push produced a real run on master.",
-   "instrument_defect_number": 15
-  },
-  {
-   "cycle": 2,
-   "kind": "scope",
-   "what": "N-7 (settle the README floor) was NOT closed this cycle even though its evidence was obtained this cycle.",
-   "why": "cycle.md step 5 permits ONE work type per cycle; this cycle's was the build wave. Editing README.md on the strength of fresh evidence without a sealed gate of its own would trade this run's central discipline for an hour of clock the run does not need - stop_at is ~23h out. The evidence is recorded verbatim in N-7's notes so the next cycle opens with it in hand."
-  },
-  {
-   "cycle": 2,
-   "kind": "routing",
-   "what": "Builders were dispatched as DIRECT Agent calls (sonnet for N-1, haiku for N-3), not via workflows/build-wave.js.",
-   "why": "Headless pacer-spawned `-p` cycle: the Workflow tool is review-gated, and direct Agent dispatch is the documented SKILL.md fallback. Same basis as run #3 cycles 6, 8, 9, 10, 13, 14. No worktrees, so the two agents were given strictly disjoint file scopes (.github/workflows/test.yml vs .swarm/runs/NAMING.md) and `git status` after the wave confirmed exactly those two paths and nothing else."
-  },
-  {
-   "cycle": 4,
-   "kind": "scope",
-   "what": "DECLINED R-1 on this run's own measurement, and measured the thing the inherited ratchet score never asked.",
-   "why": "M-4 permits exactly two outcomes for R-1 and this is the second. Run #3 cycle 14 already scored it FAIL on question one of the ratchet, but a decline resting only on an inherited score is a decision reasoning from bookkeeping, which is the exact error this repo has filed against itself repeatedly. WHAT WAS ACTUALLY MEASURED, and it reframes the item: the cycle-39 record established the guard is SILENT on D4a/D4b (acknowledgement stripped, in-section decoy left behind) — but it established that by ISOLATING the guard via --test-name-pattern, explicitly so neighbouring count guards 'can neither supply nor mask the verdict'. That correctly answers 'is the guard broken' and never asks 'is the PROPERTY unprotected', which is what R-1's value actually depends on. Asked directly (run4-cycle-004-r1probe.mjs, 7/7, arms built by git archive 60c71d3 rather than by copying a live tree): the FULL SUITE goes RED 116/2 on both D4a and D4b while the target guard stays silent on both, exactly as recorded. The kill is ATTRIBUTED, not incidental (run4-cycle-004-r1attrib.mjs + a 4/4 adjudication of its one instrument defect): skipping exactly the two count guards lets both mutations SURVIVE, the removed set was verified BY NAME rather than by count, the target guard was verified still present in those runs so the survival is not self-fulfilling, a non-matching skip pattern removes nothing, and a benign reword leaves the suite green so the red arms are not an instrument that dies on everything. DECISIVE PROPERTY: those two guards re-derive from src/corpus.js at run time and FAIL CLOSED on an absent acknowledgement — the precise direction the target guard fails OPEN. A reshape would add a third guard over a covered property and would require README to own a NEW structural marker, i.e. editing a shipped document to satisfy a test. RESIDUAL STATED, NOT HIDDEN: the two covering guards are prose regexes bound to a corpus-derived number, not the structural markers R-1's acceptance asks for, so coverage is behavioural rather than architectural; and the guard's OTHER recorded defect, the D1/D3/E3 false-rejection direction, is untouched by this decline. Re-open if a T-040 ruling reintroduces single-entry tags."
-  },
-  {
-   "cycle": 4,
-   "kind": "verification",
-   "what": "The anti-staleness cell A6 CAUGHT the decay class in the act — the first time a gate on this repo has, rather than a human catching it by reading.",
-   "why": "This repo has now measured eight times that a count claim goes stale the moment the run closes its next item; at cycle 3 the defect was caught by the conductor reading 73 lines, and the journal recorded that no cell of the gate covered it. So this cycle's gate got a cell that re-derives every asserted count from backlog.json AT RUN TIME. The sequence is the evidence: the gate passed A6 12/14 with N-5 still open; N-5 was then marked done; the SAME gate, byte-unchanged, immediately returned A6 FAIL with 'claimed done 5 != truth 6, inflight 1 != 0'. The document was falsified by the very commit that shipped it, exactly as at cycle 3 — but this time the instrument said so instead of a person noticing. Repaired to 6 done / nothing in flight / 6 blocked / 1 declined, and the prose now says counts are re-derived at each cycle's gate rather than trusted. LESSON WORTH CARRYING: the fix for a decay class is not more careful writing, it is a cell that derives the claim from the source at verification time. Careful writing was tried at cycle 3 and produced the same defect."
-  },
-  {
-   "cycle": 4,
-   "kind": "verification",
-   "what": "Both sealed-gate FAILs (A2, A4) were adjudicated as instrument defects sharing ONE root cause, with the gate left byte-unedited — and a REAL defect the gate never asked about was found by reading.",
-   "why": "INSTRUMENT DEFECTS #17 and #18, adjudicated 11/11 in run4-cycle-004-A2A4-adj.mjs. Both trace to one heuristic: the gate sliced an item's 'entry' from the FIRST occurrence of its id to the next id. R-1's first mention is in the summary paragraph ('...and 1 declined (R-1)'), so its slice began AFTER the word 'declined' and could not structurally contain the answer A2 asked for; TS-3 is the LAST blocked id, so its slice ran through the '### Declined' heading and absorbed R-1's legitimate 'ruled by this run's own conductor', which A4 then attributed to TS-3. A third bluntness: A4's /this run/ alternative fired on T-006's 'no one in this run can reach a primary source' — a clause that REINFORCES human ownership. The repair reads bullets structurally and tests the actor's HEAD clause, with controls in BOTH directions: the stale wording is still rejected, a deleted R-1 bullet is still rejected, an invitation to a builder still FIRES, an agent named in the actor field still FIRES, and an agent assignment HIDDEN inside a parenthetical still FIRES (control K, added specifically to guard the narrowing that made column I pass). THE ADJUDICATION ARTIFACT ITSELF WAS WRONG TWICE BEFORE IT WAS RIGHT, and that is worth recording: its bullet regex ended with a bare `$` under the `m` flag, so every bullet was truncated at its first line (~85 chars) and the actor field was never in scope — caught because columns F and I are the same predicate with opposite expectations and could not both pass. Its column J, the control meant to catch exactly that, was a length threshold weak enough to pass on the truncated output; it now requires the structural markers a complete bullet owns. AND THE SHAPE THAT MATTERS MOST, because it is the cycle-14 lesson recurring: the gate was RIGHT AND INSUFFICIENT. Twelve green cells sat over a REPORT.md that told a human to look at 'SPEC.md line 144' for the retag example — the example is at line 206; line 144 is unrelated prose. The builder did not invent it, it is transcribed verbatim from T-040's acceptance clause in backlog.json, so the staleness is inherited and is the KI-23 drift class. No cell asked whether a cited line number resolves. Found by reading, repaired to cite the rule rather than the line, with the drift noted in place."
-  },
-  {
-   "cycle": 4,
-   "kind": "routing",
-   "what": "REFUSED the gear-2 docs demotion of N-5 from sonnet to haiku for the second time this run, and re-verified rather than re-asserted the basis.",
-   "why": "Cycle 1 refused the identical demotion for N-2 on two measured haiku overclaims on REPORT.md (run #3 cycle 4's N-6 prediction, run #3 cycle 14's false provenance date). The evidence has since GROWN rather than merely persisted: run #4 cycle 2 measured a third, a haiku builder reporting it wrote '75 lines (under 80-line target)' for a file that is 22 lines. N-5 edits the same file, and its failure mode is silent paraphrase of facts the document exists to state precisely. Recorded rather than taken silently because it overrides a mechanical rule, and a silent override is how a run starts quietly deciding things it never wrote down. The refusal was vindicated in a specific, checkable way: every corpus-derived figure the sonnet builder wrote was re-derived by the conductor and came back EXACT — 50 entries, 12 distinct tags, 5 tags at <=4 entries with the right per-tag counts, Dijkstra 7 + Perlis 5 + Pike 5 = 17/50 = 34.0%, median first repeat at draw 9, P(repeat by 12) = 76.18%, and the triage table's 8 HIGH / 16 MEDIUM / 26 LOW over 50 rows. The builder also volunteered a distinction the task did not ask for — that backlog.json names a specific actor ('repo owner, at the next kickoff') only for TS-1/2/3 and a generic 'human' for T-006/T-040/J-7 — and preserved it rather than inventing uniform specificity. That is the opposite of the overclaiming failure mode the demotion would have risked."
-  },
-  {
-   "cycle": 4,
-   "kind": "method",
-   "what": "A conductor cross-check produced a FALSE finding, and it was killed by measuring properly instead of by filing it.",
-   "why": "Recorded because near-misses of this shape are how a run inflates its own output. Spot-checking the builder's '8 HIGH / 16 MEDIUM / 26 LOW of 50' for the attribution triage, a quick `grep -oiE '(HIGH|MEDIUM|LOW)'` over docs/corpus-attribution-triage.md returned 12 / 21 / 28 — a flat contradiction, and 61 items against a 50-entry corpus. The arithmetic not summing to 50 is what stopped the finding from being filed: the grep was counting the words wherever they appeared, including the Method-and-limits prose and the 2026-08-18 correction note, not table rows. Counting rows matching /^\\|\\s*\\d+\\s*\\|/ gives exactly 50 rows and 8 / 16 / 26, confirming the builder. The instrument was mine and it was wrong; the builder was right. This is the third wrong instrument of the cycle after the gate's own two pre-seal bugs, and the standing lesson holds in a direction worth naming explicitly: the discipline of demanding evidence applies to the CONDUCTOR'S evidence too, and a cross-check that disagrees with a builder is a claim, not a verdict."
-  },
-  {
-   "cycle": 5,
-   "kind": "scope",
-   "what": "Ran REVIEW-FIX rather than re-running the DONE decision cycle 4 handed forward, and scoped it to what run #4 actually SHIPPED rather than to src/ bin/ test/.",
-   "why": "Cycle 4's hand-off asked the next cycle to re-run the DONE decision. cycle.md step 4 outranks a prior cycle's suggestion: it places ONE review-fix, ONE QA and ONE TASTE pass after BUILD and before POLISH/VALUE_LOOP, and run #4 had run NONE of the three. The trap this avoids is the one this repo has already paid for: run #3 cycle 8 declared DONE and was wrong four times over, and every one of those errors traced to a mandatory gate that had never run while the bookkeeping said it had. state.json's qa markers (last_full_qa_cycle 6, last_taste_cycle 9) are RUN #3 numbers carried forward; reading them as this run's evidence is exactly the error run #3 cycle 12 caught. ON THE SCOPE, measured not assumed: git diff --stat 7f00cf0 HEAD -- src bin test is EMPTY, so the product code is byte-identical to the tree run #3 cycle 13 reviewed clean, and pointing reviewers at it would have been reviewing bookkeeping — the mirror image of the error run #3 cycle 6 warned against. What run #4 actually shipped is one new executable artifact (.github/workflows/test.yml) and three documents, none of which any adversarial reader had ever seen. The pass returned 2 findings, both reproduced, both fixed, and the suite did not move: 118/118/0 before and after."
-  },
-  {
-   "cycle": 5,
-   "kind": "verification",
-   "what": "The gate came back 19/20 and the one FAIL is a CONTROL that went SILENT — a species this repo had not recorded before.",
-   "why": "C4 exists to prove cell P2 (both historical examples survive) is not vacuous, by deleting the cycle-3 example and checking P2 dies. Its mutation regex matched literal single spaces against RAW text, but the live document wraps as 'at cycle 3 in\\nthe same way', so the mutation was a NO-OP and C4 reported 'P2 PASS' — the control certified the cell while testing nothing at all. SAME ROOT CAUSE as a bug the PRE-SEAL baseline had already caught in the assertion path: I fixed the assertions to read whitespace-normalised text and left the MUTATION path reading raw text. Adjudicated 13/13 in run4-cycle-005-C4G5-adj.mjs with the gate left BYTE-UNEDITED, including both arms (deleting the cycle-3 example kills P2; deleting the cycle-4 example also kills it), a control that P2 still PASSES untouched, and a control that a benign rewrap — same words, 124 newlines to 120 — leaves P2 GREEN, so the repair is not a loosening. THE SECOND POST-SEAL DEFECT IS THE WORSE ONE and it PASSED: G5 asserts only README.md and REPORT.md changed since the seal, but it diffed f9c286d..HEAD while the fixers' work was still UNCOMMITTED, so it compared committed history to itself, reported changed=[] and would have passed identically had a fixer rewritten .github/workflows/test.yml. C4 failed LOUDLY and told me it was broken; G5 failed SILENTLY and read as green. That is the distinction worth carrying."
-  },
-  {
-   "cycle": 5,
-   "kind": "routing",
-   "what": "REFUSED the gear-2 docs demotion of the REPORT.md fixer from sonnet to haiku for the THIRD time this run — and separately recorded a routing ERROR of my own on the A-1 verifier seat.",
-   "why": "THE REFUSAL: cycles 1 and 4 refused the identical demotion on this identical file, on three measured haiku overclaims (run #3 cycle 4's N-6 prediction, run #3 cycle 14's false provenance date written into the one paragraph whose job is dating claims correctly, run #4 cycle 2's '75 lines' report for a 22-line file). B-1a's failure mode is silent imprecision about cycle attribution — the exact class. The refusal was partly vindicated and partly not: the sonnet fixer preserved every required element and disclosed its own blocked Bash access rather than claiming verification it had not done, but it still wrote 'once this cycle' where the durable form is 'once at cycle 4', which the conductor repaired in one token. THE ERROR, recorded because a silent one is worse: A-1's adversarial verifier was dispatched on OPUS, but verifier seats are judgment seats and the fable guard exempts them from demotion in every gear. That is one rung below the table, by my mistake, not by policy. It did not change the outcome — the verifier reproduced the finding, found no reviewer overreach, and volunteered the one mitigating fact that argued the severity DOWN from high to medium — and the conductor independently re-derived every decisive fact against the live GitHub API before accepting it. B-1's verifier was correctly on fable."
-  },
-  {
-   "cycle": 8,
-   "kind": "routing",
-   "what": "OVERRODE the routing table itself to hold Q-7 at sonnet. This is NOT the gear-2 demotion refusal cycles 1, 4 and 5 recorded — the TABLE routes this item to haiku on its own, before any pacing rule is applied.",
-   "why": "reference/workflows.md sends `kind` docs/polish at effort S to haiku, and Q-7 is filed docs/S. But that row states its own intent — \"formatting, scaffolding, boilerplate\" — and Q-7 is none of those: it writes a new SPEC entry in an existing three-bullet grammar, and reconciles a COUNT claim across REPORT.md by re-deriving it from backlog.json rather than copying a number. Precision about counts and provenance in exactly this document family is the failure mode this repo has now MEASURED four times on haiku agents: run #3 cycle 4 (record N-6) predicted it, run #3 cycle 14 caught a false provenance date written into the one paragraph whose job is dating claims correctly, run #4 cycle 2 caught a builder reporting it wrote \"75 lines\" for a 22-line file, and cycles 1/4/5 each refused the adjacent demotion on that record. Recorded because it overrides a mechanical rule in the PROMOTE direction under a gear that sets promote=false, which is a stronger override than the three refusals were, and a silent override is how a run starts quietly deciding things it never wrote down. VINDICATED SPECIFICALLY, not merely in outcome: the builder re-derived the count word from backlog.json rather than taking the number from its prompt (gate B6 confirms REPORT and backlog agree), and it reconciled the DEPENDENT claim the prompt only flagged — \"documents the last three\" -> \"the last four\" — keeping 2 + 4 = 6 internally consistent. It also volunteered that the four REPORT.md line numbers cited in J-7 notes (~1062/~1230/~1244/~1300) no longer exist, the file being 124 lines after the cycle-3 move, and established that by grepping the whole file instead of trusting the stale citations."
-  },
-  {
-   "cycle": 8,
-   "kind": "verification",
-   "what": "Adjudicated the sealed gate B3/B4 FAILs as INSTRUMENT DEFECTS #19 and #20 with the gate left byte-unedited — and the root cause is one this same gate had ALREADY caught and repaired in itself before sealing.",
-   "why": "B3 and B4 read a markdown bullet by taking the first SOURCE LINE matching its label. The builder wrapped its D-45 bullets at ~90 columns while the three pre-existing entries D-42/D-43/D-44 are single unwrapped lines, so \"J-7\" and \"stdout\"/\"stderr\" sat on continuation lines that were structurally out of scope. WHAT MAKES THIS WORTH RECORDING RATHER THAN JUST FIXING: the pre-seal baseline had already found the IDENTICAL defect in cell B5, where the Domain-rules Exit-codes bullet also wraps across two lines and the seal covered only half of it. I repaired B5 and did NOT propagate the repair to the two sibling cells that read bullets the same way. A defect found in one cell of a gate is evidence about every cell of that gate, and I treated it as evidence about one. Adjudicated 8/8 in run4-cycle-008-B3B4-adj.mjs: column A reproduces the miss on the real document, B recovers truth, C proves no regression on the unwrapped format the old reader DID handle, D and E are must-die controls, F and G are MUST-NOT-OVERREACH controls proving the whole-bullet reader cannot absorb a neighbouring bullet — the exact failure mode that produced instrument defects #17/#18 at run #3 cycle 4, so the repair is measured against the bug the repair itself risks introducing. Column H measures the blast radius rather than asserting it: B2 presence regexes scan the whole body and are wrap-immune, so no other cell shares the defect. Both cells failed CLOSED, which is the behaviour you want from a wrong instrument."
-  },
-  {
-   "cycle": 8,
-   "kind": "verification",
-   "what": "The gate own pre-dispatch baseline caught cell A2 passing VACUOUSLY against the unfixed document — a false PASS, not a false FAIL — and A2 was reshaped before sealing.",
-   "why": "A2 was a bag-of-words over the whole \"## Exit codes\" section: stderr AND 3 AND a failure token. Whitespace-normalising that section glues the entire markdown TABLE into one punctuation-free blob, so the sentence splitter produced a single unit carrying tokens harvested from three different rows, and the SHIPPED, UNFIXED row satisfied it — that row names stderr as the DIAGNOSTIC DESTINATION, not as a failing stream. This is the KI-12 / R-1 failure class exactly: a claim satisfied by co-occurrence inside a span no one intended as a sentence. Two repairs, both pre-seal: the unit pool now treats each table row as its OWN unit and never merges neighbours, and A2 was reshaped from a section-wide bag of words into a demand for SUBSTANCE inside the exit-3 row itself. Control C8 was added to pin it — it feeds the sealed cell the literal shipped-unfixed row and requires it to stay dead, so the specific text that fooled A2 can never satisfy it again. THE GENERAL POINT, which is why this is a decision and not a footnote: this run instrument defects have overwhelmingly been false FAILs, which announce themselves. This one was a false PASS, and only a DISCRIMINATING baseline — one that asserts which cells must be RED before the work exists — could have surfaced it. A baseline that merely checked its controls would have shipped it green."
-  },
-  {
-   "cycle": 9,
-   "kind": "scope",
-   "what": "The taste pass returned four findings and this run's locked non-goals forbid acting on essentially all of them — recorded as the cycle's real result rather than buried under the two backlog items it did produce.",
-   "why": "F1 (no anti-repeat memory) needs rotation; F2 (canon-only, Dijkstra 14%) needs corpus expansion; F4 (no --tags) needs a new flag. Rotation, corpus expansion and 'any new flag' are all LOCKED non-goals of run #4, set by the allocator's trickle brief. F3 is the only one with an in-scope half, and only its DOCUMENTARY half (record the discrepancy; the styling fix itself needs NO_COLOR, also a locked non-goal). So the swarm's independent taste seat, which had never read the kickoff, arrived at the same place the kickoff taste judge did and the same place run #3's cycle-9 taste pass did: the product's ceiling is the corpus and the draw, and this run may not touch either. THIS CORROBORATES THE DISSENT RECORDED IN SPEC.md AT KICKOFF — 'a fourth consecutive run producing zero user-visible value on a repo whose top product improvement (no-repeat rotation) stays deferred suggests the right call is to point the allocator at a different repo.' That dissent was recorded and not overridden because the brief is the operator's to change, not the swarm's, and that remains true: the conductor is not lifting a non-goal for itself. What the conductor CAN do is stop treating the dissent as a kickoff opinion and start treating it as a measured, twice-independently-reproduced finding, and say so in the morning report where the operator will read it.",
-   "consequence": "No non-goal lifted. TS-1 and TS-3 gain measured corroboration and stay blocked on the human scope decision. TS-5 filed as todo (the in-scope documentary half of F3). TS-6 filed blocked. The morning report must carry the corroboration prominently: the allocator has now spent four consecutive runs on a repo whose own taste instrument says the remaining value is behind a non-goal wall, and that is an allocator-level decision no cycle of this run can make."
-  },
-  {
-   "cycle": 9,
-   "kind": "pacing",
-   "what": "Paid the fable TASTE gate in gear 1 (crawl), which the gear table describes as haiku-priced work.",
-   "why": "The budget probe returned gear 1 (rho 4.50, guest mode, weekly ceiling 2, k_cap 1) and gear 1's work-choice guidance is 'haiku-priced useful work ... S-effort sonnet builds only'. A fable judgment agent is the opposite of haiku-priced, so this is an explicit override and is recorded as one rather than slipped through. Three reasons it is the right call. (1) The taste seat is fable-GUARDED: cycle.md and workflows.md both state pacing demotions never demote judgment seats, so the rules do not offer 'run taste on haiku' as an option — the honest choices were pay it at fable or defer it. (2) It is exactly ONE agent, which is the smallest work type in the catalogue and fits gear 1's wave cap of 1 precisely; no cheaper way to discharge this gate exists. (3) The probe put projected window depletion about an hour out, so deferring the last owed gate risked pushing it into a depleted window or a limp episode, with 19.7h of clock still to spend afterwards. Gear 1 governs what a cycle burns, not whether the run's last outstanding gate gets paid.",
-   "consequence": "Gate paid. All three pre-POLISH gates are now discharged for run #4 and no further judgment-seat spend is owed this run."
-  },
-  {
-   "cycle": 10,
-   "kind": "verification",
-   "what": "The sealed gate S3 cell FAILED against a working tree that satisfies the scope constraint exactly. INSTRUMENT DEFECT #22, adjudicated 11/11 with the gate left BYTE-UNEDITED.",
-   "why": "S3 asks whether README.md is the only changed tracked file. It read `git status --porcelain`, applied .trim() TO THE WHOLE OUTPUT, then sliced 3 characters off each line to skip the two status columns and their separator. But porcelain first column is a SPACE for an unstaged modification (\" M README.md\"), and the whole-output trim ate it, so the slice started one character late and the cell reported the changed path as \"EADME.md\". WHY THE PRE-DISPATCH BASELINE DID NOT CATCH IT, which is the part worth carrying: the baseline ran against a CLEAN tree, so porcelain emitted nothing, so no line was ever sliced and the cell passed VACUOUSLY. A discriminating baseline asserts which cells must be RED before the work exists — it did that, correctly, for B1-B4 — but it can still only exercise the code paths the WORLD hands it, and a clean tree hands a status reader no lines at all. That is a new species for this run: the prior defects were cells that were wrong on data they saw; this cell was never given data. It failed CLOSED, which is the right direction. The underlying claim was verified INDEPENDENTLY of the cell: `git status --porcelain | cat -A` by hand returned exactly \" M README.md$\". Adjudicated in .swarm/runs/run4-c010-S3-adj.mjs with must-die (E), must-not-overreach (F, G) and must-stay-dead (I) columns, plus a blast-radius pair.",
-   "instrument_defect_number": 22
-  },
-  {
-   "cycle": 10,
-   "kind": "verification",
-   "what": "The gate was RIGHT AND INSUFFICIENT again, and the gap was found by READING THE DIFF: the delivered README gained a count claim (\"24 distinct authors\") in the one section that no digit-hygiene guard reaches.",
-   "why": "Twenty green cells, every one of them aimed at whether the documentation claim is TRUE, and none at whether it will STAY true. This repo has filed the decay class eight times and has a measured answer to it — run #4 cycle 4 A6 cell, which re-derives every asserted count from its source AT RUN TIME and caught the decay in the act. The Q-6 gate had no such cell because Q-6 acceptance is about a reader understanding, not about a number; the number arrived as a side effect of the builder choosing (correctly, and in this README own voice) to prefer a measured figure to an adjective. MEASURED RATHER THAN ASSUMED, and the discriminator matters: this README is unusually well defended against precisely this — test/readme-tags.test.js carries J-5 (\"no unrecognised count-claim digits\") and C7 (\"no digit runs outside the counts table\") — but both are SECTION-SCOPED to Tag vocabulary and Attribution, and the new text landed under `## Flags`. The proof that it is genuinely unguarded rather than merely unnamed is that the suite is GREEN at 118/118 with the new \"24\" in place; had either guard reached that section it would have fired. Filed as Q-8 rather than fixed, because cycle.md step 5 permits ONE work type per cycle — the cycle-2 precedent for evidence obtained inside a build wave."
-  },
-  {
-   "cycle": 10,
-   "kind": "routing",
-   "what": "Corrected Q-6 model from the backlog haiku to sonnet at pick time. This is the routing TABLE being applied, not an override of it — and it is the opposite direction from the three gear-demotion refusals this run recorded.",
-   "why": "cycle.md step 4 says routing is PICK-TIME, not plan-time, and workflows.md sends `kind` docs/polish at effort S to haiku while sending \"all other build/fix items (S/M effort)\" to sonnet. Q-6 is kind=fix, so the table routes it to sonnet and the backlog haiku was a stale PLAN-time assignment. Gear 1 sets demote=true, but the demotion rule drops sonnet to haiku for docs/polish items ONLY, and never lets build/fix fall below sonnet — so pacing does not reach this item either. Recorded because cycles 1, 4 and 5 each recorded a REFUSAL of a haiku demotion on this repo document family, and it would be easy to read this as a fourth. It is not: no rule had to be overridden here, and saying so keeps the three genuine overrides legible as overrides."
-  },
-  {
-   "cycle": 11,
-   "kind": "scope",
-   "what": "Declined to update the eleven stale J-7 behaviour counts in docs/report-history.md while raising the live count from six to seven.",
-   "why": "That file is the ARCHIVE of what earlier reports said, moved out of REPORT.md under this run's own M-2 (\"history MOVED not deleted\"). A count that was true when written is not a defect; rewriting it would falsify the record of what was believed when, which is the one thing an archive exists to prevent. The live count sites — REPORT.md's J-7 bullet and the J-7 backlog record — were both updated in this cycle, and a gate cell pins the archive byte-identical so the decision is enforced rather than merely intended."
-  },
-  {
-   "kind": "process",
-   "cycle": 11,
-   "what": "Stop instructing builders to build scratch/mutation arms under /tmp. The instruction is unfollowable and this cycle proved it.",
-   "why": "The Q-8 builder disclosed that shell cp/mkdir were denied outright for /tmp, so it built its mutation arms INSIDE the repo (.scratch-mutation-test*/) using fs.cpSync instead. The likely cause is structural rather than incidental: /opt/targets/aphorism-cli is an additionalDirectories entry and /tmp is not, so a subagent cannot write there. The agent cleaned up and gate cell S1 came back clean, but the repo has NO .gitignore, so for the duration of the wave a `git add -A` would have committed two full scratch trees. The near-miss was caught only because S1 runs BEFORE the commit. Future builder prompts should name an in-repo scratch path and require its removal, rather than naming a path the sandbox will refuse."
+  "last_cycle": {
+    "cycle": 12,
+    "work": "VALUE_LOOP / DONE decision (inline, conductor-owned) + WRAP_UP",
+    "outcome": "DONE. 12-cell closing gate re-derived the definition of done from the tree, 12 PASS / 0 FAIL incl. 2 must-die controls. Suite 119/119. Actions matrix 4/4 green on HEAD. src/corpus.js byte-identical; bin/ and src/ untouched all run. M-3 re-executed and DENIED again -> closes on its handoff branch, never as a pass (ledger stays denial #31). No VALUE_LOOP candidate cleared the ratchet: every noticeable change is a SPEC-locked non-goal. ~18.5h handed back with the reason recorded.",
+    "ts": 1787168059
   }
- ],
- "decisions_archive": ".swarm/decisions.json (all 41, full text — moved at kickoff, nothing dropped)",
- "known_issues": [
-  {
-   "id": "KI-2",
-   "severity": "high",
-   "status": "open",
-   "title": "corpus attributions are unaudited — entry shape is machine-verified but no check available to this run can confirm each of the 50 quotes is "
-  },
-  {
-   "id": "KI-5",
-   "severity": "medium",
-   "status": "partially resolved cycle 1 of run #2",
-   "title": "SWARM playbook (SWARM/playbook/learnings.md) is over its documented cap: 31 lessons against a cap of 20"
-  },
-  {
-   "id": "KI-6",
-   "severity": "low",
-   "status": "open",
-   "title": "Subagents in this VPS -p session are sandboxed to the session --add-dir list (/opt/swarm, /opt/targets/aphorism-cli)"
-  },
-  {
-   "id": "KI-7",
-   "severity": "low",
-   "status": "mitigated, control passing 5 consecutive cycles",
-   "title": "Subagent scratch files land in the SWARM root (/opt/swarm) unless the dispatch prompt names an explicit scratch path"
-  },
-  {
-   "id": "KI-8",
-   "severity": "high",
-   "status": "mitigated in practice, root cause open",
-   "title": "The conductor's sealed pre-dispatch baseline is READABLE BY THE BUILDER IT IS MEANT TO BE SEALED FROM"
-  },
-  {
-   "id": "KI-9",
-   "severity": "medium",
-   "status": "RESOLVED at cycle 2 of run #2 — by removal, which is the one route it named and could not take",
-   "title": "The README Attribution section's two count claims (C1 corpus size, C2 HIGH-risk count) cannot be bound to their markers by any measured rule"
-  },
-  {
-   "id": "KI-10",
-   "severity": "medium",
-   "status": "RESOLVED at cycle 2 of run #2 — measured closed on a two-arm gate",
-   "title": "SILENT MISS, LEFT OPEN BY A MEASURED DECISION"
-  },
-  {
-   "id": "KI-11",
-   "severity": "low",
-   "status": "open",
-   "title": "SWARM/runs/dashboard.html carries THREE copies of the cycle-37 timeline tick; two of them sit INSIDE HTML comment regions"
-  },
-  {
-   "id": "KI-12",
-   "severity": "medium",
-   "status": "open",
-   "title": "The README acknowledgement guard can be satisfied by a README that does NOT acknowledge the single-entry tag limitation"
-  },
-  {
-   "id": "KI-13",
-   "severity": "low",
-   "status": "open",
-   "title": "SWARM TOOL GAP (morning report, not a live edit -- hard rule 5)"
-  },
-  {
-   "id": "KI-14",
-   "severity": "high",
-   "status": "open",
-   "title": "SWARM TOOL GAP, HIGH because it disables a spend governor (morning report, not a live edit -- hard rule 5 fences bin/)"
-  },
-  {
-   "id": "KI-15",
-   "severity": "low",
-   "status": "open",
-   "title": "SWARM TOOL GAP (morning report, not a live edit -- hard rule 5)"
-  },
-  {
-   "id": "KI-16",
-   "severity": "high",
-   "status": "open",
-   "title": "SWARM TOOL GAP, HIGH because it FAILS OPEN on a spend authorisation (morning report, not a live edit -- hard rule 5 fences bin/)"
-  },
-  {
-   "id": "KI-17",
-   "severity": "medium",
-   "status": "open (repaired in the rendered artifact; the defective pattern is what remains filed)",
-   "title": "CONDUCTOR-INSTRUMENT DEFECT, found at cycle 49 while rendering the dashboard"
-  },
-  {
-   "id": "KI-18",
-   "severity": "low",
-   "status": "open — the not-reconstructable claim is now MEASURED, not asserted",
-   "title": "The BURN-UP STRIP that reference/cycle.md step 8 names as part of the dashboard template contract (one bar per cycle, height = cumulative ve"
-  },
-  {
-   "id": "KI-19",
-   "severity": "medium",
-   "status": "open (repaired in the rendered artifact; the defective pattern is what remains filed)",
-   "title": "The dashboard meta line fields `gen` and `next` are LIVE but were never substituted by ANY render script, and had been stale since cycle 47 "
-  },
-  {
-   "id": "KI-20",
-   "severity": "low",
-   "status": "open by decision, not by neglect",
-   "title": "The Attribution section's \"every number here is a checked table row or a loud failure\" invariant is over ASCII DIGITS only"
-  },
-  {
-   "id": "KI-21",
-   "severity": "low",
-   "status": "accepted trade, documented at the guard",
-   "title": "C7 scans fenced code blocks, so a TRUE snippet in the Attribution section that carries a digit is rejected — e.g"
-  },
-  {
-   "id": "KI-22",
-   "severity": "low",
-   "status": "open, disclosed by the builder pre-gate",
-   "title": "Two narrownesses in J-2b's structural fix, both disclosed by the builder in its return before any gate measured them"
-  },
-  {
-   "id": "KI-23",
-   "severity": "low",
-   "status": "RESOLVED at cycle 7 of run #2 — measured against the commit the claim names",
-   "title": "REPORT.md carries a LINE-COUNT claim family that nothing re-derives, and it drifts every time any test file changes"
-  },
-  {
-   "id": "KI-24",
-   "severity": "low",
-   "status": "open",
-   "title": "English number WORDS are invisible to the J-5 guard, which scans for `\\d+`"
-  },
-  {
-   "id": "KI-25",
-   "severity": "medium",
-   "status": "open",
-   "title": "SWARM TOOL GAP (morning report, not a live edit -- hard rule 5 fences bin/)"
-  },
-  {
-   "id": "KI-26",
-   "severity": "high",
-   "status": "open",
-   "title": "SWARM TOOL GAP, HIGH because it silently removes the run's crash-recovery net (morning report, not a live edit -- hard rule 5 fences bin/)"
-  },
-  {
-   "id": "KI-27",
-   "severity": "low",
-   "status": "open",
-   "title": "README.md:10 claims a “Node 18+” support floor that nothing in this repo verifies"
-  },
-  {
-   "id": "KI-28",
-   "severity": "low",
-   "status": "open",
-   "title": "Repeated --tag / --author is unprotected AND spec-undecided"
-  },
-  {
-   "id": "KI-29",
-   "severity": "low",
-   "status": "open",
-   "title": "Three domain-rule clauses (D-04 non-integer seeds, D-36 --help on stdout, D-41 positional-argument rejection) are each killed by exactly ONE"
-  },
-  {
-   "id": "KI-30",
-   "severity": "medium",
-   "status": "open",
-   "title": "The SWARM self-modification fence (hard rule 5) depends on agent goodwill"
-  },
-  {
-   "id": "KI-31",
-   "severity": "medium",
-   "status": "resolved",
-   "title": "bin/aphorism.js writes to process.stdout (lines 28, 43, 48) with no error handler, so any stdout write failure surfaces as an unhandled 'err"
-  },
-  {
-   "id": "KI-33",
-   "severity": "medium",
-   "status": "open",
-   "title": "The dashboard render harness (runs/c*-dashboard.mjs, used by cycles 3-6) substitutes the evidence block at the FIRST match of the evidence <"
-  },
-  {
-   "id": "KI-34",
-   "severity": "low",
-   "status": "open",
-   "title": "SWARM-side cycle commits carry messages that assert contents the commits do not and cannot have"
-  },
-  {
-   "id": "KI-35",
-   "severity": "low",
-   "status": "open",
-   "title": "cycle-NNN-* artifact names collide across runs in .swarm/runs/"
-  },
-  {
-   "id": "KI-36",
-   "severity": "low",
-   "status": "open, reconciled in the cycle-5 journal block",
-   "title": "The journal's ordinal labels for the count-staleness decay class are mutually inconsistent: run #4 cycle 3 says SIXTH while enumerating only four run-#3 priors (run #3 itself states five), cycle 4 says Eighth, and no occurrence is ever labelled seventh"
-  },
-  {
-   "id": "KI-37",
-   "severity": "medium",
-   "status": "open — human-only, SWARM-side (hard rule 5 fences bin/ and reference/)",
-   "title": "SWARM docs write invocations as SWARM/bin/<script>, but the harness allowlist matches literal command prefixes, so a conductor that pastes the documented form is DENIED even though the script is allowlisted under its absolute path; the allowlisted relative form bin/<script> then fails ENOENT because headless cycles run with cwd = the target dir, not the SWARM root"
-  }
- ],
- "known_issues_detail": ".swarm/known-issues.json (all 31, full text — moved at kickoff, nothing dropped)",
- "backlog_archive": ".swarm/backlog-archive-runs1-3.json (33 done + 1 dropped, full text — moved at kickoff)",
- "qa": {
-  "last_full_qa_cycle": 7,
-  "last_look_cycle": 0,
-  "last_taste_cycle": 9,
-  "carried_forward_note": "Cycle markers RESET for run #3 (they numbered run-1/run-2 cycles and would misread against this run's counter). The full run-1 and run-2 qa note blob — the cycle-50 mutation instrument, the 29/29 coverage map, and every suite_coverage_note — is preserved byte-exact in .swarm/state.json.pre-run3-1787024916 and is the input K-3 re-measures against. Prior values: last_full_qa_cycle 13, last_taste_cycle 14, last_e2e_cli_gate_cycle 50.",
-  "suite_coverage_note_cycle_003_run3": "K-3 RE-MEASURED. The 29-clause Domain-rule coverage map, re-run against today’s tree with the standing run-1 cycle-50/52 instrument, arms built by `git archive` at the pre-dispatch SHA b627ed2 (L-042) rather than by copying a live tree two agents were editing. Result 29 KILLED / 0 SURVIVED / 0 INERT / 0 NOT-PLANTED. No clause verdict moved since run #1 cycle 54; L5 and L7 (the cycle-52 holes) are still killed. Every cycle-52 anchor string still occurs exactly once in current source, so no mutation needed repair. Suite 84 tests at cycle-52 P0 -> 102 today, so several kills are now attributed to newer tests even though no clause-level verdict changed. RECORDED HERE, NOT in last_full_qa_cycle: this is the conductor/agent mutation instrument, not the qa-verify.js workflow (spec-author -> executor -> live-look), and putting it in that field would misreport which instrument produced the evidence — the same convention run #1 cycles 49-50 set.",
-  "suite_coverage_note_cycle_004_run3": "K-3 COMPLETENESS TESTED. The 29-clause map that cycle 3 re-measured 29/29 KILLED had itself never been re-derived from the SPEC. Cycle 4 derived 43 clauses independently from SPEC Domain rules / must-haves / taste notes / exit codes plus README, then diffed: 29 map onto the inherited enumeration (verdicts carried, not re-measured - src/ bin/ test/ are byte-identical between b627ed2 and e6c53b1), 14 are NEW. The 14 measured: 12 KILLED, 1 SURVIVED, 1 NOT-PLANTED. So the inherited enumeration was INCOMPLETE as an enumeration (14 omissions) while the SUITE turned out to protect 12 of those 14 anyway. The single survivor D-42 (repeated --tag/--author) is BOUNDARY, not HOLE. 0 HOLE therefore 0 new tests, which is why N-5 closes empty. RECORDED HERE, NOT in last_full_qa_cycle: this is the conductor/agent mutation instrument, not the qa-verify.js workflow - same convention as run #1 cycles 49-50 and run #3 cycle 3.",
-  "full_qa_note_cycle_006": "QA FULL pass run as DIRECT AGENT calls, not workflows/qa-verify.js: this is a headless pacer-spawned `-p` cycle where the Workflow tool is review-gated, and SKILL.md RESUME prescribes direct Agent dispatch as the documented fallback. Two deviations from the script contract, both recorded and neither a weakening: (1) the spec-only author was isolated by giving it a byte-identical COPY of SPEC.md in a directory containing nothing else (sha256 b495c99f... verified equal to the original) plus an explicit no-other-file instruction, because the script achieves spec-blindness by passing spec_text inline and args must be literal; (2) the executor stage was run BY THE CONDUCTOR instead of a sonnet agent — for a CLI with no dev server the scenarios are plain invocations, so running them here yields conductor evidence directly rather than an agent claim the gate would have to re-verify anyway. Result: 4/4 scenarios PASS against a spec-derived answer key. The value came from the live-look, not the scenarios: 4 findings, all 4 conductor-reproduced, one agent severity claim measured FALSE and re-scored down. DEDUPE CORRECTION applied within the same cycle: the look agent's 4th finding (empty --seed contradicts the Selection clause) turned out to duplicate measured gap D-43, which cycle 5 had already written into SPEC.md \"Undecided behaviours\" and routed to J-7. Q-3 and KI-32 were filed, then RETRACTED before commit; the one fact D-43 lacks (whitespace-PADDED seeds are accepted, so the refusal is specific to empty/whitespace-only) was folded into J-7's notes instead. Recorded because the near-miss is the lesson: an independent instrument re-deriving a known gap is corroboration, not new backlog, and filing it as new work would have inflated this cycle's apparent output with bookkeeping the run already owned.",
-  "fix_wave_note_cycle_007": "Q-1 and Q-2 came from the cycle-6 QA live-look and were verified this cycle, so the QA pass converted into shipped repair rather than a list. Suite 102 -> 115 (13 new tests in test/pipe.test.js, the runs first new tests; K-3s zero-new-tests rule is not violated — that rule binds tests derived from the mutation coverage map, and these are derived from a measured, conductor-reproduced live-look defect). last_full_qa_cycle stays 6: this cycle ran no QA workflow.",
-  "fix_wave_note_cycle_008": "Q-3 closed the write-error story on the second stream. bin/aphorism.js now carries a symmetric stderr error handler mirroring the stdout one from Q-1. The deliberate asymmetry, which is a judgment call and is recorded as such: on a NON-EPIPE stderr failure the tool writes NO diagnostic anywhere - re-writing to stderr could recurse into its own handler, and diverting to stdout would corrupt the data channel calling scripts parse. The exit code (3) is the only honest signal left. Suite 115 -> 118. TASTE remains the owed pass (last_taste_cycle still 0); backlog todo is now EMPTY, the 3 survivors are human-owned blocked items (T-006, T-040, J-7), so the next cycle picks TASTE or a VALUE_LOOP candidate, not a backlog item.",
-  "taste_note_cycle_009": "TASTE pass RUN and VERIFIED at cycle 9 -- the last of the three pre-POLISH gates (review-fix c5, QA full c6, TASTE c9). Verdict: wears-thin, 4 boredom findings, 0 fundamental. Dispatched as a DIRECT fable Agent call, not workflows/qa-verify.js: headless `-p` cycle, Workflow tool review-gated, direct dispatch is the documented SKILL.md fallback. Two contract-faithful adaptations are recorded in .swarm/runs/cycle-009-taste.json (CLI brief replaces the web serverBrief; no browser so evidence is raw terminal output, screenshots empty). THE GATE IS THE POINT: all four findings were conductor-reproduced by an 8-check script authored AFTER the agent returned (.swarm/runs/cycle-009-taste-gate.mjs, 8/8 PASS) plus test_cmd 118/118. One agent figure was measured and came back CONSERVATIVE rather than inflated: it reported the first repeat at use 12, but with N=50 the median first repeat is draw 9 and P(repeat by 12) = 76.2%, so the staleness bites SOONER than reported. The agent honored read-only -- git status was empty after its run. last_full_qa_cycle stays 6: this cycle ran no full-QA workflow.",
-  "polish_note_cycle_010": "POLISH gate run at cycle 10 as a DIRECT Agent dispatch, not workflows/polish-docs.js: headless pacer-spawned `-p` cycle, Workflow tool review-gated, direct dispatch is the documented SKILL.md fallback (same basis as cycles 6, 8 and 9). Single item TS-4, the only todo in the backlog. THE GATE WAS SEALED BEFORE DISPATCH this time rather than authored after the agent returned (the cycle-9 taste-gate pattern): SWARM/runs/c10-gate-TS-4.mjs, sha256 a9f5e0f5..., committed in 69bb9df together with a DISCRIMINATING BASELINE proving it failed A2-A6 on the unfixed tree while passing A7-A11. Running that baseline found TWO BUGS IN THE GATE ITSELF (an expected-flag list missing --tag; a test-summary regex matching the TAP reporter when node --test here uses the spec reporter, which reported a green 118/118 suite as NOT green) -- both false FAILs that would have fired against any tree, both fixed before sealing. Two bugs in eleven assertions is the measured argument for baselining a gate instead of reasoning about it. Attempt 1 (haiku) failed the gate honestly; attempt 2 (sonnet, one rung up the ladder) passed 12/12 with the gate byte-unchanged. last_full_qa_cycle stays 6, last_taste_cycle stays 9: this cycle ran no QA or taste workflow.",
-  "value_loop_note_cycle_011": "VALUE_LOOP candidate-generation pass run inline by the conductor, from the LOCKED SPEC and the 31-entry known_issues list rather than the backlog (todo was empty). Six candidates scored on both ratchet questions AND on spec alignment; exactly one admitted. V-2 (consolidated SWARM tool-gap handoff) rejected because WRAP_UP's morning report already carries those nine fenced gaps and building a second container an hour earlier is the cycle-6 Q-3/KI-32 near-miss repeated. V-3 (KI-12) rejected on the cycle-0 scope decision and K-3's measured-survivor rule, explicitly not on value. V-4 rejected as a LOCKED non-goal the swarm cannot lift for itself. V-5 rejected as human-owned per K-5. V-6 rejected on value. THE FINDING MATTERS MORE THAN THE FIX: V-1 is a regression against must-have K-4, ticked at cycle 4 and falsified by cycles 7, 8 and 10 of this same run -- a verified box decayed inside its own run and no pipeline step was positioned to notice. That is why the DONE decision came back NOT DONE and opened V-7 rather than closing the target: V-1 swept one document's first screen, K-4 governs three document surfaces. Declaring done one cycle after finding that the checkmarks decay would be reasoning from the checkmarks instead of from the tree.",
-  "review_fix_correction_cycle_012": "CORRECTION, and it is load-bearing for the DONE decision. taste_note_cycle_009 states 'the last of the three pre-POLISH gates (review-fix c5, QA full c6, TASTE c9)'. The 'review-fix c5' half is FALSE. Cycle 5's own journal block reads 'work: build-wave [N-8, N-10] -- the last open must-have' and its header is 'BUILD -> REVIEW', i.e. the PHASE moved into review; no review-fix pass ran. Cycle 6's block then says explicitly: 'review-fix and TASTE remain owed before POLISH; whoever runs review-fix later should scope it to src/ bin/ test/, NOT to this run's diff, or it will review bookkeeping.' TASTE was paid at cycle 9; REVIEW-FIX HAS NEVER RUN in run #3. Found at cycle 12 while re-running the DONE decision V-7 was opened to inform. This is the SAME decay class V-1 and V-7 measured in the documents, now found in the run's own bookkeeping: a note that summarised three gates as paid when one was owed. It matters because 'all three pre-POLISH gates ran' is precisely the premise a DONE call would rest on.",
-  "review_fix_note_cycle_013": "REVIEW-FIX PAID AT CYCLE 13 — the gate cycle 12 discovered had never run in run #3, scoped exactly as cycle 6 instructed (src/ bin/ test/, NOT this run's diff). All three mandatory stages ran, as DIRECT Agent calls rather than workflows/review-fix.js: headless pacer-spawned -p cycle, Workflow tool review-gated, direct dispatch is the documented SKILL.md fallback (same basis as cycles 6, 8, 9, 10). Six agents: 2 isolated reviewers (sonnet — opus demoted one rung by the gear-2 governor, reviewers are not fable-guarded judgment seats), 2 adversarial verifiers (fable, judgment seats, exempt from demotion), 2 fixers (sonnet, pairwise-disjoint files). Reviewer lenses were disjoint and neither saw the other: A on shipped behaviour, B on test-suite integrity. NOTE ON THE AGENT DISPATCH ITSELF, because cycles 1, 11 and 12 read the standing 'do not call the Agent tool unless the user requested it' instruction as blocking dispatch and ran conductor-inline: that reading is right for measurement-and-document items those cycles picked, and wrong for this one. Review-fix's middle stage exists precisely to deny the conductor the power to adjudicate its own findings; a conductor-inline review-fix is not a cheaper version of the pass, it is the absence of it. The user invoked the skill whose step 5 defines this work type as multi-agent. RESULT: 2 findings, both reproduced, 0 discarded, 0 code changes — both dispositions were documentation. The suite did not move: 118/118/0 before and after, which for a review-fix pass is the honest outcome, not a null one. THE SHIPPED CODE CAME BACK CLEAN: reviewer A, told to hunt boundary and interaction defects across bin/aphorism.js and all three src/ modules, surfaced exactly one behaviour and it turned out to be unspecified rather than wrong. That is a real signal about a repo on its third improvement run and is worth weighing in the DONE decision. last_full_qa_cycle stays 6, last_taste_cycle stays 9: this cycle ran no QA or taste pass.",
-  "docs_reconciliation_note_cycle_014": "K-4 REGRESSION REPAIRED at cycle 14 (item R-2). This is the FIFTH measurement of the same decay class in run #3 — V-1 at cycle 11, V-7 at cycle 12, the review-fix bookkeeping correction at cycle 12, the count debt cycle 13 declared rather than paid, and now this. Six J-7 count sites in REPORT.md reconciled against the backlog: line 1062 (cycle-8 narrative quotation) two->five; 1230 (executive summary) Two->Five; 1244 (ranked actions) two->five; 1300 (section heading) Four->Five; 1304 (backtick-quoted backlog title) re-dated AND updated to the live title; 1313 ('what would settle it') four->five. A fifth ruling bullet for D-44 and its cycle-13 provenance line were added, because a count claim of five over a list of four is a NEW false claim rather than a repair — the gate's A2 cell enforces that the count and the list agree, and its A3 cell checks the new bullet's SUBSTANCE so the count could not be satisfied with an empty placeholder. THE GATE DERIVES ITS TRUE COUNT FROM THE BACKLOG at run time rather than hardcoding five, so it does not go stale the moment a sixth ruling is routed to J-7. Dispatched as a DIRECT haiku Agent call, not workflows/build-wave.js: headless pacer-spawned -p cycle, Workflow tool review-gated, direct dispatch is the documented SKILL.md fallback (same basis as cycles 6, 8, 9, 10, 13). last_full_qa_cycle stays 6, last_taste_cycle stays 9: this cycle ran no QA or taste pass.",
-  "done_decision_note_cycle_015": "DONE DECLARED at cycle 15 on a settled tree. No QA, taste, review-fix or polish pass ran this cycle and none was owed: review-fix c13, QA full c6, TASTE c9, POLISH c10, each verified against its own journal block. last_full_qa_cycle stays 6, last_taste_cycle stays 9. The cycle's own instrument was cycle-015-done-gate.mjs (13 PASS / 3 FAIL, all three FAILs adjudicated as conductor instrument error with the file left unedited) plus a re-run of the cycle-14 sealed gate against today's tree (13 PASS / 0 FAIL, sha256 still matching its pre-dispatch seal) and test_cmd 118/118/0.",
-  "build_wave_note_cycle_002_run4": "Wave [N-1, N-3] at k=2 (playbook wave_k=2; gear 2 caps at 2 anyway). CLEAN by the autotune rule - zero reverts, zero failed verifies - so wave_streak 0 -> 1; k_current stays 2 until a second clean wave. Both agents honored the sole-committer rule: `git status --porcelain` after the wave showed exactly `?? .github/` and `?? .swarm/runs/NAMING.md`, nothing staged, nothing else touched. ONE AGENT SELF-REPORT WAS MEASURED FALSE and is recorded because it is the fourth haiku overclaim on this repo: the N-3 builder reported writing '75 lines (under 80-line target)'; the file is 22 lines. The shipped document contained no false claim, so nothing was harmed - but the gate did not test line count, which means this was caught by the conductor reading the return rather than by the instrument. Worth a candidate lesson: an agent's self-report about its own output is a claim like any other. The conductor separately corrected three counts inside the document (the builder inherited '~404' from cycle 1's journal instead of measuring; actual 399) and re-ran the sealed gate afterwards to prove the edit changed no verdict.",
-  "build_wave_note_cycle_003_run4": "Wave [N-2] with N-7 conductor-owned alongside it. CLEAN by the autotune rule (0 reverts, 0 failed verifies) so wave_streak 1 -> 2 -> k_current 2 -> 3; the gear-2 cap of 2 still binds the effective size. THREE INSTRUMENT DEFECTS, and the third is a species this repo had not recorded before. Two were caught by the pre-dispatch baseline and fixed before sealing: (1) the suite parser matched [#i] for Node's spec reporter, whose marker is actually U+2139 INFORMATION SOURCE — it read a green 118/118/0 suite as UNPARSEABLE, and its own control C4 stayed GREEN throughout because the control certified the parser against a fabricated 'i tests 118' sample the tool never emits. The bad glyph was inherited from cycle 2's journal, which transcribed it as ASCII 'i'. (2) B2 let one heading satisfy two of the three first-screen questions. THE THIRD, found only against the finished work: control B5 — the sole evidence that B1, the load-bearing line-preservation audit, is not vacuous — planted its mutation in REPORT.md, but after the move the history it audits lives in docs/report-history.md, so .replace() matched nothing and the control reported a clean result while testing nothing. A control coupled to the layout the work item exists to CHANGE will pass on the baseline and go silent on the result. Re-established in 9 columns including four silence-controls (additions, re-indentation, relocation must NOT fire) so the repair is not a loosening. A3 also failed, for the second consecutive cycle, again as an instrument defect of a fresh species: a negation-blind /proven minimal/ regex firing on the honest disclaimer 'not proven minimal'. The README was NOT reworded to satisfy it — adjudicated 8/8 instead. Separately, the conductor re-derived every checkable figure the builder wrote (corpus 50/24/12, pools 3-14, source line counts, 3496 test lines, the exit-code contract exercised live) and found ZERO discrepancies — the first of five such checks on this repo to come back clean. last_full_qa_cycle stays 6, last_taste_cycle stays 9: this cycle ran no QA or taste pass.",
-  "build_wave_note_cycle_004_run4": "Wave [N-5] dispatched as a DIRECT sonnet Agent call, not workflows/build-wave.js: headless pacer-spawned -p cycle, Workflow tool review-gated, direct dispatch is the documented SKILL.md fallback (same basis as run #3 cycles 6/8/9/10/13/14 and run #4 cycles 2/3). Wave of ONE by construction, not by cap: the only other todo was R-1, and R-1 was settled by conductor DECLINE before dispatch so the builder would write the hand-off against a board that was not moving underneath it. CLEAN by the autotune rule (0 reverts, 0 failed verifies) so wave_streak 0 -> 1; k_current stays 3 and the gear-2 cap of 2 still binds the effective size. Sole-committer honored: `git status --porcelain` after the wave showed exactly ` M REPORT.md` and nothing else. The sealed gate was held at SWARM/runs/ for the whole dispatch window (run #3 cycle-14 decision — hard rule 5 makes it structurally unreachable to a builder rather than merely forbidden) and its sha256 dc077828... was committed to the target at 867e94a before any agent ran; re-hashed byte-identical after the run and after copy-in. TWO GATE BUGS FOUND BY ITS OWN PRE-SEAL BASELINE and fixed before sealing: C3 assumed a package.json this repo does not have (a cell that throws is not a FAIL, it is a gate that cannot report), and A4's bare /\\bswarm\\b/ read J-7's honest citation of the path `.swarm/SPEC.md` as an agent assignment — that one would have failed against every correct answer as well as every wrong one. last_full_qa_cycle stays 6, last_taste_cycle stays 9: this cycle ran no QA or taste pass.",
-  "review_fix_note_cycle_005_run4": "REVIEW-FIX PAID AT CYCLE 5 of run #4 — the first of the three pre-POLISH gates this run has run. Scoped to run #4s own delta (.github/workflows/test.yml, README.md, REPORT.md, docs/report-history.md), NOT to src/ bin/ test/, which are byte-identical to the tree run #3 cycle 13 reviewed clean. Six agents: 2 isolated reviewers (sonnet, opus demoted by the gear-2 governor; reviewers are not fable-guarded), 2 adversarial verifiers (B-1 correctly on fable; A-1 on opus by conductor routing ERROR, recorded in decisions), 2 fixers (sonnet, pairwise-disjoint files). Reviewer lenses were disjoint and neither saw the other: A on the CI workflow and README as shipped artifacts, B on REPORT.md and the moved appendix as truth claims. RESULT: 2 findings, both reproduced, 1 further reviewer claim REFUTED and discarded, 0 code changes, suite unmoved at 118/118/0 — the honest outcome for a documents pass, not a null one. QA full and TASTE remain owed for run #4; the next cycle should decide their scope against the measurement that this run shipped ZERO product code, so a full QA pass would re-exercise a byte-identical CLI. last_full_qa_cycle stays 6, last_taste_cycle stays 9: this cycle ran no QA or taste workflow, and those numbers remain RUN #3 markers.",
-  "notify_diagnosis_note_cycle_006_run4": "Q-4 MEASURED AND REPAIRED. Cycles 4 and 5 recorded three denials of the notify helper (#32 poll, #33 send, #34 poll) and reasoned onward from them; cycle 4 concluded in writing that \"every push this run has claimed to emit since the allowlist gap opened has silently not been delivered\". THAT CONCLUSION IS FALSE AND WAS FALSIFIABLE FROM A FILE ON DISK THE WHOLE TIME: runs/notify.log records 11 invocations, 11 ok, ZERO failures, including `send goodnight ok` at 14:16:52 and `send phase-change ok` at 14:45:13 — both inside run #4, the second of them ~85 minutes before cycle 4 wrote the sentence. The denial EVENTS were real (the harness did refuse, and the log gap 15:11:49 -> 17:13:30 proves those calls never reached the script); the CAUSE attached to them was wrong. Measured rule, two scripts x two dimensions: the absolute form /opt/swarm/bin/<script> is allowlisted and RUNS (notify poll+send, budget); the SWARM/bin/<script> form the skill documents matches no allowlist entry and is DENIED (notify AND budget); an env-var prefix (RUNFILE=x /opt/swarm/bin/...) defeats the prefix match and is DENIED (notify AND budget); swarm-playbook.sh has no entry in any form and is DENIED always — that one gap is REAL and M-3 stands unchanged. Gate run4-cycle-006-gate.mjs 11 PASS / 0 FAIL with five controls (3 must-die, 2 must-stay-green). THE CLASS IS THE POINT: this run has an elaborate discipline for verifying POSITIVE claims — seal a gate, baseline it, demand pasted output — and it accepted three consecutive NEGATIVE claims (\"the tool is broken\") with no verification at all, then built a morning-report recommendation on top of one. Evidence-or-silence was being applied asymmetrically. last_full_qa_cycle stays 6 and last_taste_cycle stays 9: those are RUN #3 markers and this cycle ran no QA or taste pass.",
-  "full_qa_note_cycle_007_run4": "QA FULL PAID FOR RUN #4 at cycle 7, and the premise that would have skipped it was FALSE. Cycles 5 and 6 both carried forward that QA-full and TASTE would 're-exercise a byte-identical CLI'. Measured this cycle with a content-addressed instrument (git tree-object ids for bin/ src/ test/, c007-identity2.mjs, 2 controls): that premise is TRUE for review-fix (run #3 cycle 13's tree IS identical to HEAD) and FALSE for exactly the two gates still owed — run #3's QA-full (c6) tree DIFFERS by bin/aphorism.js +44, src/args.js, src/corpus.js, test/pipe.test.js +245, test/readme-tags.test.js +24; run #3's TASTE (c9) tree DIFFERS by src/args.js and test/readme-tags.test.js. The correct reasoning about the PAID gate was generalised to the OWED ones without re-measuring. INSTRUMENT DEFECT FOUND AND FIXED BEFORE USE: v1 hashed `git archive | sha256sum`, which stamps tar mtimes from the COMMIT DATE, and duly reported all five anchors as DIFFERS — an artefact of dates, not a content finding. Caught by v1's own implausible unanimity, not by a control; v2 reads git tree objects and carries a must-MATCH and a must-DIFFER control. Dispatched as DIRECT Agent calls, not workflows/qa-verify.js: headless pacer-spawned -p cycle, Workflow tool review-gated (same basis as run #3 c6/8/9/10/13/14 and run #4 c2/3/4/5). THE SPEC-BLIND AUTHOR STAGE FAILED ITS FIRST DISPATCH AND THAT IS RECORDED AS EVIDENCE, NOT HIDDEN: the isolation dir was /tmp, which is outside this session's additionalDirectories, so every content read — including the one permitted sha256sum — was refused. The agent reported the block and explicitly declined to fabricate an answer key it had no basis for. Re-dispatched from /opt/swarm/runs/c007-speconly (inside both the allowlist and hard rule 5's fence). Blindness was always instruction-enforced, never sandbox-enforced — the agent can reach the target repo either way — so the single-file directory removes accidental exposure and makes the instruction checkable; it is not the mechanism. Live-look returned 2 findings, both conductor-reproduced 15/15 with 5 controls (3 must-stay-GREEN, 2 must-DIE), 0 discarded, 0 severity claims measured false — the first agent pass on this repo to have no overclaim corrected. 0 code changes: L-02's behaviour is deliberate and TEST-PINNED (test/pipe.test.js:160 asserts the earned code is destroyed), so the repair is documentary and a code fix would correctly break 118/118. last_taste_cycle stays 9 (a RUN #3 marker): TASTE is still owed and its delta is now measured at two files.",
-  "fix_wave_note_cycle_008_run4": "Q-5 and Q-7 came from the cycle-7 QA live-look and were BOTH verified this cycle, so run #4s QA pass converted into shipped repair rather than a list - the same shape run #3 cycle 7 recorded. Dispatched as two DIRECT sonnet Agent calls, not workflows/build-wave.js: headless pacer-spawned -p cycle, Workflow tool review-gated, direct dispatch is the documented SKILL.md fallback (same basis as run #3 c6/8/9/10/13/14 and run #4 c2/3/4/5/7). No worktrees, so the two agents were given strictly disjoint file scopes (README.md vs .swarm/SPEC.md + REPORT.md) and gate cell G1 confirmed the working tree differs from the seal commit in EXACTLY those three files and nothing else. CLEAN by the autotune rule (0 reverts, 0 failed verifies) so wave_streak 1 -> 2 -> k_current 3 -> 4; the gear-2 cap of 2 still binds the effective size. Both agents honored the sole-committer rule. ROUTING: both items held at sonnet. Q-5 is kind=fix, which the table never sends to haiku (build/fix never drops below sonnet), so its plan-time haiku was corrected at pick time. Q-7 is kind=docs/effort=S, which the table DOES route to haiku - that was overridden, see decisions. THE GATE WAS SEALED BEFORE DISPATCH (sha256 4f37ef97..., held under SWARM/runs/ for the whole dispatch window per the run #3 cycle-14 decision, re-hashed byte-identical afterwards) with a 17P/10F discriminating baseline committed to the target first. THREE GATE BUGS FOUND BY THAT BASELINE AND FIXED BEFORE SEALING, one of them a false PASS: A2 was a bag-of-words over the whole Exit-codes section, and whitespace-normalising a section containing a markdown TABLE glues every row into one punctuation-free blob, so A2 passed on tokens harvested from three different rows of the UNFIXED document - the KI-12/R-1 failure class this repo has already paid for. last_full_qa_cycle stays 7; last_taste_cycle stays 9, which is a RUN #3 marker: TASTE is still the one owed gate for run #4.",
-  "taste_marker_disambiguation_run4": "READ THIS BEFORE READING last_taste_cycle. The value 9 is now CORRECT FOR RUN #4 — the TASTE pass ran at run #4 cycle 9 — but it was ALSO the stale run #3 marker that cycles 5, 6, 7 and 8 each had to warn readers not to trust. The two runs collided on the same cycle number by coincidence. So the field is right for the first time since run #3 ended, and a reader who trusted it during cycles 1-8 would have been wrong for the whole of that stretch and accidentally right now. The load-bearing evidence is not this integer: it is the journal block for run #4 cycle 9 plus .swarm/runs/cycle-009-taste.json. Cycle markers that cannot name their own run are a decay class this repo has now been bitten by twice (see review_fix_correction_cycle_012); the fix is a run label in the field, which is a SWARM state-spec change and therefore out of scope mid-run — recorded for the morning report.",
-  "taste_note_cycle_009_run4": "TASTE PAID FOR RUN #4 at cycle 9 — the last of the three pre-POLISH gates (review-fix c5, QA full c7, TASTE c9), so all three are now paid for run #4 and the phase moves to POLISH. Dispatched as ONE DIRECT fable Agent call, not workflows/qa-verify.js: headless pacer-spawned -p cycle, Workflow tool review-gated, direct dispatch is the documented SKILL.md fallback (same basis as run #3 c6/8/9/10/13/14 and run #4 c2/3/4/5/7/8). The taste seat is ONE agent by contract so the direct call maps onto the script exactly; the fable guard exempts judgment seats from the gear-1 demotion in force this cycle, so the seat was NOT cheapened. VERDICT wears-thin, 4 boredom findings, 0 fundamental — so no depth re-aim was triggered, and that check was made rather than assumed. THE GATE IS THE POINT: a 25-cell instrument authored AFTER the agent returned (correct for a taste pass — you cannot know what to reproduce until the findings exist) returned 24 PASS / 1 FAIL, and the single FAIL was a CONDUCTOR instrument defect, not a false agent claim: cell E3 picked `--tag humor --author knuth` as its empty-intersection arm, but Knuth's second entry is tagged humor, so the arm exited 0 and the equality test correctly reported unequal. It failed CLOSED. Adjudicated 7/7 in run4-c009-E3-adj.mjs with a genuinely empty pair chosen FROM DATA rather than from memory (`--tag performance --author 'Martin Fowler'`), gate left byte-unedited. Instrument defect #21. THE AGENT'S ARITHMETIC HELD UP: P(repeat in 7 daily draws)=35.6% recomputed to 35.56%; Dijkstra 7/50=14% measured exactly; 30-draws-to-23-distinct consistent with uniform theory 22.73. One figure was OFF BY ONE and is recorded because agent self-reports are claims: it said --help is 12 lines, measured 13. No verdict affected. Conductor also live-measured 200 default draws (50/50 distinct, 4 immediate repeats vs uniform expectation 3.98), which discriminates DESIGN (no rotation) from a biased RNG — the finding is the former. last_full_qa_cycle stays 7."
- },
- "counters": {
-  "consecutive_no_value": 0,
-  "consecutive_failures": 0,
-  "k_current": 5,
-  "wave_streak": 0,
-  "window_tokens_attributed": 0
- },
- "last_cycle": {
-  "cycle": 11,
-  "work": "build wave, k=2 [Q-8: pin the README distinct-author count; TS-5: record D-46 and raise J-7 six -> seven] — two DIRECT sonnet Agents, disjoint file scopes",
-  "outcome": "BOTH VERIFIED DONE. Sealed gate 29P/2F of 31; both FAILs adjudicated 11/11 as conductor instrument defect #23 (wrap-blind readers over hard-wrapped markdown, one root cause in two cells, failing closed), gate left byte-unedited. Suite 118 -> 119, 0 fail. Wave clean: zero reverts, zero failed verifies -> k_current 4 -> 5.",
-  "ts": 1787167417
- }
 }

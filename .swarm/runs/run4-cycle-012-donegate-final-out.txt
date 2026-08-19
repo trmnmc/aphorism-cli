@@ -1,0 +1,26 @@
+PASS  M2-a  every pre-move REPORT.md line survives the move
+        1335 non-blank lines at 957c4bf; 0 missing
+PASS  M2-b  CONTROL: the audit DETECTS a planted deletion (must-die)
+        planted removal of "still open and high, and no attribution was checked against " -> detected
+PASS  M2-c  REPORT.md first screen answers shipped / verified / open
+        192 lines total; headings=["What ships","What is machine-verified","What is open","Blocked on a human ruling","Declined","How run #4 ended, and what only a human can finish","Full history"]; {"shipped":true,"verified":true,"open":true}
+PASS  M5-a  suite green at >= 118 tests
+        tests=119 fail=0
+PASS  M5-b  src/corpus.js byte-identical since run start
+        git diff --stat: empty
+PASS  M5-c  zero user-visible feature change (bin/ and src/ untouched)
+        run #4 touched: [".github/workflows/test.yml","README.md","REPORT.md","docs/report-history.md","test/readme-tags.test.js"]
+PASS  M5-d  zero runtime dependencies
+        no package.json, no node_modules
+PASS  M1-a  README Node floor cites a REAL green Actions matrix run
+        run 32267338333 -> test (18)=success test (20)=success test (22)=success test (24)=success
+PASS  M1-b  README states the floor as verified-at-18, NOT proven-minimal
+        README carries the calibration clause: true
+PASS  M4-a  every open item names a next actor
+        7 open (T-006,TS-3,T-040,TS-2,TS-1,J-7,TS-6); 0 without an actor
+PASS  M4-b  CONTROL: the actor reader FLAGS an actorless item (must-die)
+        synthetic item with no actor word -> flagged
+PASS  M3-a  handoff records denial #30 and an exact settings patch
+        /opt/swarm/playbook/HANDOFF-allowlist-2026-08-17.md: 18329 bytes; mentions denial 30 = true
+
+---- 12 PASS / 0 FAIL ----

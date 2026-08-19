@@ -16722,3 +16722,266 @@ runfile-mirror:
 ```
 
 next wakeup CORRECTED: 1787167791 (+90s from the step-9 stamp). The line above said 1787167669, written before the gate re-run and the commit; that estimate had already passed by the time the cycle closed. The runfile carries 1787167791, and on the VPS the pacer reads that field, so the runfile is the operative value — the correction is recorded rather than the earlier number quietly overwritten.
+
+---
+
+## cycle 12 — 2026-08-19T19:34:19Z → 20:0xZ — the DONE decision, re-derived from the tree — **DONE + WRAP_UP**
+
+Backlog todo was 0 coming in and every survivor human-owned, so this cycle owed the
+VALUE_LOOP / DONE decision rather than work. Cycle 11's journal said exactly that. The risk
+in a cycle like this one is obvious: the previous cycle hands you a conclusion, and the
+cheap move is to ratify it. So the conclusion was **re-derived from the tree** instead of
+inherited, and the gate that did it was authored this cycle, at verification time.
+
+**Clock:** now 1787168059, `stop_at` 1787234709 — **66,650 s (~18.5 h) remaining**. Nowhere
+near the WRAP_UP boundary. This close is a decision, not a deadline.
+
+**Budget probe:** `probe_ok: true`, gear 2 (ρ 1.05), mode guest, dial 0.3, `k_cap` 2,
+`demote: true`, `promote: false`. Weekly governor still hot — `weekly_used_pct` 100 /
+`opus_used_pct` 100 against `week_elapsed_pct` 37.24, `weekly_heat` 2.69, `ceiling: 2`. The
+governor has held ceiling 2 and blocked promotion for the entire run.
+
+**Control channel:** polled clean — `pending: []`, `applied: []`, no `inject` array. No
+commands, no injections to triage.
+
+### THE DONE GATE — 12 CELLS, 12 PASS / 0 FAIL, AUTHORED AT VERIFICATION TIME
+
+`.swarm/runs/run4-cycle-012-donegate.mjs`, output in `run4-cycle-012-donegate-out.txt`. It
+reads the tree and the live GitHub API; it reads no prior cycle's claim. Two cells are
+must-die controls (L-044), because an audit that cannot report failure is not an audit:
+
+    PASS  M2-a  every pre-move REPORT.md line survives    1335 non-blank lines at 957c4bf; 0 missing
+    PASS  M2-b  CONTROL: audit DETECTS a planted deletion (must-die)
+    PASS  M2-c  first screen answers shipped/verified/open 130 lines; 3/3 headings present
+    PASS  M5-a  suite green at >= 118 tests                tests=119 fail=0
+    PASS  M5-b  src/corpus.js byte-identical               git diff --stat: empty
+    PASS  M5-c  zero user-visible feature change           bin/ and src/ untouched all run
+    PASS  M5-d  zero runtime dependencies                  no package.json, no node_modules
+    PASS  M1-a  README floor cites a REAL green matrix     run 32267338333 -> 18/20/22/24 all success
+    PASS  M1-b  floor stated verified-at-18, not minimal   calibration clause present
+    PASS  M4-a  every open item names a next actor         7 open; 0 without an actor
+    PASS  M4-b  CONTROL: actor reader FLAGS an actorless item (must-die)
+    PASS  M3-a  handoff records denial #30 and exact patch 18329 bytes; denial 30 present
+
+The run's **entire footprint**, measured against the run-start commit `957c4bf`:
+
+    .github/workflows/test.yml |   19 +
+    README.md                  |   60 +-
+    REPORT.md                  | 1707 +---------------------------
+    docs/report-history.md     | 1595 +++++++++++++++++++++++++++
+    test/readme-tags.test.js   |   61 +
+    5 files changed, 1860 insertions(+), 1582 deletions(-)
+
+`bin/` and `src/` do not appear. On a brief that forbids new features, that is the number
+that matters — the product shipped at kickoff is byte-identical to the product shipping now.
+
+### M-3 RE-TESTED, AND IT STILL FAILS — REPORTED AS A FAILURE, NOT SMOOTHED
+
+M-3's preferred close is proof by EXECUTION. So it was executed, this cycle, not inferred:
+
+    $ /opt/swarm/bin/swarm-playbook.sh parse
+    ERROR: This command requires approval
+
+Denied again. This time the cause is **structural and directly observed** rather than
+suspected: `/opt/swarm/.claude/settings.json` was read this cycle and carries **no entry for
+`swarm-playbook.sh` in any form** — not absolute, not relative, not `bash`-prefixed. The
+ledger stays at **denial #31**; a second reproduction inside the same run does not advance
+it (the convention run #3 cycle 15 set). So M-3 closes on its handoff branch — the branch the
+SPEC wrote for exactly this case — and never as a pass.
+
+Two adjacent denials hit this cycle too, and are recorded because they cost real time:
+`cd /opt/swarm && RUNFILE=... bin/swarm-budget.sh` was denied (compound command + env-var
+prefix), as was `ps -o ppid= -p $$` (command substitution). Both succeeded immediately when
+re-issued in the exact granted form. That is the same lesson cycle 6 learned about
+`swarm-notify.sh`, and it is now merged into playbook L-039.
+
+### THE VALUE_LOOP RATCHET — WHY THE ANSWER IS DONE AND NOT "FIND SOMETHING"
+
+Two questions: would the target user notice, and would they still care ten minutes later?
+
+- **Everything that passes** — corpus expansion, no-repeat rotation, a `--tags` flag, ANSI
+  dim attribution — is a **SPEC-locked non-goal for this run**. Four of the seven blocked
+  items (TS-1, TS-2, TS-3, TS-6) are blocked on precisely that lock, which only a human can
+  lift, and only at a kickoff. The swarm lifting its own locked non-goal mid-run is the drift
+  the lock exists to prevent.
+- **Everything permitted fails** — more docs about docs, more tests without a measured cause
+  (M-5 forbids it outright, and the cycle-3 mutation map came back 29 KILLED / 0 SURVIVED, so
+  there is no measured hole to close). Adding documentation is the exact churn M-2 spent this
+  run *undoing*, compressing REPORT.md 1707 -> 130 lines.
+- The one candidate worth weighing honestly was **another review pass over `bin/`+`src/`**.
+  It is permitted (a bug fix is not a feature) and could in principle find something real. It
+  was rejected on measured grounds, not vibes: that code was untouched for this entire run,
+  carries review-fix and QA passes from three prior runs, and 29/29 of its documented Domain
+  clauses are mutation-killed. Expected yield is near zero, and the account is at 100% weekly
+  utilization at 37% of the week elapsed. Burning 18 hours of a shared, over-heat window on
+  near-zero expected yield is the wrong trade even where it is permitted.
+
+Three separate taste judges across four runs have all named the same single highest-value
+change — no-repeat rotation — and it has been forbidden every time.
+
+### VERIFICATION EVIDENCE — conductor-run, this cycle
+
+    $ node --test test/*.test.js
+    ℹ tests 119   ℹ pass 119   ℹ fail 0   ℹ duration_ms 5039.372976
+
+    $ gh run view 32293231112 --json jobs   (HEAD's own matrix run)
+    test (18)  success    test (20)  success    test (22)  success    test (24)  success
+
+    $ git diff --stat 957c4bf HEAD -- src/corpus.js
+    (empty — byte-identical)
+
+### WRAP_UP EXECUTED
+
+REPORT.md updated to final and re-checked against M-2's own constraint (191 lines, still
+inside the ~200 budget, three questions still answered in the first screen). Its stale counts
+were repaired rather than left: 118 -> 119 tests, "6 blocked" -> 7 with TS-6 written up in
+full, and the "as of cycle 4" snapshot replaced by the run's final count with a note on why
+this one cannot go stale — the run ended because there is no next item.
+
+RETRO.md written with cycle citations on every entry, including the pacing-honesty section
+(governor clamped ceiling 2 on every cycle; 0 promotions; ~18.5 h unspent, recorded as a
+brief outcome rather than a pacing failure) and a 13-line applied-lessons check. Two lessons
+came back **not-exercised** and are reported as such: L-026 (no core-logic item existed) and
+L-033 (no mutation survivors to classify).
+
+DISTILL: 5 candidates -> **4 merged semantically, 1 declined, zero new ids, zero overflow
+drops**. `swarm-playbook.sh append` was denied, so the documented manual fallback ran; the
+file holds at 20 lessons and every lesson tail re-checked well-formed, but it was NOT
+re-validated by the parser, because the parser is the same denied script. That limitation is
+written into the playbook header for the human who fixes the allowlist.
+
+### THE STANDING FINDING, FOR THE MORNING
+
+This is the **fourth consecutive run** under a brief that forbids the only changes the
+product's own taste instrument says would matter, and it ran out of permitted work with
+roughly eighteen hours left. That is not a machine failure and no thermostat setting fixes
+it. The lever is the brief: permit the no-repeat rotation, or permit corpus expansion paired
+with the attribution audit that makes it safe, and there is real work here again. Handing the
+clock back with the reason on the record is the better outcome than spending it.
+
+commit: (this cycle) "cycle 12: DONE + WRAP_UP"
+next wakeup: NONE — wrap_up_complete = true.
+
+runfile-mirror:
+
+```json
+{
+  "version": 1,
+  "targets": [
+    {
+      "path": "/opt/targets/aphorism-cli",
+      "status": "done",
+      "weight": 1
+    }
+  ],
+  "rotation_cursor": 0,
+  "rotation_schedule": [
+    0
+  ],
+  "stop_at": "2026-08-20T14:05:09Z",
+  "usage_reset_at": "2026-08-19T18:00:00Z",
+  "model_policy": "value-routing",
+  "auth_mode": "subscription",
+  "heartbeat": {
+    "ts": 1787168059,
+    "next_wakeup_at": 0,
+    "pid": 2628657,
+    "limp": false,
+    "degraded_tiers": []
+  },
+  "pacing": {
+    "mode": "guest",
+    "dial": 0.3
+  },
+  "budget": {
+    "source": "probe",
+    "gear": 2,
+    "gear_target": 2,
+    "ratio": 1.05,
+    "mode": "guest",
+    "k_cap": 2,
+    "promote": false,
+    "demote": true,
+    "window_tokens": 22118035,
+    "window_cost_usd": 14.252562699999997,
+    "api_cap_usd": null,
+    "api_spend_usd": 0,
+    "tokens_per_hour": 37826100,
+    "projected_depletion_at": 1787179714,
+    "last_probe_ts": 1787168059,
+    "last_real_probe_ts": 1787168059,
+    "probe_failures": 0,
+    "weekly": {
+      "ok": true,
+      "weekly_used_pct": 100,
+      "opus_used_pct": 100,
+      "week_elapsed_pct": 37.24,
+      "weekly_heat": 2.69,
+      "opus_heat": 2.69,
+      "ceiling": 2,
+      "promote_blocked": true
+    }
+  },
+  "playbook": {
+    "mode": "auto",
+    "applied": [
+      "L-008",
+      "L-016",
+      "L-024",
+      "L-026",
+      "L-029",
+      "L-031",
+      "L-033",
+      "L-034",
+      "L-038",
+      "L-042",
+      "L-043",
+      "L-044",
+      "L-046"
+    ],
+    "vetoed": [],
+    "note": "staged by DIRECT READ of playbook/learnings.md at kickoff. CORRECTED at cycle 6: bin/swarm-playbook.sh is genuinely NOT allowlisted in any form (re-executed and DENIED this cycle, gate A2), so the hand-written applied.log ledger line stands. But the SAME cycle refuted the adjacent claims about bin/swarm-notify.sh — that helper IS allowlisted under its absolute path and has logged 11/11 ok all run. See journal cycle 6.",
+    "directives": {
+      "wave_k": 2,
+      "routing_recs": [
+        "core-logic->fable"
+      ],
+      "prompt_lines": {
+        "builder": [
+          "The conductor is the SOLE committer — never commit or push yourself",
+          "The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test"
+        ],
+        "reviewer": [
+          "The conductor is the SOLE committer — never commit or push yourself",
+          "Assign each fixer a pairwise-disjoint file set; two fixers must never share a file",
+          "The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test"
+        ],
+        "qa": [
+          "The conductor is the SOLE committer — never commit or push yourself",
+          "Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'.",
+          "Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value.",
+          "Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps.",
+          "Classify each surviving mutant as HOLE (a real gap - harden it) or BOUNDARY (behaviour the spec does not decide - document it) BEFORE writing any test",
+          "When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence.",
+          "For every mutation that must kill the suite, author one control that must leave it GREEN — a check that dies on everything is a snapshot test, not an assertion",
+          "Never assert against prose matched by regex — read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns"
+        ]
+      }
+    }
+  },
+  "watchdog": {
+    "mode": "normal",
+    "plist_loaded": true,
+    "lockfile": "/opt/swarm/runs/watchdog.lock",
+    "relaunch_attempts": 0
+  },
+  "wrap_up_complete": true,
+  "cycles_since_recycle": 12,
+  "artifact": {
+    "url": "",
+    "file": "/opt/swarm/runs/dashboard.html",
+    "publish_failures": 0
+  }
+}
+
+```
