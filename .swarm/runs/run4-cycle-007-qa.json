@@ -1,0 +1,102 @@
+{
+  "run": 4,
+  "cycle": 7,
+  "work_type": "qa-verify",
+  "mode": "full",
+  "dispatch": "DIRECT Agent calls, not workflows/qa-verify.js — headless pacer-spawned -p cycle, Workflow tool review-gated (documented SKILL.md RESUME fallback)",
+  "timestamp": "2026-08-19T17:26Z-18:0xZ",
+  "spec_digest_sha256": "d942389c6e402daaf758ea8fbb49b6392368bf7ee5534898fd19f21b201e81f7",
+  "why_this_pass_was_not_churn": {
+    "carried_premise": "Cycles 5 and 6 both handed forward that QA-full and TASTE would 're-exercise a byte-identical CLI'.",
+    "measured_verdict": "The premise is TRUE for review-fix and FALSE for both owed gates.",
+    "instrument": "run4-cycle-007-identity.mjs (git tree-object ids for bin/ src/ test/; 2 controls)",
+    "results": {
+      "run3-reviewfix-c13 a83c0b7": "IDENTICAL to HEAD — the paid gate; premise holds here",
+      "run3-DONE-c15 0ced19a": "IDENTICAL to HEAD",
+      "run3-QAfull-c6 5eaf9e5": "DIFFERS — bin/aphorism.js +44, src/args.js, src/corpus.js, test/pipe.test.js +245, test/readme-tags.test.js +24",
+      "run3-TASTE-c9 b5b9d55": "DIFFERS — src/args.js, test/readme-tags.test.js"
+    },
+    "instrument_defect_found_before_use": "v1 used `git archive | sha256sum`, which stamps tar member mtimes from the COMMIT DATE; it reported all five anchors DIFFERS — an artefact of dates, not content. Caught by its own implausible unanimity, not by a control. v2 reads content-addressed git tree objects and carries a must-MATCH and a must-DIFFER control."
+  },
+  "stages": {
+    "scenario_author": {
+      "agent": "sonnet, spec-blind",
+      "isolation": "byte-identical SPEC copy alone in /opt/swarm/runs/c007-speconly (sha256 verified equal), plus an explicit no-other-file instruction. Blindness is INSTRUCTION-enforced, never sandbox-enforced — the agent can reach the target repo either way.",
+      "first_dispatch": "FAILED — isolation dir was /tmp, outside this session additionalDirectories; every content read was refused, including the one permitted sha256sum. The agent reported the block and declined to fabricate an answer key. Recorded as evidence, not hidden.",
+      "agent_reported_spec_sha256": "d942389c6e402daaf758ea8fbb49b6392368bf7ee5534898fd19f21b201e81f7",
+      "sha_matches_isolation_copy": true,
+      "contamination_note": "none",
+      "scenarios_authored": 28,
+      "key_finding": {
+        "exit_code_enumeration": [
+          0,
+          1,
+          2
+        ],
+        "clause_verbatim": "Exit codes: 0 success, 1 no match, 2 bad usage (unknown flag, missing flag argument, or seed value that `Number()` parses to NaN).",
+        "spec_documents_a_write_error_code": false,
+        "author_note": "The SPEC is SILENT, not prohibitive, on a 4th code: a caller cannot cite it to forbid one, nor to say what one would mean."
+      }
+    },
+    "executor": {
+      "run_by": "conductor (run #3 cycle-6 precedent: a CLI has no dev server, so scenarios are plain invocations and running them here yields conductor evidence directly)",
+      "result": "32 PASS / 0 DIVERGENCE on decidable scenarios",
+      "undecided_recorded_not_scored": {
+        "S-25 --seed \"\"": "exit 2 (D-43)",
+        "S-26 --author \"\"": "exit 0, 109 bytes (D-44)",
+        "S-27 repeated --tag": "exit 0, 1484 bytes = the design list (D-42)",
+        "S-28 --author=": "exit 2 (D-44)"
+      },
+      "note": "All four reproduce exactly the shipped behaviours SPEC 'Undecided behaviours' records, corroborating that section."
+    },
+    "live_look": {
+      "agent": "fable (judgment seat, exempt from the gear-2 demotion)",
+      "findings": 2,
+      "reproduced_by_conductor": 2,
+      "discarded": 0,
+      "severity_claims_measured_false": 0,
+      "note": "The first agent pass on this repo with no overclaim to correct. Its 14-item things_i_attacked_and_found_CLEAN list is what makes the 2 findings readable as coverage rather than as a thin sample."
+    }
+  },
+  "findings": [
+    {
+      "id": "L-01",
+      "severity": "medium",
+      "agent_severity": "medium",
+      "title": "--author is diacritic-sensitive; the ASCII spelling of the corpus's one non-ASCII author gives a false \"no match\"",
+      "conductor_repro": "gate A1/A2/A3/A4",
+      "measured": "--author 'Saint-Exupery' -> exit 1, stdout empty; --author 'Saint-Exupéry' -> exit 0, 139 bytes. Corpus holds exactly 1 non-ASCII author of 24, read from the module.",
+      "severity_capped_by_measurement": "reachable via 'saint', 'exup', 'antoine' (A3)",
+      "disposition": "backlog Q-6, docs-only — shipped behaviour CONFORMS to the SPEC Filtering clause, so the code must not change"
+    },
+    {
+      "id": "L-02",
+      "severity": "low",
+      "agent_severity": "low",
+      "title": "README's exit-3 row contradicts shipped, test-pinned behaviour on the stderr path",
+      "conductor_repro": "gate A5/A6/A7/A8/A9",
+      "measured": "`--tag nope 2>/dev/full` -> exit 3, earned 1 destroyed, zero diagnostic. `--bogus 2>/dev/full` -> exit 3, earned 2 destroyed. README row 3 scopes exit 3 to \"a real stdout write failure\" and promises \"one aphorism: … line on stderr\".",
+      "not_a_code_bug": "test/pipe.test.js:160 explicitly asserts status !== 2/1/0 — the behaviour is deliberate and test-pinned, so a code fix would correctly break 118/118. The DOCUMENT is what diverges.",
+      "disposition": "backlog Q-5, docs-only"
+    },
+    {
+      "id": "C-01",
+      "severity": "medium",
+      "source": "conductor (gate A10), independently corroborated by the spec-blind author",
+      "title": "SPEC's Exit-codes Domain rule enumerates 0/1/2 only; the shipped exit 3 was never added to the regression floor",
+      "chronology": "The 43-clause coverage enumeration was derived at run #3 cycle 4; exit 3 and both stream handlers landed at run #3 cycles 7-8. No clause ever covered exit 3.",
+      "not_a_test_hole": "test/pipe.test.js:86 and :160 both exercise /dev/full and both RAN (skipped 0 in the 118/118 run). This is a SPEC + README gap, so it adds no tests (M-5).",
+      "disposition": "backlog Q-7 — record as an \"Undecided behaviours\" entry and route to J-7 for a human ruling; amending a Domain rule is a SPEC change this run may not make"
+    }
+  ],
+  "conductor_verification": {
+    "gate": "run4-cycle-007-gate-qa.mjs — 15 PASS / 0 FAIL",
+    "controls": "5 (3 must-stay-GREEN: C1 no spurious fire, C2 closed-vs-failing stderr, C3 EPIPE benign; 2 must-DIE: C4 A5 discriminates, C5 A1 needs A2)",
+    "test_cmd": "tests 118 / suites 0 / pass 118 / fail 0 / duration_ms 5126.189039 (node v24.19.0)",
+    "collision_scan": "not applicable — a CLI ships no classic browser scripts",
+    "sole_committer": "honored — `git status --porcelain` empty after both agents"
+  },
+  "still_owed": {
+    "TASTE": "last_taste_cycle stays 9, a RUN #3 marker. Its delta is now measured: src/args.js + test/readme-tags.test.js only."
+  }
+}

@@ -309,6 +309,57 @@
    ],
    "declined_cycle": 4,
    "decline_reason": "DECLINED at run #4 cycle 4, on this run's OWN measurement rather than on run #3 cycle 14's\ninherited ratchet score. M-4 permits exactly two outcomes for this item and this is the second.\n\nTHE MEASUREMENT (run4-cycle-004-r1probe.mjs, 7 PASS / 0 FAIL, arms built by `git archive 60c71d3`,\nnever by copying the live tree): the two cells on R-1's own recorded regression set that represent a\nMISSED violation - D4a and D4b, acknowledgement stripped with an in-section decoy left behind - are\nBOTH CAUGHT BY THE FULL SUITE, which goes RED (116 pass / 2 fail) on each, while the R-1 target guard\nstays SILENT on both, exactly as the cycle-39 note recorded. The cycle-39 measurement isolated that\nguard deliberately via --test-name-pattern so the neighbouring count guards could not mask the verdict;\nthat correctly answers 'is the guard broken' (it is) but not 'is the property unprotected', which is\nwhat R-1's value actually depends on.\n\nTHE CATCH IS ATTRIBUTED, NOT INCIDENTAL (run4-cycle-004-r1attrib.mjs, 4 PASS + its G1 adjudication 4/4):\nskipping exactly two tests - 'README must correctly describe single-entry tag count' and 'README opening\nsentence must state correct multi-entry and single-entry tag counts' - lets BOTH mutations SURVIVE\n(suite returns to green); the removed set was measured to be exactly those two by name, not by count;\nthe R-1 target guard was measured still present in the skipped runs, so G3/G4 are not self-fulfilling;\na non-matching skip pattern removes nothing; and a benign reword of the same sentence leaves the suite\nGREEN, so the red arms are not an instrument that dies on every edit.\n\nWHY THAT IS DECISIVE: those two guards re-derive their expected value from src/corpus.js at run time and\nFAIL CLOSED when the acknowledgement phrase is absent - which is the precise direction in which the\ntarget guard fails OPEN. The property R-1 exists to protect is therefore already protected, twice, by\nguards whose failure mode is a false rejection rather than a silent miss. A reshape would add a third\nguard over an already-covered property, and would require README.md to own a NEW structural marker -\ni.e. editing a shipped document surface in order to satisfy a test.\n\nRATCHET: unchanged and now doubly supported - a user running `aphorism` in a terminal notices nothing\neither way, and the premise is gone (12 distinct tags, 0 on exactly one entry).\n\nRESIDUAL, STATED RATHER THAN PAPERED OVER: the two covering guards are prose regexes bound to a\ncorpus-derived number, NOT the 'structural marker the document owns' that R-1's acceptance asks for, so\nthe coverage is behavioural rather than architectural. And the guard's OTHER recorded defect - the\nD1/D3/E3 FALSE-REJECTION direction, where an honest reword makes it fire - is NOT fixed by this decline.\nIt costs nothing today because the shipped README passes. If a human ruling on T-040 reintroduces\nsingle-entry tags, or if README's phrasing is reworded away from the literal count phrase, re-open this."
+  },
+  {
+   "id": "Q-5",
+   "title": "README's exit-3 row contradicts shipped, test-pinned behaviour on the stderr path",
+   "kind": "fix",
+   "effort": "S",
+   "priority": 8,
+   "status": "todo",
+   "attempts": 0,
+   "model": "haiku",
+   "files_hint": [
+    "README.md"
+   ],
+   "packages": [],
+   "deps": [],
+   "acceptance": "README's exit-code table stops claiming exit 3 means 'a real stdout write failure ... one `aphorism: …` line on stderr'. The row must also cover the stderr-side case: a non-EPIPE STDERR write failure ALSO exits 3, emits NO diagnostic anywhere, and deliberately replaces the exit code the run had already earned (1 or 2). That behaviour is intended and test-pinned (test/pipe.test.js:160 asserts status !== 2/1/0), so the DOCUMENT is what changes, never the code or the test. The nearby prose at README.md:117-119 must stay consistent with the corrected row.",
+   "notes": "From cycle-7 QA live-look L-02, conductor-reproduced (gate c007-gate-qa.mjs A5/A6/A7/A8/A9, 15/15). Measured: `--tag nope 2>/dev/full` -> exit 3 (earned 1 destroyed); `--bogus 2>/dev/full` -> exit 3 (earned 2 destroyed); both with zero readable diagnostic. Control C2 proves this is specific to a FAILING stderr device: a merely CLOSED stderr (`exec 2>&-`) preserves 1 and 2, because Node reopens closed stdio to /dev/null."
+  },
+  {
+   "id": "Q-6",
+   "title": "--author is diacritic-sensitive and nothing tells the user, so the ASCII spelling gives a false \"no match\"",
+   "kind": "fix",
+   "effort": "S",
+   "priority": 9,
+   "status": "todo",
+   "attempts": 0,
+   "model": "haiku",
+   "files_hint": [
+    "README.md"
+   ],
+   "packages": [],
+   "deps": [],
+   "acceptance": "README documents that --author matches literally, so an author carrying a diacritic must be typed with it (or matched by a partial that avoids it). DOCS ONLY: the matching semantics are exactly what the SPEC Domain rule specifies (\"substring containment, case-insensitively\"), so the shipped behaviour is CONFORMING and must not change. src/args.js (--help) is NOT in scope: it is product source and its one-screen budget is a taste-note constraint.",
+   "notes": "From cycle-7 QA live-look L-01, conductor-reproduced (gate A1/A2/A3/A4). Measured: --author 'Saint-Exupery' -> exit 1, stdout empty, while --author 'Saint-Exupéry' -> exit 0. The corpus holds exactly ONE non-ASCII author of 24 (gate A4, read from the module, not from prose). Severity capped at medium BY MEASUREMENT, not by judgement: the entry stays reachable via 'saint', 'exup', 'antoine' (gate A3). The agent also measured NFD-normalized input failing — same root cause, rarer trigger."
+  },
+  {
+   "id": "Q-7",
+   "title": "SPEC's Exit-codes Domain rule enumerates 0/1/2 only — the shipped exit 3 was never added to the regression floor",
+   "kind": "docs",
+   "effort": "S",
+   "priority": 7,
+   "status": "todo",
+   "attempts": 0,
+   "model": "sonnet",
+   "files_hint": [
+    ".swarm/SPEC.md"
+   ],
+   "packages": [],
+   "deps": [],
+   "acceptance": "The gap is RECORDED, not silently repaired. Exit 3 was introduced at run #3 cycle 8; the SPEC Domain rule still reads \"Exit codes: 0 success, 1 no match, 2 bad usage\" (gate A10, read structurally from the bullet). Amending a Domain rule is a SPEC change and this run may not make one: the Domain-rules header calls those clauses the regression floor and the 29-clause coverage map is measured against them. So the correct disposition is an \"Undecided behaviours\" entry in the D-42/D-43/D-44 grammar (shipped behaviour / why the SPEC does not decide it / status) routed to J-7 for a human ruling — and J-7's count, which run #3 cycle 14 had to reconcile across six REPORT.md sites, must be re-derived from the backlog rather than hardcoded.",
+   "notes": "Conductor finding, not an agent claim — surfaced by gate A10 and corroborated by the coverage-map chronology: the 43-clause enumeration was derived at run #3 cycle 4, four cycles BEFORE the stderr handler and exit 3 landed at run #3 cycle 8, so no clause ever covered exit 3. The TEST suite does cover it (test/pipe.test.js:86 and :160, both exercising /dev/full, skipped 0 in the 118/118 run) — this is a SPEC and README gap, not a test hole, which is why it adds no tests (M-5)."
   }
  ]
 }
