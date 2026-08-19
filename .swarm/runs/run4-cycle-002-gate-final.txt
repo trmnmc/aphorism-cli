@@ -1,0 +1,50 @@
+run #4 cycle 2 sealed gate — wave [N-1, N-3] + M-5 standing guard
+
+PASS A1   workflow file exists at .github/workflows/test.yml
+           c33a7c8af31dcb2a / 363 bytes
+PASS A2   matrix covers exactly Node 18, 20, 22, 24
+           got=[18,20,22,24] missing=[] extra=[]
+FAIL A3   triggers on push to master AND workflow_dispatch
+           push=true master=false workflow_dispatch=true
+PASS A4   fail-fast disabled so one bad version cannot hide the others
+           fail-fast: false present
+PASS A5   runs the repo EXISTING test command unmodified: node --test test/*.test.js
+           verbatim command present
+PASS A6   no dependency install step (zero-dep repo, no package.json)
+           install_steps=[] npm_cache=false
+PASS A7   uses actions/checkout + actions/setup-node driven by the matrix
+           checkout=true setup-node=true matrix-wired=true
+PASS A8   CONTROL: the A2 extractor must MISS Node 18 in a workflow that omits it
+           synthetic got=[20,22,24] — extractor discriminates: true
+PASS A9   CONTROL: the A5 extractor must REJECT a workflow that runs `npm test` instead
+           npm-test workflow accepted? false — extractor discriminates: true
+PASS B1   NAMING.md exists where the next conductor will meet it
+           1904 bytes
+PASS B2   it states a run-scoped convention with a concrete matching example
+           run-scoped examples=5 names-the-hazard=true
+PASS B3   FORWARD-ONLY: not one pre-existing .swarm/runs file renamed, edited or dropped
+           pre=770 gone=0 changed=0
+PASS B4   the convention is TRUE, not merely written: every file this cycle added to .swarm/runs obeys it
+           added=6 violating=[]
+PASS B5   CONTROL: the convention pattern must NOT match a legacy name
+           legacy names matched by the new pattern: 0 — pattern discriminates: true
+PASS C1   suite green: >= 118 tests, 0 failures, exit 0
+           tests=118 pass=118 fail=0 exit=0
+PASS C2   src/corpus.js byte-identical (locked non-goal)
+           77a4de5c777a3bdb vs sealed 77a4de5c777a3bdb
+PASS C3   zero dependencies: no package.json, no lockfile, no node_modules
+           none present
+PASS C4   CONTROL: the suite parser must report failures on FAILING output
+           synthetic parsed tests=118 fail=3 — not a rubber stamp: true
+PASS C5   no product code touched: src/ bin/ test/ and README/REPORT byte-identical
+           11 files unchanged
+
+18 PASS / 1 FAIL of 19
+
+--- raw test_cmd tail ---
+✔ getListBehaviourSection still fails on a SEPARATOR MISMATCH (not a heading-parse error) when a reformatted heading's literal is mutated (T-021) (0.369892ms)
+✔ getListBehaviourSection still fails on a SEPARATOR MISMATCH (not a heading-parse error) under an American-spelled heading (T-027) (0.243189ms)
+ℹ tests 118
+ℹ pass 118
+ℹ fail 0
+ℹ duration_ms 4791.300956
