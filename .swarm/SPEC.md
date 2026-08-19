@@ -221,7 +221,8 @@ loud; the aphorism is the product.
 ## Undecided behaviours
 
 <!-- Records GAPS, not Domain rules. The 29-clause coverage map does NOT grow because of
-     these entries. Carried forward verbatim from run #3; all remain human-owned (J-7). -->
+     these entries. D-42 through D-45 carried forward verbatim from run #3; D-46 added
+     this run (run #4). All remain human-owned (J-7). -->
 
 **Repeated `--tag` / `--author` (measured gap D-42)**
 
@@ -259,6 +260,27 @@ loud; the aphorism is the product.
   exit-3 behaviour itself (test/pipe.test.js:86 and :160, both exercising `/dev/full`, 0
   skipped in the 118/118 run). This is a SPEC and README gap, not a test hole. Human-owned,
   tracked as backlog item J-7.
+
+**Attribution is styled by punctuation only, not by a "dim" rendering (measured gap D-46)**
+
+- **Shipped behaviour:** `bin/aphorism.js:60` formats every result as
+  `` `${entry.text}\n    — ${entry.author}` `` — a four-space indent and an em dash
+  (U+2014) are the only things distinguishing the attribution line from the aphorism
+  line. Grepping `bin/aphorism.js`, `src/args.js` and `src/select.js` finds no ANSI
+  escape sequence and no `isTTY` branch anywhere in the tree; `node bin/aphorism.js
+  --seed 7 | od -c` carries zero ESC (`033`) bytes. On a TTY the attribution is
+  byte-identical in weight to the aphorism it credits.
+- **Why the SPEC does not decide it:** Taste notes asserts "Attribution is dim, not
+  loud; the aphorism is the product" — a rendering claim — but Domain rules' `--list`
+  clause specifies only the plain-text form (`<text> — <author>`, no styling), and the
+  Nice-to-haves list carries "ANSI dim for the attribution line, respecting `NO_COLOR`"
+  as a still-open, not-yet-built item. So either the taste note overstates what already
+  ships, or the product under-delivers the aesthetic it claims for itself — the SPEC
+  contains both the claim and, in Nice-to-haves, the tacit admission that the claim
+  isn't built. Nothing in the SPEC says which reading is correct, and this run's brief
+  excludes building ANSI styling to close the gap either way (locked non-goal).
+- **Status:** No test pins this; none should, until a human rules. Human-owned, tracked
+  as backlog item J-7.
 
 ## Definition of done
 

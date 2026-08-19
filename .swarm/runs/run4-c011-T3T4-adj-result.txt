@@ -1,0 +1,25 @@
+
+PASS  A  DEFECT REPRODUCED — T3 raw-substring reader fails on the delivered block
+          rawIncludes=false wrapPresent=true
+PASS  B  FIXED reader recovers truth on that SAME input — the taste note IS quoted
+          quote found once the wrap is normalised
+PASS  C  DEFECT REPRODUCED — T4 read only the Status bullet's FIRST line
+          "- **Status:** No test pins this; none should, until a human rules. Human-owned, tracked"
+PASS  D  FIXED reader recovers truth — the Status bullet DOES route to J-7
+          - **Status:** No test pins this; none should, until a human rules. Human-owned, tracked as backlog item J-7.
+PASS  E  MUST-DIE: the fixed quote reader does NOT fire on a block omitting the taste note
+          stayed dead on a decoy that talks about attribution
+PASS  F  MUST-DIE: the fixed Status reader does NOT find J-7 in a Status bullet lacking it
+          - **Status:** No test pins this. Owned by nobody in particular.
+PASS  G  MUST-NOT-OVERREACH: the fixed Status reader stops at its own bullet
+          - **Status:** owned locally. Second line of the same bullet.
+PASS  H  MUST-STAY-GREEN: the fixed readers still work on a bullet that is NOT wrapped
+          - **Status:** Human-owned, tracked as backlog item J-7.
+PASS  I  BLAST RADIUS: T7 asserts an ABSENCE, so the same defect there would fail OPEN
+          sealed: onOneLine=true present=true | now: goneUnderUnwrap=true
+PASS  J  BLAST RADIUS: T2 is immune — bold markers are tokens markdown wrapping cannot split
+          wholeBlock=true eachOnOneLine=true
+PASS  K  BLAST RADIUS: T5 reads only the J-7 bullet's FIRST line — same habit, safe HERE only
+          count word on line 1 = true; the habit is identical, the luck is not a property of the cell
+
+=== 11 PASS / 0 FAIL ===

@@ -5,7 +5,7 @@
  "run_label": "improvement run #4",
  "run_started_at": "2026-08-19T14:05:17Z",
  "phase": "POLISH",
- "cycle": 10,
+ "cycle": 11,
  "run_cmd": "node bin/aphorism.js",
  "test_cmd": "node --test test/*.test.js",
  "spec_digest": [
@@ -208,6 +208,18 @@
    "kind": "routing",
    "what": "Corrected Q-6 model from the backlog haiku to sonnet at pick time. This is the routing TABLE being applied, not an override of it — and it is the opposite direction from the three gear-demotion refusals this run recorded.",
    "why": "cycle.md step 4 says routing is PICK-TIME, not plan-time, and workflows.md sends `kind` docs/polish at effort S to haiku while sending \"all other build/fix items (S/M effort)\" to sonnet. Q-6 is kind=fix, so the table routes it to sonnet and the backlog haiku was a stale PLAN-time assignment. Gear 1 sets demote=true, but the demotion rule drops sonnet to haiku for docs/polish items ONLY, and never lets build/fix fall below sonnet — so pacing does not reach this item either. Recorded because cycles 1, 4 and 5 each recorded a REFUSAL of a haiku demotion on this repo document family, and it would be easy to read this as a fourth. It is not: no rule had to be overridden here, and saying so keeps the three genuine overrides legible as overrides."
+  },
+  {
+   "cycle": 11,
+   "kind": "scope",
+   "what": "Declined to update the eleven stale J-7 behaviour counts in docs/report-history.md while raising the live count from six to seven.",
+   "why": "That file is the ARCHIVE of what earlier reports said, moved out of REPORT.md under this run's own M-2 (\"history MOVED not deleted\"). A count that was true when written is not a defect; rewriting it would falsify the record of what was believed when, which is the one thing an archive exists to prevent. The live count sites — REPORT.md's J-7 bullet and the J-7 backlog record — were both updated in this cycle, and a gate cell pins the archive byte-identical so the decision is enforced rather than merely intended."
+  },
+  {
+   "kind": "process",
+   "cycle": 11,
+   "what": "Stop instructing builders to build scratch/mutation arms under /tmp. The instruction is unfollowable and this cycle proved it.",
+   "why": "The Q-8 builder disclosed that shell cp/mkdir were denied outright for /tmp, so it built its mutation arms INSIDE the repo (.scratch-mutation-test*/) using fs.cpSync instead. The likely cause is structural rather than incidental: /opt/targets/aphorism-cli is an additionalDirectories entry and /tmp is not, so a subagent cannot write there. The agent cleaned up and gate cell S1 came back clean, but the repo has NO .gitignore, so for the duration of the wave a `git add -A` would have committed two full scratch trees. The near-miss was caught only because S1 runs BEFORE the commit. Future builder prompts should name an in-repo scratch path and require its removal, rather than naming a path the sandbox will refuse."
   }
  ],
  "decisions_archive": ".swarm/decisions.json (all 41, full text — moved at kickoff, nothing dropped)",
@@ -443,14 +455,14 @@
  "counters": {
   "consecutive_no_value": 0,
   "consecutive_failures": 0,
-  "k_current": 4,
-  "wave_streak": 1,
+  "k_current": 5,
+  "wave_streak": 0,
   "window_tokens_attributed": 0
  },
  "last_cycle": {
-  "cycle": 10,
-  "work": "build wave, k=1 [Q-6: README documents --author diacritic sensitivity] — one DIRECT sonnet Agent, routing corrected at pick time from the backlog stale haiku",
-  "outcome": "Q-6 verified done; sealed gate 20P/1F of 21, the FAIL adjudicated 11/11 as conductor instrument defect #22 (gate byte-unedited); conductor diff-read found an unguarded count claim the gate was not aimed at -> Q-8 filed todo; suite 118/118/0, src/corpus.js byte-identical",
-  "ts": 1787165536
+  "cycle": 11,
+  "work": "build wave, k=2 [Q-8: pin the README distinct-author count; TS-5: record D-46 and raise J-7 six -> seven] — two DIRECT sonnet Agents, disjoint file scopes",
+  "outcome": "BOTH VERIFIED DONE. Sealed gate 29P/2F of 31; both FAILs adjudicated 11/11 as conductor instrument defect #23 (wrap-blind readers over hard-wrapped markdown, one root cause in two cells, failing closed), gate left byte-unedited. Suite 118 -> 119, 0 fail. Wave clean: zero reverts, zero failed verifies -> k_current 4 -> 5.",
+  "ts": 1787167417
  }
 }

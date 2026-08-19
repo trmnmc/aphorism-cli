@@ -2193,3 +2193,64 @@ test('README `--list` format literal matches the shipped binary\'s actual --list
     );
   }
 });
+
+// ---------------------------------------------------------------------------
+// Q-8 -- the "### `--author` matching" section (under "## Flags") states
+// "Of the corpus's 24 distinct authors, exactly one carries a non-ASCII
+// character". 24 is correct today (measured from src/corpus.js), but this
+// section is the one place in the README with a count claim and NO
+// digit-hygiene guard: unlike Tag vocabulary (J-5) and Attribution (C7),
+// nothing here re-derives the figure from the corpus at test time. This is
+// NOT a whole-section digit-hygiene sweep like J-5/C7 -- it only pins the
+// one claim named in this backlog item ("N distinct authors"), the same
+// narrow, single-claim idiom the "README must state total unique tags
+// correctly" test above uses for "N distinct tags". A blanket ban would be a
+// larger change to this section's contract than this item asks for.
+//
+// Located structurally: the "### " heading is found by exact text (the flag
+// name and section topic are both fixed, unlike the `--list` behaviour
+// section which T-021/T-027 had to tolerate reformatting for), and the
+// section body runs to the next "### " or "## " heading, whichever comes
+// first -- mirrors getListBehaviourSection's own end-boundary rule above, so
+// a benign reword of the surrounding prose (this test's converse control)
+// cannot extend or shrink the section by accident.
+// ---------------------------------------------------------------------------
+
+// Helper: return the "### `--author` matching" section's raw text (heading
+// through the line before the next "### " or "## " heading, whichever comes
+// first). Mirrors getListBehaviourSection's boundary rule above.
+function getAuthorMatchingSection(readmeContent) {
+  const start = readmeContent.indexOf('### `--author` matching');
+  assert(start !== -1, 'README must have a "### `--author` matching" section under "## Flags"');
+  const nextH3 = readmeContent.indexOf('\n### ', start + 1);
+  const nextH2 = readmeContent.indexOf('\n## ', start + 1);
+  const boundaries = [nextH3, nextH2].filter((i) => i > -1);
+  const end = boundaries.length > 0 ? Math.min(...boundaries) : readmeContent.length;
+  return readmeContent.substring(start, end);
+}
+
+test('README `--author` matching section must state the correct count of distinct corpus authors (Q-8)', () => {
+  const readmePath = path.join(__dirname, '..', 'README.md');
+  const readmeContent = fs.readFileSync(readmePath, 'utf8');
+  const authorMatchingSection = getAuthorMatchingSection(readmeContent);
+
+  // Truth, derived from the corpus at test time -- never a literal copied
+  // into this file.
+  const distinctAuthors = new Set(corpus.map((entry) => entry.author));
+  const trueDistinctAuthorCount = distinctAuthors.size;
+
+  const match = authorMatchingSection.match(/(\d+)\s+distinct authors/);
+  assert(
+    match,
+    'could not find an "N distinct authors" claim in the "### `--author` matching" section -- ' +
+      'this claim must fail loud, not pass silently, when it cannot be parsed'
+  );
+
+  const statedCount = parseInt(match[1], 10);
+  assert.equal(
+    statedCount,
+    trueDistinctAuthorCount,
+    'README "### `--author` matching" section says the corpus has ' + statedCount +
+      ' distinct authors, but src/corpus.js actually has ' + trueDistinctAuthorCount
+  );
+});

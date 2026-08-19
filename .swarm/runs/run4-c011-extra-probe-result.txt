@@ -1,0 +1,9 @@
+
+PASS  P1  DELETING the claim makes the guard fail LOUD (not pass silently)
+          exit=1 tests=119 fail=1
+PASS  P2  CONTROL: the unmutated arm is green, so P1 measured the deletion and not the arm
+          exit=0 tests=119 pass=119 fail=0
+PASS  P3  the new test body carries no literal 24 (comments excluded, code only)
+          no literal in the executable lines
+
+=== 3 PASS / 0 FAIL ===
