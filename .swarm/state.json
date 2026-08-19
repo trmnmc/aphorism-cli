@@ -237,7 +237,7 @@
    "id": "KI-19",
    "severity": "medium",
    "status": "open (repaired in the rendered artifact; the defective pattern is what remains filed)",
-   "title": ""
+   "title": "The dashboard meta line fields `gen` and `next` are LIVE but were never substituted by ANY render script, and had been stale since cycle 47 "
   },
   {
    "id": "KI-20",
@@ -291,37 +291,37 @@
    "id": "KI-28",
    "severity": "low",
    "status": "open",
-   "title": ""
+   "title": "Repeated --tag / --author is unprotected AND spec-undecided"
   },
   {
    "id": "KI-29",
    "severity": "low",
    "status": "open",
-   "title": ""
+   "title": "Three domain-rule clauses (D-04 non-integer seeds, D-36 --help on stdout, D-41 positional-argument rejection) are each killed by exactly ONE"
   },
   {
    "id": "KI-30",
    "severity": "medium",
    "status": "open",
-   "title": ""
+   "title": "The SWARM self-modification fence (hard rule 5) depends on agent goodwill"
   },
   {
    "id": "KI-31",
    "severity": "medium",
    "status": "resolved",
-   "title": ""
+   "title": "bin/aphorism.js writes to process.stdout (lines 28, 43, 48) with no error handler, so any stdout write failure surfaces as an unhandled 'err"
   },
   {
    "id": "KI-33",
    "severity": "medium",
    "status": "open",
-   "title": ""
+   "title": "The dashboard render harness (runs/c*-dashboard.mjs, used by cycles 3-6) substitutes the evidence block at the FIRST match of the evidence <"
   },
   {
    "id": "KI-34",
    "severity": "low",
    "status": "open",
-   "title": ""
+   "title": "SWARM-side cycle commits carry messages that assert contents the commits do not and cannot have"
   },
   {
    "id": "KI-35",
