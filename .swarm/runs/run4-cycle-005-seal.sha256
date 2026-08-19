@@ -1,0 +1,46 @@
+8a3ff4f53c31b15112b86585cecb578df8b0e1889f5d9257f4c548adc6d7da42  run4-cycle-005-gate.mjs
+
+SEALED 2026-08-19, run #4 cycle 5, BEFORE any fixer agent was dispatched.
+
+The gate file itself is held at SWARM/runs/run4-cycle-005-gate.mjs for the whole dispatch
+window. Hard rule 5 gives workflow agents TARGET paths only and never SWARM paths, so the
+check is STRUCTURALLY unreachable to a fixer rather than merely forbidden to it (the run #3
+cycle-14 decision). Only this hash and the baseline below live in the target during dispatch.
+
+DISCRIMINATING PRE-DISPATCH BASELINE — 16 PASS / 4 FAIL on the UNFIXED tree.
+Full output: run4-cycle-005-baseline-gate.txt
+
+The four FAILs are exactly the scope of the two reproduced findings, and nothing else:
+  R1  README asserts an unqualified "most recent full matrix"
+  R5  that recency claim is false against the live API (newest is 32274489339, not the cited 32267338333)
+  P1  REPORT still carries the false wrapper "twice in this cycle alone"
+  P4  that sentence scopes both examples to one cycle and never names cycle 4
+
+Everything a correct fix must NOT disturb already passes and must still pass afterwards:
+R2 (citation not deleted), R3 (four-version table intact), R4 (cited run really is a green
+4-job matrix), R6 (verified-at-18 honesty wording), P2 (both historical examples survive),
+P3 (the running total of eight survives — B-1b was REFUTED, so eight is true and deleting
+it would remove a true claim), P5 (dated snapshot framing), G1/G2 (suite 118/118/0 with a
+parser proven to read a red run as red), G3 (the two out-of-scope files byte-unchanged),
+G4 (src/ bin/ test/ untouched, still zero-dependency), G5 (only README.md and REPORT.md move).
+
+TWO GATE BUGS WERE FOUND BY THIS BASELINE AND REPAIRED BEFORE SEALING.
+Fixing before a gate has run is repair; editing after it has run destroys the evidence of
+what it measured.
+
+1. UNBOUNDED RECURSION. Cells were evaluated eagerly at registration, so the control cells
+   C1-C4 — which re-invoke this same file with --only — ran the controls inside every
+   control. The first baseline never terminated. Cells are now registered and evaluated
+   only after --only is parsed, so a --only run evaluates exactly one cell.
+
+2. A MATCHER BLIND TO LINE-WRAPPING. Both documents are hard-wrapped markdown, so the
+   claim under review is physically stored as "including twice\nin this cycle alone".
+   The phrase cells matched the raw text and could not see through the break. The
+   consequence is the important part: P1 reported the false sentence ABSENT on a tree that
+   contains it — a cell that fails OPEN — while P2 reported an intact example as DELETED.
+   One root cause, opposite directions. Phrase cells now match whitespace-normalised text;
+   only line-oriented cells use the raw text.
+
+Two bugs in twenty cells is the standing argument for baselining a gate rather than
+reasoning about it. Bug 2 in particular would have certified the REPORT.md defect as fixed
+without any fix at all.

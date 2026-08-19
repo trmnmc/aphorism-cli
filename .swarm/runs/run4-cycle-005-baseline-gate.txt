@@ -1,0 +1,42 @@
+run #4 cycle 5 — review-fix gate    16 PASS / 4 FAIL  of 20
+
+  FAIL    R1  README makes no UNQUALIFIED claim that its cited run is the newest
+               unqualified: "The most recent full matrix — [Actions run 32267338333](https://github.com/trmnmc/aphorism-cli/actions/runs/32267338333), commit `"
+  PASS    R2  the historical citation is NOT deleted (run id + commit still present)
+               run_id=true commit_sha=true
+  PASS    R3  the four-version result table is intact (18/20/22/24, all 118/118/0)
+               versions=4/4 rows_with_118_118_0=4
+  PASS    R4  every run id README cites EXISTS and is a completed, all-green 4-job matrix
+               32267338333:4/4 green
+  FAIL    R5  the recency claim is TRUE against the live API (end, not means)
+               live_newest=32274489339 readme_claims_newest=true readme_cites_newest=false (total_runs=8)
+  PASS    R6  the verified-at-18 / not-proven-minimal honesty wording survives
+               verified_at_18=true not_proven_minimal=true names_16_17=true
+  FAIL    P1  the false wrapper "twice in this cycle alone" is gone
+               still present
+  PASS    P2  BOTH historical examples survive — nothing deleted (standing non-goal)
+               cycle3_example=true cycle4_example=true
+  PASS    P3  the running total of eight survives (B-1b was refuted, so it is TRUE)
+               total of eight retained
+  FAIL    P4  any "twice" claim now names cycles matching its own two examples
+               single_cycle_scope=true names_cycle3=true names_cycle4=false
+  PASS    P5  the dated snapshot framing survives
+               snapshot dating retained
+  PASS    C1  CONTROL — R1 still FIRES on a README with the old superlative restored
+               R1 FAIL  unqualified: "### Node support The most recent full matrix — Actions run 32267338333 — reported: CI runs the whole suite on four Node majors on "
+  PASS    C2  CONTROL — R2 still FIRES on a README with the run id deleted
+               R2 FAIL  run_id=false commit_sha=true
+  PASS    C3  CONTROL — P1 still FIRES on a REPORT with the old sentence restored
+               P1 FAIL  still present
+  PASS    C4  CONTROL — P2 still FIRES on a REPORT with the cycle-3 example deleted
+               P2 FAIL  cycle3_example=false cycle4_example=true
+  PASS    G1  suite green >= 118 (parser reads BOTH the TAP and spec reporters)
+               tests=118 pass=118 fail=0
+  PASS    G2  CONTROL — the G1 parser is not a rubber stamp (reads a red run as red)
+               synthetic red parsed as tests=118 pass=115 fail=3; gate would_pass=false
+  PASS    G3  the two out-of-scope baseline files are byte-UNCHANGED since the seal
+               docs/report-history.md and .github/workflows/test.yml unchanged
+  PASS    G4  src/ bin/ test/ untouched and still zero-dependency
+               product_diff="" manifest_present=false
+  PASS    G5  ONLY README.md and REPORT.md changed since the sealed baseline
+               changed=[] unexpected=[]
