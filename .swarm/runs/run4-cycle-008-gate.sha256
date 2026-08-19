@@ -1,0 +1,9 @@
+4f37ef9774613e661aea0f36b4bb376b45f36ed04cc1e20b9063ecdf3958f212  run4-c008-gate.mjs
+Sealed pre-dispatch at run #4 cycle 8. The gate file itself is held under SWARM/runs/ for
+the whole dispatch window (run #3 cycle-14 decision): hard rule 5 forbids passing SWARM
+paths to workflow agents, so a gate living there is STRUCTURALLY unreachable to a builder
+rather than merely forbidden to it. Copied in and re-hashed after verification.
+Pre-dispatch discriminating baseline: 17 PASS / 10 FAIL of 27 cells.
+  RED (the work must turn these green): A2 A3 A4 B1 B2 B3 B4 B6 B7 G1
+  GREEN (13 controls + 7 standing truths): A0 A1 A5 A6 A7 A8 A9 B5 C1 C2 C3 C4 C5 C6 C7 C8 G2
+Seal commit: e0687203db39f0f9d4ef75b73bea7bae558ae22e

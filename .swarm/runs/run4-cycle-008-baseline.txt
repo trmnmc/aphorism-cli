@@ -1,0 +1,56 @@
+PASS  A0  README has a "## Exit codes" section with an exit-3 table row
+        row3 present (138 chars)
+PASS  A1  the exit-3 row still documents the STDOUT case (nothing deleted)
+        | `3` | The output could not be written — a real stdout write failure (for example the device is full); one `aphorism: …` line on stderr |
+FAIL  A2  the exit-3 ROW itself covers the stderr-side case in substance (not merely naming stderr as where a diagnostic goes)
+        stderr=true no-diagnostic-claim=false replaced-code-claim=false :: | `3` | The output could not be written — a real stdout write failure (for example the device is full); one `aphorism: …` line on stderr |
+FAIL  A3  the section asserts NO diagnostic is emitted in the stderr-failure case
+        no asserting unit found
+FAIL  A4  the section asserts the ALREADY-EARNED exit code (1 or 2) is replaced
+        no asserting unit found
+PASS  A5  BEHAVIOUR: a failing stderr device gives exit 3 on a would-be exit-1 run
+        exit=3 (expected 3)
+PASS  A6  BEHAVIOUR: a failing stderr device gives exit 3 on a would-be exit-2 run
+        exit=3 (expected 3)
+PASS  A7  BEHAVIOUR: nothing reaches stdout in the stderr-failure case
+        stdout=""
+PASS  A8  CONTROL (must stay true): a WORKING stderr preserves the earned codes 1 and 2
+        --tag zzznope=1 (exp 1), --bogus=2 (exp 2)
+PASS  A9  CONTROL (must stay true): a merely CLOSED stderr also preserves 1 and 2 — so exit 3 is specific to a FAILING device, not to an absent one
+        --tag zzznope=1 (exp 1), --bogus=2 (exp 2)
+PASS  C1  CONTROL must-die: strip every unit mentioning stderr from the section -> A3/A4 both FAIL
+        A3/A4 = false/false (expected false/false)
+PASS  C2  CONTROL must-stay-green: a benign REWRAP of the section leaves A3/A4 unchanged
+        before=false/false after=false/false
+PASS  C3  CONTROL must-die: a section whose only stderr unit DENIES the property does NOT satisfy A3/A4
+        A3/A4 = false/false (expected false/false)
+PASS  C8  CONTROL must-die: the SHIPPED, UNFIXED exit-3 row does NOT satisfy A2 — the cell the baseline caught passing vacuously stays dead against the text it wrongly accepted
+        no-diagnostic=false replaced=false (both must be false)
+FAIL  B1  SPEC § Undecided behaviours gained a FOURTH entry and it is D-45
+        entries=3 ids=[D-42,D-43,D-44] (expected 4 incl D-45)
+FAIL  B2  the D-45 entry carries all three grammar bullets, like D-42/D-43/D-44
+        D-45 absent
+FAIL  B3  the D-45 Status bullet routes the ruling to J-7
+        D-45 absent
+FAIL  B4  the D-45 Shipped-behaviour bullet has SUBSTANCE: names exit 3 on BOTH streams (so the entry cannot be an empty placeholder)
+        D-45 absent
+PASS  B5  MUST-NOT-MOVE: the Domain-rules "Exit codes:" bullet is byte-identical to its pre-dispatch seal
+        sha=4545c0eb720e6e54 sealed=4545c0eb720e6e54 :: - Exit codes: 0 success, 1 no match, 2 bad usage (unknown flag, missing flag argument, or seed value that `Number()` par
+FAIL  B6  REPORT.md's J-7 bullet uses the SAME count word backlog.json's J-7 title states (derived at run time, not hardcoded)
+        REPORT says "five", backlog says "six"
+FAIL  B7  REPORT.md's J-7 bullet enumerates the SIXTH behaviour in substance (exit 3 / the exit-code enumeration)
+        exit/3 = true/false
+PASS  C4  CONTROL must-die: deleting the D-45 heading from the section drops the entry count to 3 -> B1/B2/B3/B4 all FAIL
+        entries=3 ids=[D-42,D-43,D-44] (expected 3, no D-45)
+PASS  C5  CONTROL must-stay-green: a benign REWRAP of § Undecided behaviours leaves the entry parse unchanged
+        before=[D-42,D-43,D-44] after=[D-42,D-43,D-44]
+PASS  C6  CONTROL must-die: mutating the Domain-rules Exit-codes bullet changes B5's hash
+        mutation applied=true, hash differs=true
+PASS  C7  CONTROL must-die: rewriting REPORT.md's J-7 count word to "seven" makes B6 FAIL (B6 is not satisfied by ANY number word)
+        mutated word="seven" truth="six" (must differ)
+FAIL  G1  SCOPE: the working tree differs from the seal commit in EXACTLY the three permitted document files
+        changed=[] extra=[]
+PASS  G2  SUITE: node --test reports >= 118 tests, 0 fail (parser handles BOTH the TAP and the U+2139 spec reporter)
+        tests=118 pass=118 fail=0
+
+=== 17 PASS / 10 FAIL of 27 cells ===
