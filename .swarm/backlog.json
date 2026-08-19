@@ -334,16 +334,16 @@
    "kind": "fix",
    "effort": "S",
    "priority": 9,
-   "status": "todo",
+   "status": "done",
    "attempts": 0,
-   "model": "haiku",
+   "model": "sonnet",
    "files_hint": [
     "README.md"
    ],
    "packages": [],
    "deps": [],
    "acceptance": "README documents that --author matches literally, so an author carrying a diacritic must be typed with it (or matched by a partial that avoids it). DOCS ONLY: the matching semantics are exactly what the SPEC Domain rule specifies (\"substring containment, case-insensitively\"), so the shipped behaviour is CONFORMING and must not change. src/args.js (--help) is NOT in scope: it is product source and its one-screen budget is a taste-note constraint.",
-   "notes": "From cycle-7 QA live-look L-01, conductor-reproduced (gate A1/A2/A3/A4). Measured: --author 'Saint-Exupery' -> exit 1, stdout empty, while --author 'Saint-Exupéry' -> exit 0. The corpus holds exactly ONE non-ASCII author of 24 (gate A4, read from the module, not from prose). Severity capped at medium BY MEASUREMENT, not by judgement: the entry stays reachable via 'saint', 'exup', 'antoine' (gate A3). The agent also measured NFD-normalized input failing — same root cause, rarer trigger."
+   "notes": "From cycle-7 QA live-look L-01, conductor-reproduced (gate A1/A2/A3/A4). Measured: --author 'Saint-Exupery' -> exit 1, stdout empty, while --author 'Saint-Exupéry' -> exit 0. The corpus holds exactly ONE non-ASCII author of 24 (gate A4, read from the module, not from prose). Severity capped at medium BY MEASUREMENT, not by judgement: the entry stays reachable via 'saint', 'exup', 'antoine' (gate A3). The agent also measured NFD-normalized input failing — same root cause, rarer trigger. | CLOSED cycle 10 (run #4). ROUTING CORRECTED AT PICK TIME: the backlog carried model=haiku from PLAN, but the routing table sends kind=fix/effort=S to SONNET (the haiku row is kind docs/polish + S only), and gear-1 demotion never drops a fix item below sonnet. Dispatched sonnet. Sealed gate SWARM/runs/run4-c010-q6-gate.mjs (sha256 cad6150e..., byte-unchanged after the run) returned 20 PASS / 1 FAIL of 21; the FAIL was cell S3, adjudicated 11/11 as conductor instrument defect #22 with the gate left byte-unedited. B3 is the cell carrying execution weight: it PARSED the --author values out of the delivered README and RAN them, so the remedy the document offers is verified rather than believed (relevant=[accented Saint-Exupery|saint|antoine], all exit 0)."
   },
   {
    "id": "Q-7",
@@ -399,6 +399,25 @@
    "model": "sonnet",
    "attempts": 0,
    "notes": "From the run #4 cycle-9 TASTE pass, finding 4 (minor). Adjacent to TS-2 but DISTINCT: TS-2 is about tag pool SIZE (five pools hold <= 4 entries), this is about the tag vocabulary being unDISCOVERABLE. CONDUCTOR-VERIFIED, gate cells E1/E2/E4 plus adjudication columns C/D/E/F: no --tags flag exists (`--tags` exits 2, --help never mentions it); --help does delegate discovery to a jq pipeline (measured line: `node bin/aphorism.js --list --json | jq -r '.tags[]' | sort -u`); and an unknown tag produces byte-identical stderr and exit status to a genuinely empty intersection of two VALID filters (`--tag performance --author \"Martin Fowler\"`), both exit 1 + 'aphorism: no aphorism matches those filters' + empty stdout. An unknown AUTHOR is indistinguishable too. The message is not merely generic across tags — it is generic across the entire no-match class, which is defensible unix behaviour and is why this is filed minor rather than as a bug.",
+   "covers": []
+  },
+  {
+   "id": "Q-8",
+   "title": "README new \"24 distinct authors\" count claim sits in the one section with no digit-hygiene guard",
+   "kind": "fix",
+   "effort": "S",
+   "priority": 9,
+   "value": "M",
+   "status": "todo",
+   "attempts": 0,
+   "model": "sonnet",
+   "files_hint": [
+    "test/readme-tags.test.js"
+   ],
+   "packages": [],
+   "deps": [],
+   "acceptance": "The count claim \"24 distinct authors\" in README section `### --author matching` is pinned to a value RE-DERIVED FROM src/corpus.js AT RUN TIME, in the manner test/readme-tags.test.js already uses for the tag and attribution counts — never to a literal copied into the test. The new test must be proven FAILABLE and ATTRIBUTABLE (L-029): show it goes red under a mutation of the README number AND under a mutation of the corpus, and show that removing it lets both survive. Pair it with a CONVERSE control that must leave the suite GREEN (L-044) — a benign reword of the surrounding sentence must not trip it. Do NOT edit README.md: the claim is TRUE as measured at cycle 10 (24 distinct authors over 50 entries, exactly one non-ASCII). This is a guard, not a correction.",
+   "notes": "CONDUCTOR FINDING at cycle 10, from reading the Q-6 diff after the gate passed — not from the cycle-7 QA pass despite the Q- prefix. The cycle-14 shape recurring: the gate was RIGHT AND INSUFFICIENT. Twenty green cells sat over a README that had just gained an unguarded count claim, because no cell was aimed at claim DURABILITY. MEASURED, NOT ASSUMED: this README is unusually well guarded against exactly this decay class — test/readme-tags.test.js carries \"README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)\" and \"README Attribution section must contain no digit runs outside the counts table (C7)\" — but both are SECTION-SCOPED, and the new text landed under `## Flags`, outside every guarded region. The discriminator that proves it is unguarded rather than merely unnamed: the suite is GREEN at 118/118 with the new \"24\" in place, so no existing digit-hygiene guard reaches it. IN SCOPE BY M-5 own wording (\"a test is added ONLY to pin a claim this run makes true\") — this run made that claim true at cycle 10. NOT built this cycle because cycle.md step 5 permits ONE work type per cycle and this cycle work type was the build wave; same discipline cycle 2 applied when it declined to close N-7 on evidence obtained in a build cycle.",
    "covers": []
   }
  ]

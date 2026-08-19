@@ -5,7 +5,7 @@
  "run_label": "improvement run #4",
  "run_started_at": "2026-08-19T14:05:17Z",
  "phase": "POLISH",
- "cycle": 9,
+ "cycle": 10,
  "run_cmd": "node bin/aphorism.js",
  "test_cmd": "node --test test/*.test.js",
  "spec_digest": [
@@ -189,6 +189,25 @@
    "what": "Paid the fable TASTE gate in gear 1 (crawl), which the gear table describes as haiku-priced work.",
    "why": "The budget probe returned gear 1 (rho 4.50, guest mode, weekly ceiling 2, k_cap 1) and gear 1's work-choice guidance is 'haiku-priced useful work ... S-effort sonnet builds only'. A fable judgment agent is the opposite of haiku-priced, so this is an explicit override and is recorded as one rather than slipped through. Three reasons it is the right call. (1) The taste seat is fable-GUARDED: cycle.md and workflows.md both state pacing demotions never demote judgment seats, so the rules do not offer 'run taste on haiku' as an option — the honest choices were pay it at fable or defer it. (2) It is exactly ONE agent, which is the smallest work type in the catalogue and fits gear 1's wave cap of 1 precisely; no cheaper way to discharge this gate exists. (3) The probe put projected window depletion about an hour out, so deferring the last owed gate risked pushing it into a depleted window or a limp episode, with 19.7h of clock still to spend afterwards. Gear 1 governs what a cycle burns, not whether the run's last outstanding gate gets paid.",
    "consequence": "Gate paid. All three pre-POLISH gates are now discharged for run #4 and no further judgment-seat spend is owed this run."
+  },
+  {
+   "cycle": 10,
+   "kind": "verification",
+   "what": "The sealed gate S3 cell FAILED against a working tree that satisfies the scope constraint exactly. INSTRUMENT DEFECT #22, adjudicated 11/11 with the gate left BYTE-UNEDITED.",
+   "why": "S3 asks whether README.md is the only changed tracked file. It read `git status --porcelain`, applied .trim() TO THE WHOLE OUTPUT, then sliced 3 characters off each line to skip the two status columns and their separator. But porcelain first column is a SPACE for an unstaged modification (\" M README.md\"), and the whole-output trim ate it, so the slice started one character late and the cell reported the changed path as \"EADME.md\". WHY THE PRE-DISPATCH BASELINE DID NOT CATCH IT, which is the part worth carrying: the baseline ran against a CLEAN tree, so porcelain emitted nothing, so no line was ever sliced and the cell passed VACUOUSLY. A discriminating baseline asserts which cells must be RED before the work exists — it did that, correctly, for B1-B4 — but it can still only exercise the code paths the WORLD hands it, and a clean tree hands a status reader no lines at all. That is a new species for this run: the prior defects were cells that were wrong on data they saw; this cell was never given data. It failed CLOSED, which is the right direction. The underlying claim was verified INDEPENDENTLY of the cell: `git status --porcelain | cat -A` by hand returned exactly \" M README.md$\". Adjudicated in .swarm/runs/run4-c010-S3-adj.mjs with must-die (E), must-not-overreach (F, G) and must-stay-dead (I) columns, plus a blast-radius pair.",
+   "instrument_defect_number": 22
+  },
+  {
+   "cycle": 10,
+   "kind": "verification",
+   "what": "The gate was RIGHT AND INSUFFICIENT again, and the gap was found by READING THE DIFF: the delivered README gained a count claim (\"24 distinct authors\") in the one section that no digit-hygiene guard reaches.",
+   "why": "Twenty green cells, every one of them aimed at whether the documentation claim is TRUE, and none at whether it will STAY true. This repo has filed the decay class eight times and has a measured answer to it — run #4 cycle 4 A6 cell, which re-derives every asserted count from its source AT RUN TIME and caught the decay in the act. The Q-6 gate had no such cell because Q-6 acceptance is about a reader understanding, not about a number; the number arrived as a side effect of the builder choosing (correctly, and in this README own voice) to prefer a measured figure to an adjective. MEASURED RATHER THAN ASSUMED, and the discriminator matters: this README is unusually well defended against precisely this — test/readme-tags.test.js carries J-5 (\"no unrecognised count-claim digits\") and C7 (\"no digit runs outside the counts table\") — but both are SECTION-SCOPED to Tag vocabulary and Attribution, and the new text landed under `## Flags`. The proof that it is genuinely unguarded rather than merely unnamed is that the suite is GREEN at 118/118 with the new \"24\" in place; had either guard reached that section it would have fired. Filed as Q-8 rather than fixed, because cycle.md step 5 permits ONE work type per cycle — the cycle-2 precedent for evidence obtained inside a build wave."
+  },
+  {
+   "cycle": 10,
+   "kind": "routing",
+   "what": "Corrected Q-6 model from the backlog haiku to sonnet at pick time. This is the routing TABLE being applied, not an override of it — and it is the opposite direction from the three gear-demotion refusals this run recorded.",
+   "why": "cycle.md step 4 says routing is PICK-TIME, not plan-time, and workflows.md sends `kind` docs/polish at effort S to haiku while sending \"all other build/fix items (S/M effort)\" to sonnet. Q-6 is kind=fix, so the table routes it to sonnet and the backlog haiku was a stale PLAN-time assignment. Gear 1 sets demote=true, but the demotion rule drops sonnet to haiku for docs/polish items ONLY, and never lets build/fix fall below sonnet — so pacing does not reach this item either. Recorded because cycles 1, 4 and 5 each recorded a REFUSAL of a haiku demotion on this repo document family, and it would be easy to read this as a fourth. It is not: no rule had to be overridden here, and saying so keeps the three genuine overrides legible as overrides."
   }
  ],
  "decisions_archive": ".swarm/decisions.json (all 41, full text — moved at kickoff, nothing dropped)",
@@ -425,13 +444,13 @@
   "consecutive_no_value": 0,
   "consecutive_failures": 0,
   "k_current": 4,
-  "wave_streak": 0,
+  "wave_streak": 1,
   "window_tokens_attributed": 0
  },
  "last_cycle": {
-  "cycle": 9,
-  "work": "TASTE gate [qa-verify mode:taste, one direct fable agent] — the last owed pre-POLISH gate for run #4",
-  "outcome": "verdict wears-thin, 4 findings, 0 fundamental; gate 24P/1F with the single FAIL adjudicated 7/7 as conductor instrument defect #21; 2 findings corroborate blocked TS-1/TS-3, 2 filed new (TS-5 todo, TS-6 blocked); suite 118/118/0",
-  "ts": 1787164365
+  "cycle": 10,
+  "work": "build wave, k=1 [Q-6: README documents --author diacritic sensitivity] — one DIRECT sonnet Agent, routing corrected at pick time from the backlog stale haiku",
+  "outcome": "Q-6 verified done; sealed gate 20P/1F of 21, the FAIL adjudicated 11/11 as conductor instrument defect #22 (gate byte-unedited); conductor diff-read found an unguarded count claim the gate was not aimed at -> Q-8 filed todo; suite 118/118/0, src/corpus.js byte-identical",
+  "ts": 1787165536
  }
 }

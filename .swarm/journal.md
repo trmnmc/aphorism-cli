@@ -16014,3 +16014,345 @@ runfile-mirror:
  }
 }
 ```
+
+## cycle 10 — POLISH — Q-6 shipped, and the gate found one thing while a diff-read found another
+
+work: build wave, k=1 — **Q-6** (README documents that `--author` matches literally, so a
+diacritic author must be typed with it or reached by a partial that avoids it). Dispatched
+as ONE DIRECT sonnet Agent rather than `workflows/build-wave.js` — headless pacer-spawned
+`-p` cycle, Workflow tool review-gated, the documented SKILL.md fallback (same basis as
+run #3 c6/8/9/10/13/14 and run #4 c2/3/4/5/7/8/9).
+gear 1 (guest, weekly ceiling 2, rho=4.98, k_cap 1, demote=true, promote=false).
+clock: 19.4h to stop_at at cycle open — no time pressure on any decision below.
+control channel: `poll` clean, `pending: []`, `inject: []` — nothing to apply.
+outcome: **Q-6 verified done.** Backlog todo 2 → 2 (Q-6 closed, Q-8 filed), done 8 → 9.
+
+### ROUTING — A CORRECTION THAT IS NOT AN OVERRIDE
+
+The backlog carried Q-6 at `model: haiku` from PLAN time. The routing table sends haiku
+only `kind` docs/polish at effort S; Q-6 is `kind: fix`, which the table routes to sonnet.
+Routing is PICK-TIME (cycle.md step 4), so the stale field was corrected, not honoured.
+Gear 1's `demote: true` does not reach it either — the demotion rule drops sonnet to haiku
+for docs/polish ONLY and never lets build/fix fall below sonnet.
+
+Recorded because cycles 1, 4 and 5 each recorded a REFUSAL of a haiku demotion on this
+repo's document family, and this could be misread as a fourth. It is not. No rule was
+overridden here; the table was simply applied. Saying so keeps the three genuine overrides
+legible as overrides.
+
+### THE GATE, SEALED BEFORE DISPATCH
+
+    file      SWARM/runs/run4-c010-q6-gate.mjs
+    sha256    cad6150edfacebddf0fee5f56e8ef134d11eee4612d6584309ddaad606f45128
+    seal      committed to the target at 24ada29 BEFORE any agent ran
+    after     re-hashed post-run: BYTE-IDENTICAL; copied into .swarm/runs/, hash re-verified
+    baseline  17 PASS / 4 FAIL of 21 — BASELINE SOUND
+    result    20 PASS / 1 FAIL of 21
+
+Held OUTSIDE the target repo for the dispatch window (run #3 cycle-14 decision): hard rule 5
+gives workflow agents target paths only, so a gate under `SWARM/runs/` is STRUCTURALLY
+unreachable to a builder rather than merely forbidden to it.
+
+**The baseline was DISCRIMINATING, not merely control-checked** — it asserts which cells must
+be RED before the work exists (B1,B2,B3,B4), which must be GREEN, and fails if either set is
+wrong. That is the run #4 cycle-8 lesson applied: a baseline that only checks its controls
+will ship a false PASS.
+
+**One gate bug found and repaired PRE-SEAL.** C4 — the control proving B1 keys on the
+author's NAME rather than on "any non-ASCII byte" — asserted a property of the WORLD ("the
+README does not currently contain the surname") instead of a property of the CELL, so it
+failed against a correct README and would have failed for the wrong reason after the fix
+landed too. Repaired by extracting B1's predicate into a named function and running the
+control against THE ACTUAL CODE: a synthetic carrying every non-ASCII decoy the README
+already ships (`—`, `ℹ`, `…`) and no author name must leave B1 dead (C4), while a document
+naming the author must make it fire (C4b).
+
+### VERIFICATION EVIDENCE
+
+    PASS  A1   ASCII spelling STILL exits 1, stdout empty          (exit=1 stdout="")
+    PASS  A2   diacritic spelling (NFC) STILL exits 0              (exit=0 lines=1)
+    PASS  A3   NFD (decomposed) input STILL exits 1                (exit=1)
+    PASS  A4   partials still reach the entry     (saint=0 exup=0 antoine=0)
+    PASS  S1   src/corpus.js BYTE-IDENTICAL to the anchor          (77a4de5c777a3bdb)
+    PASS  S2   no src/ bin/ test/ .github/ file changed since seal (none)
+    FAIL  S3   only README.md changed  <- INSTRUMENT DEFECT #22    (tracked-changed=[EADME.md])
+    PASS  B1   README names the author in DIACRITIC form           (surname=true full=true)
+    PASS  B2   README names the ASCII spelling                     (present=true)
+    PASS  B3   README offers a partial that ACTUALLY WORKS
+               readme --author values=[<name>|dijkstra|Saint-Exupery|Saint-Exupéry|saint|antoine]
+               relevant=[Saint-Exupéry|saint|antoine]  exit0=[Saint-Exupéry|saint|antoine]
+    PASS  B4   ASCII spelling marked NOT matching, in its OWN unit or demonstrated
+               units-with-ascii=1 prose=true demo=true
+    PASS  C1   MUST-DIE: presence reader is not a rubber stamp
+    PASS  C2   MUST-STAY-GREEN: the reader can read the file at all
+    PASS  C3   MUST-DIE: inverting A1 kills it (real exit=1)
+    PASS  C4   MUST-DIE: B1 not fooled by the README's 3/3 existing non-ASCII decoys
+    PASS  C4b  MUST-STAY-GREEN: B1 does fire on a document naming the author
+    PASS  C5   MUST-DIE: B3 on an ASCII-only synthetic correctly dies
+    PASS  C6   MUST-NOT-OVERREACH: B4 cannot absorb a NEIGHBOURING unit's negation
+    PASS  C7   MUST-STAY-GREEN: B4 does fire on a same-unit negation
+    PASS  G1   SUITE green >= 118                    (tests=118 pass=118 fail=0)
+    PASS  G2   DEFAULT RUN still works               (exit=0 bytes=129)
+
+    === 20 PASS / 1 FAIL of 21 cells ===
+
+test_cmd, run by the conductor (not the agent's self-report), via G1's parser which reads
+BOTH summary shapes (instrument defect #14):
+
+    tests=118 pass=118 fail=0
+
+**B3 is the cell carrying execution weight**, and it is the answer to the question this
+item actually poses. It does not check that the README *says* a remedy exists — it PARSES
+the `--author` values out of the delivered document and RUNS them. A builder that invented
+a plausible partial that does not work would have failed it. C5 pins that: a synthetic
+README offering only the ASCII spelling makes B3 die.
+
+### THE ONE FAIL — INSTRUMENT DEFECT #22, AND A NEW SPECIES OF IT
+
+S3 asks whether `README.md` is the only changed tracked file. It read
+`git status --porcelain`, applied `.trim()` **to the whole output**, then sliced 3 characters
+off each line to skip the two status columns and their separator. Porcelain's first column
+is a SPACE for an unstaged modification (` M README.md`) — the whole-output trim ate it, the
+slice started one character late, and the cell reported the changed path as `EADME.md`.
+
+**Why the pre-dispatch baseline did not catch it, which is the part worth carrying.** The
+baseline ran against a CLEAN tree. Porcelain emitted nothing, so no line was ever sliced,
+so the cell passed VACUOUSLY. The baseline WAS discriminating and did its job on B1-B4 —
+but a baseline can only exercise the code paths the WORLD hands it, and a clean tree hands
+a status reader no lines at all. Every prior defect this run filed was a cell that was
+wrong about data it saw; this is a cell that was never given data. Same lesson from a new
+angle: a gate is a program, and a program needs its own baseline — including for the inputs
+that do not exist yet at baseline time.
+
+It failed CLOSED, which is what you want from a wrong instrument. And the underlying claim
+was settled INDEPENDENTLY of the cell — `git status --porcelain | cat -A` by hand:
+
+    " M README.md$"
+
+Adjudicated 11/11 in `.swarm/runs/run4-c010-S3-adj.mjs`, sealed gate left BYTE-UNEDITED
+(run #3 c4/c12/c14 precedent: rewriting a gate after it has run destroys the evidence of
+what it measured):
+
+    PASS  A  DEFECT REPRODUCED on the live porcelain output      -> ["EADME.md"]
+    PASS  B  FIXED reader recovers truth on that SAME input      -> ["README.md"]
+    PASS  C  NO REGRESSION on "M  path" (the shape it DID handle)
+    PASS  D  NO REGRESSION on "?? path" and "A  path"
+    PASS  E  MUST-DIE: an out-of-scope src/ change is still REJECTED
+    PASS  F  MUST-NOT-OVERREACH: the .swarm/ filter does not swallow a real path
+    PASS  G  MUST-NOT-OVERREACH: a path merely CONTAINING ".swarm/" is not filtered
+    PASS  H  a rename reduces to its destination, not to arrow soup
+    PASS  I  CONTROL must-stay-dead: a clean tree yields nothing — no invented path
+    PASS  J  BLAST RADIUS: S2 shares the .trim() habit but is IMMUNE (--name-only has no
+             status column, so trimming cannot shift its fields)
+    PASS  K  BLAST RADIUS: S3 is the only cell slicing a fixed offset off git output
+
+**Column K is the weak column of that artifact and is named as such rather than counted
+silently: it ASSERTS its answer instead of measuring it.** The actual measurement was run
+separately over the sealed gate's source — two cells consume git output, at lines 129 and
+137; line 129 (`S2`) uses `--name-only` and only compares the result to the empty string,
+and line 137 (`S3`) is the only one that slices. So K's claim is TRUE, established by that
+grep and not by K.
+
+### THE GATE WAS RIGHT AND INSUFFICIENT — FOUND BY READING THE DIFF
+
+Twenty green cells sat over a delivered README that had just gained an **unguarded count
+claim**: "Of the corpus's 24 distinct authors, exactly one carries a non-ASCII character".
+Every cell was aimed at whether the documentation claim is TRUE. None was aimed at whether
+it will STAY true — which is this repo's most-filed failure class, eight times over.
+
+The number is correct (conductor-measured from `src/corpus.js`: 50 entries, 24 distinct
+authors, exactly one non-ASCII — `Antoine de Saint-Exupéry`, é = U+00E9, on one entry), and
+the builder was right to prefer a measured figure to an adjective; that is this README's own
+voice. The problem is durability, not truth.
+
+MEASURED, NOT ASSUMED — and the discriminator is what makes it filable. This README is
+unusually well defended against exactly this: `test/readme-tags.test.js` carries
+"README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)" and
+"README Attribution section must contain no digit runs outside the counts table (C7)". Both
+are SECTION-SCOPED, and the new text landed under `## Flags`, outside every guarded region.
+The proof that it is genuinely unguarded rather than merely unnamed: the suite is **GREEN at
+118/118 with the new "24" in place**. Had either guard reached that section, it would have
+fired.
+
+Filed as **Q-8** (todo, fix, S, sonnet) rather than fixed this cycle — cycle.md step 5
+permits ONE work type per cycle and this cycle's was the build wave. Same discipline cycle 2
+applied when it declined to close N-7 on evidence obtained inside a build wave. Q-8 is in
+scope by M-5's own wording ("a test is added ONLY to pin a claim this run makes true"), and
+its acceptance requires the pin to re-derive from `src/corpus.js` AT RUN TIME rather than
+copy a literal — the run #4 cycle-4 A6 answer to the decay class.
+
+### THE BUILDER'S CLAIMS, CHECKED
+
+Every factual claim in the delivered text was re-derived by the conductor:
+
+    "24 distinct authors"                       CORRECT  (measured from src/corpus.js)
+    "exactly one carries a non-ASCII character" CORRECT  (Antoine de Saint-Exupéry, 1 entry)
+    "--author 'Saint-Exupery' -> exit 1"        CORRECT  (A1, and by hand)
+    "--author 'Saint-Exupéry' -> exit 0"        CORRECT  (A2, and by hand)
+    "--author saint / antoine still work"       CORRECT  (A4, and B3 by execution)
+    "no accent-folding, no Unicode normalization, no transliteration"
+                                                CORRECT  src/select.js:21-23 is
+                                                entry.author.toLowerCase().includes(needle)
+                                                with no .normalize() call anywhere
+
+No claim required conductor repair — the first cycle of this run where a delivered document
+needed none. The builder also disclosed a check it did NOT run (it read `src/args.js` not at
+all, per its scope instruction) rather than implying coverage it lacked.
+
+Placement was the builder's judgement and it read the document's conventions correctly:
+`### \`--author\` matching` sits under `## Flags`, mirroring the existing
+`### \`--list\` behaviour` subsection, and preserves the Flags table's row order.
+
+### SCOPE
+
+`src/corpus.js` byte-identical (S1). No `src/`, `bin/`, `test/` or `.github/` file touched
+(S2). The only changed tracked file is `README.md` (S3, under the repaired reader; verified
+independently by hand). Zero new user-visible features, zero dependencies. Suite 118/118/0
+before and after.
+
+### BACKLOG HYGIENE (cycle % 5 == 0)
+
+Full SPEC.md re-read done. Backlog at 19 items, far under the ~30 cap — no dedupe, no drops,
+no reprioritisation needed. Checked specifically: TS-2 and TS-6 remain genuinely distinct
+(pool SIZE vs DISCOVERABILITY, as cycle 9 recorded), and R-1 stays `dropped` rather than
+deleted. All five must-haves M-1…M-5 remain covered: M-1 by N-1+N-7 (done), M-2 by N-2
+(done), M-3 by N-6 (done), M-4 by N-5+N-3 (done) and R-1 (declined with a recorded reason),
+M-5 as the standing suite guard, green every cycle.
+
+### HAND-OFF
+
+Backlog todo is **Q-8** (pin the new count claim; `test/readme-tags.test.js`) and **TS-5**
+(record D-46, route to J-7; `.swarm/SPEC.md`). Their `files_hint` sets are disjoint, so they
+could share a wave if the gear cap ever allows two again; at gear 1 the cap is 1, so expect
+one per cycle. Q-8 is the natural next pick — it closes a hole this cycle opened, and
+leaving it open past a cycle is how the decay class has won eight times before.
+
+No gate is owed (review-fix c5, QA-full c7, TASTE c9, all verified against their own journal
+blocks). Nothing is in flight. The seven blocked survivors are all human-owned.
+
+The standing allocator-level finding is unchanged and belongs in the morning report: this is
+the fourth consecutive run under a brief that forbids the only changes the product's own
+taste instrument says would matter.
+
+runfile-mirror:
+
+```json
+{
+  "version": 1,
+  "targets": [
+    {
+      "path": "/opt/targets/aphorism-cli",
+      "status": "active",
+      "weight": 1
+    }
+  ],
+  "rotation_cursor": 0,
+  "rotation_schedule": [
+    0
+  ],
+  "stop_at": "2026-08-20T14:05:09Z",
+  "usage_reset_at": "2026-08-19T18:00:00Z",
+  "model_policy": "value-routing",
+  "auth_mode": "subscription",
+  "heartbeat": {
+    "ts": 1787164889,
+    "next_wakeup_at": 1787167589,
+    "pid": 2577574,
+    "limp": false,
+    "degraded_tiers": []
+  },
+  "pacing": {
+    "mode": "guest",
+    "dial": 0.3
+  },
+  "budget": {
+    "source": "probe",
+    "gear": 1,
+    "gear_target": 1,
+    "ratio": 4.5,
+    "mode": "guest",
+    "k_cap": 1,
+    "promote": false,
+    "demote": true,
+    "window_tokens": 115884536,
+    "window_cost_usd": 94.11976589999992,
+    "api_cap_usd": null,
+    "api_spend_usd": 0,
+    "tokens_per_hour": 27218062,
+    "projected_depletion_at": 1787167368,
+    "last_probe_ts": 1787164475,
+    "last_real_probe_ts": 1787164475,
+    "probe_failures": 0,
+    "weekly": {
+      "ok": true,
+      "weekly_used_pct": 100,
+      "opus_used_pct": 100,
+      "week_elapsed_pct": 36.51,
+      "weekly_heat": 2.74,
+      "opus_heat": 2.74,
+      "ceiling": 2,
+      "promote_blocked": true
+    }
+  },
+  "playbook": {
+    "mode": "auto",
+    "applied": [
+      "L-008",
+      "L-016",
+      "L-024",
+      "L-026",
+      "L-029",
+      "L-031",
+      "L-033",
+      "L-034",
+      "L-038",
+      "L-042",
+      "L-043",
+      "L-044",
+      "L-046"
+    ],
+    "vetoed": [],
+    "note": "staged by DIRECT READ of playbook/learnings.md at kickoff. CORRECTED at cycle 6: bin/swarm-playbook.sh is genuinely NOT allowlisted in any form (re-executed and DENIED this cycle, gate A2), so the hand-written applied.log ledger line stands. But the SAME cycle refuted the adjacent claims about bin/swarm-notify.sh — that helper IS allowlisted under its absolute path and has logged 11/11 ok all run. See journal cycle 6.",
+    "directives": {
+      "wave_k": 2,
+      "routing_recs": [
+        "core-logic->fable"
+      ],
+      "prompt_lines": {
+        "builder": [
+          "The conductor is the SOLE committer — never commit or push yourself",
+          "The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test"
+        ],
+        "reviewer": [
+          "The conductor is the SOLE committer — never commit or push yourself",
+          "Assign each fixer a pairwise-disjoint file set; two fixers must never share a file",
+          "The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test"
+        ],
+        "qa": [
+          "The conductor is the SOLE committer — never commit or push yourself",
+          "Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'.",
+          "Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value.",
+          "Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps.",
+          "Classify each surviving mutant as HOLE (a real gap - harden it) or BOUNDARY (behaviour the spec does not decide - document it) BEFORE writing any test",
+          "When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence.",
+          "For every mutation that must kill the suite, author one control that must leave it GREEN — a check that dies on everything is a snapshot test, not an assertion",
+          "Never assert against prose matched by regex — read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns"
+        ]
+      }
+    }
+  },
+  "watchdog": {
+    "mode": "normal",
+    "plist_loaded": true,
+    "lockfile": "/opt/swarm/runs/watchdog.lock",
+    "relaunch_attempts": 0
+  },
+  "wrap_up_complete": false,
+  "cycles_since_recycle": 10,
+  "artifact": {
+    "url": "",
+    "file": "/opt/swarm/runs/dashboard.html",
+    "publish_failures": 0
+  }
+}
+```

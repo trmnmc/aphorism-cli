@@ -41,6 +41,21 @@ node bin/aphorism.js --json | jq -r .author
 node bin/aphorism.js --list --tag debugging
 ```
 
+### `--author` matching
+
+The substring match is literal: no accent-folding, no Unicode normalization, no
+transliteration. Of the corpus's 24 distinct authors, exactly one carries a non-ASCII
+character — `Antoine de Saint-Exupéry` — and the plain-ASCII spelling of that name matches
+nothing:
+
+```sh
+node bin/aphorism.js --author 'Saint-Exupery' --list   # exit 1, no match
+node bin/aphorism.js --author 'Saint-Exupéry' --list   # exit 0, prints the entry
+```
+
+A partial that avoids the accented character still works, e.g. `--author saint` or
+`--author antoine`.
+
 ### `--list` behaviour
 
 `--list` prints every aphorism in the filtered set in corpus order, one per line. Each
