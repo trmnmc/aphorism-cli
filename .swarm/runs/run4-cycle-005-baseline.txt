@@ -1,0 +1,49 @@
+RUN #4 CYCLE 5 — REVIEW-FIX PRE-DISPATCH BASELINE
+=================================================
+Written by the conductor BEFORE any agent ran. Purpose: tamper-evidence over the exact
+surface the reviewers are pointed at, and a green-suite anchor to revert to.
+
+HEAD at dispatch:  bac35357f6d36f843c9d6ce13927cd42ad17249b
+Cycle timestamp:   1787156396 (2026-08-19T16:19:56Z)
+Gear:              2 (guest mode, weekly ceiling 2, demote=true, promote=false)
+
+REVIEWED SURFACE — sha256 at dispatch
+------------------------------------
+c33a7c8af31dcb2a9d5f5b8eb42a558c5202626d338b62f37744697aed43af52  .github/workflows/test.yml      (19 lines)
+df911af3e6149372f6a677a493de23d7305bf9855cbfad9041be51698b171ee6  README.md                       (177 lines)
+229231162cfcab3c71a005804d26868c09c44bf3f4f84c1e0d8690a566802014  REPORT.md                       (124 lines)
+3175541b4ef075a2b47469220cd23061c139b50406ed52d142ac373eb12cec76  docs/report-history.md          (1595 lines)
+
+SUITE AT DISPATCH — test_cmd run directly by the conductor
+----------------------------------------------------------
+$ node --test test/*.test.js
+  tests 118 / suites 0 / pass 118 / fail 0 / cancelled 0 / skipped 0 / todo 0
+  duration_ms 4766.156532
+
+WHY THIS SCOPE, MEASURED NOT ASSUMED
+------------------------------------
+Run #4's whole delta against its base (957c4bf..HEAD, excluding .swarm/) is:
+
+    .github/workflows/test.yml |   19 +
+    README.md                  |   23 +
+    REPORT.md                  | 1702 +----------------------------
+    docs/report-history.md     | 1595 ++++++++++++++++++++++++++++++
+    4 files changed, 1761 insertions(+), 1578 deletions(-)
+
+src/ bin/ test/ are UNTOUCHED by this run, and are byte-identical to the tree that run #3
+cycle 13's review-fix pass reviewed and returned clean:
+
+    $ git diff --stat 7f00cf0 HEAD -- src bin test
+    (empty)
+
+So this pass is scoped to what run #4 actually shipped and no adversarial reader has ever
+seen. Re-reviewing byte-identical product code would be reviewing bookkeeping — the exact
+error run #3 cycle 6 warned the later review-fix cycle against, in mirror image.
+
+WHY THIS PASS IS OWED AT ALL
+----------------------------
+cycle.md step 4 places ONE review-fix, ONE QA and ONE TASTE pass after BUILD and before
+POLISH/VALUE_LOOP. All five of run #4's must-haves closed at cycle 4. Run #4 has run none
+of the three. state.json's qa markers (last_full_qa_cycle 6, last_taste_cycle 9) are RUN #3
+cycle numbers carried forward, not run #4 evidence — reading them as this run's is exactly
+the bookkeeping-decay error run #3 cycle 12 caught and filed.
