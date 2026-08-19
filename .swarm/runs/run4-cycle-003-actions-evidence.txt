@@ -1,0 +1,56 @@
+# N-7 EVIDENCE — Actions run 32267338333, verbatim extract
+
+Fetched by the conductor at run #4 cycle 3 with:
+
+    gh run view 32267338333 --log
+
+Full log: 2640 lines / 294107 bytes, sha256 ae008df04b9b7d6447bc6e0e036d4b8f5732ec5794288a14e513b2adc20688ff
+Re-fetchable from GitHub at any time with the command above; only the load-bearing
+lines are kept here, VERBATIM, rather than committing 294 KB of CI noise into a
+zero-dependency CLI repo.
+
+Run metadata (from `gh run view --json`): event=push  head_sha=44702fb
+conclusion=success  jobs test(18) test(20) test(22) test(24) all success.
+
+## Verbatim lines
+
+test (20)	Run actions/setup-node@v4	2026-08-19T14:59:42.4260477Z node: v20.20.2
+test (20)	Run node --test test/*.test.js	﻿2026-08-19T14:59:42.4394475Z ##[group]Run node --test test/*.test.js
+test (20)	Run node --test test/*.test.js	2026-08-19T14:59:45.3750805Z # tests 118
+test (20)	Run node --test test/*.test.js	2026-08-19T14:59:45.3751014Z # suites 0
+test (20)	Run node --test test/*.test.js	2026-08-19T14:59:45.3822169Z # pass 118
+test (20)	Run node --test test/*.test.js	2026-08-19T14:59:45.3822424Z # fail 0
+test (20)	Run node --test test/*.test.js	2026-08-19T14:59:45.3822625Z # cancelled 0
+test (20)	Run node --test test/*.test.js	2026-08-19T14:59:45.3822839Z # skipped 0
+test (20)	Run node --test test/*.test.js	2026-08-19T14:59:45.3823046Z # todo 0
+test (20)	Run node --test test/*.test.js	2026-08-19T14:59:45.3823311Z # duration_ms 2880.880957
+test (18)	Run actions/setup-node@v4	2026-08-19T14:59:40.1629126Z node: v18.20.8
+test (18)	Run node --test test/*.test.js	﻿2026-08-19T14:59:40.1861208Z ##[group]Run node --test test/*.test.js
+test (18)	Run node --test test/*.test.js	2026-08-19T14:59:42.8172980Z # tests 118
+test (18)	Run node --test test/*.test.js	2026-08-19T14:59:42.8173133Z # suites 0
+test (18)	Run node --test test/*.test.js	2026-08-19T14:59:42.8173285Z # pass 118
+test (18)	Run node --test test/*.test.js	2026-08-19T14:59:42.8173432Z # fail 0
+test (18)	Run node --test test/*.test.js	2026-08-19T14:59:42.8173582Z # cancelled 0
+test (18)	Run node --test test/*.test.js	2026-08-19T14:59:42.8173742Z # skipped 0
+test (18)	Run node --test test/*.test.js	2026-08-19T14:59:42.8173892Z # todo 0
+test (18)	Run node --test test/*.test.js	2026-08-19T14:59:42.8174057Z # duration_ms 2576.749347
+test (22)	Run actions/setup-node@v4	2026-08-19T14:59:38.4115880Z node: v22.23.2
+test (22)	Run node --test test/*.test.js	﻿2026-08-19T14:59:38.4270480Z ##[group]Run node --test test/*.test.js
+test (22)	Run node --test test/*.test.js	2026-08-19T14:59:42.0723557Z # tests 118
+test (22)	Run node --test test/*.test.js	2026-08-19T14:59:42.0723793Z # suites 0
+test (22)	Run node --test test/*.test.js	2026-08-19T14:59:42.0723995Z # pass 118
+test (22)	Run node --test test/*.test.js	2026-08-19T14:59:42.0724191Z # fail 0
+test (22)	Run node --test test/*.test.js	2026-08-19T14:59:42.0724385Z # cancelled 0
+test (22)	Run node --test test/*.test.js	2026-08-19T14:59:42.0724587Z # skipped 0
+test (22)	Run node --test test/*.test.js	2026-08-19T14:59:42.0724988Z # todo 0
+test (22)	Run node --test test/*.test.js	2026-08-19T14:59:42.0725207Z # duration_ms 3497.816055
+test (24)	Run actions/setup-node@v4	2026-08-19T14:59:38.1399879Z node: v24.19.0
+test (24)	Run node --test test/*.test.js	﻿2026-08-19T14:59:38.1512856Z ##[group]Run node --test test/*.test.js
+test (24)	Run node --test test/*.test.js	2026-08-19T14:59:40.7313008Z ℹ tests 118
+test (24)	Run node --test test/*.test.js	2026-08-19T14:59:40.7313275Z ℹ suites 0
+test (24)	Run node --test test/*.test.js	2026-08-19T14:59:40.7313656Z ℹ pass 118
+test (24)	Run node --test test/*.test.js	2026-08-19T14:59:40.7313910Z ℹ fail 0
+test (24)	Run node --test test/*.test.js	2026-08-19T14:59:40.7314160Z ℹ cancelled 0
+test (24)	Run node --test test/*.test.js	2026-08-19T14:59:40.7314434Z ℹ skipped 0
+test (24)	Run node --test test/*.test.js	2026-08-19T14:59:40.7314705Z ℹ todo 0
+test (24)	Run node --test test/*.test.js	2026-08-19T14:59:40.7315048Z ℹ duration_ms 2515.144919

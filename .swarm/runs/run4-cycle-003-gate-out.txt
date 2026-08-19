@@ -1,0 +1,16 @@
+  PASS A1  README cites the REAL run URL                                  https://github.com/trmnmc/aphorism-cli/actions/runs/32267338333
+  PASS A2  all four observed majors carry their 118-pass result           matched=[18,20,22,24]
+  FAIL A3  floor stated as verified-at-18, no minimality overclaim        honest-phrase=true overclaims=1
+  PASS A4  CONTROL: unfixed README must FAIL A1-A3                        unfixed verdict=false (A1=false A2=false A3=false)
+  PASS A5  CONTROL: URL + minimality claim still REJECTED                 decoy A3=false
+  PASS B1  every non-whitespace line survives the move (multiset)         distinct=1295 missing=0
+  PASS B2  ships/verified/open all answered in first 200 lines, each with >=3 content lines at={"ships":8,"verified":26,"open":44} thin=[]
+  PASS B3  history MOVED: REPORT<=420 lines, appendix>=1000, nothing lost pre=1579 report=73 appendix=1596 sum=1669
+  PASS B4  REPORT links to the appendix and every anchor resolves         links=2 broken=0
+  FAIL B5  CONTROL: B1 fires on a single paraphrased line                 missing-after-mutation=0 victim="**The product ships.** `node bin/aphorism.js` prin"
+  PASS B6  CONTROL: B2 rejects empty placeholder sections                 hollow verdict=false
+  PASS C1  suite green, >=118 tests                                       tests=118 pass=118 fail=0 exit=0
+  PASS C2  src/ bin/ test/ .github/ byte-identical to seal                11 files unchanged
+  PASS C3  zero dependencies                                              none present
+  PASS C4  CONTROL: parser reads real TAP + real spec glyphs, sees failures tap={"tests":118,"pass":115,"fail":3} spec={"tests":118,"pass":115,"fail":3} ascii-i-decoy=null
+  13 PASS / 2 FAIL of 15

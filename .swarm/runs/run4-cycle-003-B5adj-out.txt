@@ -1,0 +1,12 @@
+  PASS A  DIAGNOSIS: B5’s victim is in the appendix, NOT in REPORT.md  victim in REPORT.md=false in appendix=true
+  PASS B  UNMUTATED shipped pair — audit clean                         missing=0
+  PASS C  paraphrase one appendix line — audit FIRES                   missing=1 applied=true
+  PASS D  delete one appendix line — audit FIRES                       missing=1
+  PASS E  drop ONE of several copies — audit FIRES (multiset, not set) copies=2 dropped=true missing=1
+  PASS F  CONTROL: adding new prose stays SILENT                       missing=0
+  PASS G  CONTROL: re-indenting a preserved line stays SILENT          missing=0
+  PASS H  CONTROL: moving a line between the two files stays SILENT    missing=0
+  PASS I  CONTROL: truncating the appendix FIRES loudly                missing=1156
+  9 / 9 columns as expected
+  victim(unique)   "**The product ships.** `node bin/aphorism.js` prints one attributed prog"
+  victim(repeated) "_No screenshot: a CLI has no rendered surface. The live-look QA stage is"  x2

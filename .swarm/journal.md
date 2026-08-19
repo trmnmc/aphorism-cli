@@ -14040,3 +14040,195 @@ watchdog's staleness check?
 
 next wakeup: 1787151991 (+90s, base delay after a verified-value cycle;
   clamp `wakeup + 900 <= stop_at` not binding — stop is ~23h out)
+
+## cycle 3 | 2026-08-19T15:10Z -> 15:47Z | aphorism-cli | BUILD
+
+work: build-wave [N-2] at effective k=2 (k_current 2, gear cap 2), dispatched as a DIRECT
+  Agent call (headless `-p` cycle, Workflow tool review-gated, documented SKILL.md
+  fallback). Plus N-7, conductor-owned by construction — only this session holds the gh
+  token — which does not consume a wave slot.
+agents: 1 builder — sonnet (N-2, REPORT.md + docs/report-history.md). Demotion to haiku
+  REFUSED per the item's recorded routing note: this repo has MEASURED haiku writing false
+  provenance into this exact file twice (run #3 cycles 4 and 14). The conductor took
+  README.md itself, so the two file scopes were strictly disjoint and stayed that way.
+budget: gear 2, rho 0.52, guest, k_cap 2, demote true, promote blocked, probe_ok true.
+  window 24,730,675 tok / $22.12; 22.31M tok/h; projected depletion 1787171560. governor
+  clamp 2 — weekly 100% used at 34.6% elapsed, heat 2.89. Envelope still spent; gear 2.
+control: poll ok, 0 pending, 0 injections.
+craft pack: read clean, `degraded: []`. Neither item is UI; the docs lines went to N-2.
+
+### M-1 CLOSES, AND THE EVIDENCE WAS RE-FETCHED RATHER THAN INHERITED
+
+N-7's job was to carry cycle 2's finding into README.md. The conductor did not trust cycle
+2's note about it — a prior cycle's journal is a claim like any other — and re-queried
+GitHub directly. Three runs now exist on this repo, all green; run 1 is the cited one:
+
+    test (18)  node: v18.20.8   # tests 118 / # pass 118 / # fail 0
+    test (20)  node: v20.20.2   # tests 118 / # pass 118 / # fail 0
+    test (22)  node: v22.23.2   # tests 118 / # pass 118 / # fail 0
+    test (24)  node: v24.19.0   ℹ tests 118 / ℹ pass 118 / ℹ fail 0
+    run 32267338333  event=push  head_sha=44702fb  conclusion=success  4/4 jobs success
+
+Verbatim extract: `.swarm/runs/run4-cycle-003-actions-evidence.txt` (40 lines kept from a
+2640-line, 294 KB log, sha256 ae008df0...; re-fetchable with `gh run view 32267338333 --log`
+— committing a quarter-megabyte of CI noise into a zero-dependency CLI repo did not seem
+like the honest trade, and the source is authoritative and permanent).
+
+README.md now states the floor as **verified-at-18**, cites the run, tables the four
+observed versions, and says in as many words that it is **not proven minimal** — nothing
+tests Node 16 or 17, so those are unknown rather than ruled out. That distinction is the
+whole point of M-1; writing "minimum supported" would have been the unverified claim the
+must-have exists to kill.
+
+### N-2: 1578 LINES MOVED, AND THE AUDIT SAYS ZERO WERE LOST
+
+The builder took the safest available split: the entire original REPORT.md copied
+byte-for-byte into `docs/report-history.md` under a 17-line preamble, and REPORT.md
+replaced with 73 lines of fresh first-screen prose. Nothing old was retyped.
+
+M-2's mechanical rule was measured, not asserted — twice, with different code:
+
+    sealed gate B1        distinct=1295  missing=0
+    independent recheck   pre distinct 1295 / total 1335 -> post distinct 1364 / total 1406
+                          lines short of quota: 0     appendix-alone deficits: 0
+
+The second line matters beyond redundancy: the appendix ALONE carries the whole history, so
+preservation does not depend on anything the new first screen happens to quote.
+
+### THREE INSTRUMENT DEFECTS, AND THE THIRD IS THE ONE WORTH READING
+
+**Two were caught by the pre-dispatch baseline, before the gate was sealed** — which is the
+argument for baselining a gate rather than reasoning about it, made for the second cycle
+running:
+
+1. **C1 could not read its own suite output.** Node's spec reporter marks summary lines with
+   U+2139 INFORMATION SOURCE, not an ASCII `i`. The parser matched `[#i]` and called a
+   green 118/118/0 suite UNPARSEABLE. The transcription error came from cycle 2's own
+   journal, which rendered the glyph as `i` — an inherited fact degrading by one character
+   on the way into a new instrument. And control C4 was GREEN the entire time, because it
+   certified the parser against a fabricated `i tests 118` sample the tool never emits.
+   **A control built from a fabricated sample is a control over the fabrication.** C4 now
+   uses the real glyph and additionally asserts the ASCII decoy parses to null.
+2. **B2 let one heading answer two questions.** "### Build run — all 5 shipped, re-verified
+   today" satisfied both the `ships` and the `verified` probes. Sections must now be
+   distinct headings.
+
+**The third surfaced only against the finished work, and it is a new species for this
+repo — a control that goes silent exactly when it is needed.**
+
+Sealed B5 is the ONLY evidence that B1 — the load-bearing cell of the entire cycle — is not
+vacuous. It plants one paraphrased line and asserts the audit fires. On the baseline it
+fired. Against the finished work it reported `missing-after-mutation=0`: it picks its victim
+out of the ORIGINAL REPORT.md and string-replaces it inside the NEW REPORT.md, which worked
+only while those were the same file. After the move the victim lives in the appendix, so
+`.replace()` matched nothing and the "mutated" input was byte-identical to the real one.
+**B5 was mutating a file the history had already left.** The mutation instrument was
+coupled to the layout the item existed to change.
+
+Adjudicated in nine columns (`run4-cycle-003-B5adj.mjs`, 9/9), the sealed gate left
+byte-unedited and its sha256 re-verified afterwards:
+
+    PASS A  DIAGNOSIS: victim is in the appendix, NOT REPORT.md    report=false hist=true
+    PASS B  UNMUTATED shipped pair — audit clean                   missing=0
+    PASS C  paraphrase one appendix line — audit FIRES             missing=1
+    PASS D  delete one appendix line — audit FIRES                 missing=1
+    PASS E  drop ONE of several copies — FIRES (multiset not set)  copies=2 missing=1
+    PASS F  CONTROL: adding new prose stays SILENT                 missing=0
+    PASS G  CONTROL: re-indenting stays SILENT                     missing=0
+    PASS H  CONTROL: moving a line between files stays SILENT      missing=0
+    PASS I  CONTROL: truncating the appendix FIRES loudly          missing=1156
+
+C/D/E restore the firing power B5 lost; F/G/H are what make it a repair rather than a
+loosening, since M-2 requires preservation, not equality — additions, re-indentation and
+relocation must all stay quiet.
+
+**A3 failed too, for the second cycle running, and again as an instrument defect of a
+different species.** Cycle 2's A3 encoded a MEANS where the item stated an END. This one
+encodes a PHRASE where the item states a CLAIM: the overclaim list holds
+`/proven\s+minimal/i` with no negation guard, and the README says "It is **not proven
+minimal**" — the exact honest disclaimer A3 exists to require. A substring test cannot see
+the word in front of it. Adjudicated in eight columns (`run4-cycle-003-A3adj.mjs`, 8/8);
+columns C-G prove the negation-aware version still rejects a real overclaim, a bare
+assertion, an honest-phrase-plus-overclaim hybrid, and the pre-dispatch README, and column H
+shows the sealed and fixed cells agree on every input except the negated one. The README was
+NOT reworded to satisfy the regex — "not proven minimal" is the better sentence, and bending
+the document to a buggy check is how a gate starts writing the product.
+
+### THE AGENT'S NUMBERS WERE CHECKED, AND THIS TIME THEY WERE ALL TRUE
+
+Recorded because the previous four checks of this kind on this repo each found an overclaim.
+Every checkable figure in the new REPORT.md was re-derived by the conductor:
+
+    corpus       50 entries / 24 authors / 12 tags / pools 3..14      all match
+    source       args 134  corpus 269  select 91  bin 100            all match
+    tests        3496 lines across 5 files                           matches
+    exit codes   no-match=1  unknown-flag=2  bad-seed=2  happy=0     verified live
+    exit 3       EXIT_WRITE_ERROR on non-EPIPE write failure; EPIPE  read from source
+                 deliberately exits quietly (cycle-8 asymmetry)      + live EPIPE run = 0
+
+Zero discrepancies. The builder also flagged its own limits honestly — no git and no network
+in its session, so it attributed the Actions figures to README.md rather than asserting them
+as independently verified. That is the correct move, and the conductor supplied the missing
+half by re-fetching from GitHub.
+
+### ONE REAL DEFECT, FOUND BY READING RATHER THAN BY THE GATE
+
+The new "What is open" section said "13 tracked items — 3 done, 4 in flight". True when the
+builder wrote it, and **false the instant this cycle's own commit marked N-2 and N-7 done.**
+No cell of the gate covers it; the conductor caught it reading the 73 lines.
+
+This is the SIXTH measurement of the same decay class in this target's history (run #3's
+V-1, V-7, the cycle-12 bookkeeping correction, R-2 at cycle 14, and the cycle-2 inherited
+"~404" figure). The distinctive thing here is the timing: the document would have been
+falsified not by later drift but by the very commit that shipped it. Repaired to 5 done /
+2 in flight, dated "as of run #4 cycle 3" so a reader treats it as a snapshot, with N-2 and
+N-7 named as closed. The gate was re-run afterwards to prove the edit moved no verdict —
+B1 still `missing=0`.
+
+### VERIFICATION EVIDENCE
+
+Sealed gate `run4-cycle-003-gate.mjs`, sha256 `788171b752962459...`, re-verified
+byte-unchanged after the run. Discriminating baseline `run4-cycle-003-baseline.txt`: 9P/6F
+on the unfixed tree, with A1-A3 and B2-B4 all failing and every control passing.
+
+    PASS A1  README cites the REAL run URL          https://.../runs/32267338333
+    PASS A2  four majors carry their 118-pass result  matched=[18,20,22,24]
+    FAIL A3  floor stated as verified-at-18           ADJUDICATED 8/8 — negation-blind regex
+    PASS A4  CONTROL: unfixed README must FAIL A1-A3  unfixed verdict=false
+    PASS A5  CONTROL: URL + minimality still REJECTED decoy A3=false
+    PASS B1  every line survives the move (multiset)  distinct=1295 missing=0
+    PASS B2  ships/verified/open in first 200 lines   at={ships:8,verified:26,open:44}
+    PASS B3  history MOVED, nothing lost              pre=1579 report=73 appendix=1596
+    PASS B4  appendix links resolve                   links=2 broken=0
+    FAIL B5  CONTROL: B1 fires on a paraphrase        ADJUDICATED 9/9 — see above
+    PASS B6  CONTROL: B2 rejects empty placeholders   hollow verdict=false
+    PASS C1  suite green, >=118 tests                 tests=118 pass=118 fail=0 exit=0
+    PASS C2  src/ bin/ test/ .github/ byte-identical  11 files unchanged
+    PASS C3  zero dependencies                        none present
+    PASS C4  CONTROL: reads real TAP + spec glyphs    ascii-i-decoy=null
+    13 PASS / 2 FAIL of 15    both FAILs adjudicated as instrument defects, 17/17 columns
+
+test_cmd, conductor-run directly, three times this cycle (baseline, post-wave, post-repair):
+
+    ℹ tests 118 / ℹ suites 0 / ℹ pass 118 / ℹ fail 0 / ℹ duration_ms 4867.75
+
+collision-scan: `applicable: false` — a CLI has no classic browser scripts. Standing check
+run, not skipped.
+
+verdicts: N-7 DONE (conductor-verified). N-2 DONE (conductor-verified).
+wave autotune: CLEAN wave — 0 reverts, 0 failed verifies. wave_streak 1 -> 2 -> k_current
+  2 -> 3, streak reset to 0. The gear-2 cap of 2 still binds the effective size.
+must-haves: M-1 CLOSED (README carries the citation and the precise claim). M-2 CLOSED
+  (first screen + verbatim appendix, audited twice). M-3 closed cycle 2. M-5 green.
+  M-4 remains: N-5 and R-1.
+backlog: 5 done, 2 todo (N-5 now unblocked — its dep N-2 is done; R-1), 6 blocked (all six
+  human-owned rulings, unchanged).
+known issues: no new entries. The two adjudicated instrument defects live in this journal
+  and in their adjudication artifacts, not in known_issues — they are gate bugs found and
+  measured within the cycle, not shipped product defects.
+
+next: N-5 — the M-4 hand-off item, now unblocked, and it edits REPORT.md, which nothing else
+  may touch while it runs. Then R-1, whose honest outcome may well be an explicit DECLINE
+  on this run's own record rather than a reshape.
+commit: (this cycle)
+runfile-mirror: written to runs/current.json and current.json.bak this cycle

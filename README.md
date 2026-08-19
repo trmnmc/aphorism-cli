@@ -8,6 +8,7 @@ nothing else. Safe to drop in a `.bashrc` or an MOTD.
 ## Usage
 
 No install step and no dependencies — Node 18+ and the repo is all you need.
+The floor is [measured, not assumed](#node-support); see Tests.
 
 ```sh
 node bin/aphorism.js
@@ -152,3 +153,25 @@ node --test test/*.test.js
 
 Coverage of the selection and parsing rules (pure-module tests), plus end-to-end CLI tests
 that spawn the real binary and assert on stdout, stderr, and exit codes.
+
+### Node support
+
+CI runs the whole suite on four Node majors on every push. The most recent full
+matrix — [Actions run 32267338333](https://github.com/trmnmc/aphorism-cli/actions/runs/32267338333),
+commit `44702fb` — reported:
+
+| Node | Result |
+|---|---|
+| v18.20.8 | 118 tests, 118 pass, 0 fail |
+| v20.20.2 | 118 tests, 118 pass, 0 fail |
+| v22.23.2 | 118 tests, 118 pass, 0 fail |
+| v24.19.0 | 118 tests, 118 pass, 0 fail |
+
+Read "Node 18+" as **verified-at-18**: 18 is the lowest version actually tested, and it
+passes everything. It is **not proven minimal** — nothing here tests Node 16 or 17, so
+whether the CLI runs on them is unknown rather than ruled out.
+
+One incidental finding from that run, recorded because it bites anything that parses the
+suite output: Node 18, 20 and 22 print the TAP summary (`# tests 118`), while Node 24
+prints the spec-reporter summary (`ℹ tests 118`) — and that marker is U+2139
+INFORMATION SOURCE, not an ASCII `i`.
