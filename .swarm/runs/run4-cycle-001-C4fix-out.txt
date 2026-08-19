@@ -1,0 +1,13 @@
+PASS  A  UNFIXED parser on REAL output — must MISS (reproduces the defect)
+        parsed tests=0 fail=-1
+PASS  B  FIXED parser on REAL output — must recover a green >=118 suite
+        parsed tests=118 fail=0
+PASS  C  CONTROL: FIXED parser on synthetic TAP — no regression on the old format
+        parsed tests=3 fail=0
+PASS  D  CONTROL: FIXED parser on synthetic FAILING output — must report the failure
+        parsed tests=118 fail=3
+
+suite exited 0: true
+
+ALL 4 COLUMNS AS EXPECTED — the defect is reproduced (A), the fix recovers the true
+counts (B), and it is neither format-regressive (C) nor a rubber stamp (D).

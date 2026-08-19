@@ -1,0 +1,18 @@
+PASS  C1a  backlog.json parses
+        ok
+PASS  C1b  all 7 pre-cycle items still present
+        pre=7 now=13 lost=[]
+PASS  C2a  every must-have parsed from SPEC.md is covered (found 5: M-1,M-2,M-3,M-4,M-5)
+        uncovered=[]
+PASS  C2b  CONTROL: a non-existent must-have (M-9) reads as NOT covered
+        M-9 absent as expected
+PASS  C3a  no two builder todo items share a file without a dep edge
+        0 unsequenced clashes
+PASS  C3b  CONTROL: the one real file overlap (N-2/N-5 on REPORT.md) exists and IS sequenced
+        N-5 deps on N-2, both touch REPORT.md
+FAIL  C4  M-5 guard: suite green and >= 118 tests
+        tests=0 fail=-1 exit0=true
+PASS  C5  no acceptance clause names a test command or file
+        0 leaks
+
+7 PASS / 1 FAIL  of 8 cells

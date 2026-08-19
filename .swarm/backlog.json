@@ -16,7 +16,34 @@
       "packages": [],
       "model": "sonnet",
       "attempts": 0,
-      "notes": "BLOCKED on a human, permanently as far as this run is concerned: confirming an attribution needs sources this run has no access to (network is a product non-goal and MCP/web tools are outside the conductor's allowed surface). Superseded in practice by I-4, which produces the risk-ranked triage a human can act on. Tracked as KI-2."
+      "notes": "BLOCKED on a human, permanently as far as this run is concerned: confirming an attribution needs sources this run has no access to (network is a product non-goal and MCP/web tools are outside the conductor's allowed surface). Superseded in practice by I-4, which produces the risk-ranked triage a human can act on. Tracked as KI-2.",
+      "covers": [
+        "M-4"
+      ]
+    },
+    {
+      "id": "TS-3",
+      "title": "Three voices hold a third of the corpus, so draws sound same-registered",
+      "kind": "polish",
+      "status": "blocked",
+      "priority": 2,
+      "effort": "M",
+      "model": "sonnet",
+      "deps": [
+        "TS-1"
+      ],
+      "files_hint": [
+        "src/corpus.js"
+      ],
+      "packages": [],
+      "acceptance": "BLOCKED ON THE SAME HUMAN SCOPE DECISION as TS-1. Once corpus expansion is permitted, added entries diversify author and era rather than deepening the already-dominant voices.",
+      "attempts": 0,
+      "blocked_reason": "Locked SPEC.md non-goal for run #3: 'corpus expansion'. Same lock as TS-1.",
+      "owner": "human (repo owner, at the next kickoff)",
+      "notes": "From the cycle-9 TASTE pass, finding 3 (minor). CONDUCTOR-MEASURED: 24 distinct authors over 50 entries, but Dijkstra 7 + Perlis 5 + Pike 5 = 17/50 = 34% of the corpus in three voices. The agent's claim that 'a third of the corpus is three voices' verified exactly.",
+      "covers": [
+        "M-4"
+      ]
     },
     {
       "id": "T-040",
@@ -36,46 +63,10 @@
       "filed_cycle": 46,
       "acceptance": "A human confirms two judgment calls cycle 46 made while closing T-007, each of which a reasonable maintainer could call the other way. (1) The 26-name fold map itself: every mapping is defensible but several are debatable — history->language, innovation->philosophy, psychology->teamwork, testing->debugging. The last one is the load-bearing one: it dissolves the only tag the corpus had for \"testing\" as a discipline, because only 2 entries were about testing and manufacturing a third would have been dishonest tagging. (2) SPEC.md Domain rules line 144: its illustrative example read \"`--tag test` does not match a `testing` tag\" and named a tag this cycle removed, so it was changed to \"`--tag desi` does not match a `design` tag\". The RULE is untouched; only the illustration moved. Both are recorded rather than presented as settled.",
       "notes": "Filed by the conductor against its own change. Neither item blocks anything; both are judgment calls that a human owner should either ratify or reverse, and reversing either is cheap (the fold map is a data table in .swarm/runs/cycle-046-retag.mjs).\n\n|| CYCLE 49 — one further consequence for the human, MEASURED end-to-end rather than reasoned about. All 26 retired tag names now take the generic no-match path: exit 1 and the single line \"aphorism: no aphorism matches those filters\" on stderr. That is exactly what the SPEC Domain rule requires and the gate confirms it (arm B, 78/78 cells), so it is NOT a defect. But it is a usability consequence a human should rule on: a user whose `--tag testing` worked before cycle 46 is told only that nothing matched, never that the name became `debugging`. Cell C5 measured that a retired name and a never-existing name (`zzzznotatag`) are byte-identical in exit code, stdout and stderr — so the product genuinely cannot distinguish \"you used the old name\" from \"you made that up\". Emitting a \"did you mean\" hint would be a FEATURE and is fenced by this run's non-goals; it is recorded here as a decision for the owner, not taken. Evidence: .swarm/runs/cycle-049-gate-out.txt.\n\n|| CYCLE 50 STEP-3 HYGIENE - priority 9 -> 3, one field, nothing else touched. This item is product-touching (README.md, .swarm/SPEC.md) and was ranked below three TEST-ONLY items that the cycle-39 family decision fences off from being worked at all, which contradicts the single rule the cycle-45 re-rank stated for itself: product-touching above test-only. Placed at p3 - below T-043 and T-006 (p2) and above T-008 (p4) - so the live order now reads: the unprotected Domain rule, the attribution audit, ratify the shipped breaking change, deepen the corpus, then the fenced guard family. No scope, acceptance, status, effort or dep was changed, here or anywhere.\n\n|| STATUS todo -> BLOCKED at cycle 5, as backlog hygiene, NOT as a failure and NOT as a drop. This item needs two editorial judgment calls from run #1 cycle 46 (the 26-name fold map, and the SPEC illustration that moved off a removed tag). It sat as `todo` on a board that a conductor walks top-down looking for dispatchable work, which is exactly the churn K-5 exists to prevent — N-8's own acceptance forbids re-opening these as agent work. It is now BLOCKED on a named human actor and fully restated in REPORT.md § \"Improvement run #3 — human-owned items, hand-off\" (appended cycle 5, verified by the conductor). attempts stays 0: nothing was tried and failed, so an attempts bump would misreport the history. Unblocks the moment a human rules; nothing in the swarm can unblock it.",
-      "blocked_reason": "human-owned ruling — not agent-workable"
-    },
-    {
-      "id": "J-7",
-      "title": "Five CLI behaviours are unspecified and a human should rule on them (from J-6 + N-4 + D-44)",
-      "kind": "docs",
-      "status": "blocked",
-      "priority": 7,
-      "effort": "S",
-      "value": "M",
-      "model": "sonnet",
-      "deps": [],
-      "attempts": 0,
-      "filed_cycle": 4,
-      "files_hint": [
-        ".swarm/SPEC.md"
-      ],
-      "packages": [],
-      "acceptance": "A human rules on FIVE behaviours the Domain rules do not currently decide (two enumerated inline below; three more — D-42, D-43, D-44 — enumerated in the notes and written up in SPEC.md § Undecided behaviours), and the ruling is written into SPEC.md as an explicit clause either way. (1) --help vs usage-error precedence when both appear in argv: the shipped behaviour is that the usage error WINS in both argv orders (measured: `--help --seed abc` and `--seed abc --help` both exit 2 with \"aphorism: flag --seed requires a numeric value\" on stderr). (2) Whether `--seed -0` and `--seed 0` are THE SAME SEED: they are `===` in JavaScript, but toUint32Seed folds the IEEE-754 bit pattern including the sign bit, so they select DIFFERENT aphorisms (measured: seed 0 -> Kernighan \"most effective debugging tool\"; seed -0 -> Saint-Exupery \"Perfection is achieved\"). Either behaviour is defensible; the SPEC decides neither.",
-      "notes": "FILED AT CYCLE 4 from J-6, which measured both and correctly declined to pin either with a test. This is a SPEC decision, not a swarm task, and it is filed the way T-040 is: a human ratifies or reverses, and the item is not dispatchable until they do.\n\nWHY NO TEST WAS ADDED, and why that was right: the Domain rules resolve exactly ONE flag-vs-error precedence question explicitly — for --list (\"A seed that fails to parse is still a usage error under --list\"). The existence of that carve-out is evidence the author does not treat \"usage-error trumps other flags\" as self-evidently general; where they meant it to generalise, they said so. They never said it for --help. An assertion pinning today s behaviour would therefore be a future false rejection rather than coverage — which is the failure mode J-6 exists to avoid. Same logic for -0/0: the rule guarantees determinism PER SEED VALUE and says nothing about whether -0 and 0 are one value or two.\n\nNOTE FOR WHOEVER RULES ON (2): if the answer is \"they are the same seed\", that is a PRODUCT bug in toUint32Seed and closing it is a src/ change, which this run s non-goals fence off. If the answer is \"they are distinguishable bit patterns, by design\", the fix is one SPEC sentence and nothing else. The cheap ruling and the expensive one are not symmetric, so rule before anyone writes code.\n\nHONEST NOTE ON (1) FROM THE BUILDER, disclosed before any gate looked: its \"does not map\" call on case 1 rests on an INFERENCE from the --list carve-out (silence implies deliberate scoping) rather than on direct textual statement. A reasonable reviewer could read the Exit-codes clause as unconditional and call the current behaviour a hole rather than an unspecified choice. The disagreement is recorded rather than resolved. | CYCLE 4: N-4 added TWO more rulings to this item, both measured. (3) REPEATED --tag/--author (D-42): shipped behaviour is last-occurrence-wins and it is UNPROTECTED - conductor reproduced it independently (--tag humor --tag design --list prints the 14-entry design list; a first-wins mutant prints the 9-entry humor list; the suite stays 102p/0f on both). SPEC spells every filter flag in the singular and never mentions repetition, so last-wins is an artifact of assignment order in parseArgs, not a contract. (4) EMPTY/WHITESPACE --seed (D-43): SPEC Selection says --seed accepts any value that Number() parses to a non-NaN number, and Number(\"\")===0 is non-NaN, so the literal reading says ACCEPT; the implementation rejects with exit 2 and SPEC Exit-codes calls a missing flag argument bad usage. The two clauses point opposite ways, so there is no decided behaviour to test against - a human must pick one.\n\n|| STATUS todo -> BLOCKED at cycle 5, as backlog hygiene, NOT as a failure and NOT as a drop. This item needs four CLI behaviours the Domain rules do not decide — --help-vs-usage-error precedence, -0/0 seed identity, repeated --tag/--author, and empty/whitespace --seed. It sat as `todo` on a board that a conductor walks top-down looking for dispatchable work, which is exactly the churn K-5 exists to prevent — N-8's own acceptance forbids re-opening these as agent work. It is now BLOCKED on a named human actor and fully restated in REPORT.md § \"Improvement run #3 — human-owned items, hand-off\" (appended cycle 5, verified by the conductor). attempts stays 0: nothing was tried and failed, so an attempts bump would misreport the history. Unblocks the moment a human rules; nothing in the swarm can unblock it. CYCLE 6 CORROBORATION + one new fact. The cycle-6 QA live-look, an instrument with no knowledge of D-43, independently re-derived the empty-seed gap from the shipped binary and reached the same two-clauses-point-opposite-ways reading. Independent re-derivation raises confidence that this gap is real and human-owned, and it cost nothing to learn because the agent was not told the answer. NEW FACT for whoever rules, which D-43 does NOT record: the refusal is specific to EMPTY and WHITESPACE-ONLY values. Whitespace-PADDED values are ACCEPTED today — `node bin/aphorism.js --seed \" 5 \" --json` is byte-identical to `--seed 5` and exits 0 (conductor-measured, cycle 6, .swarm/runs/cycle-006-qa-verify.txt). So the implementation is not uniformly \"trim then reject\"; src/args.js:55 rejects only when the trimmed value is empty, then hands the UNTRIMMED string to Number(), which itself tolerates padding. A ruling of \"accept per Number()\" is therefore a smaller change than it looks: it deletes one guard clause rather than reworking seed parsing.\n\n|| CYCLE 13, RUN #3 review-fix pass: a FIFTH ruling joins this item. (5) EMPTY FLAG VALUE, '=' FORM vs SPACE FORM (D-44). Reviewer-found, then independently reproduced by an adversarial verifier, then re-measured by the conductor. Shipped behaviour: --author '' returns exit code 0 and prints an aphorism (--author '' --list piped to wc -l gives 50, identical to --list piped to wc -l, i.e. the whole corpus); --author= returns exit code 2; --tag '' returns exit code 1; --tag= returns exit code 2. Mechanism: src/args.js:83-86 (the equals branch) deliberately rejects an empty value, while the space branch at src/args.js:106-124 checks only for a missing next token or one that looksLikeFlag(), so it assigns the empty string at line 121. The verifier ruled UNDECIDED, not a violation, and the reasoning is recorded in SPEC.md D-44: Exit-codes calls a missing flag argument bad usage and the equals-branch rejection is a deliberate line of code (arguing defect), but a shell passing '' DID supply an argument, and the space-form results follow mechanically from two clauses the SPEC does state — substring containment necessarily matches everything on an empty needle, whole-tag equality necessarily matches nothing. Two stated clauses point opposite ways and none names empty values. NO CODE CHANGE WAS MADE, and independently of the ruling none should be made by the swarm: either direction changes shipped user-visible CLI behaviour, which this run's non-goals forbid.\n\n|| COUNT DEBT CREATED BY THIS EDIT, DECLARED RATHER THAN PAID (cycle 13). Raising this item from four behaviours to five makes REPORT.md § 'J-7: Four CLI behaviours...' (line ~1300) stale by one. It is NOT repaired in this cycle: this cycle's verification gate was sealed before dispatch and does not cover REPORT.md, and an unverified document edit smuggled in at persist time is exactly the discipline this run exists to hold. Filed as R-2, which also picks up three PRE-EXISTING stale mentions this cycle discovered but did not create (REPORT.md lines ~1062, ~1230, ~1244 all still say 'two behaviours', against a backlog title that has said four since cycle 4). Cycle 12 repaired the § heading alone and did not sweep the body — the same decay class, one layer down.",
-      "blocked_reason": "human-owned ruling — not agent-workable"
-    },
-    {
-      "id": "TS-1",
-      "title": "Corpus depth: 50 canon-only entries repeat by roughly the 9th draw",
-      "kind": "polish",
-      "status": "blocked",
-      "priority": 4,
-      "effort": "L",
-      "model": "sonnet",
-      "deps": [],
-      "files_hint": [
-        "src/corpus.js"
-      ],
-      "packages": [],
-      "acceptance": "BLOCKED ON A HUMAN SCOPE DECISION, not on engineering. To unblock, the owner lifts the 'corpus expansion' non-goal at a future kickoff. Then: the corpus grows enough that a repeat is unlikely inside a typical session, weighted toward less-anthologized lines from the canonical voices and toward the last 15 years, with recent-repeat avoidance across consecutive invocations.",
-      "attempts": 0,
-      "blocked_reason": "Locked SPEC.md non-goal for run #3: 'corpus expansion'. The swarm cannot lift its own locked non-goal mid-run -- that is exactly the drift the spec lock exists to prevent -- so this is filed blocked rather than todo. NOT dropped, NOT quietly re-scoped.",
-      "owner": "human (repo owner, at the next kickoff)",
-      "notes": "From the cycle-9 TASTE pass, finding 1 (notable) -- the headline taste finding of run #3. CONDUCTOR-MEASURED, and the agent's figure was CONSERVATIVE: the corpus is 50 entries, so under uniform draws the MEDIAN first exact repeat lands at draw 9 and P(repeat by draw 12) = 76.2%. The agent reported feeling it at use 12; the arithmetic says most users feel it sooner. Severity 'notable' rather than 'fundamental' was CHECKED, not rubber-stamped: the SHAPE of the product (one quiet attributed line, pipeable, stderr-clean) held across 32 runs and is genuinely good; it is the POOL that runs out. The daily --seed MOTD pattern (7 distinct aphorisms across a simulated week) partially masks the repeat and is the product's strongest idea."
+      "blocked_reason": "human-owned ruling — not agent-workable",
+      "covers": [
+        "M-4"
+      ]
     },
     {
       "id": "TS-2",
@@ -97,35 +88,205 @@
       "attempts": 0,
       "blocked_reason": "Locked SPEC.md non-goal for run #3: 'corpus expansion'. Same lock as TS-1.",
       "owner": "human (repo owner, at the next kickoff)",
-      "notes": "From the cycle-9 TASTE pass, finding 2 (minor). CONDUCTOR-MEASURED from `--list --json`: philosophy=3 (two of the three Dijkstra), readability=4, reliability=4, language=4, process=4 -- 5 of 12 tags at <= 4 entries. README's claim that 'the smallest pool holds three aphorisms, so --tag always has something to choose between' is TRUE but experientially thin, which is the taste seat's point exactly: a green correctness gate cannot see this."
+      "notes": "From the cycle-9 TASTE pass, finding 2 (minor). CONDUCTOR-MEASURED from `--list --json`: philosophy=3 (two of the three Dijkstra), readability=4, reliability=4, language=4, process=4 -- 5 of 12 tags at <= 4 entries. README's claim that 'the smallest pool holds three aphorisms, so --tag always has something to choose between' is TRUE but experientially thin, which is the taste seat's point exactly: a green correctness gate cannot see this.",
+      "covers": [
+        "M-4"
+      ]
     },
     {
-      "id": "TS-3",
-      "title": "Three voices hold a third of the corpus, so draws sound same-registered",
+      "id": "TS-1",
+      "title": "Corpus depth: 50 canon-only entries repeat by roughly the 9th draw",
       "kind": "polish",
       "status": "blocked",
-      "priority": 2,
-      "effort": "M",
+      "priority": 4,
+      "effort": "L",
       "model": "sonnet",
-      "deps": [
-        "TS-1"
-      ],
+      "deps": [],
       "files_hint": [
         "src/corpus.js"
       ],
       "packages": [],
-      "acceptance": "BLOCKED ON THE SAME HUMAN SCOPE DECISION as TS-1. Once corpus expansion is permitted, added entries diversify author and era rather than deepening the already-dominant voices.",
+      "acceptance": "BLOCKED ON A HUMAN SCOPE DECISION, not on engineering. To unblock, the owner lifts the 'corpus expansion' non-goal at a future kickoff. Then: the corpus grows enough that a repeat is unlikely inside a typical session, weighted toward less-anthologized lines from the canonical voices and toward the last 15 years, with recent-repeat avoidance across consecutive invocations.",
       "attempts": 0,
-      "blocked_reason": "Locked SPEC.md non-goal for run #3: 'corpus expansion'. Same lock as TS-1.",
+      "blocked_reason": "Locked SPEC.md non-goal for run #3: 'corpus expansion'. The swarm cannot lift its own locked non-goal mid-run -- that is exactly the drift the spec lock exists to prevent -- so this is filed blocked rather than todo. NOT dropped, NOT quietly re-scoped.",
       "owner": "human (repo owner, at the next kickoff)",
-      "notes": "From the cycle-9 TASTE pass, finding 3 (minor). CONDUCTOR-MEASURED: 24 distinct authors over 50 entries, but Dijkstra 7 + Perlis 5 + Pike 5 = 17/50 = 34% of the corpus in three voices. The agent's claim that 'a third of the corpus is three voices' verified exactly."
+      "notes": "From the cycle-9 TASTE pass, finding 1 (notable) -- the headline taste finding of run #3. CONDUCTOR-MEASURED, and the agent's figure was CONSERVATIVE: the corpus is 50 entries, so under uniform draws the MEDIAN first exact repeat lands at draw 9 and P(repeat by draw 12) = 76.2%. The agent reported feeling it at use 12; the arithmetic says most users feel it sooner. Severity 'notable' rather than 'fundamental' was CHECKED, not rubber-stamped: the SHAPE of the product (one quiet attributed line, pipeable, stderr-clean) held across 32 runs and is genuinely good; it is the POOL that runs out. The daily --seed MOTD pattern (7 distinct aphorisms across a simulated week) partially masks the repeat and is the product's strongest idea.",
+      "covers": [
+        "M-4"
+      ]
+    },
+    {
+      "id": "J-7",
+      "title": "Five CLI behaviours are unspecified and a human should rule on them (from J-6 + N-4 + D-44)",
+      "kind": "docs",
+      "status": "blocked",
+      "priority": 7,
+      "effort": "S",
+      "value": "M",
+      "model": "sonnet",
+      "deps": [],
+      "attempts": 0,
+      "filed_cycle": 4,
+      "files_hint": [
+        ".swarm/SPEC.md"
+      ],
+      "packages": [],
+      "acceptance": "A human rules on FIVE behaviours the Domain rules do not currently decide (two enumerated inline below; three more — D-42, D-43, D-44 — enumerated in the notes and written up in SPEC.md § Undecided behaviours), and the ruling is written into SPEC.md as an explicit clause either way. (1) --help vs usage-error precedence when both appear in argv: the shipped behaviour is that the usage error WINS in both argv orders (measured: `--help --seed abc` and `--seed abc --help` both exit 2 with \"aphorism: flag --seed requires a numeric value\" on stderr). (2) Whether `--seed -0` and `--seed 0` are THE SAME SEED: they are `===` in JavaScript, but toUint32Seed folds the IEEE-754 bit pattern including the sign bit, so they select DIFFERENT aphorisms (measured: seed 0 -> Kernighan \"most effective debugging tool\"; seed -0 -> Saint-Exupery \"Perfection is achieved\"). Either behaviour is defensible; the SPEC decides neither.",
+      "notes": "FILED AT CYCLE 4 from J-6, which measured both and correctly declined to pin either with a test. This is a SPEC decision, not a swarm task, and it is filed the way T-040 is: a human ratifies or reverses, and the item is not dispatchable until they do.\n\nWHY NO TEST WAS ADDED, and why that was right: the Domain rules resolve exactly ONE flag-vs-error precedence question explicitly — for --list (\"A seed that fails to parse is still a usage error under --list\"). The existence of that carve-out is evidence the author does not treat \"usage-error trumps other flags\" as self-evidently general; where they meant it to generalise, they said so. They never said it for --help. An assertion pinning today s behaviour would therefore be a future false rejection rather than coverage — which is the failure mode J-6 exists to avoid. Same logic for -0/0: the rule guarantees determinism PER SEED VALUE and says nothing about whether -0 and 0 are one value or two.\n\nNOTE FOR WHOEVER RULES ON (2): if the answer is \"they are the same seed\", that is a PRODUCT bug in toUint32Seed and closing it is a src/ change, which this run s non-goals fence off. If the answer is \"they are distinguishable bit patterns, by design\", the fix is one SPEC sentence and nothing else. The cheap ruling and the expensive one are not symmetric, so rule before anyone writes code.\n\nHONEST NOTE ON (1) FROM THE BUILDER, disclosed before any gate looked: its \"does not map\" call on case 1 rests on an INFERENCE from the --list carve-out (silence implies deliberate scoping) rather than on direct textual statement. A reasonable reviewer could read the Exit-codes clause as unconditional and call the current behaviour a hole rather than an unspecified choice. The disagreement is recorded rather than resolved. | CYCLE 4: N-4 added TWO more rulings to this item, both measured. (3) REPEATED --tag/--author (D-42): shipped behaviour is last-occurrence-wins and it is UNPROTECTED - conductor reproduced it independently (--tag humor --tag design --list prints the 14-entry design list; a first-wins mutant prints the 9-entry humor list; the suite stays 102p/0f on both). SPEC spells every filter flag in the singular and never mentions repetition, so last-wins is an artifact of assignment order in parseArgs, not a contract. (4) EMPTY/WHITESPACE --seed (D-43): SPEC Selection says --seed accepts any value that Number() parses to a non-NaN number, and Number(\"\")===0 is non-NaN, so the literal reading says ACCEPT; the implementation rejects with exit 2 and SPEC Exit-codes calls a missing flag argument bad usage. The two clauses point opposite ways, so there is no decided behaviour to test against - a human must pick one.\n\n|| STATUS todo -> BLOCKED at cycle 5, as backlog hygiene, NOT as a failure and NOT as a drop. This item needs four CLI behaviours the Domain rules do not decide — --help-vs-usage-error precedence, -0/0 seed identity, repeated --tag/--author, and empty/whitespace --seed. It sat as `todo` on a board that a conductor walks top-down looking for dispatchable work, which is exactly the churn K-5 exists to prevent — N-8's own acceptance forbids re-opening these as agent work. It is now BLOCKED on a named human actor and fully restated in REPORT.md § \"Improvement run #3 — human-owned items, hand-off\" (appended cycle 5, verified by the conductor). attempts stays 0: nothing was tried and failed, so an attempts bump would misreport the history. Unblocks the moment a human rules; nothing in the swarm can unblock it. CYCLE 6 CORROBORATION + one new fact. The cycle-6 QA live-look, an instrument with no knowledge of D-43, independently re-derived the empty-seed gap from the shipped binary and reached the same two-clauses-point-opposite-ways reading. Independent re-derivation raises confidence that this gap is real and human-owned, and it cost nothing to learn because the agent was not told the answer. NEW FACT for whoever rules, which D-43 does NOT record: the refusal is specific to EMPTY and WHITESPACE-ONLY values. Whitespace-PADDED values are ACCEPTED today — `node bin/aphorism.js --seed \" 5 \" --json` is byte-identical to `--seed 5` and exits 0 (conductor-measured, cycle 6, .swarm/runs/cycle-006-qa-verify.txt). So the implementation is not uniformly \"trim then reject\"; src/args.js:55 rejects only when the trimmed value is empty, then hands the UNTRIMMED string to Number(), which itself tolerates padding. A ruling of \"accept per Number()\" is therefore a smaller change than it looks: it deletes one guard clause rather than reworking seed parsing.\n\n|| CYCLE 13, RUN #3 review-fix pass: a FIFTH ruling joins this item. (5) EMPTY FLAG VALUE, '=' FORM vs SPACE FORM (D-44). Reviewer-found, then independently reproduced by an adversarial verifier, then re-measured by the conductor. Shipped behaviour: --author '' returns exit code 0 and prints an aphorism (--author '' --list piped to wc -l gives 50, identical to --list piped to wc -l, i.e. the whole corpus); --author= returns exit code 2; --tag '' returns exit code 1; --tag= returns exit code 2. Mechanism: src/args.js:83-86 (the equals branch) deliberately rejects an empty value, while the space branch at src/args.js:106-124 checks only for a missing next token or one that looksLikeFlag(), so it assigns the empty string at line 121. The verifier ruled UNDECIDED, not a violation, and the reasoning is recorded in SPEC.md D-44: Exit-codes calls a missing flag argument bad usage and the equals-branch rejection is a deliberate line of code (arguing defect), but a shell passing '' DID supply an argument, and the space-form results follow mechanically from two clauses the SPEC does state — substring containment necessarily matches everything on an empty needle, whole-tag equality necessarily matches nothing. Two stated clauses point opposite ways and none names empty values. NO CODE CHANGE WAS MADE, and independently of the ruling none should be made by the swarm: either direction changes shipped user-visible CLI behaviour, which this run's non-goals forbid.\n\n|| COUNT DEBT CREATED BY THIS EDIT, DECLARED RATHER THAN PAID (cycle 13). Raising this item from four behaviours to five makes REPORT.md § 'J-7: Four CLI behaviours...' (line ~1300) stale by one. It is NOT repaired in this cycle: this cycle's verification gate was sealed before dispatch and does not cover REPORT.md, and an unverified document edit smuggled in at persist time is exactly the discipline this run exists to hold. Filed as R-2, which also picks up three PRE-EXISTING stale mentions this cycle discovered but did not create (REPORT.md lines ~1062, ~1230, ~1244 all still say 'two behaviours', against a backlog title that has said four since cycle 4). Cycle 12 repaired the § heading alone and did not sweep the body — the same decay class, one layer down.",
+      "blocked_reason": "human-owned ruling — not agent-workable",
+      "covers": [
+        "M-4"
+      ]
+    },
+    {
+      "id": "N-6",
+      "title": "M-3: record denial #31 with a sibling-script discriminator and hand off the exact patch",
+      "kind": "docs",
+      "covers": [
+        "M-3"
+      ],
+      "status": "todo",
+      "priority": 9,
+      "effort": "S",
+      "value": "S",
+      "model": "conductor",
+      "owner": "conductor",
+      "deps": [],
+      "attempts": 0,
+      "filed_cycle": 1,
+      "files_hint": [
+        ".swarm/journal.md"
+      ],
+      "packages": [],
+      "acceptance": "The current reachability of the swarm playbook helper is settled by an ACTUAL invocation this run made, not by inference from a prior run - and whichever way it came out is recorded with the evidence that distinguishes an allowlist omission from a directory-level guard or a harness quirk. If it is still unreachable, the standing hand-off document carries this run's denial count and the exact configuration lines a human would add, so the next person has a patch rather than a complaint.",
+      "notes": "CONDUCTOR-OWNED, not dispatchable - the plan agent flagged this correctly and the reason is structural: every action M-3 needs touches /opt/swarm, which hard rule 5 forbids passing to any workflow agent. ALREADY PROBED AT CYCLE 1: `/opt/swarm/bin/swarm-playbook.sh parse`, bare, no pipe, no env prefix -> \"This command requires approval\". Denial #31. The discriminator that makes this an omission rather than a guard: /opt/swarm/bin/swarm-budget.sh and /opt/swarm/bin/swarm-notify.sh, same directory, same invocation shape, BOTH RAN in this same session and returned real output. So the deny is per-entry, not per-directory. What remains is updating SWARM/playbook/HANDOFF-allowlist-2026-08-17.md with denial #31 plus that discriminator. Honest limit unchanged from runs #2/#3: the claim that cmd_parse exits 2 on validator output is still READ, never EXECUTED, and this run cannot execute it either."
+    },
+    {
+      "id": "N-1",
+      "title": "Add a Node 18/20/22/24 Actions matrix that runs the existing suite",
+      "kind": "fix",
+      "covers": [
+        "M-1"
+      ],
+      "status": "todo",
+      "priority": 10,
+      "effort": "S",
+      "value": "M",
+      "model": "sonnet",
+      "owner": "builder",
+      "deps": [],
+      "attempts": 0,
+      "filed_cycle": 1,
+      "files_hint": [
+        ".github/workflows/test.yml"
+      ],
+      "packages": [],
+      "acceptance": "A version-controlled CI workflow exists that runs this repo's EXISTING test command unmodified against each of Node 18, 20, 22 and 24, on push and on manual dispatch, using no dependency and no install step beyond checkout and the Node setup action. Each version reports its own pass/fail independently, so one failing version does not mask the others. The workflow adds nothing to require() and nothing to install.",
+      "notes": "Builder scope is the workflow file ONLY. It must NOT edit README.md's Node-18 floor claim: the true floor is unknown until the conductor pushes this, triggers a real run and reads real per-version output, and writing a plausible correction without that output is exactly the unverified-claim failure M-1 exists to kill. Default branch is `master` (not main) - the trigger must name it correctly or the push produces no run. Set fail-fast off, or a Node-18 failure cancels the other three and destroys the very evidence M-1 wants."
+    },
+    {
+      "id": "N-7",
+      "title": "M-1 conductor half: push the matrix, observe the REAL run, settle the README floor from what it says",
+      "kind": "qa",
+      "covers": [
+        "M-1"
+      ],
+      "status": "todo",
+      "priority": 10,
+      "effort": "M",
+      "value": "M",
+      "model": "conductor",
+      "owner": "conductor",
+      "deps": [
+        "N-1"
+      ],
+      "attempts": 0,
+      "filed_cycle": 1,
+      "files_hint": [
+        "README.md"
+      ],
+      "packages": [],
+      "acceptance": "The Node support floor README.md states is backed by the observed result of a real multi-version CI run on this repo - the floor either confirmed and cited to that run, or corrected to the lowest version the run actually shows passing. The per-version output is pasted as evidence. If the run cannot be reached or observed, the must-have closes as an explicit FAILURE naming the reason, and the README claim is marked unverified rather than left implying it was checked.",
+      "notes": "CONDUCTOR-OWNED by construction: only this session holds the gh token (scopes confirmed at cycle 1: gist, read:org, repo, workflow) and only the conductor commits and pushes (hard rule 1). Repo is PUBLIC, so Actions minutes are free. Three prior runs recorded this floor as PERMANENTLY UNVERIFIABLE because the VPS holds one Node runtime and no containers - that reasoning was about the wrong machine and is what this item overturns. FAILURE MODES TO REPORT HONESTLY, not route around: Actions disabled on the repo; the workflow scope insufficient in practice despite being listed; the run queued past this run's stop_at. Any of those closes M-1 as a stated FAILURE, never as a pass."
+    },
+    {
+      "id": "N-2",
+      "title": "REPORT.md: first screen answers shipped / verified / open; history MOVED to an appendix",
+      "kind": "docs",
+      "covers": [
+        "M-2"
+      ],
+      "status": "todo",
+      "priority": 11,
+      "effort": "L",
+      "value": "L",
+      "model": "sonnet",
+      "owner": "builder",
+      "deps": [],
+      "attempts": 0,
+      "filed_cycle": 1,
+      "files_hint": [
+        "REPORT.md",
+        "docs/report-history.md"
+      ],
+      "packages": [],
+      "acceptance": "A reader opening REPORT.md learns what the CLI ships, what is machine-verified, and what is open, from the first ~200 lines alone, without scrolling into forensic detail to find any of the three. The forensic history that made the file 1578 lines is still present in full - MOVED verbatim into a linked appendix, not summarized, not paraphrased, not dropped - and every cross-reference between the two documents resolves to something that exists.",
+      "notes": "HIGHEST-RISK ITEM OF THE RUN. M-2's own rule is mechanical: every non-whitespace line of today's REPORT.md must still appear in the concatenation of the new REPORT.md and the appendix. Move sections BYTE-FOR-BYTE; write only the new first-screen summary fresh. Any paraphrase, any reflowed dated row, any tidied cycle citation fails that audit - and the run's non-goals forbid deleting or rewriting a historical claim regardless. ROUTING NOTE, a conductor judgment recorded because it overrides a mechanical rule: gear-2 demotion would send this docs item to haiku, and this repo has already MEASURED that failure - run #3 cycle 4 (record N-6) and cycle 14 both caught a haiku agent writing false provenance into REPORT.md, the second time inside the very paragraph whose job was dating claims correctly. Demotion is REFUSED here; hold at sonnet or above."
+    },
+    {
+      "id": "N-5",
+      "title": "Hand-off: every open item carries a named next actor and the evidence that would settle it",
+      "kind": "docs",
+      "covers": [
+        "M-4"
+      ],
+      "status": "todo",
+      "priority": 12,
+      "effort": "M",
+      "value": "M",
+      "model": "sonnet",
+      "owner": "builder",
+      "deps": [
+        "N-2"
+      ],
+      "attempts": 0,
+      "filed_cycle": 1,
+      "files_hint": [
+        "REPORT.md"
+      ],
+      "packages": [],
+      "acceptance": "Every open backlog item - the six blocked on a human ruling (T-006, T-040, J-7, TS-1, TS-2, TS-3) and R-1 - appears in REPORT.md's hand-off with a NAMED next actor and the SPECIFIC evidence that would settle it, reachable from the first screen. A reader never has to open backlog.json to learn who owns an open item or what would close it. Nothing is dropped and nothing blocked is re-described as work an agent could pick up.",
+      "notes": "Sequenced after N-2 because both edit REPORT.md and no two dispatched items may share a file. The underlying facts already exist in backlog.json notes - this is synthesis, not investigation, and inventing an actor or a piece of settling evidence that backlog.json and SPEC.md do not already support is the failure mode to avoid. The six blocked items are blocked because an agent must not make those rulings; restating them must not soften that."
+    },
+    {
+      "id": "N-3",
+      "title": "KI-35: run-scoped artifact naming so cycle-NNN files stop colliding across runs",
+      "kind": "polish",
+      "covers": [
+        "M-4"
+      ],
+      "status": "todo",
+      "priority": 13,
+      "effort": "S",
+      "value": "S",
+      "model": "haiku",
+      "owner": "builder",
+      "deps": [],
+      "attempts": 0,
+      "filed_cycle": 1,
+      "files_hint": [
+        ".swarm/runs/NAMING.md"
+      ],
+      "packages": [],
+      "acceptance": "A future run writing its own cycle artifacts under .swarm/runs/ cannot overwrite or shadow a same-numbered artifact from an earlier run, because a written-down naming convention makes each run's artifacts distinguishable by name - and that convention sits where the next conductor will meet it before naming its first artifact. Not one of the existing ~400 files is renamed, moved or edited.",
+      "notes": "MEASURED at cycle 1: .swarm/runs/ holds 404 files named cycle-NNN-*, numbered from four runs whose cycle counters each restart at 1. Run #4's cycle-001-* would land on run #1's. Renaming the existing files is FORBIDDEN and that is not conservatism - README.md, REPORT.md and backlog.json notes cite several of them by exact path, and a rename silently breaks a historical citation, which this run's non-goals prohibit. So the fix is forward-only. HONEST LIMIT: a builder cannot make the conductor obey the convention - that logic is outside this repo. The convention closes this item; the conductor following it for run #4's own artifacts is what makes it true, and is verified as such."
     },
     {
       "id": "R-1",
       "title": "Structural reshape of the README acknowledgement guard (the recorded T-024 answer)",
       "kind": "fix",
       "status": "todo",
-      "priority": 5,
+      "priority": 14,
       "effort": "M",
       "value": "M",
       "model": "sonnet",
@@ -137,7 +298,11 @@
       ],
       "packages": [],
       "acceptance": "The guard formerly named 'README should acknowledge single-entry tag limitation' stops deriving its verdict from marker phrases positioned inside an English sentence, and instead reads a STRUCTURAL marker the document owns. Traceable to a measured survivor: the cycle-13 verifier re-reproduced cells D4a/D4b (acknowledgement stripped, in-section decoy left behind -> guard SILENT) against a green 118/118 baseline, and additionally showed that a sentence DENYING the property outright ('Never worry that a tag might appear on exactly one entry — that cannot happen here.') also passes the guard. Any replacement must be measured against the FOUR-cell regression set recorded in the comment block above the test (C0 silent; D1/D3/E3 must NOT fire on honest READMEs; D4a/D4b must fire) and must not be a fourth regex narrowing — three prior narrowings produced two new false rejections while the silent hole survived.",
-      "notes": "Filed at cycle 13 from the review-fix pass as an UNFIXED REPRODUCED FINDING, per the review-fix contract (nothing silently dropped). Cycle 13 deliberately did NOT fix it: the verifier's recommended action was document_only, and the conductor's disposition was to rename the test to match its body rather than narrow the matcher — the matcher was left byte-identical under a sealed hash, precisely so this reshape stays available as honest future work rather than being half-done. NOTE THE PREMISE SHIFT that makes this lower-value than it looks, measured at cycle 13 from src/corpus.js: the corpus now holds 12 distinct tags and ZERO tags on exactly one entry, so the 'limitation' the guard was built to protect does not currently exist. The guard is retained only because a human ruling on T-040 (corpus retag consequences) could reintroduce single-entry tags. Score it against the two-question ratchet before dispatching — a user notices nothing either way, and it may be more honest to RETIRE the guard than to reshape it."
+      "notes": "Filed at cycle 13 from the review-fix pass as an UNFIXED REPRODUCED FINDING, per the review-fix contract (nothing silently dropped). Cycle 13 deliberately did NOT fix it: the verifier's recommended action was document_only, and the conductor's disposition was to rename the test to match its body rather than narrow the matcher — the matcher was left byte-identical under a sealed hash, precisely so this reshape stays available as honest future work rather than being half-done. NOTE THE PREMISE SHIFT that makes this lower-value than it looks, measured at cycle 13 from src/corpus.js: the corpus now holds 12 distinct tags and ZERO tags on exactly one entry, so the 'limitation' the guard was built to protect does not currently exist. The guard is retained only because a human ruling on T-040 (corpus retag consequences) could reintroduce single-entry tags. Score it against the two-question ratchet before dispatching — a user notices nothing either way, and it may be more honest to RETIRE the guard than to reshape it. || RUN #4, cycle 1: M-4 names this item explicitly and permits exactly two outcomes - done and conductor-verified, or explicitly DECLINED with a stated reason. Run #3 cycle 14 already scored it against the two-question ratchet and it FAILED question one (a user in a terminal notices nothing either way), and recorded that both dispositions are human-owned: retiring the guard deletes a claim, and a human ruling on T-040 could reintroduce the single-entry tags whose absence is the whole reason it looks vacuous. Carried into run #4 unchanged so the decline, if that is where it lands, is made on this run's own record rather than inherited.",
+      "covers": [
+        "M-4",
+        "M-5"
+      ]
     }
   ]
 }
