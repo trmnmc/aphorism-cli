@@ -14511,3 +14511,32 @@ next: the DONE decision is now genuinely live — all five must-haves closed, ze
   their last full sweep — that was the load-bearing measurement of run #3 cycle 15.
 commit: (this cycle)
 runfile-mirror: written to runs/current.json and current.json.bak this cycle
+
+### cycle 4 addendum — the notify helper is denied in BOTH directions, not just on poll
+
+The journal block above records `swarm-notify.sh poll` as denied by the harness allowlist
+(denial #32). Closing the loop at step 8: `swarm-notify.sh send` is denied too (denial #33),
+under the same rule. So this cycle's phase-change push (BUILD -> REVIEW) did NOT go out.
+
+Recorded rather than acted on, per hard rule 5 — `bin/` is fenced read-only mid-run.
+
+Worth stating precisely, because the two halves fail differently and only one is benign:
+`poll` failing is recoverable in-cycle — `runs/control.json` was read directly and its
+`pending: []` is the same fact the poll would have produced, so nothing was lost. `send`
+failing is NOT recoverable: there is no second channel, so every push this run has claimed
+to emit since the allowlist gap opened has silently not been delivered. The dashboard's meta
+line still renders `notify on (…0d89)` — which is TRUE about configuration and MISLEADING
+about delivery. That is the same shape as the cycle-3 defect the notify-line repair was
+written for: a statement that is accurate about the thing it measures and wrong about the
+thing a reader will take from it.
+
+For the morning report, as a SWARM tool question rather than a target defect: the notify
+helper's configured-ness and its reachability are two different facts and the dashboard
+conflates them. A truthful meta line would distinguish `notify configured` from
+`notify delivering`, and the cheapest honest version is to record the exit status of the
+last `send` attempt and render that.
+
+`SWARM push` — the SWARM repo's own commit for this cycle is durable on disk but will not
+reach `git@github.com:trmnmc/SWARM.git`: the droplet's deploy key is still read-only, as at
+cycle 3. Per hard rule 1 a push failure is journaled and never blocks the cycle. The TARGET
+repo pushed clean this cycle (`60c71d3..177189b` on master).
