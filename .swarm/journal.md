@@ -14022,3 +14022,21 @@ next: N-7 — cite the run URL in README.md and state the floor precisely (verif
 commit: (this cycle)
 next wakeup: see runfile
 runfile-mirror: written to runs/current.json and current.json.bak this cycle
+
+### cycle 2 addendum — a pacing inconsistency, recorded for the morning report
+
+Observed at this cycle's step 0, not acted on (hard rule 5 fences bin/ mid-run):
+cycle 1's journal records `next wakeup: 1787150561 (+90s)`, but the runfile this cycle
+read carried `heartbeat.next_wakeup_at = 1787158238` — roughly two hours out, and past
+any delay cycle.md step 9 permits (base 90s, 900–1800s after a no-value cycle, 3600s in
+limp). The pacer log then shows `spawned` at 14:50:38, about five minutes after
+`cycle-done` at 14:45:32 — i.e. the cycle fired on the pacer's own 5-minute cadence
+rather than on the stale field. No harm done and the run is healthy; the reason to write
+it down is that the two mechanisms disagreed and the FALLBACK is what kept the run
+moving. If `next_wakeup_at` is authoritative anywhere, a two-hour value would have cost
+this run two hours of clock. Belongs in the morning report as a SWARM tool question:
+which of the two is the contract, and does anything read `next_wakeup_at` besides the
+watchdog's staleness check?
+
+next wakeup: 1787151991 (+90s, base delay after a verified-value cycle;
+  clamp `wakeup + 900 <= stop_at` not binding — stop is ~23h out)
