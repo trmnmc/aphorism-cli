@@ -16720,3 +16720,5 @@ runfile-mirror:
   }
 }
 ```
+
+next wakeup CORRECTED: 1787167791 (+90s from the step-9 stamp). The line above said 1787167669, written before the gate re-run and the commit; that estimate had already passed by the time the cycle closed. The runfile carries 1787167791, and on the VPS the pacer reads that field, so the runfile is the operative value — the correction is recorded rather than the earlier number quietly overwritten.
