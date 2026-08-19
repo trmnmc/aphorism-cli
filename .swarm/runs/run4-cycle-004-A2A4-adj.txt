@@ -1,0 +1,26 @@
+=== A2 / A4 ADJUDICATION (instrument defects #17, #18) ===
+
+PASS A  DEFECT REPRODUCED: sealed slice for R-1 starts at the SUMMARY mention and holds no decline language
+         sealed_slice_head="R-1). Any bare count on this page is a snapsho" has_declin=false
+PASS B  REPAIR: R-1's BULLET does describe it as declined, with a reason
+         bullet_len=966 has_declin=true
+PASS C  CONTROL: repaired A2 still REJECTS the old stale "not yet done" wording
+         verdict_on_stale_arm=false
+PASS D  CONTROL: repaired A2 still REJECTS an R-1 bullet deleted outright
+         verdict_on_deleted_arm=false
+PASS E  DEFECT REPRODUCED: TS-3's sealed slice bleeds past "### Declined" into R-1's text
+         bleeds_heading=true conductor_in_sealed=true conductor_in_own_bullet=false
+PASS F  REPAIR: no blocked item's OWN bullet assigns the work to an agent
+         violations=[]
+PASS G  CONTROL: repaired A4 FIRES when a bullet invites a builder to pick it up
+         verdict=bullet invites an agent to pick it up
+PASS H  CONTROL: repaired A4 FIRES when a Next-actor field names an agent instead of a human
+         verdict=actor field does not name a human
+PASS I  CONTROL: T-006's "no one in this run can reach a primary source" is NOT a violation
+         phrase_present=true violation=null
+PASS J  CONTROL: extractor returns COMPLETE bullets (structural markers present, not just non-empty)
+         blocked_complete=T-006:true T-040:true J-7:true TS-1:true TS-2:true TS-3:true r1_reopen=true lens={"T-006":391,"T-040":927,"J-7":774,"TS-1":286,"TS-2":366,"TS-3":346,"R-1":966}
+PASS K  CONTROL: an agent assignment hidden INSIDE the parenthetical still FIRES
+         verdict=bullet invites an agent to pick it up
+
+11 PASS / 0 FAIL of 11

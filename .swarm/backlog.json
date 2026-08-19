@@ -242,7 +242,7 @@
    "covers": [
     "M-4"
    ],
-   "status": "todo",
+   "status": "done",
    "priority": 12,
    "effort": "M",
    "value": "M",
@@ -258,7 +258,8 @@
    ],
    "packages": [],
    "acceptance": "Every open backlog item - the six blocked on a human ruling (T-006, T-040, J-7, TS-1, TS-2, TS-3) and R-1 - appears in REPORT.md's hand-off with a NAMED next actor and the SPECIFIC evidence that would settle it, reachable from the first screen. A reader never has to open backlog.json to learn who owns an open item or what would close it. Nothing is dropped and nothing blocked is re-described as work an agent could pick up.",
-   "notes": "Sequenced after N-2 because both edit REPORT.md and no two dispatched items may share a file. The underlying facts already exist in backlog.json notes - this is synthesis, not investigation, and inventing an actor or a piece of settling evidence that backlog.json and SPEC.md do not already support is the failure mode to avoid. The six blocked items are blocked because an agent must not make those rulings; restating them must not soften that. || RUN #4 cycle 3: DEP CLEARED — N-2 is done and conductor-verified, so this item is now unblocked and is the run's next pick. It edits REPORT.md, which is now a 73-line first screen plus docs/report-history.md; nothing else may touch REPORT.md while it runs. Note the standing hazard this cycle just measured for the sixth time: any count this item writes about open items goes stale the moment the run closes another item, so write counts as dated snapshots or derive them at read time, never as bare figures."
+   "notes": "Sequenced after N-2 because both edit REPORT.md and no two dispatched items may share a file. The underlying facts already exist in backlog.json notes - this is synthesis, not investigation, and inventing an actor or a piece of settling evidence that backlog.json and SPEC.md do not already support is the failure mode to avoid. The six blocked items are blocked because an agent must not make those rulings; restating them must not soften that. || RUN #4 cycle 3: DEP CLEARED — N-2 is done and conductor-verified, so this item is now unblocked and is the run's next pick. It edits REPORT.md, which is now a 73-line first screen plus docs/report-history.md; nothing else may touch REPORT.md while it runs. Note the standing hazard this cycle just measured for the sixth time: any count this item writes about open items goes stale the moment the run closes another item, so write counts as dated snapshots or derive them at read time, never as bare figures.",
+   "closed_cycle": 4
   },
   {
    "id": "N-3",

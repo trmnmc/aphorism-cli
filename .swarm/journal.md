@@ -14297,3 +14297,217 @@ introduced, and it affects only the SWARM repo — the TARGET repo pushed clean 
 (39b6818..132ed1b and 132ed1b..9ddc480 on master). For the morning report: the droplet's
 SWARM deploy key needs write scope, or SWARM commits accumulate locally until a session
 with a writable credential pushes them.
+
+---
+
+## cycle 4 — BUILD -> REVIEW — build-wave [N-5] + conductor-owned R-1 decline
+
+work: build-wave [N-5] (M-4 hand-off, sonnet, direct Agent dispatch) with R-1 settled by
+  conductor DECLINE before dispatch. gear 2 (guest, rho=0.50, weekly ceiling 2, promote
+  blocked); effective wave size min(k_current 3, gear cap 2) = 2, used 1 by construction.
+budget: gear 2 · rho 0.50 · window 39,819,695 tokens · 23.6M tok/h · projected depletion
+  1787170282 · probe_ok true, probe_failures 0.
+
+### R-1: DECLINED, on a measurement the inherited score never made
+
+M-4 permits exactly two outcomes for R-1. Run #3 cycle 14 had already scored it FAIL on
+ratchet question one, but declining on an inherited score is reasoning from bookkeeping.
+
+The cycle-39 record established the guard is SILENT on D4a/D4b — but it established that by
+ISOLATING the guard via `--test-name-pattern`, expressly so neighbouring count guards
+"can neither supply nor mask the verdict". That answers *is the guard broken* (it is) and
+never asks *is the property unprotected*, which is what R-1's value rests on.
+
+    run4-cycle-004-r1probe.mjs      arms built by `git archive 60c71d3`   7 PASS / 0 FAIL
+    P1  baseline full suite GREEN                     tests=118 pass=118 fail=0
+    P2  baseline guard SILENT                         5/5
+    P3  D4a guard SILENT   (reproduces cycle-39)      5/5
+    P4  D4b guard SILENT   (reproduces cycle-39)      5/5
+    P5  D4a FULL SUITE RED                            116 pass / 2 fail
+    P6  D4b FULL SUITE RED                            116 pass / 2 fail
+    P7  CONTROL benign reword leaves suite GREEN      118/118
+
+    catching tests, both arms:
+      README must correctly describe single-entry tag count
+      README opening sentence must state correct multi-entry and single-entry tag counts
+
+    run4-cycle-004-r1attrib.mjs   4 PASS / 1 FAIL  (+ G1 adjudicated 4/4)
+    G3  D4a SURVIVES once those two are skipped      GREEN  -> kill attributed
+    G4  D4b SURVIVES once those two are skipped      GREEN  -> kill attributed
+    G5  the same arms still RED with them present    RED
+    G1  `# skipped == 2`                             INSTRUMENT DEFECT #16, adjudicated
+
+G1 asserted the TAP `# skipped` counter; `--test-skip-pattern` FILTERS rather than marking
+skipped, so that counter is 0 by construction. It failed CLOSED — it under-claimed
+attribution rather than asserting one that was not there. The adjudication is stronger than
+the cell it replaces, because two ARBITRARY tests vanishing would have satisfied a count:
+
+    A  DEFECT REPRODUCED  skipped_counter=0, executed 118 -> 116
+    B  REPAIR             removed set is EXACTLY the two named guards, by name
+    C  CONTROL            the R-1 target guard still RAN (so G3/G4 are not self-fulfilling)
+    D  CONTROL            a non-matching skip pattern removes NOTHING (118 vs 118)   4/4
+
+DECISIVE PROPERTY: the two covering guards re-derive from `src/corpus.js` at run time and
+FAIL CLOSED on an absent acknowledgement — the precise direction the target guard fails
+OPEN. A reshape adds a third guard over a covered property and needs README to own a NEW
+structural marker, i.e. editing a shipped document to satisfy a test.
+
+RESIDUAL, STATED NOT HIDDEN: those two guards are prose regexes bound to a corpus-derived
+number, not the structural markers R-1's acceptance asks for — coverage is behavioural, not
+architectural. The guard's OTHER recorded defect, the D1/D3/E3 false-rejection direction, is
+untouched by this decline. Re-open if a T-040 ruling reintroduces single-entry tags.
+
+### VERIFICATION EVIDENCE
+
+Sealed gate `run4-cycle-004-gate.mjs`, sha256 `dc077828d2364646...`, held under SWARM/runs/
+for the whole dispatch window and re-verified byte-identical after the run and after
+copy-in. Pre-dispatch baseline `run4-cycle-004-baseline.txt`: **9 PASS / 5 FAIL** on the
+unfixed tree, the five FAILs being exactly N-5's scope.
+
+    PASS A0   "## What is open" section exists
+    PASS A1   every blocked + declined id present     missing=none
+    FAIL A2   R-1 described as DECLINED               ADJUDICATED 11/11 — see below
+    PASS A3   every BLOCKED item names a human        without_human=none
+    FAIL A4   nothing re-described as agent work      ADJUDICATED 11/11 — see below
+    PASS A5a  substantive settling evidence           short=none
+    PASS A5b  item-specific, not boilerplate          longest_shared=48
+    PASS A6   counts agree with backlog.json NOW      claimed done=6 blocked=6 = truth
+    PASS A7   evidence here, not deferred             punt_phrase=false
+    PASS A8   still a first screen                    report_lines=125
+    PASS A9   nothing dropped                         pre=10 lost=none
+    PASS C1   suite green, >=118                      tests=118 pass=118 fail=0 exit=0
+    PASS C2   src/ bin/ test/ .github/ untouched      porcelain=""
+    PASS C3   zero dependencies                       no manifest, no lockfile
+    12 PASS / 2 FAIL of 14        both FAILs adjudicated, 11/11 columns
+
+test_cmd, run directly by the conductor, after the repairs:
+
+    tests 118 / suites 0 / pass 118 / fail 0 / duration_ms 4658.099763
+
+collision-scan: `applicable: false` — a CLI ships no classic browser scripts. Standing check
+run, not skipped.
+
+### TWO GATE BUGS FOUND BY ITS OWN PRE-SEAL BASELINE
+
+Fixed BEFORE sealing, which is repair; editing after a gate has run is destroying evidence.
+
+1. **C3 crashed** — it assumed a `package.json`. This repo has no manifest at all; the
+   absence of manifest, lockfile and `node_modules` *is* the zero-dependency proof. A cell
+   that throws is not a FAIL, it is a gate that cannot report.
+2. **A4 false-positived on J-7** — a bare `/\bswarm\b/` read J-7's honest citation of the
+   path `` `.swarm/SPEC.md` `` as an agent assignment. That bug would have failed against
+   every CORRECT answer as well as every wrong one.
+
+### INSTRUMENT DEFECTS #17 AND #18 — ONE ROOT CAUSE
+
+Both surviving FAILs trace to the gate slicing an item's entry from the FIRST occurrence of
+its id to the next id's occurrence. R-1's first mention is in the summary paragraph
+("...and 1 declined (R-1)"), so its slice began AFTER the word "declined" and could not
+structurally contain the answer A2 asked for. TS-3 is the LAST blocked id, so its slice ran
+through the "### Declined" heading and absorbed R-1's legitimate "ruled by this run's own
+conductor", which A4 then attributed to TS-3. Third bluntness: A4's `/this run/` fired on
+T-006's "no one in this run can reach a primary source" — a clause that REINFORCES human
+ownership.
+
+    run4-cycle-004-A2A4-adj.mjs    11 PASS / 0 FAIL, re-run against the REPAIRED tree
+    A  DEFECT REPRODUCED  sealed R-1 slice head = "R-1). Any bare count on this page..."
+    B  REPAIR             R-1's BULLET does say declined, with a reason   len=966
+    C  CONTROL            the old "not yet done" wording is STILL rejected
+    D  CONTROL            an R-1 bullet deleted outright is STILL rejected
+    E  DEFECT REPRODUCED  TS-3 slice bleeds past "### Declined"; "conductor" is
+                          in the sealed slice and NOT in TS-3's own bullet
+    F  REPAIR             no blocked bullet assigns the work to an agent   violations=[]
+    G  CONTROL            "a builder can pick this up next cycle" still FIRES
+    H  CONTROL            an agent named in the Next-actor field still FIRES
+    I  CONTROL            T-006's honest parenthetical is NOT a violation
+    J  CONTROL            extractor returns COMPLETE bullets (structural markers)
+    K  CONTROL            an agent assignment HIDDEN in a parenthetical still FIRES
+
+THE ADJUDICATION ARTIFACT WAS ITSELF WRONG TWICE BEFORE IT WAS RIGHT, which is the honest
+record. Its bullet regex ended with a bare `$` under the `m` flag, so every bullet was
+truncated at its first line (~85 chars) and the actor field was never in scope — caught only
+because columns F and I are the same predicate with opposite expectations and cannot both
+pass. Column J, the control that exists to catch exactly that, was a length threshold weak
+enough to pass on truncated output; it now demands the structural markers a complete bullet
+owns. Control K was added specifically to guard the narrowing that let column I pass.
+
+### THE ANTI-STALENESS CELL CAUGHT THE DECAY IN THE ACT
+
+Cycle 3 shipped a count that was true when the builder wrote it and false the instant that
+cycle's own commit landed, and the journal recorded that NO CELL OF THE GATE COVERED IT. So
+A6 this cycle re-derives every asserted count from `backlog.json` at run time. The sequence
+is the evidence, one byte-unchanged gate throughout:
+
+    N-5 still open   ->  PASS A6   claimed {done:5, inflight:1, blocked:6} == truth
+    N-5 marked done  ->  FAIL A6   claimed done 5 != 6, inflight 1 != 0
+    repaired         ->  PASS A6   claimed {done:6, blocked:6} == truth
+
+Eighth measurement of this decay class, and the FIRST caught by an instrument rather than by
+a person reading. The lesson is not "write more carefully" — cycle 3 tried that and produced
+the same defect. It is that a claim must be DERIVED FROM ITS SOURCE at verification time.
+
+### ONE REAL DEFECT, FOUND BY READING RATHER THAN BY THE GATE
+
+Twelve green cells sat over a REPORT.md that told a human to look at **"SPEC.md line 144"**
+for the retag example rewrite. The example is at **SPEC.md:206**; line 144 is unrelated prose
+about DONE/stall behaviour. The builder did NOT invent it — it is transcribed verbatim from
+T-040's `acceptance` clause in `backlog.json`, so the staleness is INHERITED, and it is the
+KI-23 drift class (line-number citations nothing re-derives). No cell asked whether a cited
+line number resolves. Repaired to cite the rule rather than the line, with the drift noted
+in place so the next reader is not sent to 144 again.
+
+This is the cycle-14 shape recurring: the gate was RIGHT AND INSUFFICIENT. A sealed gate
+bounds what you checked, never what is true.
+
+### A CONDUCTOR CROSS-CHECK PRODUCED A FALSE FINDING AND WAS KILLED BY MEASURING
+
+Spot-checking the builder's "8 HIGH / 16 MEDIUM / 26 LOW of 50", a quick
+`grep -oiE '(HIGH|MEDIUM|LOW)'` over the triage doc returned 12 / 21 / 28 — a flat
+contradiction. What stopped it being filed is that 12+21+28 = 61 against a 50-entry corpus:
+the grep was counting those words in the Method prose and the 2026-08-18 correction note,
+not table rows. Counting rows matching `^\|\s*\d+\s*\|` gives exactly 50 rows and
+8 / 16 / 26. **The builder was right; my instrument was wrong.** Third wrong instrument this
+cycle. The discipline of demanding evidence applies to the conductor's evidence too.
+
+### EVERY CHECKABLE FIGURE RE-DERIVED, AND THEY WERE ALL TRUE
+
+    corpus        50 entries / 12 distinct tags                        match
+    tags <= 4     5 of 12: philosophy 3; readability, reliability,
+                  language, process 4 each                             match
+    voices        Dijkstra 7 + Perlis 5 + Pike 5 = 17/50 = 34.0%       match
+    TS-1 draws    median first repeat at draw 9 (P=0.5345);
+                  P(repeat by 12) = 0.7618 -> 76.2%                    match
+    triage        50 rows, 8 HIGH / 16 MEDIUM / 26 LOW                 match
+    J-7           SPEC "Undecided behaviours" holds exactly D-42,
+                  D-43, D-44 — "the last three", first two unwritten   match
+    seed -0 vs 0  different aphorisms (Saint-Exupery vs Kernighan)     verified live
+
+The builder also volunteered a distinction the task never asked for — backlog.json names a
+specific actor ("repo owner, at the next kickoff") only for TS-1/2/3 and a generic "human"
+for T-006/T-040/J-7 — and PRESERVED it rather than inventing uniform specificity. That is
+the opposite of the overclaiming failure mode the refused haiku demotion would have risked.
+
+verdicts: N-5 DONE (conductor-verified). R-1 DECLINED (status `dropped`, not deleted).
+wave autotune: CLEAN wave — 0 reverts, 0 failed verifies. wave_streak 0 -> 1; k_current
+  stays 3, gear-2 cap of 2 still binds.
+must-haves: **M-4 CLOSED** — every open item now carries a named human actor and its own
+  settling evidence on the first screen, and R-1 is settled by explicit measured decline.
+  M-1, M-2, M-3 closed cycles 2-3; M-5 green (118/118/0). **All five must-haves are closed.**
+backlog: 6 done, 0 todo, 6 blocked (all six human-owned rulings, unchanged), 1 dropped.
+known issues: no new entries. The three wrong instruments this cycle (two pre-seal gate
+  bugs, one conductor grep) were found and measured within the cycle; they are gate/tool
+  bugs, not shipped product defects. The line-144 drift is an instance of the already-filed
+  KI-23 class, repaired in place.
+control channel: `swarm-notify.sh poll` was DENIED by the harness allowlist (denial #32 of
+  this repo's running count); `runs/control.json` read directly instead — `pending: []`,
+  no `inject` array. Non-fatal per cycle.md; file-sourced pending only.
+next: the DONE decision is now genuinely live — all five must-haves closed, zero todo, six
+  human-owned blocked items. It is DELIBERATELY NOT MADE THIS CYCLE. Run #3 cycle 8 declared
+  done and was wrong four times over, and the cycle-14 -> 15 pattern that got it right was to
+  score the board in one cycle and judge it in the next, against a tree that has settled.
+  ~21.8h of clock remains, so there is no pressure buying the shortcut. The next cycle should
+  re-run the DONE decision against this settled tree, and should specifically check whether
+  the two surfaces that could still be silently wrong (README.md, docs/) have MOVED since
+  their last full sweep — that was the load-bearing measurement of run #3 cycle 15.
+commit: (this cycle)
+runfile-mirror: written to runs/current.json and current.json.bak this cycle

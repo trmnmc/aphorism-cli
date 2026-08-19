@@ -44,24 +44,76 @@ correction and every dated claim, moved verbatim rather than summarized — live
 
 ## What is open
 
-Per `.swarm/backlog.json` **as of run #4 cycle 3** (a snapshot — the run is still
-moving): 13 tracked items — 5 done, 2 in flight, and **6 blocked on a human ruling an
-agent must not make**:
+Per `.swarm/backlog.json` **as of the close of run #4 cycle 4**: 13 tracked items — 6 done
+(N-1, N-2, N-3, N-5, N-6, N-7), nothing in flight, 6 blocked on a human ruling, and 1
+declined (R-1). Any bare count on this page is a snapshot dated to this cycle and goes
+stale the moment the run closes its next item — measured eight times now, including twice
+in this cycle alone: once when this paragraph was first written mid-cycle and falsified by
+the very commit that shipped it, and once at cycle 3 in the same way. The item names below
+stay true longer than the arithmetic; the counts are re-derived from `backlog.json` at each
+cycle's verification gate rather than trusted.
 
-| Item(s) | What's needed | Next actor |
-|---|---|---|
-| **T-006** | Audit the 50 corpus attributions against primary sources — start with the 8 HIGH-risk rows in `docs/corpus-attribution-triage.md` | human |
-| **T-040** | Ratify or reverse two judgment calls made in the tag-vocabulary fold (`testing → debugging` is the load-bearing one) | human |
-| **J-7** | Rule on five CLI behaviours the spec leaves unspecified (e.g. repeated `--tag`/`--author`, empty `--seed`) and record the ruling in `.swarm/SPEC.md` | human |
-| **TS-1 / TS-2 / TS-3** | Lift the "corpus expansion" non-goal before corpus depth, tag-pool depth or voice concentration can be addressed — all three wait on this one scope decision | human |
-| **R-1** | README acknowledgement-guard reshape — todo, not yet done or explicitly declined | this run |
-| **N-5** | Confirm every open item carries a named actor and the evidence that would settle it | this run (builder) |
+### Blocked on a human ruling
 
-`N-2` (this restructure) and `N-7` (the Node-floor citation in README) both closed
-conductor-verified at cycle 3 and are counted among the 5 done above.
+The six items below are blocked because a person, not an agent, must decide. None is
+re-described as work a builder could pick up.
 
-Every one of the items above has fuller evidence, prior attempts and exact citations
-already recorded in the appendix — search it for the item's id.
+- **T-006** — corpus attribution audit. *Next actor:* a human (no one in this run can
+  reach a primary source; network access is a product non-goal). *Settles when:* all 50
+  corpus attributions are checked against primary sources, starting with the 8 rows marked
+  HIGH risk in [`docs/corpus-attribution-triage.md`](docs/corpus-attribution-triage.md)
+  (8 HIGH / 16 MEDIUM / 26 LOW of 50).
+- **T-040** — two judgment calls from the cycle-46 tag retag. *Next actor:* a human.
+  *Settles when:* they ratify or reverse (a) the 26-name fold map — especially
+  `testing → debugging`, the load-bearing one, since it dissolves the corpus's only tag for
+  testing as a discipline — and (b) confirm the example rewrite in SPEC.md's Domain rules,
+  where the illustration `` `--tag test` does not match a `testing` tag `` became
+  `` `--tag desi` does not match a `design` tag `` because the retag removed the tag the old
+  illustration named. (T-040's acceptance clause in `backlog.json` cites this as "line 144";
+  that line number has since drifted and the example now sits at SPEC.md:206 — cite the rule,
+  not the line.) Recorded for the same ruling: all 26 retired
+  tag names now return the identical "no match" message as a tag name that never existed,
+  so whether to add a "did you mean" hint is a further human call.
+- **J-7** — five CLI behaviours the SPEC leaves undecided. *Next actor:* a human.
+  *Settles when:* an explicit clause goes into `.swarm/SPEC.md` for each of: `--help` vs.
+  usage-error precedence when both appear in argv; whether `--seed -0` and `--seed 0` pick
+  the same aphorism (today they don't — different IEEE-754 bit patterns); repeated
+  `--tag`/`--author` (last-occurrence wins today, unprotected by any test); empty or
+  whitespace `--seed` (SPEC's Selection and Exit-codes clauses point opposite ways); empty
+  `--author`/`--tag` via `=` form vs. space form (same kind of clash). SPEC.md's own
+  "Undecided behaviours" section already documents the last three in full; the first two
+  exist only in `backlog.json`'s J-7 notes, still to be written up once ruled.
+- **TS-1** — corpus depth: under uniform draws over the 50-entry corpus, median first
+  repeat lands at draw 9 and P(repeat by draw 12) = 76.2%. *Next actor:* a human, the repo
+  owner, at the next kickoff. *Settles when:* the owner lifts SPEC.md's locked "corpus
+  expansion" non-goal.
+- **TS-2** — tag-pool depth: 5 of 12 tags hold <= 4 entries (`philosophy`=3;
+  `readability`, `reliability`, `language`, `process`=4 each). *Next actor:* a human, the
+  repo owner, at the next kickoff (same scope decision as TS-1). *Settles when:* corpus
+  expansion is permitted; until then only README/help wording steering users toward larger
+  pools is in scope.
+- **TS-3** — voice concentration: Dijkstra 7 + Perlis 5 + Pike 5 = 17/50 = 34% of the
+  corpus in three voices. *Next actor:* a human, the repo owner, at the next kickoff (same
+  scope decision as TS-1). *Settles when:* corpus expansion is permitted and new entries
+  diversify author and era rather than deepen the three already-dominant voices.
+
+### Declined
+
+- **R-1** — README acknowledgement-guard reshape. **Declined, not dropped:** `status:
+  dropped` in `backlog.json`, ruled by this run's own conductor at run #4 cycle 4. The
+  property the guard exists to protect is already covered, twice, by two sibling count
+  guards that re-derive their expected value from `src/corpus.js` and fail CLOSED — the
+  opposite of the direction the original guard was found to fail in (silent on a stripped
+  acknowledgement). Reshaping would have added a third guard over an already-covered
+  property. Stated rather than hidden: those two covering guards are prose regexes bound to
+  a corpus-derived count, not the structural document marker R-1's acceptance asked for, and
+  the original guard's separate false-rejection defect (an honest reword can make it fire)
+  is untouched by this decline. *Re-opens if:* a human ruling on T-040 reintroduces
+  single-entry tags, or README's phrasing moves away from the literal count phrase.
+
+Fuller background, prior attempts and exact citations for every item above live in
+`.swarm/backlog.json`'s own notes; items open before this run are also covered in
+[`docs/report-history.md`](docs/report-history.md).
 
 ## Full history
 
