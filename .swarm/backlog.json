@@ -316,7 +316,7 @@
    "kind": "fix",
    "effort": "S",
    "priority": 8,
-   "status": "todo",
+   "status": "done",
    "attempts": 0,
    "model": "sonnet",
    "files_hint": [
@@ -325,7 +325,8 @@
    "packages": [],
    "deps": [],
    "acceptance": "README's exit-code table stops claiming exit 3 means 'a real stdout write failure ... one `aphorism: …` line on stderr'. The row must also cover the stderr-side case: a non-EPIPE STDERR write failure ALSO exits 3, emits NO diagnostic anywhere, and deliberately replaces the exit code the run had already earned (1 or 2). That behaviour is intended and test-pinned (test/pipe.test.js:160 asserts status !== 2/1/0), so the DOCUMENT is what changes, never the code or the test. The nearby prose at README.md:117-119 must stay consistent with the corrected row.",
-   "notes": "From cycle-7 QA live-look L-02, conductor-reproduced (gate c007-gate-qa.mjs A5/A6/A7/A8/A9, 15/15). Measured: `--tag nope 2>/dev/full` -> exit 3 (earned 1 destroyed); `--bogus 2>/dev/full` -> exit 3 (earned 2 destroyed); both with zero readable diagnostic. Control C2 proves this is specific to a FAILING stderr device: a merely CLOSED stderr (`exec 2>&-`) preserves 1 and 2, because Node reopens closed stdio to /dev/null."
+   "notes": "From cycle-7 QA live-look L-02, conductor-reproduced (gate c007-gate-qa.mjs A5/A6/A7/A8/A9, 15/15). Measured: `--tag nope 2>/dev/full` -> exit 3 (earned 1 destroyed); `--bogus 2>/dev/full` -> exit 3 (earned 2 destroyed); both with zero readable diagnostic. Control C2 proves this is specific to a FAILING stderr device: a merely CLOSED stderr (`exec 2>&-`) preserves 1 and 2, because Node reopens closed stdio to /dev/null.\n\n|| RUN #4 CYCLE 8 VERIFIED. README exit-3 row now covers BOTH streams; the stdout half was preserved verbatim (gate A1), so nothing was deleted. Sealed gate cells A0-A9 PASS with all four Q-5 controls green (C1 must-die, C2 must-stay-green rewrap, C3 denial-decoy must-die, C8 the shipped-unfixed row must stay dead). BEHAVIOUR RE-MEASURED BY THE CONDUCTOR, not inherited from cycle 7: --tag zzznope 2>/dev/full -> 3, --bogus 2>/dev/full -> 3, stdout empty; working stderr -> 1 and 2; CLOSED stderr (2>&-) -> 1 and 2, so exit 3 is specific to a FAILING device, not an absent one. ONE BOUNDARY THE GATE NEVER ASKED, probed separately because the new README sentence makes a completeness claim (\"replaces the 1 or 2 the run had already earned\"): a would-be exit-0 run is UNAFFECTED by a failing stderr (--seed 5 2>/dev/full -> 0, --help 2>/dev/full -> 0). So the claim is complete, not understated. Suite unmoved: 118/118/0, conductor-run. The builder disclosed that its sandbox blocked its own /dev/full redirection and declined to fabricate the measurement, cross-checking test/pipe.test.js instead - an honest limit reported rather than papered over.",
+   "verified_cycle": 8
   },
   {
    "id": "Q-6",
@@ -350,7 +351,7 @@
    "kind": "docs",
    "effort": "S",
    "priority": 7,
-   "status": "todo",
+   "status": "done",
    "attempts": 0,
    "model": "sonnet",
    "files_hint": [
@@ -359,7 +360,8 @@
    "packages": [],
    "deps": [],
    "acceptance": "The gap is RECORDED, not silently repaired. Exit 3 was introduced at run #3 cycle 8; the SPEC Domain rule still reads \"Exit codes: 0 success, 1 no match, 2 bad usage\" (gate A10, read structurally from the bullet). Amending a Domain rule is a SPEC change and this run may not make one: the Domain-rules header calls those clauses the regression floor and the 29-clause coverage map is measured against them. So the correct disposition is an \"Undecided behaviours\" entry in the D-42/D-43/D-44 grammar (shipped behaviour / why the SPEC does not decide it / status) routed to J-7 for a human ruling — and J-7's count, which run #3 cycle 14 had to reconcile across six REPORT.md sites, must be re-derived from the backlog rather than hardcoded.",
-   "notes": "Conductor finding, not an agent claim — surfaced by gate A10 and corroborated by the coverage-map chronology: the 43-clause enumeration was derived at run #3 cycle 4, four cycles BEFORE the stderr handler and exit 3 landed at run #3 cycle 8, so no clause ever covered exit 3. The TEST suite does cover it (test/pipe.test.js:86 and :160, both exercising /dev/full, skipped 0 in the 118/118 run) — this is a SPEC and README gap, not a test hole, which is why it adds no tests (M-5)."
+   "notes": "Conductor finding, not an agent claim — surfaced by gate A10 and corroborated by the coverage-map chronology: the 43-clause enumeration was derived at run #3 cycle 4, four cycles BEFORE the stderr handler and exit 3 landed at run #3 cycle 8, so no clause ever covered exit 3. The TEST suite does cover it (test/pipe.test.js:86 and :160, both exercising /dev/full, skipped 0 in the 118/118 run) — this is a SPEC and README gap, not a test hole, which is why it adds no tests (M-5).\n\n|| RUN #4 CYCLE 8 VERIFIED. D-45 recorded in SPEC.md § Undecided behaviours in the exact D-42/D-43/D-44 grammar, and routed to J-7 as its SIXTH ruling. THE DOMAIN RULE DID NOT MOVE - gate cell B5 hashes the whole logical Exit-codes bullet against its pre-dispatch seal (4545c0eb...) and it matched, with control C6 proving the hash actually dies on a mutation. That is the load-bearing check: the item exists to RECORD the gap, and repairing the regression floor is the one thing it was forbidden to do. B1 (4 entries, incl D-45), B2 (all three grammar bullets), B6 (REPORT count word re-derived from backlog.json at run time - \"six\" = \"six\", with control C7 proving B6 is not satisfied by ANY number word), B7 (the sixth behaviour enumerated in substance) all PASS. B3/B4 FAILED and were adjudicated 8/8 as INSTRUMENT DEFECTS in run4-cycle-008-B3B4-adj.mjs with the sealed gate left byte-unedited: both cells read only the FIRST SOURCE LINE of a bullet, and the builder wrapped its D-45 bullets at ~90 columns while the three pre-existing entries are single unwrapped lines. Same root cause as a bug this gate own pre-seal baseline had ALREADY caught and repaired for B5 - and the repair was not propagated. The adjudication carries a no-regression column (the fixed reader still reads the unwrapped D-42/D-43/D-44), two must-die columns, and two MUST-NOT-OVERREACH columns proving the whole-bullet reader cannot absorb a neighbouring bullet - the failure mode that produced instrument defects #17/#18 at run #3 cycle 4. Conductor also verified the count arithmetic by reading: the bullet enumerates 6 behaviours, \"the last four\" = D-42/D-43/D-44/D-45 (correct after this edit), \"the first two\" remain backlog-only, 2+4=6 matches the backlog title. Suite unmoved: 118/118/0.",
+   "verified_cycle": 8
   }
  ]
 }

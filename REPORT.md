@@ -74,15 +74,17 @@ re-described as work a builder could pick up.
   not the line.) Recorded for the same ruling: all 26 retired
   tag names now return the identical "no match" message as a tag name that never existed,
   so whether to add a "did you mean" hint is a further human call.
-- **J-7** — five CLI behaviours the SPEC leaves undecided. *Next actor:* a human.
+- **J-7** — six CLI behaviours the SPEC leaves undecided. *Next actor:* a human.
   *Settles when:* an explicit clause goes into `.swarm/SPEC.md` for each of: `--help` vs.
   usage-error precedence when both appear in argv; whether `--seed -0` and `--seed 0` pick
   the same aphorism (today they don't — different IEEE-754 bit patterns); repeated
   `--tag`/`--author` (last-occurrence wins today, unprotected by any test); empty or
   whitespace `--seed` (SPEC's Selection and Exit-codes clauses point opposite ways); empty
-  `--author`/`--tag` via `=` form vs. space form (same kind of clash). SPEC.md's own
-  "Undecided behaviours" section already documents the last three in full; the first two
-  exist only in `backlog.json`'s J-7 notes, still to be written up once ruled.
+  `--author`/`--tag` via `=` form vs. space form (same kind of clash); and exit code 3 on a
+  write failure, on either stream, which the Exit-codes Domain rule's "0 success, 1 no
+  match, 2 bad usage" enumeration never mentions. SPEC.md's own "Undecided behaviours"
+  section already documents the last four in full; the first two exist only in
+  `backlog.json`'s J-7 notes, still to be written up once ruled.
 - **TS-1** — corpus depth: under uniform draws over the 50-entry corpus, median first
   repeat lands at draw 9 and P(repeat by draw 12) = 76.2%. *Next actor:* a human, the repo
   owner, at the next kickoff. *Settles when:* the owner lifts SPEC.md's locked "corpus

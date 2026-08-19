@@ -241,6 +241,25 @@ loud; the aphorism is the product.
 - **Why the SPEC does not decide it:** Exit codes makes a missing flag argument a usage error and the `=` branch's rejection of an empty value is a deliberate line of code, so empty could be read as missing. Against that: a shell passing `''` DID supply an argument, and the space-form results follow mechanically from Filtering's substring and whole-tag clauses. No clause names an empty value or distinguishes the two forms.
 - **Status:** No test pins this. Human-owned, tracked as backlog item J-7.
 
+**Exit code 3 on stdout/stderr write failure (measured gap D-45)**
+
+- **Shipped behaviour:** `bin/aphorism.js` exits 3 on a write failure, on both streams. A
+  non-EPIPE stdout failure exits 3 and emits one `aphorism: ...` diagnostic line on stderr.
+  A non-EPIPE stderr failure also exits 3, emits no diagnostic anywhere, and deliberately
+  replaces the exit code the run had already earned (1 or 2) — measured:
+  `--tag zzznope 2>/dev/full` -> 3 (earned 1 destroyed), `--bogus 2>/dev/full` -> 3 (earned 2
+  destroyed).
+- **Why the SPEC does not decide it:** The Domain rule enumerates "0 success, 1 no match, 2
+  bad usage" and never mentions 3. Exit 3 landed at run #3 cycle 8, four cycles after the
+  43-clause coverage map was derived at run #3 cycle 4 — chronology is why no clause ever
+  covered it. The clash: if the Exit-codes clause is a closed enumeration, shipped exit 3
+  violates the regression floor; if it is open, exit 3 is an unlisted-but-legal addition and
+  the clause needs a sentence saying so. Nothing in the SPEC says which.
+- **Status:** No test pins this SPEC/README gap — though the test suite does cover the
+  exit-3 behaviour itself (test/pipe.test.js:86 and :160, both exercising `/dev/full`, 0
+  skipped in the 118/118 run). This is a SPEC and README gap, not a test hole. Human-owned,
+  tracked as backlog item J-7.
+
 ## Definition of done
 
 **Product (met 2026-08-14, must not regress):** `node bin/aphorism.js` prints a random

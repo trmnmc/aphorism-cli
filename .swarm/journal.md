@@ -15329,3 +15329,339 @@ runfile-mirror:
  "wrap_up_complete": false
 }
 ```
+
+## cycle 8 — QA → BUILD — the cycle-7 QA findings converted into shipped repair
+
+work: build-wave [Q-5, Q-7], dispatched as two DIRECT sonnet Agent calls rather than
+`workflows/build-wave.js` — headless pacer-spawned `-p` cycle, Workflow tool review-gated,
+the documented SKILL.md RESUME fallback (same basis as run #3 c6/8/9/10/13/14 and run #4
+c2/3/4/5/7). No worktrees, so the two agents got strictly disjoint file scopes.
+gear 2 (guest, weekly ceiling 2, rho=0.05, demote=true, promote=false), k_cap 2.
+clock: 20.1h to stop_at at cycle open — no time pressure on any decision below.
+control channel: `poll ok merged=0`, `pending: []`, `inject: []` — nothing to apply.
+outcome: **2 items verified done, 0 reverts, 0 failed verifies.** Backlog todo 3 → 1.
+
+### WHY A FIX WAVE AND NOT THE OWED TASTE GATE
+
+TASTE is the one pre-POLISH gate run #4 still owes (review-fix c5, QA-full c7; the
+`last_taste_cycle: 9` in state.json is a RUN #3 marker and reading it as this run's
+evidence is the error run #3 cycle 12 caught). It was not picked, deliberately.
+
+Cycle 7's QA pass produced three findings, all conductor-reproduced 15/15 with five
+controls at the time they were filed. Running a second discovery pass on top of an
+unrepaired list grows the list; run #3 cycle 7 faced the identical choice and recorded
+the shipping outcome as the right one. TASTE is a 900s work type against a 20-hour
+clock — nothing about paying it next cycle is at risk. What would have been at risk is
+the finding-to-repair latency, which is the only thing a QA pass is ultimately for.
+
+### THE WAVE
+
+    k effective = min(k_current 3, gear cap 2, hard max 5) = 2
+
+    Q-5  README.md                     sonnet   README's exit-3 row contradicted shipped behaviour
+    Q-7  .swarm/SPEC.md, REPORT.md     sonnet   exit 3 absent from the SPEC Exit-codes enumeration
+
+Q-6 (`--author` is diacritic-sensitive) was the third cycle-7 finding and is ALSO a
+README.md edit, so it could not share a wave with Q-5 under the disjoint-scope rule. It
+is the only remaining todo and is the natural pick after TASTE.
+
+ROUTING, both held at sonnet, for two different reasons:
+
+  - Q-5 is `kind: fix`, which the table never sends to haiku (build/fix never drops below
+    sonnet in any gear). Its plan-time `haiku` was a PLAN-TIME field and was corrected at
+    pick time, which is where routing is decided.
+  - Q-7 is `kind: docs, effort: S`, which the TABLE ITSELF routes to haiku. That was
+    overridden — see the cycle-8 routing decision. This is a stronger override than the
+    demotion refusals of cycles 1/4/5, because it runs against the table under a gear
+    that sets `promote: false`.
+
+### THE GATE, SEALED BEFORE DISPATCH
+
+    file        SWARM/runs/run4-c008-gate.mjs   (held OUTSIDE the target for the whole
+                dispatch window — hard rule 5 forbids passing SWARM paths to agents, so a
+                gate living there is STRUCTURALLY unreachable rather than merely forbidden)
+    sha256      4f37ef9774613e661aea0f36b4bb376b45f36ed04cc1e20b9063ecdf3958f212
+                committed to the target at da36d6a8 BEFORE any agent ran;
+                re-hashed after the run: IDENTICAL.
+    baseline    17 PASS / 10 FAIL of 27 cells, committed to the target first
+                RED   (the work must turn these green): A2 A3 A4 B1 B2 B3 B4 B6 B7 G1
+                GREEN (13 controls + 7 standing truths): A0 A1 A5 A6 A7 A8 A9 B5
+                      C1 C2 C3 C4 C5 C6 C7 C8 G2
+
+THREE GATE BUGS FOUND BY THAT BASELINE AND FIXED BEFORE SEALING. Two were ordinary. The
+third is the one worth carrying:
+
+**A2 was a FALSE PASS.** It asked for `stderr` AND `3` AND a failure token anywhere in the
+`## Exit codes` section. Whitespace-normalising a section that contains a markdown TABLE
+glues every row into one punctuation-free blob, so the sentence splitter emitted a single
+unit carrying tokens harvested from three different rows — and the UNFIXED document
+satisfied it. The shipped row names stderr as the DIAGNOSTIC DESTINATION, not as a failing
+stream. That is the KI-12 / R-1 failure class precisely: a claim satisfied by
+co-occurrence inside a span nobody intended as a sentence.
+
+Repaired twice over, both pre-seal: the unit pool now treats each table row as its OWN
+unit and never merges neighbours, and A2 was reshaped from a section-wide bag of words
+into a demand for SUBSTANCE inside the exit-3 row itself. Control C8 pins it — it feeds
+the sealed cell the literal shipped-unfixed row text and requires it to stay dead.
+
+Three of this run's instrument defects so far were false FAILs, which announce themselves.
+This one was a false PASS. Only a DISCRIMINATING baseline — one that declares which cells
+must be RED *before the work exists* — could have caught it. A baseline that merely ran
+its controls would have shipped it green.
+
+### VERIFICATION EVIDENCE
+
+Sealed gate, byte-unchanged, against the delivered tree:
+
+    PASS  A0  README has a "## Exit codes" section with an exit-3 table row
+    PASS  A1  the exit-3 row still documents the STDOUT case (nothing deleted)
+    PASS  A2  the exit-3 ROW itself covers the stderr-side case in substance
+    PASS  A3  the section asserts NO diagnostic is emitted in the stderr-failure case
+    PASS  A4  the section asserts the ALREADY-EARNED exit code (1 or 2) is replaced
+    PASS  A5  BEHAVIOUR: failing stderr gives exit 3 on a would-be exit-1 run  (exit=3)
+    PASS  A6  BEHAVIOUR: failing stderr gives exit 3 on a would-be exit-2 run  (exit=3)
+    PASS  A7  BEHAVIOUR: nothing reaches stdout in the stderr-failure case     (stdout="")
+    PASS  A8  CONTROL: a WORKING stderr preserves 1 and 2
+    PASS  A9  CONTROL: a merely CLOSED stderr also preserves 1 and 2
+    PASS  C1  CONTROL must-die: strip stderr units -> A3/A4 both FAIL
+    PASS  C2  CONTROL must-stay-green: benign REWRAP leaves A3/A4 unchanged
+    PASS  C3  CONTROL must-die: a DENIAL of the property does not satisfy A3/A4
+    PASS  C8  CONTROL must-die: the shipped-unfixed row stays dead against A2
+    PASS  B1  SPEC gained a FOURTH Undecided entry and it is D-45   (ids=[D-42,D-43,D-44,D-45])
+    PASS  B2  the D-45 entry carries all three grammar bullets
+    FAIL  B3  the D-45 Status bullet routes the ruling to J-7          <- instrument defect
+    FAIL  B4  the D-45 Shipped bullet names exit 3 on BOTH streams     <- instrument defect
+    PASS  B5  MUST-NOT-MOVE: Domain-rules "Exit codes:" bullet byte-identical to its seal
+              sha=4545c0eb720e6e54 sealed=4545c0eb720e6e54
+    PASS  B6  REPORT J-7 count word re-derived from backlog.json  (REPORT "six" = backlog "six")
+    PASS  B7  REPORT J-7 bullet enumerates the sixth behaviour in substance
+    PASS  C4  CONTROL must-die: deleting D-45 drops the count to 3
+    PASS  C5  CONTROL must-stay-green: benign REWRAP leaves the entry parse unchanged
+    PASS  C6  CONTROL must-die: mutating the Domain-rules bullet changes B5's hash
+    PASS  C7  CONTROL must-die: rewriting the J-7 count to "seven" makes B6 FAIL
+    PASS  G1  SCOPE: working tree vs seal commit = [.swarm/SPEC.md, README.md, REPORT.md]
+              extra=[]  — exactly the three permitted files, nothing else
+    PASS  G2  SUITE: tests=118 pass=118 fail=0
+
+    === 25 PASS / 2 FAIL of 27 cells ===
+
+test_cmd, run by the conductor (not the agents' self-report):
+
+    ℹ tests 118
+    ℹ suites 0
+    ℹ pass 118
+    ℹ fail 0
+    ℹ cancelled 0
+    ℹ skipped 0
+    ℹ todo 0
+    ℹ duration_ms 4986.719332
+
+### THE TWO FAILS — INSTRUMENT DEFECTS #19 AND #20, AND A REPEAT OF MY OWN MISTAKE
+
+B3 and B4 read a markdown bullet by taking the first SOURCE LINE matching its label. The
+builder wrapped its D-45 bullets at ~90 columns; the three pre-existing entries are single
+unwrapped lines. So `J-7` and `stdout`/`stderr` sat on continuation lines that were
+structurally out of the cells' scope. Both failed CLOSED, which is what you want from a
+wrong instrument.
+
+**The root cause was already known to this gate.** The pre-seal baseline had found the
+identical bug in cell B5 — the Domain-rules Exit-codes bullet also wraps across two source
+lines, and the seal originally covered only the first half of it. I repaired B5 and did
+not propagate the repair to the two sibling cells that read bullets the same way. A defect
+found in one cell of a gate is evidence about every cell of that gate; I treated it as
+evidence about one cell.
+
+Adjudicated 8/8 in `.swarm/runs/run4-cycle-008-B3B4-adj.mjs`, sealed gate left BYTE-UNEDITED
+(run #3 cycles 4/12/14 precedent: rewriting a gate after it has run destroys the evidence
+of what it measured):
+
+    PASS  A  UNFIXED single-line reader MISSES on the real D-45 bullets   (defect reproduced)
+    PASS  B  FIXED whole-bullet reader recovers truth                     [true, true]
+    PASS  C  NO REGRESSION: fixed reader still reads the 3 unwrapped pre-existing entries
+    PASS  D  MUST-DIE: D-45 Status with J-7 removed still FAILS
+    PASS  E  MUST-DIE: a Shipped bullet naming only stdout still FAILS
+    PASS  F  MUST-NOT-OVERREACH: Status lacking J-7 + a FOLLOWING bullet that HAS J-7 -> FAILS
+    PASS  G  MUST-NOT-OVERREACH: Shipped stripped of both streams, names moved into the NEXT
+             bullet -> still FAILS
+    PASS  H  BLAST RADIUS measured, not asserted: B2's presence regexes scan the whole body
+             and are wrap-immune, so no other cell shares the defect
+
+Columns F and G exist because the repair could introduce the exact bug that produced
+instrument defects #17/#18 at run #3 cycle 4 — a slice that runs past its bullet and
+absorbs a neighbour's text. The repair is measured against the bug the repair itself risks.
+
+### ONE BOUNDARY THE GATE NEVER ASKED, PROBED BY READING THE DIFF
+
+The cycle-14 lesson is that a gate can be RIGHT AND INSUFFICIENT, so the diff was read
+rather than only measured. The new README sentence makes a COMPLETENESS claim — exit 3
+"deliberately overwrites whatever exit code the run had already earned (`1` or `2`)". No
+cell asked whether a would-be exit-**0** run is also affected, which if true would make the
+sentence an understatement. Measured directly:
+
+    node bin/aphorism.js --seed 5    2>/dev/full   -> 0     (successful run, unaffected)
+    node bin/aphorism.js --help      2>/dev/full   -> 0     (unaffected)
+    node bin/aphorism.js --seed 5    2>/dev/null   -> 0     (control)
+    node bin/aphorism.js --tag zzznope 2>/dev/full -> 3     (earned 1 destroyed)
+    node bin/aphorism.js --bogus     2>/dev/full   -> 3     (earned 2 destroyed)
+
+The claim is COMPLETE, not understated. A successful run writes nothing to stderr, so no
+stderr failure arises to destroy its 0. This time the extra read confirmed the work rather
+than catching it — recorded because a check is not worth less for coming back clean.
+
+### DISCLOSED NARROWNESS IN THE GATE, CAUSING NO WRONG VERDICT
+
+A4's replaced-code token list matches `replac|overrid|supersed|destroy|discard|instead of`
+and the builder wrote "**overwrites**", which none of them match (`overrid` ≠ `overwrit`).
+A2 passed on its other disjunct and A4 passed on the prose sentence's "discarding a `1` or
+`2`", so no verdict was affected — but the token list is narrower than English, and that is
+disclosed rather than left for a later cycle to trip over. Not filed as an issue: the cells
+carry disjunctions and controls, and the narrowness costs nothing today.
+
+### AGENT SELF-REPORTS, BOTH HONEST
+
+The Q-5 builder's sandbox blocked its own `2>/dev/full` redirection. It said so, declined
+to fabricate the measurement, and cross-checked `test/pipe.test.js` instead. The Q-7
+builder volunteered that the four REPORT.md line numbers cited in J-7's backlog notes
+(~1062/~1230/~1244/~1300) no longer exist — the file is 124 lines since the cycle-3 move —
+and established that by grepping the whole file rather than trusting the stale citations.
+No agent self-report required correction this cycle, the second such cycle on this repo.
+
+### WAVE AUTOTUNE
+
+Clean wave — 0 reverts, 0 failed verifies. `wave_streak` 1 → 2 → `k_current` 3 → 4,
+streak reset to 0. The gear-2 cap of 2 still binds the effective size.
+
+### HAND-OFF
+
+Backlog todo is down to **Q-6** alone (`--author` is diacritic-sensitive; README.md;
+conductor-reproduced at cycle 7 as gate A1-A4). The six survivors are human-owned blocked
+items and R-1 is dropped.
+
+The owed gate is **TASTE**, and it is now the only pre-POLISH gate run #4 has not paid.
+Its delta was measured at cycle 7 and is real, not vacuous: src/args.js and
+test/readme-tags.test.js differ from the run #3 cycle-9 taste tree. Next cycle should pay
+it, then take Q-6. Do NOT read `state.json.qa.last_taste_cycle: 9` as this run's evidence —
+it is a run #3 marker.
+
+runfile-mirror:
+
+```json
+{
+ "version": 1,
+ "targets": [
+  {
+   "path": "/opt/targets/aphorism-cli",
+   "status": "active",
+   "weight": 1
+  }
+ ],
+ "rotation_cursor": 0,
+ "rotation_schedule": [
+  0
+ ],
+ "stop_at": "2026-08-20T14:05:09Z",
+ "usage_reset_at": "2026-08-19T18:00:00Z",
+ "model_policy": "value-routing",
+ "auth_mode": "subscription",
+ "heartbeat": {
+  "ts": 1787163138,
+  "next_wakeup_at": 1787165004,
+  "pid": 2560375,
+  "limp": false,
+  "degraded_tiers": []
+ },
+ "pacing": {
+  "mode": "guest",
+  "dial": 0.3
+ },
+ "budget": {
+  "source": "probe",
+  "gear": 2,
+  "gear_target": 2,
+  "ratio": 0.05,
+  "mode": "guest",
+  "k_cap": 2,
+  "promote": false,
+  "demote": true,
+  "window_tokens": 104679632,
+  "window_cost_usd": 85.07965629999998,
+  "api_cap_usd": null,
+  "api_spend_usd": 0,
+  "tokens_per_hour": 27236914,
+  "projected_depletion_at": 1787167356,
+  "last_probe_ts": 1787162304,
+  "last_real_probe_ts": 1787162304,
+  "probe_failures": 0,
+  "weekly": {
+   "ok": true,
+   "weekly_used_pct": 100,
+   "opus_used_pct": 100,
+   "week_elapsed_pct": 36.26,
+   "weekly_heat": 2.76,
+   "opus_heat": 2.76,
+   "ceiling": 2,
+   "promote_blocked": true
+  }
+ },
+ "playbook": {
+  "mode": "auto",
+  "applied": [
+   "L-008",
+   "L-016",
+   "L-024",
+   "L-026",
+   "L-029",
+   "L-031",
+   "L-033",
+   "L-034",
+   "L-038",
+   "L-042",
+   "L-043",
+   "L-044",
+   "L-046"
+  ],
+  "vetoed": [],
+  "note": "staged by DIRECT READ of playbook/learnings.md at kickoff. CORRECTED at cycle 6: bin/swarm-playbook.sh is genuinely NOT allowlisted in any form (re-executed and DENIED this cycle, gate A2), so the hand-written applied.log ledger line stands. But the SAME cycle refuted the adjacent claims about bin/swarm-notify.sh — that helper IS allowlisted under its absolute path and has logged 11/11 ok all run. See journal cycle 6.",
+  "directives": {
+   "wave_k": 2,
+   "routing_recs": [
+    "core-logic->fable"
+   ],
+   "prompt_lines": {
+    "builder": [
+     "The conductor is the SOLE committer — never commit or push yourself",
+     "The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test"
+    ],
+    "reviewer": [
+     "The conductor is the SOLE committer — never commit or push yourself",
+     "Assign each fixer a pairwise-disjoint file set; two fixers must never share a file",
+     "The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test"
+    ],
+    "qa": [
+     "The conductor is the SOLE committer — never commit or push yourself",
+     "Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'.",
+     "Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value.",
+     "Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps.",
+     "Classify each surviving mutant as HOLE (a real gap - harden it) or BOUNDARY (behaviour the spec does not decide - document it) BEFORE writing any test",
+     "When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence.",
+     "For every mutation that must kill the suite, author one control that must leave it GREEN — a check that dies on everything is a snapshot test, not an assertion",
+     "Never assert against prose matched by regex — read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns"
+    ]
+   }
+  }
+ },
+ "watchdog": {
+  "mode": "normal",
+  "plist_loaded": true,
+  "lockfile": "/opt/swarm/runs/watchdog.lock",
+  "relaunch_attempts": 0
+ },
+ "wrap_up_complete": false,
+ "cycles_since_recycle": 8,
+ "artifact": {
+  "url": "",
+  "file": "/opt/swarm/runs/dashboard.html",
+  "publish_failures": 0
+ }
+}
+```

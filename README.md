@@ -109,15 +109,21 @@ stderr rather than printing an aphorism. The fold map that produced this change 
 | `0` | Success — an aphorism (or the help text) was printed to stdout |
 | `1` | No aphorism matched the given filters; message on stderr, stdout empty |
 | `2` | Usage error — unknown flag, seed that `Number()` parses to NaN, or missing flag argument |
-| `3` | The output could not be written — a real stdout write failure (for example the device is full); one `aphorism: …` line on stderr |
+| `3` | The output could not be delivered. A real stdout write failure (for example the device is full) exits `3` with one `aphorism: …` line on stderr. A real *stderr* write failure (same kind of device error, not a reader hanging up) also exits `3`, but with no diagnostic anywhere — on either stream — and it deliberately overwrites whatever exit code the run had already earned (`1` or `2`) |
 
 Errors always go to stderr, so `node bin/aphorism.js --tag nonexistent > out.txt`
 leaves `out.txt` empty rather than writing a diagnostic into your pipeline.
 
 Exit `3` exists so that a failure to *deliver* the output is never confused with exit `1`,
-which means the corpus had nothing to say. A reader that hangs up without reading is not an
-error at all: `node bin/aphorism.js --list | true` and `… | head -0` both break the pipe,
-and the tool exits `0` with nothing on stderr, the way a well-behaved Unix filter should.
+which means the corpus had nothing to say. That holds whether the delivery failure is on
+stdout or on stderr: if stderr itself can't be written to, the tool doesn't retry the write
+(that risks recursing into its own failure handler) and doesn't reroute the diagnostic to
+stdout (that would corrupt the data channel calling scripts parse), so exit `3` alone —
+with no message anywhere — is deliberately left as the only signal, even when it means
+discarding a `1` or `2` the run had already earned. A reader that hangs up without reading
+is not an error at all: `node bin/aphorism.js --list | true` and `… | head -0` both break
+the pipe, and the tool exits `0` with nothing on stderr, the way a well-behaved Unix filter
+should.
 
 ## Attribution
 

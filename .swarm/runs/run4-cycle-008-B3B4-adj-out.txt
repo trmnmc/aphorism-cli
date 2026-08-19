@@ -1,0 +1,28 @@
+PASS  A  UNFIXED single-line reader MISSES on the real D-45 bullets (defect reproduced)
+        expected=[false,false] got=[false,false]
+        status1stline="- **Status:** No test pins this SPEC/README gap — though the test suite does cover the" shipped1stline="- **Shipped behaviour:** `bin/aphorism.js` exits 3 on a write failure, on both streams. A"
+PASS  B  FIXED whole-bullet reader recovers truth on the real D-45 bullets
+        expected=[true,true] got=[true,true]
+        status="- **Status:** No test pins this SPEC/README gap — though the test suite does cover the exit-3 behaviour itself (test/pipe.test.js:" | shipped="- **Shipped behaviour:** `bin/aphorism.js` exits 3 on a write failure, on both streams. A non-EPIPE stdout failure exits 3 and emi"
+PASS  C  FIXED reader still reads the three PRE-EXISTING unwrapped entries correctly
+        expected=[true,true,true] got=[true,true,true]
+        D-42/D-43/D-44 Status bullets each route to J-7
+PASS  D  MUST-DIE: D-45 Status with J-7 removed still FAILS under the fixed reader
+        expected=false got=false
+        J-7 -> "the owner" throughout the entry
+PASS  E  MUST-DIE: a Shipped-behaviour bullet naming only stdout still FAILS under the fixed reader
+        expected=false got=false
+        stderr half deleted from the Shipped bullet
+PASS  F  MUST-NOT-OVERREACH: Status lacking J-7, with a FOLLOWING bullet that HAS J-7, still FAILS
+        expected=false got=false
+        decoy bullet carrying J-7 appended immediately after Status
+PASS  G  MUST-NOT-OVERREACH: Shipped stripped of both stream names still FAILS even though the NEXT bullet names them
+        expected=false got=false
+        stream names moved OUT of Shipped and INTO the following Why bullet
+PASS  H  BLAST RADIUS: B2's three presence regexes are wrap-immune (they scan the whole body)
+        expected=[true,true,true] got=[true,true,true]
+        unchanged from the sealed gate — no other cell shares the defect
+
+=== ADJUDICATION 8 PASS / 0 FAIL of 8 columns ===
+VERDICT: B3 and B4 are INSTRUMENT DEFECTS. The delivered D-45 entry satisfies
+both predicates; the sealed cells read one source line of a wrapped bullet.
