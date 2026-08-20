@@ -17,3 +17,19 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: node --test test/*.test.js
+      # Observability only — never a gate. This step's outcome cannot fail the
+      # job: continue-on-error is set, and the shell logic below also self-
+      # succeeds. --experimental-test-coverage's numbers vary run to run even on
+      # one Node version against an unchanged tree: V8 sometimes emits a branch
+      # record for src/select.js:83 and sometimes does not, so the DENOMINATOR
+      # of the ratio moves (measured: 63/64 = 98.44% on 18 of 20 runs, 63/65 =
+      # 96.92% on the other 2). See docs/coverage-baseline.md. That is why this
+      # is an observation and must never become a check.
+      # No threshold flag (--test-coverage-lines/
+      # -branches/-functions) is used anywhere in this file, and none should
+      # ever be added here.
+      - name: Coverage report (informational, not a gate)
+        continue-on-error: true
+        run: |
+          node --test --experimental-test-coverage test/*.test.js \
+            || echo "NOTE: --experimental-test-coverage exited non-zero on Node ${{ matrix.node-version }} (see output above). This step is informational only and does not affect job status."
