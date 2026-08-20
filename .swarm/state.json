@@ -99,9 +99,18 @@
     "n": 2,
     "work": "Q-4 completion — re-anchor the tag-vocabulary guards to a counts table (1 builder, k=1, opus after gear-2 demote)",
     "outcome": "sealed gate 14/14; suite 121 -> 124; unfixed column fail=4 vs fixed GREEN on the honest-prose-deletion control; citation guard red by design, filed as Q-7",
-    "commit": null
+    "commit": "4b63e91"
   },
   "qa": {
     "last_full_qa_cycle": 1
+  },
+  "post_commit_2026_08_20_cycle2": {
+    "commit": "4b63e91",
+    "test_cmd_output": "tests 124 / pass 122 / fail 2 / skipped 0",
+    "failing": [
+      "README Node support citation: cited git diff must be empty",
+      "README Node support citation: base-to-working-tree diff must also be empty"
+    ],
+    "note": "BOTH citation guards are red post-commit, as predicted pre-commit: the commit touched test/, which is inside the cited pathspec, so `git diff 2b003ea..HEAD -- src bin test .github` is no longer empty. This is the guard working, not failing. Q-7 closes it by re-citing to a CI run that describes 4b63e91. Never to be closed by narrowing the pathspec or relaxing the assertion (L-043)."
   }
 }

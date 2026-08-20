@@ -20196,3 +20196,20 @@ runfile-mirror:
   }
 }
 ```
+
+### Cycle 2 addendum — the post-commit state, measured rather than predicted
+
+Pre-commit this block said the sibling `base..HEAD` check "goes red too, for the same reason".
+That prediction was then checked rather than left standing:
+
+```
+not ok 58 - README Node support citation: cited git diff must be empty ...
+not ok 59 - README Node support citation: base-to-working-tree diff must also be empty ...
+# tests 124
+# pass 122
+# fail 2
+# skipped 0
+```
+
+Commit `4b63e91`, pushed to origin/master. Both citation guards red, both for the one
+documented reason, both owned by Q-7. Every other test in the suite is green.
