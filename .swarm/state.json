@@ -476,6 +476,6 @@
     "n": 2,
     "work": "build-wave k=1 (P-2) + conductor verification gate",
     "outcome": "P-2 done on the CORRECTED artifact; builder return failed the gate on 2 measured-sounding claims (both falsified, both corrected in-doc); CI matrix 4/4 green with a real run URL; new cross-version comparability finding recorded",
-    "commit": ""
+    "commit": "9e17a13"
   }
 }

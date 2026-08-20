@@ -17458,3 +17458,10 @@ audit that did not exist this morning.
     targets: /opt/targets/aphorism-cli (active, weight 1) | rotation [0] cursor 0
     watchdog pacer, plist_loaded true | caffeinate_pid 0 (Linux) | cycles_since_recycle 1
     playbook auto: L-008 L-016 L-024 L-026 L-029 L-031 L-033 L-034 L-038 L-042 L-043 L-044 L-046
+
+**cycle 2 addendum (post-commit).** Target repo commit `9e17a13` pushed to origin OK. The
+SWARM repo push FAILED — `git -C /opt/swarm push` returned "Please make sure you have the
+correct access rights and the repository exists". Commit `b1a7052` (the run #5 applied-lessons
+ledger line) is durable on disk and unpushed; will retry next cycle. Per hard rule 1 this is
+journaled and does not block the cycle. Note this is the SWARM side only — the target, which
+is the actual deliverable, is pushed and green.
