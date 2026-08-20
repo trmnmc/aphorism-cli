@@ -18348,3 +18348,27 @@ looking empty is not the same as the gates being discharged.
     targets: /opt/targets/aphorism-cli (active, weight 1) | rotation [0] cursor 0
     watchdog pacer, plist_loaded true | caffeinate_pid 0 (Linux) | cycles_since_recycle 5
     playbook auto: L-008 L-016 L-024 L-026 L-029 L-031 L-033 L-034 L-038 L-042 L-043 L-044 L-046
+
+**cycle 6 addendum (post-commit).** Target commits `c08562b`, `e65ec37` and `c452180` all
+pushed to origin OK (`68c318c..c452180`). SWARM-side `git -C /opt/swarm push` FAILED again —
+"Please make sure you have the correct access rights and the repository exists" — the
+**fifth** consecutive cycle. The SWARM tree is CLEAN this cycle (`git status --porcelain`
+empty; `runs/` is gitignored and `playbook/` was untouched), so nothing is at risk and
+nothing new is unpushed. Per hard rule 1 this is journaled and does not block the cycle. It
+stays in the morning report as a host-config item for a human: the swarm cannot fix its own
+remote from inside a run, and five cycles is well past transient.
+
+**Dashboard.** Re-rendered locally to `runs/dashboard.html` (22478 bytes, zero unsubstituted
+placeholders, cycle 6 present, notify line rendered with the last-4-chars topic form) — on
+the VPS that write IS the publication. No Artifact tool in this headless session, so the
+additional publish channel is skipped, which is not a publish failure (`publish_failures`
+stays 0). Phase unchanged (BUILD → BUILD) and no stall, so no notification emits were owed.
+Note on the phase field, which cycle.md calls advisory: BUILD is now slightly behind the
+truth — the must-have build work is done and what remains are the owed gates — but the
+authority is the gate list, and `state.json.qa.run5_gate_note` states it exactly. Not
+churned for an advisory string.
+
+**Wakeup.** `next_wakeup_at = 1787200537` (now + 90, the base delay for a verified-value
+cycle; gears never touch the wakeup delay). Hard rule 8 checked before the write: wakeup +
+900 leaves 75269 s of headroom against `stop_at`. No `ScheduleWakeup` call — on the VPS
+`bin/swarm-pacer.sh` reads this field every 5 minutes and is the actual firing mechanism.
