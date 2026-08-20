@@ -179,9 +179,23 @@ directions with the citation guard now able to fire pre-commit.
 (KI-2) is the highest-severity open issue on this repo and needs primary sources this CLI
 is designed never to reach.
 
-**One infrastructure item:** disarming the watchdog timer needs root —
-`sudo systemctl disable --now swarm-watchdog.timer`. Reported as not-done rather than
-done. (The pacer stops on its own: `wrap_up_complete` is now true.)
+**Two infrastructure items, both reported as not-done rather than done.**
+
+1. Disarming the watchdog timer needs root. `systemctl disable --now swarm-watchdog.timer`
+   was attempted at wrap-up and failed with *"Interactive authentication required"* —
+   the same result run #4 reported. Clear it with
+   `sudo systemctl disable --now swarm-watchdog.timer`. Harmless as it stands.
+2. **This run stops, but the pacer may start a *new* one in ~2 hours.** `wrap_up_complete`
+   is now true, and `bin/swarm-pacer.sh` honours it — every firing exits `run-complete`, so
+   no further cycle of *this* run will execute. But after `cooloff_hours` (unset in
+   `runs/allocator.json`, so the default 2) the pacer archives the runfile, and the next
+   firing lands in the no-runfile branch where the current posture — **`trickle`** — permits
+   an **auto-kickoff**. Left alone, that is likely to schedule a *fourth* consecutive
+   housekeeping run against this repo, under the same brief that has now locked out the only
+   changes worth making. **If the recommendation below is accepted, the allocator posture or
+   queue needs changing before that fires** — the wrap-up cannot do it, because
+   `runs/allocator.json` is the allocator's file and this run has no authority over the next
+   one's brief.
 
 **The standing finding, now for the third consecutive run.** The single highest-value
 change available to this product — **no-repeat-until-exhausted rotation** — has now been
