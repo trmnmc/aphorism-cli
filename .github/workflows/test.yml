@@ -16,6 +16,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+      # `node --test test/*.test.js` exits 0 reporting "tests 0" when the glob
+      # matches nothing: on Node >= 21 the runner re-globs the literal itself, so
+      # an unmatched pattern collects zero files and the gate below would report
+      # success having run nothing. `ls` exits non-zero on an unmatched glob, so
+      # this makes that case loud. Deliberately NOT a count assertion — a floor
+      # like "at least 120 tests" is a number that goes stale on the next commit.
+      - name: Assert the test glob matches at least one file
+        run: ls test/*.test.js
       - run: node --test test/*.test.js
       # Observability only — never a gate. This step's outcome cannot fail the
       # job: continue-on-error is set, and the shell logic below also self-

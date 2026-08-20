@@ -59,7 +59,8 @@ process.stdout.write(HELP.endsWith('\n') ? HELP : `${HELP}\n`);
 
 The FALSE arm (the `${HELP}\n` side) never executes. `HELP` is a module-level constant
 exported from `src/args.js` (defined as a template literal, `src/args.js:7-20`) whose literal
-text ends in a newline — the source line immediately before the closing backtick is blank.
+text ends in a newline — the closing backtick sits at the start of its own line (`src/args.js:20`
+is ``` `; ```), so the literal's final character is the newline that terminates line 19.
 `HELP.endsWith('\n')` is therefore `true` for every possible program input; there is no CLI
 argument, environment, or code path that can make it `false` without editing `src/args.js`
 itself to change the constant. This is classified **BOUNDARY**: behaviour the spec does not

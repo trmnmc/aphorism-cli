@@ -25,6 +25,22 @@
 // shows up as a SKIP in the suite summary, not a silent pass) rather than
 // failing or passing for the wrong reason. A genuinely stale citation --
 // base commit present, diff non-empty -- is not such a case and must fail.
+//
+// An unreachable base commit is ONLY treated as that environment limitation
+// when the checkout is actually shallow, per `git rev-parse
+// --is-shallow-repository`. On a full clone, a cited base that does not
+// resolve is not a history gap -- it is a bogus citation -- so that case
+// FAILS instead of skipping. (Shallow-ness itself being undeterminable, e.g.
+// because the git binary is too old for that flag, is its own environment
+// limitation and still routes to SKIP.)
+//
+// The section's prose is also required to name its retirement condition
+// exactly once. If more than one backtick-quoted `git diff <base>..<target>
+// -- <paths>` command shows up in the section (the prose grows over time and
+// tends to accumulate references to earlier citations), picking whichever
+// comes first would silently parse the wrong one depending on where in the
+// text it happens to land. That ambiguity FAILS loudly, naming the count
+// found, rather than resolving by position.
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -57,14 +73,24 @@ function getNodeSupportSection(readmeContent) {
 // space-separated tokens follow `--`), so a future edit to either does not
 // require touching this file.
 function parseCitedDiffCommand(sectionText) {
-  const commandPattern = /`git diff ([0-9a-fA-F]+)\.\.(\S+) -- ([^`]+)`/;
-  const match = sectionText.match(commandPattern);
+  const commandPattern = /`git diff ([0-9a-fA-F]+)\.\.(\S+) -- ([^`]+)`/g;
+  const matches = [...sectionText.matchAll(commandPattern)];
   assert(
-    match,
+    matches.length > 0,
     'Node support section must name its retirement condition as a backtick-quoted ' +
       '`git diff <base>..<target> -- <paths>` command'
   );
+  assert.equal(
+    matches.length,
+    1,
+    'Node support section names ' + matches.length + ' backtick-quoted `git diff ' +
+      '<base>..<target> -- <paths>` commands, not one -- the retirement-condition citation is ' +
+      'ambiguous, and this guard refuses to silently parse whichever one comes first in the ' +
+      'prose. Trim the section so exactly one such command appears (or remove the leftover ' +
+      'reference to an earlier citation).'
+  );
 
+  const match = matches[0];
   const base = match[1];
   const target = match[2];
   const pathspec = match[3].trim().split(/\s+/);
@@ -100,18 +126,41 @@ test('README Node support citation: cited git diff must be empty (or the check m
   // GitHub Actions checks out with actions/checkout@v4, which defaults to a
   // shallow (depth-1) clone, so the base commit named by an older citation
   // is frequently absent from CI's copy of history. That is an environment
-  // limitation, not a stale citation, so it must route to skip.
+  // limitation, not a stale citation -- but ONLY when the checkout actually
+  // is shallow. On a full clone, a base commit that fails to resolve is not
+  // a history gap; it is a bogus citation, and must fail rather than skip.
   const baseReachable = spawnSync(
     'git',
     ['cat-file', '-e', base + '^{commit}'],
     { cwd: REPO_ROOT, encoding: 'utf8' }
   );
   if (baseReachable.error || baseReachable.status !== 0) {
-    t.skip(
-      'cited base commit ' + base + ' is not reachable in this checkout ' +
-        '(likely a shallow clone) -- cannot evaluate the README\'s Node support citation'
+    const isShallow = spawnSync(
+      'git',
+      ['rev-parse', '--is-shallow-repository'],
+      { cwd: REPO_ROOT, encoding: 'utf8' }
     );
-    return;
+    if (isShallow.error || isShallow.status !== 0) {
+      t.skip(
+        'cited base commit ' + base + ' is not reachable in this checkout, and whether this ' +
+          'checkout is shallow could not be determined (`git rev-parse ' +
+          '--is-shallow-repository` failed) -- cannot evaluate the README\'s Node support citation'
+      );
+      return;
+    }
+    if (isShallow.stdout.trim() === 'true') {
+      t.skip(
+        'cited base commit ' + base + ' is not reachable in this checkout ' +
+          '(this is a shallow clone) -- cannot evaluate the README\'s Node support citation'
+      );
+      return;
+    }
+    assert.fail(
+      'cited base commit ' + base + ' is not reachable in this checkout, and this checkout is ' +
+        'a full clone (`git rev-parse --is-shallow-repository` reports false) -- on a full ' +
+        'clone an unresolvable cited base is not a history gap, it is a bogus citation, so this ' +
+        'must fail rather than skip.'
+    );
   }
 
   // Run the cited command itself. A non-zero exit here (e.g. an unresolvable
