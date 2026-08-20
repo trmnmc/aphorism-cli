@@ -1,0 +1,46 @@
+
+cycle-3 gate — item P-3 (bidirectional doc-claim audit)   11 PASS / 0 FAIL
+==============================================================================
+  PASS  G1  every file:line citation in the in-scope docs resolves to a real file AND a real line
+        13 file:line citations across 3 docs; 0 unresolvable
+  PASS  G2  every local markdown link target exists; every in-page anchor matches a real heading slug
+        4 link targets; 0 broken
+  PASS  G3  README's two tag tables reproduce the measured tag multiset exactly (name AND count)
+        12 documented rows vs 12 measured tags; 0 mismatches
+  PASS  G4  README's prose counts (distinct tags / tags on 2+ / tags on exactly 1 / smallest pool) are true
+        measured: 12 distinct, 12 on 2+, 0 on exactly 1, smallest 3 (of 50 entries); unsupported claims: 0
+  PASS  G5  every retired tag name README lists as folded is counted correctly AND matches nothing (exit 1)
+        README claims 26 folded names; parsed 26 retired names, 0 still match something
+  PASS  G6  each exit code README documents is reproduced by the shipped binary
+        8 documented exit behaviours reproduced; 0 failed
+  PASS  G7  flags in src/args.js == flags in --help == flags in README (code->doc, both directions)
+        6 flags in args.js, 6 in --help, 6 in README §Flags; 0 asymmetric
+  PASS  G8  coverage-baseline.md's headline branch fraction is re-derivable from a live lcov run
+        live lcov: BRH 63 / BRF 64 (98.44%); doc states 63/64: true; stale "64 of 65" present: false
+  PASS  G9  corpus-attribution-triage.md's risk-table rows bind to the corpus entries they name (index -> author AND text prefix), on ONE consistent convention
+        50 risk-table rows; convention 0-based (0-based binds 50, 1-based binds 0); 0 rows bind to the wrong entry; 14 inline #N refs, 0 out of range
+  PASS  G10  P-5 floor: suite green at >= 119, src/corpus.js byte-identical to run start
+        pass 119 / fail 0; src/corpus.js diff vs run start (81b0958): IDENTICAL
+  PASS  G11  the agent inventory covers every surface and every citation the gate independently found
+        inventory 21622 bytes, ~73 table rows; surfaces not mentioned: none
+
+cycle-3 gate ADDENDUM — item P-3   1 PASS / 0 FAIL
+==============================================================================
+  PASS  G12  README §Node support's own named falsifier does not fire: the git diff it cites is empty, and the run it cites really reported the counts in its table
+        self-guard `git diff 0c2ed40..HEAD -- src bin test .github` => EMPTY (claim still current)
+        cited run 32324495153, "as of commit" 0c2ed40, guard base 0c2ed40, anchored: true
+        archived log .swarm/runs/cycle-002-ci-32324495153.log: present; 4 table rows, 0 disagree with the log
+
+cycle-3 gate ADDENDUM — item P-3   0 PASS / 1 FAIL   [MUTATION G12 ACTIVE]
+==============================================================================
+  FAIL  G12  README §Node support's own named falsifier does not fire: the git diff it cites is empty, and the run it cites really reported the counts in its table
+        self-guard `git diff 44702fb..HEAD -- src bin test .github` => NON-EMPTY (claim is STALE):
+        .github/workflows/test.yml | 16 ++++++++++++
+         test/readme-tags.test.js   | 61 ++++++++++++++++++++++++++++++++++++++++++++++
+         2 files changed, 77 insertions(+)
+        cited run 32324495153, "as of commit" 0c2ed40, guard base 44702fb, anchored: false
+        archived log .swarm/runs/cycle-002-ci-32324495153.log: present; 4 table rows, 0 disagree with the log
+
+FAILABILITY CONTROL: mutation G12 => CONTROL PASSED (cell can fail)
+d94a42e657612d5db51a538d2fcbccefbec0e61cf654c797ef5932b4b92b1078  /opt/swarm/runs/c003-gate-P-3.mjs
+1ba41b07b814bed7e0daf256c4112b387372fd038514f963e30a0b916a2f78b7  /opt/swarm/runs/c003-gate-P-3-addendum.mjs

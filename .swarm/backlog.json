@@ -464,9 +464,9 @@
       "kind": "docs",
       "effort": "M",
       "priority": 30,
-      "status": "todo",
+      "status": "done",
       "attempts": 0,
-      "model": "sonnet",
+      "model": "haiku",
       "deps": [],
       "files_hint": [
         "README.md",
@@ -474,7 +474,8 @@
         "src/args.js"
       ],
       "packages": [],
-      "acceptance": "README, --help output and docs/ audited claim-by-claim in BOTH directions, enumerating every citation FORM including the bare :N sibling shorthand (L-043); each false, stale or unreachable claim (L-046) corrected or removed with the measurement pasted; no assertion bound to regex-matched prose; a clean audit is a valid reportable outcome."
+      "acceptance": "README, --help output and docs/ audited claim-by-claim in BOTH directions, enumerating every citation FORM including the bare :N sibling shorthand (L-043); each false, stale or unreachable claim (L-046) corrected or removed with the measurement pasted; no assertion bound to regex-matched prose; a clean audit is a valid reportable outcome.",
+      "notes": "cycle 3 — DONE, and done BY CONDUCTOR REPAIR rather than as delivered (cycle-14 R-2 precedent). Sealed gate SWARM/runs/c003-gate-P-3.mjs (sha256 d94a42e6…, seal committed to the target at 92f04be BEFORE dispatch, gate held outside the repo per the cycle-14 precedent) scored 11 PASS / 0 FAIL, plus a separately-scored addendum cell G12. Four failability controls (G1/G3/G6/G7) plus G12 all turn RED under mutation against an all-GREEN converse run. MECHANICAL SURFACES CLEAN: 13 file:line citations resolve, 4 link targets resolve, both README tag tables reproduce the measured multiset exactly, all four vocabulary prose counts true, 26 folded tag names all inert, 8 documented exit behaviours reproduced, the 6-flag set identical across args.js/--help/README, the coverage headline re-derives to 63/64 from a live lcov run, and all 50 attribution rows bind to the corpus entry they name on a derived (0-based) convention. ONE REAL FINDING, repaired: README §Node support had gone stale — the `git diff 44702fb..HEAD -- src bin test .github` the section names as its OWN retirement condition had stopped being empty (77 added lines, commits 0230c23 and 0c2ed40) and the citation stayed put. Re-anchored to run 32324495153 / commit 0c2ed40 with counts taken from the archived CI log (119/119/0 on 18.20.8, 20.20.2, 22.23.2, 24.19.0), and the change recorded in-doc rather than swapped silently. AGENT RETURN WAS IMPERFECT: its summary claimed 71 TRUE against 58 TRUE rows in its own table — an inflated count claim inside a count-auditing document — and it reached the STALE verdict by inference from a test count in another document rather than by running the falsifier command it had quoted. Both corrected in-file as marked corrections. Two of its five UNVERIFIED rows resolved to TRUE on conductor measurement; #4 (coverage stability) stays UNVERIFIED and is reported as not-run, never as passed."
     },
     {
       "id": "P-4",
@@ -505,6 +506,24 @@
       "files_hint": [],
       "packages": [],
       "acceptance": "node --test test/*.test.js green at >=119 on every commit this run makes; Actions matrix green on final HEAD; git diff shows zero changes to src/corpus.js; no new runtime or dev dependency anywhere in the tree; no new user-visible flag or behaviour."
+    },
+    {
+      "id": "P-6",
+      "title": "The README self-guard that caught this cycle's stale citation is not mechanized anywhere that survives the run",
+      "kind": "qa",
+      "effort": "S",
+      "priority": 35,
+      "status": "todo",
+      "attempts": 0,
+      "model": "sonnet",
+      "deps": [],
+      "files_hint": [
+        "test/",
+        "README.md"
+      ],
+      "packages": [],
+      "acceptance": "README §Node support names its own falsifier as an executable command and that is the ONLY reason cycle 3 could catch the citation going stale — but nothing was running it, and the cell that now does (G12) lives in SWARM/runs and dies with this run. A test in test/ runs the section's own quoted `git diff <base>..HEAD -- <paths>` command, parsed out of the prose rather than hardcoded, and fails when it returns non-empty. It MUST DEGRADE, NOT FAIL, on a shallow clone: CI checks out with --depth=1, so when the base commit is unreachable (`git cat-file -e <base>^{commit}` non-zero) the test skips with a stated reason rather than turning the matrix red for the wrong cause. Prove both arms: the test must fail against a deliberately stale base, pass against the current one, and skip (not fail) in a shallow clone.",
+      "notes": "Filed by cycle 3 out of its own finding. The general shape is the valuable part: a doc claim that names the command which falsifies it is checkable forever; one that does not is only ever checkable by a human who happens to wonder. Scoped as test hardening (explicitly in this run's brief), not a feature: no new flag, no user-visible behaviour, and it raises the suite count, which the P-5 floor (>=119) permits."
     }
   ]
 }

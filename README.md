@@ -177,30 +177,41 @@ that spawn the real binary and assert on stdout, stderr, and exit codes.
 
 ### Node support
 
-CI runs the whole suite on four Node majors on every push. As of commit `44702fb`
-(2026-08-19), the most recent full matrix run against a commit that actually changed
+CI runs the whole suite on four Node majors on every push. As of commit `0c2ed40`
+(2026-08-20), the most recent full matrix run against a commit that actually changed
 `src/`, `bin/`, `test/`, or the workflow itself was
-[Actions run 32267338333](https://github.com/trmnmc/aphorism-cli/actions/runs/32267338333),
+[Actions run 32324495153](https://github.com/trmnmc/aphorism-cli/actions/runs/32324495153),
 which reported:
 
 | Node | Result |
 |---|---|
-| v18.20.8 | 118 tests, 118 pass, 0 fail |
-| v20.20.2 | 118 tests, 118 pass, 0 fail |
-| v22.23.2 | 118 tests, 118 pass, 0 fail |
-| v24.19.0 | 118 tests, 118 pass, 0 fail |
+| v18.20.8 | 119 tests, 119 pass, 0 fail |
+| v20.20.2 | 119 tests, 119 pass, 0 fail |
+| v22.23.2 | 119 tests, 119 pass, 0 fail |
+| v24.19.0 | 119 tests, 119 pass, 0 fail |
 
 Later CI runs re-test byte-identical code as of this writing (see
-`git diff 44702fb..HEAD -- src bin test .github`), so this citation stays the reference
+`git diff 0c2ed40..HEAD -- src bin test .github`), so this citation stays the reference
 matrix until that diff stops being empty. For the current state of CI — including any
 runs since this citation — see the
 [`test` workflow's run history](https://github.com/trmnmc/aphorism-cli/actions?query=workflow%3Atest).
+
+> **Updated 2026-08-20 (cycle 3).** The paragraph above previously cited run
+> `32267338333` at commit `44702fb` with a 118-test matrix, and it had gone stale: the
+> `git diff` it names as its own retirement condition had stopped being empty (77 added
+> lines across `test/readme-tags.test.js` and `.github/workflows/test.yml`, from commits
+> `0230c23` and `0c2ed40`), while the citation stayed put. The old table was not false
+> about run `32267338333` — that run really did report 118 — it was a true statement about
+> a matrix that no longer described this tree. Recorded rather than quietly swapped,
+> because the self-guard is the reason the decay was catchable at all: the doc names the
+> exact command that falsifies it, so an audit can check the claim instead of believing it.
 
 Read "Node 18+" as **verified-at-18**: 18 is the lowest version actually tested, and it
 passes everything. It is **not proven minimal** — nothing here tests Node 16 or 17, so
 whether the CLI runs on them is unknown rather than ruled out.
 
 One incidental finding from that run, recorded because it bites anything that parses the
-suite output: Node 18, 20 and 22 print the TAP summary (`# tests 118`), while Node 24
-prints the spec-reporter summary (`ℹ tests 118`) — and that marker is U+2139
-INFORMATION SOURCE, not an ASCII `i`.
+suite output: Node 18, 20 and 22 print the TAP summary (`# tests 119`), while Node 24
+prints the spec-reporter summary (`ℹ tests 119`) — and that marker is U+2139
+INFORMATION SOURCE, not an ASCII `i`. The count moved with the suite; the split between
+the two reporters did not, and is re-confirmed in run `32324495153`.

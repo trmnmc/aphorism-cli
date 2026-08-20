@@ -5,7 +5,7 @@
   "run_label": "improvement run #5",
   "run_started_at": "2026-08-20T01:52:10Z",
   "phase": "BUILD",
-  "cycle": 2,
+  "cycle": 3,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "spec_digest": [
@@ -231,6 +231,24 @@
     {
       "cycle": 1,
       "decision": "P-1 closed as BOUNDARY with zero tests added. The suite already executes every REACHABLE branch (64/65); the 65th is dead code. Correcting the kickoff unmeasured 12-of-14 claim to the measured 1-of-7 shrinks this run further and the report will say so rather than pad the clock — remaining weight moves to P-3 and P-4."
+    },
+    {
+      "cycle": 3,
+      "kind": "verification",
+      "what": "Calibrated two cells of the P-3 gate BEFORE dispatch, after its own baseline came back 8 PASS / 3 FAIL with two of the three FAILs being defects in the gate rather than findings about the tree.",
+      "why": "The standing lesson of this target is that a gate is a program and needs its own baseline. It fired again, and cheaply, because the baseline ran before any agent did. G1 carried a non-vacuity floor of >=15 citations against a tree that holds 13 — an arbitrary magic number, wrong against reality, lowered to 10. G9 assumed corpus_attribution_triage's #N was a 1-based index; it is 0-based (#0 is Knuth / 'Premature optimization'). The important part is the SHAPE of the second repair: flipping the constant would have made the cell green while leaving it just as blind, so the cell was rewritten to DERIVE the convention from the tree and bind every risk-table row to the corpus entry it names by author AND text prefix. It now reports '0-based binds 50, 1-based binds 0' — a cell that would notice a convention change instead of one that hardcodes today's answer. Pre-dispatch calibration is distinct from editing a gate after it has judged a dispatch, which this run does not do: when the sealed gate later needed a cell it did not have, that cell went into a SEPARATELY-SCORED addendum file and the sealed gate stayed byte-identical to its hash."
+    },
+    {
+      "cycle": 3,
+      "kind": "method",
+      "what": "Split P-3 so the dispatched half contained NO judgment: the agent enumerated and measured prose claims read-only and wrote exactly one untracked file, and the conductor adjudicated every verdict and made every correction.",
+      "why": "Gear 1 crawl (rho 3.61, weekly governor hot at ceiling 2, k_cap 1) routes an M-effort docs item to haiku by the demote rung — and this target has a cycle-numbered precedent (cycle-4 N-6) of haiku overclaiming on exactly this document family. The available dodges were both bad: flagging the item route_class core to reach fable would have been the conductor gaming its own pacing system in a trickle-posture run, and skipping the item would have left a spec must-have unclosed. The third option is to change what is dispatched rather than who receives it. Enumeration across four surfaces is labour, not judgment; deciding whether a claim is true is judgment. So the agent got the labour with a hard read-only fence and an explicit instruction that UNVERIFIED is a respected answer and an invented measurement is the worst possible one, and every verdict it returned was re-measured here. The precedent held anyway — its summary claimed 71 TRUE against 58 TRUE rows in its own table — but it landed as a bookkeeping error in an untracked scratch file, caught by counting rather than believing, instead of as a false claim shipped into README.md."
+    },
+    {
+      "cycle": 3,
+      "kind": "scope",
+      "what": "Excluded REPORT.md and docs/report-history.md from the P-3 audit surface, and said so before auditing rather than after.",
+      "why": "P-3's acceptance names 'README, --help output and docs/'. Taken literally that includes docs/report-history.md, which is 128 KB and 1595 lines of APPEND-ONLY history — dated statements of what was believed at a past cycle, structurally the same artifact as the journal. Auditing those against today's tree is a category error: they are not claims about now, and 'correcting' them would destroy the record of what was believed when, which is the same argument cycle 2 made when it recorded a falsified claim in a new block instead of editing the cycle-1 block that contained it. REPORT.md is excluded on a different ground: it is a live document, but it carries its own cycle-14 gate and WRAP_UP rewrites it, so auditing it now audits a draft. That leaves 567 lines of live claim surface across four documents, which is what was actually audited — a scope decision recorded here so the report cannot read as if 'docs/' had been swept whole."
     }
   ],
   "decisions_archive": ".swarm/decisions.json (all 41, full text — moved at kickoff, nothing dropped)",
@@ -473,9 +491,9 @@
     "window_tokens_attributed": 0
   },
   "last_cycle": {
-    "n": 2,
-    "work": "build-wave k=1 (P-2) + conductor verification gate",
-    "outcome": "P-2 done on the CORRECTED artifact; builder return failed the gate on 2 measured-sounding claims (both falsified, both corrected in-doc); CI matrix 4/4 green with a real run URL; new cross-version comparability finding recorded",
-    "commit": "9e17a13"
+    "n": 3,
+    "work": "build-wave k=1 (P-3, haiku, read-only) + conductor verification gate + conductor repair",
+    "outcome": "P-3 done by conductor repair; sealed gate 11P/0F + addendum G12 PASS, 5 failability controls RED under mutation; one real finding — README §Node support stale against its OWN named falsifier — repaired and re-anchored to a live CI matrix; agent summary overclaimed 71 TRUE vs 58 actual, corrected in-file; P-6 filed",
+    "commit": ""
   }
 }

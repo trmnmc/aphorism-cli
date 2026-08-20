@@ -17465,3 +17465,237 @@ correct access rights and the repository exists". Commit `b1a7052` (the run #5 a
 ledger line) is durable on disk and unpushed; will retry next cycle. Per hard rule 1 this is
 journaled and does not block the cycle. Note this is the SWARM side only — the target, which
 is the actual deliverable, is pushed and green.
+
+---
+
+## cycle 3 — 2026-08-20T02:52Z — build-wave k=1 (P-3) + conductor gate + conductor repair
+
+**Clock.** `date +%s` = 1787193284 at open. `stop_at` 1787276706 — 23.16 h remaining, no
+admission pressure. `cycles_since_recycle` 1 → 2.
+
+**Budget.** Probe OK. `gear_target` 1, ρ **3.61**, mode guest, dial 0.33, `k_cap` **1**,
+`demote: true`, `promote: false`. Weekly governor still HOT — weekly 100% / opus 100% at
+41.42% of the week elapsed, heat 2.41, ceiling 2, promote blocked. Applied gear moves
+2 → **1 (crawl)**, one step, hysteresis-legal. Burn 16.71 M window tokens, 19.86 M
+tokens/hour, projected depletion 1787216414. Gear 1 buys haiku-priced work — planning,
+docs, test triage — and a wave of exactly one.
+
+**Orient.** Dirty tree at open: `.swarm/journal.md` and `.swarm/state.json`, a coherent
+cycle-2 tail (the post-commit addendum recording the SWARM-side push failure, plus the
+commit hash stamped into `last_cycle`). Salvage-committed at `84617ab`, not discarded.
+Control channel: poll clean, `pending: []`, no `inject` array. Nothing to triage.
+
+**Re-anchor.** Cycle 3, so no scheduled full SPEC re-read (that is the every-5th-cycle
+rule). P-1 and P-2 are closed; P-3, P-4 and P-5 remain. Cycle 2 handed off to P-3 by name.
+
+---
+
+## The scope decision, made before the audit rather than after
+
+P-3's acceptance names "README, --help output and docs/". Taken literally that pulls in
+`docs/report-history.md` — 128 KB, 1595 lines, append-only history. Those are dated
+statements of what was believed at a past cycle, structurally the same artifact as this
+journal, and auditing them against today's tree is a category error; "correcting" them
+would destroy the record of what was believed when. That is the same argument cycle 2 made
+when it recorded a falsified claim in a new block instead of editing the cycle-1 block that
+contained it. `REPORT.md` is excluded on a different ground: live, but it carries its own
+cycle-14 gate and WRAP_UP rewrites it, so auditing it now audits a draft.
+
+Audited surface, stated so the report cannot read as if `docs/` had been swept whole:
+`README.md` (206 lines), the `--help` output, `docs/coverage-baseline.md` (217),
+`docs/corpus-attribution-triage.md` (144). **567 lines of live claim surface.**
+
+## The gate, and its own baseline — which failed, as it usually does here
+
+Written first, sealed by sha256, and held **outside** the target repo at
+`SWARM/runs/c003-gate-P-3.mjs` — hard rule 5 forbids workflow agents SWARM paths, which
+makes the gate structurally unreachable to a builder rather than merely forbidden to it
+(cycle-14 precedent). The seal and the pre-dispatch baseline went into the target at
+`92f04be` **before any agent ran**.
+
+    sha256 = d94a42e657612d5db51a538d2fcbccefbec0e61cf654c797ef5932b4b92b1078
+
+First baseline: **8 PASS / 3 FAIL**. Two of the three FAILs were defects in the gate, not
+findings about the tree — the run's standing lesson firing for the thirteenth time, and
+firing cheaply because the baseline ran before the dispatch did.
+
+- **G1** carried a non-vacuity floor of `>= 15` citations against a tree holding 13. An
+  arbitrary magic number, wrong against reality. Floor → 10.
+- **G9** assumed `#N` in the attribution triage doc was a 1-based corpus index. It is
+  **0-based** — `#0` is Knuth, "Premature optimization". The repair matters more than the
+  bug: flipping the constant would have turned the cell green while leaving it exactly as
+  blind, so the cell was **rewritten to derive the convention from the tree** and bind
+  every risk-table row to the corpus entry it names, by author AND text prefix. It now
+  reports `0-based binds 50, 1-based binds 0` — a cell that would notice a convention
+  change rather than one that hardcodes today's answer.
+
+The third FAIL, G11, is the inventory-completeness cell and correctly read NOT RUN until an
+inventory existed. Calibrated baseline **10 PASS / 1 FAIL (G11 not-run)**.
+
+**Failability controls.** A cell that cannot fail is not evidence. Four mutations, four
+reds, against a converse run in which all ten are green: G1 (injected an unresolvable
+`src/select.js:99999`), G3 (perturbed one measured tag count), G6 (falsified the
+broken-pipe exit-0 observation), G7 (injected a phantom flag into the args.js flag set).
+
+## What was dispatched, and why the split rather than the tier
+
+Gear 1 routes an M-effort docs item to haiku by the demote rung, and this target has a
+cycle-numbered precedent — cycle-4 **N-6** — of haiku overclaiming on exactly this document
+family. Both obvious dodges were bad. Flagging the item `route_class: "core"` to reach fable
+would have been the conductor gaming its own pacing system in a trickle-posture run with the
+weekly governor pinned at ceiling 2. Skipping the item would have left a spec must-have
+unclosed with 23 hours on the clock.
+
+The third option is to change **what** is dispatched rather than **who** receives it.
+Enumeration across four surfaces is labour; deciding whether a claim is true is judgment. So
+the agent got the labour under a hard read-only fence — no tracked file edited, no git
+command, exactly one output file, `/tmp` for scratch — and was told in as many words that
+`UNVERIFIED` is a respected answer and an invented measurement is the worst thing it could
+produce. Every verdict it returned was re-measured here.
+
+It was also told what the gate already covered, and not to pad the inventory with it. The
+residue — free prose no regex resolves — was the whole assignment.
+
+## Result: the mechanical surfaces are clean, and that is a real finding
+
+**Sealed gate, post-repair: 11 PASS / 0 FAIL.** 13 file:line citations all resolve to a real
+file and a real line; 4 link targets resolve; both README tag tables reproduce the measured
+multiset exactly (12 rows, 12 tags, 0 mismatches); all four vocabulary prose counts hold
+(12 distinct, 12 on 2+, 0 on exactly one, smallest pool 3, over 50 entries); all 26 folded
+tag names parse out and every one is inert; 8 documented exit behaviours reproduce including
+the broken pipe; the 6-flag set is identical across `src/args.js`, `--help` and README
+§Flags; the coverage headline re-derives to **63/64** from a live lcov run with no "64 of 65"
+residue; all 50 attribution rows bind to the corpus entry they name; the P-5 floor holds at
+119/119/0 with `src/corpus.js` byte-identical to the run's first commit.
+
+A clean audit is a valid reportable outcome, and most of this one is clean.
+
+## The one real finding: a claim that had told us how to falsify it, and nobody had
+
+`README.md` §Node support cited Actions run `32267338333` at commit `44702fb` with a
+118-test matrix — and then, to its considerable credit, named its own retirement condition
+as an executable command:
+
+> Later CI runs re-test byte-identical code as of this writing (see
+> `git diff 44702fb..HEAD -- src bin test .github`), so this citation stays the reference
+> matrix until that diff stops being empty.
+
+The diff had stopped being empty. Run it:
+
+    $ git diff --stat 44702fb..HEAD -- src bin test .github
+     .github/workflows/test.yml | 16 ++++++++++++
+     test/readme-tags.test.js   | 61 ++++++++++++++++++++++++++++++++++++++++++++++
+     2 files changed, 77 insertions(+)
+
+Two commits crossed it: `0230c23` (run #4, cycle 11 — the one that took the suite 118 → 119)
+and `0c2ed40` (this run, cycle 2). Neither updated the section. The old table was never
+*false* about run `32267338333` — that run really did report 118 — it was a true statement
+about a matrix that no longer described this tree. That is the `STALE` verdict class doing
+exactly the work it exists to do.
+
+**Repaired** against a real, current matrix, with every number read out of the archived CI
+log rather than any summary of it — and the product tree is unchanged since the commit that
+run tested, which is what makes it a legitimate reference:
+
+    $ git diff --stat 0c2ed40..HEAD -- src bin test .github
+    (no output)
+
+    run 32324495153, commit 0c2ed406944…, four jobs green
+      test (18)  node 18.20.8   # tests 119   # pass 119   # fail 0
+      test (20)  node 20.20.2   # tests 119   # pass 119   # fail 0
+      test (22)  node 22.23.2   # tests 119   # pass 119   # fail 0
+      test (24)  node 24.19.0   ℹ tests 119   ℹ pass 119   ℹ fail 0
+
+The change is recorded in-document as a dated note rather than swapped in silently,
+*because the self-guard is the reason the decay was catchable at all*. The incidental
+TAP-vs-spec-reporter observation at the foot of the section was 118-stale too; the count is
+now 119 and the reporter split is re-confirmed in the same log.
+
+**And the gate that should have caught it now exists.** The sealed gate is left
+byte-unedited — editing a gate after it has judged a dispatch destroys the evidence of what
+it measured (cycle-4, cycle-12 precedent) — so the new cell went into a separately-scored
+addendum, `SWARM/runs/c003-gate-P-3-addendum.mjs` (sha256 `1ba41b07…`). **G12** parses the
+`git diff <base>..HEAD -- <paths>` command out of the README's own prose, runs it, requires
+it empty, requires the "as of commit" and the guard base to be the same commit, and checks
+all four table rows against the archived log. It PASSES post-repair. Its control re-points
+the base at the stale `44702fb` and it goes **RED** — so the cell demonstrably would have
+caught this finding, which is the only kind of "we've fixed it going forward" claim worth
+making.
+
+## The agent's return was imperfect, in the way the precedent predicted
+
+Its summary claimed **71 TRUE**. Its own table holds **65 numbered rows, 58 of them TRUE**.
+An inflated count claim inside a document whose entire job is auditing count claims — the
+cycle-4 N-6 failure mode, landing on schedule. It was caught by counting the rows, not by
+reading the summary.
+
+Second defect, subtler and worth more: it reached the STALE verdict **by inference** — the
+test count in `coverage-baseline.md` said 119, README said 118, therefore the test files
+must have changed — while *quoting the git command that would have settled it directly*. It
+had the falsifier in hand and reasoned around it. Right answer, wrong derivation. The
+conductor ran the command.
+
+Both corrected in-file as marked corrections, original wording quoted rather than swapped.
+P-3 is recorded **done by conductor repair, not done as delivered** (cycle-14 R-2
+precedent), and the distinction is on the backlog item and will be in the report, so the
+retro cannot read this as a clean wave.
+
+Of the five `UNVERIFIED` rows, two resolved to TRUE on conductor measurement: the
+`--tag` whole-tag / `--author` substring distinction is observable from outside the process
+(`--tag desig` → 1, `--tag DESIGN` → 0, `--author Knu` → 0), and the triage doc's
+"checked mechanically for all 50 rows" is precisely what gate cell G9 re-derives. One stays
+UNVERIFIED and is reported as **not-run, never as passed**: the coverage-stability claim
+needs the ~60-run sweep cycle 2 did, and this cycle did not re-run it. The remaining two
+were correctly withheld.
+
+**Filed:** `P-6` — G12 lives in `SWARM/runs/` and dies with this run. A test in `test/`
+should run the section's own quoted command, parsed out of the prose rather than hardcoded.
+It must **skip, not fail**, on a shallow clone: CI checks out `--depth=1`, so an unreachable
+base commit must not turn the matrix red for the wrong reason. Both arms provable.
+
+**Wave autotune:** one wave, one item, zero reverts, zero failed verifies — but the return
+needed conductor repair, so this is not scored as a clean wave. `wave_streak = 0`,
+`k_current` unchanged at 3. `consecutive_no_value = 0` (verified value this cycle).
+
+**Backlog:** todo 3 → 3 (P-3 done, P-6 filed; P-4 and P-5 remain), done 13 → 14, blocked 7
+unchanged, all human-owned. Product tree untouched: `bin/`, `src/`, `test/` have zero diff
+this cycle and `src/corpus.js` is byte-identical to `81b0958`.
+
+## VERIFICATION EVIDENCE
+
+Full transcript: `.swarm/runs/cycle-003-verify-P-3.txt` (both gates, the G12 control, and
+the closing hashes; fingerprinted by this cycle's commit). Gate programs copied into
+`.swarm/runs/` and re-hashed — both match their seals exactly. Excerpt:
+
+    cycle-3 gate — item P-3 (bidirectional doc-claim audit)   11 PASS / 0 FAIL
+      PASS G3  12 documented rows vs 12 measured tags; 0 mismatches
+      PASS G5  README claims 26 folded names; parsed 26, 0 still match something
+      PASS G7  6 flags in args.js, 6 in --help, 6 in README §Flags; 0 asymmetric
+      PASS G8  live lcov: BRH 63 / BRF 64 (98.44%); stale "64 of 65" present: false
+      PASS G9  50 rows; 0-based binds 50, 1-based binds 0; 0 rows bind wrong
+      PASS G10 pass 119 / fail 0; src/corpus.js vs 81b0958: IDENTICAL
+
+    cycle-3 gate ADDENDUM   1 PASS / 0 FAIL
+      PASS G12 `git diff 0c2ed40..HEAD -- src bin test .github` => EMPTY (claim current)
+               cited run 32324495153, "as of commit" 0c2ed40, anchored: true
+               4 table rows, 0 disagree with the archived log
+      [--mutate G12, base -> 44702fb] => NON-EMPTY (claim is STALE), 77 insertions
+      FAILABILITY CONTROL: CONTROL PASSED (cell can fail)
+
+    d94a42e6…  cycle-003-gate-P-3.mjs          (matches pre-dispatch seal)
+    1ba41b07…  cycle-003-gate-P-3-addendum.mjs
+
+**Next:** cycle 4 — P-4, the playbook allowlist item, is the last must-have that is not a
+standing guard. Cycle 2 hand-wrote its ledger line and marked it as hand-written; what
+remains is the handoff document carrying denial #31, the exact JSON lines, and the single
+command a human runs to confirm. It is conductor work at S effort, which is what gear 1
+wants. P-6 is available if the clock allows.
+
+## runfile-mirror
+
+    stop_at 1787276706 | usage_reset_at 1787276706 | mode guest dial 0.33 | auth subscription
+    gear 1 (target 1, rho 3.61) | k_cap 1 | demote true | promote false
+    weekly: used 100% / opus 100% at week 41.42% elapsed, heat 2.41, ceiling 2, promote_blocked
+    targets: /opt/targets/aphorism-cli (active, weight 1) | rotation [0] cursor 0
+    watchdog pacer, plist_loaded true | caffeinate_pid 0 (Linux) | cycles_since_recycle 2
+    playbook auto: L-008 L-016 L-024 L-026 L-029 L-031 L-033 L-034 L-038 L-042 L-043 L-044 L-046
