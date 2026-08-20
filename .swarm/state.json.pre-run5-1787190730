@@ -1,22 +1,20 @@
 {
-  "idea": "zero-dependency Node CLI printing a random attributed programming aphorism — improvement run #5: measure branch coverage, audit doc claims, record the playbook gap; no new features",
+  "idea": "zero-dependency Node CLI printing a random attributed programming aphorism — improvement run #3: measure, repair, document; no new features",
   "project_dir": "/opt/targets/aphorism-cli",
   "created_at": "2026-08-14T00:00:00+00:00",
-  "run_label": "improvement run #5",
-  "run_started_at": "2026-08-20T01:52:10Z",
-  "phase": "PLAN",
-  "cycle": 0,
+  "run_label": "improvement run #4",
+  "run_started_at": "2026-08-19T14:05:17Z",
+  "phase": "DONE",
+  "cycle": 12,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "spec_digest": [
-    "IMPROVEMENT RUN #5 on a shipped zero-dep Node CLI — measure what the suite actually executes; no new features",
-    "must: bin/aphorism.js branch gap (85.71%) enumerated exactly, each branch classified HOLE or BOUNDARY, HOLEs pinned by failable+attributable+converse-controlled tests (P-1)",
-    "must: coverage baseline written down and observable per-push in CI on Node 18/20/22/24, cited to a real run URL — and NEVER gated on (P-2)",
-    "must: every README/--help/docs claim audited doc->code AND code->doc, every citation form incl. bare :N; a clean audit is a valid result (P-3)",
-    "must: allowlist gap proven closed by EXECUTING the denied script, else denial #31 + exact patch handed off, ledger line hand-written and marked (P-4)",
-    "must: suite green >=119 every commit, Actions matrix green on final HEAD, zero features, zero new deps, src/corpus.js byte-identical (P-5)",
-    "expected shape: bounded chores; early DONE is the honest outcome, not a failure",
-    "escalation (2nd consecutive run): no-repeat rotation is the highest-value change and is locked out by the brief — operator lever"
+    "IMPROVEMENT RUN #4 on a shipped zero-dep Node CLI — settle two unsupported claims; no new features",
+    "must: Node floor settled by REAL Actions matrix output or corrected in README; not-run reported as not-run (M-1)",
+    "must: REPORT.md first screen answers shipped/verified/open, history MOVED not deleted, audit pasted (M-2)",
+    "must: allowlist gap proven closed by executing the denied script, else denial #30 + exact patch handed off (M-3)",
+    "must: every open item gets a named actor + settling evidence, KI-35 fixed (M-4); suite green >= 118, no unmeasured test (M-5)",
+    "non-goals: corpus expansion, rotation, any new flag, any dependency, any deleted citation"
   ],
   "baseline_2026_08_19": {
     "test_cmd_output": "tests 118 / pass 118 / fail 0 / duration_ms 4745.9 (node v24.19.0)",
@@ -462,14 +460,14 @@
   "counters": {
     "consecutive_no_value": 0,
     "consecutive_failures": 0,
-    "k_current": 3,
+    "k_current": 5,
     "wave_streak": 0,
     "window_tokens_attributed": 0
   },
   "last_cycle": {
-    "n": 0,
-    "work": "kickoff (improvement run #5)",
-    "outcome": "spec rewritten; stress RESHAPE conf 6; taste 3/6/9/5 dissent recorded; denial #31 reproduced both halves",
-    "commit": ""
+    "cycle": 12,
+    "work": "VALUE_LOOP / DONE decision (inline, conductor-owned) + WRAP_UP",
+    "outcome": "DONE. 12-cell closing gate re-derived the definition of done from the tree, 12 PASS / 0 FAIL incl. 2 must-die controls. Suite 119/119. Actions matrix 4/4 green on HEAD. src/corpus.js byte-identical; bin/ and src/ untouched all run. M-3 re-executed and DENIED again -> closes on its handoff branch, never as a pass (ledger stays denial #31). No VALUE_LOOP candidate cleared the ratchet: every noticeable change is a SPEC-locked non-goal. ~18.5h handed back with the reason recorded.",
+    "ts": 1787168059
   }
 }

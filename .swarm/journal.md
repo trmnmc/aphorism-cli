@@ -17057,3 +17057,143 @@ call ~200 approximate and move on. The gate says `<= 200`; the honest path to gr
 making the claim true.
 
     ---- 12 PASS / 0 FAIL ----   (200 lines; shipped/verified/open all present)
+
+---
+
+# cycle 0 — KICKOFF, improvement run #5 (2026-08-20T01:45Z)
+
+**Allocator auto-kickoff.** `runs/kickoff-hints.json` carried `source: allocator`,
+`mode: guest`, `dial: 0.33`, `stop_at: 1787276706`, and the brief *"TRICKLE POSTURE:
+housekeeping only — harden tests, fix playbook items, polish docs — no new features.
+Haiku-priced work types; no new features."* The idea text began `improve existing target `,
+so SKILL.md guard 1d applies: this is an IMPROVEMENT RUN, guard 1b's non-empty-dir refusal
+does not apply, the existing repo is REUSED (no `git init`, no `gh repo create`), and
+must-haves are scoped by the brief. Hints consumed and deleted. Interactive Q&A skipped per
+1d; stress-test, prior-art scout and taste judge all still ran — a queued idea earns the
+same scrutiny as a chat idea.
+
+**This is the FIFTH consecutive run under this identical brief.**
+
+## Stress-test — verdict RESHAPE, confidence 6
+
+*The attack that landed.* Runs #1–#4 each closed every must-have they set. Run #4 closed
+DONE at cycle 12 with ~18.5 of its 24 hours unspent and said so in its own report. All 7
+surviving backlog items are BLOCKED on human rulings an agent must not make. The CI matrix
+and the REPORT.md surgery that justified run #4 are both already done and green. A fifth
+identical run is the churn three prior stress-tests already named.
+
+*The defence that held — narrow, but real and MEASURED.* No run in this repo's recorded
+history has ever asked the RUNTIME which branches the suite reaches. Measured live at this
+kickoff:
+
+    $ node --test --experimental-test-coverage test/*.test.js
+    ℹ file         | line % | branch % | funcs % | uncovered lines
+    ℹ  aphorism.js | 100.00 |    85.71 |  100.00 |
+    ℹ  args.js     | 100.00 |   100.00 |  100.00 |
+    ℹ  corpus.js   | 100.00 |   100.00 |  100.00 |
+    ℹ  select.js   | 100.00 |   100.00 |  100.00 |
+    ℹ all files    | 100.00 |    98.44 |  100.00 |
+
+    $ grep -c "experimental-test-coverage" .swarm/journal.md
+    0
+
+Zero occurrences across a 1.49 MB journal. Four runs argued about whether the suite was
+"thin" using SPEC-clause mutation sweeps; none ever ran the instrument that answers the
+question directly — and it ships inside the Node binary the repo already requires, so it
+adds no dependency. That converts "harden tests" from an unfalsifiable instruction into a
+bounded, falsifiable, closable one: 12 unexecuted branches in a 100-line file.
+
+*Reshaped:* the run is re-aimed off "more housekeeping" and onto that single new
+instrument, plus a bidirectional doc-claim audit, with an explicit non-goal forbidding any
+coverage threshold or ratchet — because putting a percentage on screen is exactly what
+tempts a run into writing tests to feed it.
+
+## Prior-art scout — 3 of 6 searches spent, stance BUILD
+
+`gh search repos` free-text (2, both empty of anything zero-dep) and `--topic=mutation-testing`
+returned `stryker-mutator/stryker-js` as the only live JS option — a dependency, and
+therefore a scope change, not housekeeping. Same conclusion run #4 reached from a different
+angle. Nothing clears both the license gate and the no-dependency constraint, which is the
+answer, not a failed search. Node's own `--experimental-test-coverage` is in-tree. Stance:
+**build** (hand-rolled, as runs #1–#4 did). Remaining budget deliberately unspent.
+
+## Taste judge — 3 / 6 / 9 / 5, DISSENT RECORDED, NOT OVERRIDDEN
+
+use-twice **3** · product-not-demo **6** · scope-fits-night **9** · one-memorable-thing **5**.
+
+> "Load-bearing axis is use-twice: as scoped this is a well-designed, honestly-bounded
+> half-night of chores that leaves nothing a user or a future reader will return to, so it
+> is worth running only if the operator declines to lift the brief — the specific change
+> needed is upstream of this spec, not inside it."
+
+For the SECOND consecutive run the judge's call is that the brief itself is the problem,
+and for the second consecutive run the conductor cannot act on it: every candidate it
+points at is a new user-visible feature, excluded by the allocator brief, and the brief is
+the operator's to change, not the swarm's. Escalated in SPEC "Expected shape" and it will
+be escalated again in REPORT.md.
+
+*Contract deviation, recorded rather than smoothed over:* the judge's `ns:taste` block
+emitted **five** axis entries — `scope-fits-night` twice — against a contract that specifies
+exactly four, in order. The duplicate carried the same score (9) and a `duplicate-guard`
+note, so no score is ambiguous, but the block as emitted does not satisfy the output
+contract. Scores above are taken from the first occurrence of each axis.
+
+## Allowlist gap — denial #31, BOTH halves reproduced in this session
+
+    $ /opt/swarm/bin/swarm-playbook.sh parse
+    -> DENIED by the harness (permission prompt, non-interactive session)
+
+    Edit /opt/swarm/.claude/settings.json  (kickoff step 5, sanctioned)
+    -> DENIED by the harness
+
+Second consecutive run measuring both halves in one session. The gap is now precisely
+located rather than merely asserted — `permissions.allow` carries
+`Bash(/opt/swarm/bin/swarm-budget.sh:*)` and `Bash(/opt/swarm/bin/swarm-notify.sh:*)` and
+**no `swarm-playbook.sh` entry in any form**. Playbook directives for this run were
+therefore staged by DIRECT READ of `playbook/learnings.md`, not by the script's parser —
+the same fallback runs #2–#4 used. The applied-ledger line will be HAND-WRITTEN and MARKED
+as such. Tracked as must-have P-4; the fix itself is a SWARM edit and is out of bounds
+mid-run under hard rule 5.
+
+## Headless zero-prompt assert (kickoff step 11) — NOT RUN, reported as not-run
+
+    $ timeout 240 claude -p "/swarm status ..." --permission-mode acceptEdits --add-dir ...
+    -> requires approval (the `claude` binary is not on the allowlist)
+
+Reported as NOT-RUN, never as passed. Partial mitigation, stated as partial: this session is
+itself a headless `-p` session spawned with `--add-dir /opt/targets`, and it has completed
+kickoff with zero prompts on the allowed surface — so the scope is validated by construction
+for the tools actually used, but the assert's own claim is unverified. Consequence to be
+aware of: a watchdog relaunch may stall.
+
+## Watchdog
+
+`swarm-watchdog.timer` **enabled + active**; `swarm-pacer.timer` **active**. Carried
+forward unfixed from run #4's closing finding (playbook L-037): the watchdog's guard 4 is
+satisfied by `REPORT.md` existing in every target, and on an improvement run that file is
+present from cycle 0 because the PREVIOUS run wrote it — so the watchdog will read
+`all-done / reports-present` and no-op for this entire run too. **This run again has no
+crash recovery, and this line is the report of that.** Not fixed here: `bin/` is read-only
+during a run (hard rule 5). `watchdog.mode` set to `pacer`; the pacer's own guard keys on
+`wrap_up_complete` only and is sound.
+
+## State written
+
+SPEC.md rewritten for run #5 (P-1…P-5). Product spec, Domain rules (29 clauses), Undecided
+behaviours D-42…D-46 and Taste notes carried forward unchanged. `backlog.json` **preserved,
+not reset** — kickoff step 7's "empty backlog" would have silently dropped 7 human-owned
+BLOCKED items; backed up to `backlog.json.pre-run5-1787190730`. state.json → phase PLAN,
+cycle 0, `k_current` reset to 3. Runfile written: guest/0.33, `stop_at` 1787276706
+(23.88 h out).
+
+Budget probe OK — `gear 4, ratio 0.75, thermostat, probe_ok true, window 1.70M tok`.
+**Applied gear 3**, because guest mode clamps the reachable ceiling to 3; recorded in
+`budget.gear_note` rather than silently overwriting the probe's own number.
+
+Suite re-verified at kickoff before anything was written:
+
+    $ node --test test/*.test.js
+    ℹ tests 119   ℹ pass 119   ℹ fail 0   ℹ skipped 0   ℹ duration_ms 5141.26
+
+**Next:** cycle 1 — inline PLAN. The backlog does not yet cover P-1…P-5, so the PLAN gate
+holds until it does.
