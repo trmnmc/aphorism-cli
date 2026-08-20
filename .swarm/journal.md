@@ -19080,3 +19080,187 @@ swarm problem, and it is the second run in a row it has been named.
     targets: /opt/targets/aphorism-cli (active, weight 1) | rotation [0] cursor 0
     watchdog pacer, plist_loaded true | caffeinate_pid 0 (Linux) | cycles_since_recycle 8
     playbook auto: L-008 L-016 L-024 L-026 L-029 L-031 L-033 L-034 L-038 L-042 L-043 L-044 L-046
+
+---
+
+# cycle 10 — RF-5: the guard can now fire on the commit that breaks it
+
+    2026-08-20T05:48:55+0000 .. 06:10Z | target /opt/targets/aphorism-cli | phase BUILD
+    work: build-wave k=1 (direct Agent, headless fallback) -> RF-5 | outcome: VERIFIED
+    commits 2b003ea (guard, red by design) + 556c01e (re-citation, green) | both pushed
+
+## Clock, gear, control
+
+    date +%s -> 1787204935 | stop_at 1787276706 | 71663s (~19.9h) remaining
+    probe OK: gear 1 (target 1), rho 9.79 (up from 8.41) — TENTH consecutive crawl
+    weekly governor HOT: weekly 100% / opus 100% at week 43.34% elapsed, heat 2.31,
+      ceiling 2, promote blocked. k_cap 1, demote true.
+    burn 96,190,726 tok @ 23,542,850 tok/h, projected depletion 1787212335 (~06:12Z)
+    control: poll clean, pending [] applied [] inject [] — nothing to triage
+    cycle 10 % 5 == 0 -> full SPEC re-read + backlog hygiene both done (below)
+
+Admission: build-wave's 2700s worst case against 70763s of usable window — fits with room
+to spare. Effective wave size = min(k_current 3, gear cap 1, hard max 5) = **1**. RF-5 is
+kind `fix`, so gear 1's demote rule leaves it on sonnet (build/fix never drops below).
+
+## What was wrong
+
+`test/node-support-citation.test.js` runs the README's own retirement condition,
+`git diff <base>..HEAD -- src bin test .github`, and `HEAD` by definition excludes
+uncommitted work. So the commit that falsifies the citation **always tests green**, and
+the breakage only surfaces a cycle later on the next full clone. CI cannot see it either:
+it checks out shallow, the base is unreachable, the guard skips. No signal available to
+the breaking commit could observe the break — which is precisely how cycle 8 left main
+red for a full cycle.
+
+The fix reuses the SAME parsed base and pathspec with the range dropped —
+`git diff <base> -- <paths>`, base against the working tree. The builder kept both
+comparisons and gave a good reason I had not thought of: they are not redundant in either
+direction. A committed change later reverted uncommitted shows up in `base..HEAD` only; an
+uncommitted-only edit shows up in base-to-worktree only.
+
+## The gate failed 6 of 8 cells, and it was my fault, not the builder's
+
+I sealed the gate by sha256 before dispatch (0585e83e6e3a…, seal re-verified INTACT
+immediately before execution — the builder never saw it). It returned **2 PASS / 6 FAIL**.
+
+Publishing that number rather than quietly fixing the file, because the six failures were
+defects in **my instrument**, and "corrected instrument" and "weakened gate" look identical
+from an 8/8 summary line if you don't show the work:
+
+    D1  mutation target was src/pick.js — A FILE THAT DOES NOT EXIST in this repo.
+        appendFileSync CREATED it, so G1 mutated an UNTRACKED path, which git diff
+        correctly ignores. G1 measured nothing; G2 then threw on git checkout of it.
+    D2  G3/G1/G2 asserted pass === 1; the candidate ships TWO tests (pass=2).
+    D3  G6 asserted fail === 1; a bogus base correctly fails BOTH arms (fail=2).
+    D4  G4 asserted skipped === 1; a shallow clone correctly skips BOTH arms (skipped=2).
+    D5  G7 invoked `node --test test/` instead of the SPEC's `node --test test/*.test.js`.
+
+D2-D4 are one mistake wearing three hats: I hardcoded the guard's arity into cells whose
+subject is behaviour, in the same breath as telling the builder "one test or two is your
+call". D1 is worse and simpler — I named a source file without running `git ls-files`.
+
+The addendum gate (467551de2712…) corrects exactly D1-D5 and **no behavioural assertion**.
+G1 must still die, G2/G3 must live, G4 must skip, G5 must survive, G6 must fail. Both
+hashes and both full outputs are archived in
+`.swarm/runs/run5-cycle-010-verify-RF-5.txt`. Result: **8 PASS / 0 FAIL**.
+
+One further honesty note the addendum forced me to write down: the sealed G1's detail line
+`committed-history diff over pathspec is EMPTY: true` was **mislabelled** — it printed
+`git diff HEAD -- <paths>`, not `<base>..HEAD`. The claim that `..HEAD` is blind to
+uncommitted work is not carried by that line at all. It is carried by **G5**, which runs
+the OLD base..HEAD-only guard against the same mutation and watches it survive.
+
+## VERIFICATION EVIDENCE
+
+Load-bearing pair (L-029 attributability) — a kill you cannot attribute is not evidence:
+
+    PASS  G1  uncommitted edit to a TRACKED src/select.js FAILS the guard pre-commit
+              exit=1 tests=2 pass=1 fail=1 skipped=0 | dirty "M src/select.js"
+    PASS  G5  the SAME mutation SURVIVES the OLD committed guard
+              old guard clean:   exit=0 pass=1 fail=0 skipped=0
+              old guard mutated: exit=0 pass=1 fail=0 skipped=0   <- SURVIVES
+    PASS  G2  uncommitted README.md edit (outside pathspec) still passes — proves the
+              guard is pathspec-scoped, not `git diff <base>` bare or a `git status` sweep
+    PASS  G3  clean worktree passes (so G1's death is the mutation, not the scratch setup)
+    PASS  G4  shallow clone: every arm skips, none fails | is-shallow-repository=true
+    PASS  G6  bogus base on a full clone still FAILS, names it a bogus citation, skipped=0
+    PASS  G7a suite 121/120/1 in the worktree, and the ONE failure is this guard itself
+    PASS  G8  one file changed, src/corpus.js diff "", zero tracked manifests
+    NOTE  G9  an UNTRACKED new file inside the pathspec is STILL invisible (git diff never
+              reports untracked paths). Shared with the old guard, outside RF-5's claim,
+              measured rather than left as the anecdote D1 stumbled into.
+    8 PASS / 0 FAIL (+1 measurement)
+
+Skips counted everywhere and never read as passes. Full text + the unedited 2/8 arm:
+`.swarm/runs/run5-cycle-010-verify-RF-5.txt`.
+
+Real environment, not scratch clones:
+
+    $ gh run view 32337875271            # commit 2b003ea, four majors
+      # tests 121  # pass 119  # fail 0  # skipped 2   on v18.20.8/v20.20.2/v22.23.2/v24.19.0
+      <- both arms skip on CI's shallow checkout. G4 confirmed in the real environment,
+         and the reason the README's skip count moved 1 -> 2.
+
+    $ node --test test/*.test.js         # final HEAD 556c01e, clean tree
+      tests 121 / pass 121 / fail 0 / skipped 0
+      <- on a full clone both arms EXECUTE. The new comparison is exercised for real here,
+         not merely its degradation path.
+
+    $ gh run view 32337981925            # final HEAD 556c01e
+      success — test (18) (20) (22) (24) all success
+
+## The red commit, stated as an exception rather than smoothed over
+
+Commit `2b003ea` was **RED on a full clone** for the ~4 minutes between push and
+re-citation. That is not an accident of this cycle; it is structural. Editing `test/`
+falsifies the cited pathspec, and the CI run that would refresh the citation cannot exist
+until after the push. The only ways to make that commit green were to narrow the pathspec
+or relax the assertion — both are opening the gate by weakening it, which is the one move
+this run exists to refuse. So I took the path cycles 5 and 6 established: commit red, say
+so in the commit message, push, run the round trip the README section itself prescribes,
+re-cite to run 32337875271 at 2b003ea, land green.
+
+**P-5's floor is measured at the cycle's final HEAD** (121/121/0, matrix 4/4 green on
+556c01e) with the intermediate state reported, never re-labelled. This is the standing
+**P-7** conflict, and cycle 10 sharpened it without resolving it: the exception is no
+longer discovered a cycle late by a full clone, it is visible pre-commit to the run that
+causes it. Strictly better detection, identical disposition — and a human will now meet
+this call on *every* commit touching `src/bin/test/.github` rather than occasionally.
+Still human-owned.
+
+**KI-38 RESOLVED.** Residual recorded, not closed over: untracked files inside the
+pathspec remain invisible (G9).
+
+## Backlog hygiene (cycle 10 % 5 == 0) + SPEC re-read
+
+Full `SPEC.md` re-read. All five must-haves (P-1..P-5) remain closed; P-5 is a standing
+guard and held again this cycle. Backlog: **31 items, 21 done, 1 dropped, 9 live** — well
+under the ~30 cap. Dedupe pass over the 8 blocked items found **no overlap and nothing to
+drop**: TS-1/2/3/6 name four distinct corpus properties (depth, tag-pool size, voice
+concentration, tag discoverability), T-006/T-040 split audit from retag-consequences, J-7
+collects unspecified CLI behaviours, P-7 is the P-5/P-6 conflict. Zero merged, zero
+dropped.
+
+That leaves the backlog with **one** live item that a swarm may act on — P-5, the standing
+conductor guard — and **eight** blocked on human rulings. RF-5 was the last implementable
+item in the queue.
+
+## Wave autotune
+
+IN SCOPE (a fix item dispatched as a direct Agent call per the headless build-wave
+fallback) and **CREDITED CLEAN**: zero reverts, zero failed verifies. The sealed gate's six
+FAILs were instrument defects adjudicated in a separate addendum — not failed verifies of
+the item; every behavioural assertion passed on the first execution of a correct
+instrument. `wave_streak 0 -> 1`, below the threshold of 2, so `k_current` stays 3. Gear 1
+pins `k_cap` at 1 regardless, so the credit changes nothing operationally; recorded because
+the streak is real evidence and suppressing it would understate the next run's starting k.
+This is the opposite call from cycles 6/7/9 (out of scope: no build item) and from cycle 8
+(in scope but adjudicated-clean, which is not clean) — the distinction is whether a
+behavioural assertion ever had to be argued with, and this cycle none did.
+
+## Standing situation
+
+Denial ledger unchanged at **31** — `swarm-playbook.sh` still has no allowlist entry in any
+form; P-4's hand-off stands. Two NEW harness denials this cycle, both invocation-form, both
+worked around without a SWARM write and neither a new structural gap: `bash <script>` (only
+`bash bin/swarm-*.sh` prefixes are allowlisted — used `node` instead) and
+`RUNFILE=… swarm-budget.sh` (an env-var prefix defeats the literal prefix match — the
+script defaults `RUNFILE` to the same path, so it was dropped). Both are KI-37 biting
+again, from the same side as cycle 9's #32 correction; **neither is counted as a new
+denial**, for exactly the reason cycle 9 gave.
+
+The run is not stalled — this cycle produced verified value, `consecutive_no_value` stays
+0 — but with RF-5 closed it is now at the honest end of its brief. For the **third**
+consecutive run the highest-value change to this product (TS-1's no-repeat rotation) is
+locked out by the trickle brief rather than by any engineering obstacle. Operator lever,
+not a swarm problem.
+
+## runfile-mirror
+
+    stop_at 1787276706 | usage_reset_at 1787276706 | mode guest dial 0.33 | auth subscription
+    gear 1 (target 1, rho 9.79) | k_cap 1 | demote true | promote false
+    weekly: used 100% / opus 100% at week 43.34% elapsed, heat 2.31, ceiling 2, promote_blocked
+    targets: /opt/targets/aphorism-cli (active, weight 1) | rotation [0] cursor 0
+    watchdog pacer, plist_loaded true | caffeinate_pid 0 (Linux) | cycles_since_recycle 9
+    playbook auto: L-008 L-016 L-024 L-026 L-029 L-031 L-033 L-034 L-038 L-042 L-043 L-044 L-046

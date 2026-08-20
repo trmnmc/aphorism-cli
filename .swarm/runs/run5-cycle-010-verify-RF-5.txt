@@ -1,0 +1,145 @@
+RF-5 VERIFICATION EVIDENCE — run #5, cycle 10, 2026-08-20
+Target HEAD at gate authoring time: 6c0c298 (before any of this cycle's commits)
+
+Both gates were authored by the conductor and sha256-sealed BEFORE the builder was
+dispatched. The builder never saw either file. Captured output below is verbatim as
+returned; the gates are NOT re-runnable to the same result after the fact, because the
+cycle's own commits changed the tree they measure. That is why the text is archived here
+rather than regenerated.
+
+  sealed gate    /opt/swarm/runs/run5-c010-gate-RF-5.mjs
+                 sha256 0585e83e6e3aec69276ccf4afdb857d41fa37d7f953971aa3ad31c5ab56bb3c9
+                 12674 bytes, seal re-verified INTACT immediately before execution
+  addendum gate  /opt/swarm/runs/run5-c010-gate-RF-5-addendum.mjs
+                 sha256 467551de27126a7d01d3e21233c6a1cbaaf1b86b4f9fe9fb91f5328e638c2f5c
+
+================================================================================
+ARM 1 — THE SEALED GATE, RUN AS SEALED.  2 PASS / 6 FAIL.
+Published unedited. Six cells failed on defects in the INSTRUMENT, not the work.
+================================================================================
+
+FAIL  G3  clean worktree + candidate guard  => PASS (setup does not pre-fire)
+      exit=0 tests=2 pass=2 fail=0 skipped=0
+      porcelain: ""
+FAIL  G1  MUST DIE: uncommitted edit to src/pick.js fails the guard pre-commit
+      exit=0 tests=2 pass=2 fail=0 skipped=0
+      worktree dirty: "?? src/pick.js"
+      committed-history diff over pathspec is EMPTY: true
+      failure text:
+error: pathspec 'src/pick.js' did not match any file(s) known to git
+FAIL  G2  MUST LIVE: uncommitted out-of-pathspec edit
+      threw: Command failed: git checkout -- src/pick.js
+      error: pathspec 'src/pick.js' did not match any file(s) known to git
+FAIL  G6  REGRESSION: unresolvable base on a full clone FAILS, never skips
+      exit=1 tests=2 pass=0 fail=2 skipped=0
+      names it a bogus citation: true
+PASS  G5  ATTRIBUTABLE: the same mutation SURVIVES the OLD committed guard
+      old guard, clean:  exit=0 pass=1 fail=0 skipped=0
+      old guard, mutated: exit=0 pass=1 fail=0 skipped=0  <- SURVIVES
+FAIL  G4  shallow clone (as CI): guard SKIPS, never fails
+      is-shallow-repository=true
+      exit=0 tests=2 pass=0 fail=0 skipped=2
+FAIL  G7  P-5 floor: full suite at committed HEAD >= 119, zero failures
+      tests=1 pass=0 fail=1 skipped=0 exit=1
+      HEAD=6c0c298 porcelain="M test/node-support-citation.test.js"
+PASS  G8  blast radius: corpus byte-identical, zero dependency manifests
+      diff --stat 6c0c298..worktree:
+      test/node-support-citation.test.js | 98 ++++++++++++++++++++++++++++++++++----
+       1 file changed, 88 insertions(+), 10 deletions(-)
+      src/corpus.js diff: ""
+      tracked manifests: ""
+
+2 PASS / 6 FAIL
+
+DIAGNOSIS OF MY OWN INSTRUMENT (D1-D5, corrected in the addendum and nowhere else):
+  D1  PATHSPEC_FILE was 'src/pick.js'. That file DOES NOT EXIST here — `git ls-files src bin`
+      returns bin/aphorism.js, src/args.js, src/corpus.js, src/select.js. appendFileSync
+      CREATED it, so G1 mutated an UNTRACKED file, and `git diff <base> -- <paths>` correctly
+      ignores untracked paths. G1 measured nothing; G2 then threw on `git checkout` of it.
+  D2  G3/G1/G2 asserted pass === 1. The candidate ships TWO tests, so the clean control read
+      pass=2 and scored FAIL on arity, not behaviour.
+  D3  G6 asserted fail === 1. A bogus base correctly fails BOTH arms => fail=2. The cell's
+      real signal (exit non-zero, "bogus citation" present, skipped=0) was already correct.
+  D4  G4 asserted skipped === 1. A shallow clone correctly skips BOTH arms => skipped=2.
+  D5  G7 invoked `node --test test/` (reported tests=1) instead of the SPEC's test_cmd
+      `node --test test/*.test.js`.
+  NOTE the sealed G1's detail line "committed-history diff over pathspec is EMPTY: true" is
+  itself mislabelled: it printed `git diff HEAD -- <paths>`, not `<base>..HEAD`. The claim
+  that ..HEAD is blind to uncommitted work is NOT carried by that line. It is carried by G5,
+  which runs the old base..HEAD-only guard against the same mutation and watches it survive.
+
+================================================================================
+ARM 2 — THE ADDENDUM GATE.  8 PASS / 0 FAIL (+1 measurement).
+Corrects D1-D5 and NO behavioural assertion. G1 must still die, G2/G3 must live,
+G4 must skip, G5 must survive, G6 must fail.
+================================================================================
+
+PASS  G3  clean worktree + candidate guard => every test PASSES (setup does not pre-fire)
+      exit=0 tests=2 pass=2 fail=0 skipped=0
+      porcelain: ""
+      mutation target is TRACKED (D1 fix): "src/select.js"
+PASS  G1  MUST DIE: uncommitted edit to a TRACKED src/select.js fails the guard pre-commit
+      exit=1 tests=2 pass=1 fail=1 skipped=0
+      worktree dirty: "M src/select.js"  (M = modified tracked file, not ?? untracked)
+      failure names the worktree comparison: base-to-working-tree
+PASS  G2  MUST LIVE: uncommitted edit to README.md (outside pathspec) still passes
+      exit=0 tests=2 pass=2 fail=0 skipped=0
+      worktree dirty: "M README.md"
+      proves the guard is pathspec-scoped, not a bare 'git diff <base>' or a 'git status' sweep
+PASS  G6  REGRESSION: unresolvable base on a full clone FAILS, never skips
+      exit=1 tests=2 pass=0 fail=2 skipped=0
+      both arms fail (fail=2), and the text names it a bogus citation: true
+PASS  G5  ATTRIBUTABLE: the SAME mutation SURVIVES the OLD committed guard
+      old guard, clean:   exit=0 tests=1 pass=1 fail=0 skipped=0
+      old guard, mutated: exit=0 tests=1 pass=1 fail=0 skipped=0  <- SURVIVES
+      G1 kills, G5 survives, same mutation => the kill is attributable to THIS change
+PASS  G4  shallow clone (as CI): EVERY arm skips, none fails
+      is-shallow-repository=true
+      exit=0 tests=2 pass=0 fail=0 skipped=2
+PASS  G7a P-5 worktree: suite >= 119, and its ONE failure is the citation guard itself
+      test_cmd: node --test test/*.test.js
+      tests=121 pass=120 fail=1 skipped=0 exit=1
+      failing: ["README Node support citation: base-to-working-tree diff must also be empty,
+                so an uncommitted falsification is visible now (or the check must skip on a
+                missing precondition)"]
+      EXPECTED RED: the guard firing on this cycle's own uncommitted test/ edit.
+PASS  G8  blast radius: one file, corpus byte-identical, zero dependency manifests
+      changed files: ["test/node-support-citation.test.js"]
+      src/corpus.js diff: ""   tracked manifests: ""
+NOTE  G9  an UNTRACKED new file inside the pathspec is invisible to the guard (old and new alike)
+      porcelain: "?? src/brand-new.js"
+      guard result: exit=0 tests=2 pass=2 fail=0 skipped=0
+      git diff --name-only over pathspec: ""
+      WHY: git diff never reports untracked paths. Pre-existing, shared with the old guard,
+      outside RF-5's claim. Recorded as a measured limit, not scored as a pass or a fail.
+
+8 PASS / 0 FAIL  (+1 measurement)
+
+================================================================================
+ARM 3 — THE REAL ENVIRONMENT. Not a scratch clone; the actual repo and actual CI.
+================================================================================
+
+$ node --test test/*.test.js            # worktree, RF-5 uncommitted
+  tests 121 / pass 120 / fail 1 / skipped 0
+  the single failure is the new arm firing on its own edit
+
+$ git push && gh run watch 32337875271  # commit 2b003ea
+  test (18) (20) (22) (24) — all four success
+$ gh run view 32337875271 --log
+  test (18|20|22|24):  # tests 121   # pass 119   # fail 0   # skipped 2
+  node: v18.20.8 / v20.20.2 / v22.23.2 / v24.19.0
+  <- the guard SKIPS on CI's shallow checkout, both arms, on all four majors.
+     Real-world confirmation of G4, and the reason the skip count moved 1 -> 2.
+
+$ node --test test/*.test.js            # final HEAD 556c01e, clean tree, after re-citation
+  tests 121 / pass 121 / fail 0 / skipped 0
+  <- on a FULL clone both arms EXECUTE rather than skipping, so this run exercises the
+     new comparison for real, not merely its degradation path.
+
+$ gh run view 32337981925               # final HEAD 556c01e
+  conclusion: success — test (18) (20) (22) (24) all success
+
+P-5 RECORDED EXCEPTION, stated as an exception and never re-labelled as a pass:
+commit 2b003ea was RED on a full clone for the ~4 minutes between push and re-citation,
+because the CI run that refreshes the citation cannot exist until after the push. Same
+class as 5f833ab (cycle 5). Filed under P-7, which remains human-owned.
