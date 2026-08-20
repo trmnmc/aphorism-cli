@@ -508,7 +508,7 @@
       "files_hint": [],
       "packages": [],
       "acceptance": "node --test test/*.test.js green at >=119 on every commit this run makes; Actions matrix green on final HEAD; git diff shows zero changes to src/corpus.js; no new runtime or dev dependency anywhere in the tree; no new user-visible flag or behaviour.",
-      "notes": "cycle 7: re-verified by the conductor. node --test test/*.test.js -> tests 120 / pass 120 / fail 0 (node v24.19.0). git diff --name-only 81b0958..HEAD -- src bin is EMPTY, so src/corpus.js is byte-identical to run start by diff, not merely by hash (sha256 77a4de5c...45d09e recorded). No package.json exists, so zero deps holds by construction. Actions matrix green on HEAD 23b2f6b (run 32332414113, success). Zero features added."
+      "notes": "cycle 8: re-verified by the conductor inside the sealed gate (cell A6). node --test test/*.test.js -> tests 120 / pass 120 / fail 0, exit 0 (node v24.19.0), against the >=119 floor. Blast radius cell A5 confirms the whole cycle diff from 057d00c is .github/workflows/test.yml alone, so src/corpus.js is byte-identical by diff. No package.json exists -> zero deps holds by construction. Zero features added: the change is a CI action version pin. Actions matrix on the new HEAD is stamped in the cycle-8 addendum."
     },
     {
       "id": "P-6",
@@ -606,14 +606,14 @@
       "priority": 60,
       "status": "todo",
       "attempts": 0,
-      "model": "haiku",
+      "model": "sonnet",
       "deps": [],
       "files_hint": [
         ".github/workflows/test.yml"
       ],
       "packages": [],
       "acceptance": "Actions run 32331910336 annotated every job: \"Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4.\" The workflow is green today because the runner silently forces Node 24. Bump both to the major that targets Node 24 natively, and confirm the matrix stays green on all four Node majors against a REAL run rather than a local inference.",
-      "notes": "Observed, not inferred: read off the run annotations of this cycle own push. Filed rather than fixed -- cycle.md step 5 permits ONE work type per cycle and this cycle was review-fix, whose stage 3 is scoped to REPRODUCED findings from the review. This is a fresh observation, not a review finding, so folding it in would have been scope creep. Nothing is broken today; the deprecation is a future break."
+      "notes": "cycle 8: BUILT and locally verified; CI half still open at the main commit. Both actions bumped @v4 -> @v7 (actions/checkout latest v7.0.1, actions/setup-node latest v7.0.0, read from gh api at gate run time, not hardcoded). Sealed gate SWARM/runs/cycle-008-verify.mjs (sha256 2e6caf18...b924, seal intact after dispatch): A1/A2x2/A3/A5/A6 PASS + 2 converse controls PASS; A4 FAILED as an INSTRUMENT DEFECT -- its regex matched the comment at test.yml:36 that FORBIDS threshold flags, and the identical string is in the pre-dispatch blob 057d00c, so the builder cannot have introduced it. Repaired additively in SWARM/runs/cycle-008-A4fix.mjs, six columns all as expected, A4 recomposed PASS; sealed gate left byte-unedited per the standing precedent. Model recomputed haiku -> sonnet at pick time (routing table gives haiku to docs/polish only; kind=fix never drops below sonnet). STILL TODO because the acceptance final clause requires a REAL Actions run on all four Node majors, which no local check can settle. Converse control captured pre-push: run 32331910336 was GREEN on 4/4 jobs AND carried the deprecation annotation on all four, so annotation-absence is a proven discriminator."
     }
   ]
 }

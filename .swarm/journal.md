@@ -18599,3 +18599,195 @@ channel is skipped — not a publish failure; `publish_failures` stays 0. Phase 
 gears never touch the wakeup delay). Hard rule 8 checked before the write: wakeup + 900 leaves
 73 534 s of headroom against `stop_at`. No `ScheduleWakeup` call — on the VPS
 `bin/swarm-pacer.sh` reads this field every 5 minutes and is the actual firing mechanism.
+
+# cycle 8 — 2026-08-20T05:09Z — RF-4: the deprecation bump, and a gate cell that read a prohibition as the violation
+
+**Clock.** `date +%s` → 1787202573. `stop_at − now` = 74 092 s (~20.6 h). No admission pressure:
+a build wave's 2700 s worst case fits with two orders of magnitude to spare.
+
+**Budget probe.** OK, `source: probe`. gear_target 1, **ρ 7.92** (up from 6.79 last cycle — the
+eighth consecutive crawl). window_tokens 81 928 011, ~23.9 M tokens/h, projected depletion
+1787211981. Weekly governor still **HOT**: weekly 100 % / opus 100 % at week 42.95 % elapsed,
+heat 2.33, ceiling 2, `promote_blocked`. Applied gear 1 (held). `k_cap` 1, `demote` true,
+`promote` false. `probe_failures` stays 0.
+
+**Control channel.** `bin/swarm-notify.sh poll` was **DENIED by the harness** — same class as the
+`swarm-playbook.sh parse` denial recorded at kickoff (denial #31), and non-fatal by cycle.md's
+own rule: journal one line, continue from the file-sourced `pending[]` only. `runs/control.json`
+reads `pending: []`, `applied: []`, no `inject` array. Nothing to apply, nothing to triage.
+Counted as **denial #32** — see the ledger note at the end.
+
+**Orient.** Tree CLEAN at `057d00c` (`git status --porcelain` empty), so no crashed-cycle
+salvage was owed. Backlog 30 items: 19 done / 2 todo / 8 blocked / 1 dropped.
+
+**Craft pack.** `swarm-craft.mjs` returned `degraded: []` — nothing to journal. Its `ui` pack was
+deliberately NOT spliced into this item's prompt: a CI YAML file is not a UI surface under the
+step-5 flag rule (no .html/.css/.jsx/.tsx/.vue/.svelte in `files_hint`, no UI noun in the title),
+and padding a two-line bump with 26 lines of visual-design guidance is cost without value.
+
+## The pick: RF-4 over the owed TASTE pass, and why that is not just picking the cheap thing
+
+TASTE is the last of the three gates cycle.md step 4 makes mandatory before POLISH (review-fix
+paid at cycle 6, QA-full at cycle 7), and cycle 7's own hand-off named it as next. It is
+deferred one cycle, deliberately, on two independent grounds:
+
+1. **Gear.** At gear 1 the work-choice rule is haiku-priced useful work with S-effort sonnet
+   builds only. A taste pass is one **fable** agent — a judgment seat, correctly exempt from
+   demotion, and therefore the single most expensive thing on this board — dispatched at ρ 7.92
+   with the weekly governor pinned at ceiling 2. RF-4 is S-effort, one file, and is exactly the
+   shape gear 1 names.
+2. **Marginal value, which is the stronger reason.** A taste pass returns `boredom_findings`
+   that route to `feature` and `polish` items. This run's allocator brief forbids new features
+   outright, and the depth findings a taste agent would surface on a 50-entry corpus are
+   ALREADY on the board and already blocked by that same brief — TS-1 (repeats by the ~9th
+   draw), TS-2 (five tag pools ≤ 4 entries), TS-3 (three voices hold a third of the corpus),
+   TS-6 (undiscoverable tag vocabulary). Paying a fable seat to re-file items the run is
+   forbidden to act on is ceremony. The gate is still owed before POLISH and will be paid; it
+   is not owed before *every* cycle, and ~20 h of clock remain.
+
+RF-4 also sits inside the spec rather than beside it: P-2 and P-5 are both about the Actions
+matrix being observable and green, so CI health is a must-have surface here, not incidental.
+
+**Routing recomputed at pick time,** as step 4 requires. The backlog carried `model: "haiku"`
+from plan time. The routing table gives haiku only to `kind` docs/polish at S effort; RF-4 is
+`kind: fix`, so the table says **sonnet**. Gear 1's `demote` does not touch it either —
+sonnet→haiku is permitted for docs/polish only and build/fix never drops below sonnet. Dispatched
+sonnet. Recorded because a plan-time model that survives into dispatch unrecomputed is how
+routing quietly stops being pick-time.
+
+**Dispatch shape.** ONE direct `Agent` call, not the build-wave Workflow: this is a `-p` headless
+VPS session, where the Workflow tool is review-gated, and cycle.md's documented fallback is
+direct Agent calls. k=1, which is what `k_cap` allowed anyway.
+
+## The sealed gate
+
+Authored **before** dispatch and hash-sealed — `sha256 2e6caf18…c0d9a7b924`, re-hashed after the
+builder returned and **identical**. Held at `SWARM/runs/cycle-008-verify.mjs`, OUTSIDE the target
+repo: hard rule 5 gives workflow agents target paths only, so a gate under SWARM/ is
+*structurally* unreachable to a builder rather than merely forbidden to it (the run #3 cycle-14
+method decision). Pre-dispatch HEAD `057d00c` passed in as the blast-radius baseline.
+
+Every cell re-derives its expected value from the tree or from the GitHub API at run time —
+nothing reads a builder report or a prior cycle's summary. Two converse controls, because a cell
+nobody has shown can go RED is not evidence however green it is.
+
+## VERIFICATION EVIDENCE
+
+    $ sha256sum runs/cycle-008-verify.mjs
+    2e6caf1845e3fa635d880d9429ed1d4bccdde4fbf014773bc01144c0d9a7b924   (seal intact)
+
+    $ node runs/cycle-008-verify.mjs 057d00c
+    CELL                  VERDICT  DETAIL
+    A1                    PASS     no @v4 pins remain
+    A2:actions/checkout   PASS     pinned @v7, latest release v7.0.1 (major 7)
+    A2:actions/setup-node PASS     pinned @v7, latest release v7.0.0 (major 7)
+    A3                    PASS     matrix=[18,20,22,24] fail-fast:false=true
+    A4                    FAIL     glob=true test=true coverage-step=true threshold-flag-introduced=true
+    A5                    PASS     changed: .github/workflows/test.yml (.swarm/ excluded)
+    A6                    PASS     tests=120 pass=120 fail=0 exit=0
+    C1                    PASS     control: mutant re-adding @v4 → "still @v4: actions/checkout"
+    C2                    PASS     control: mutant dropping Node 24 → "matrix=[18,20,22]"
+    8 PASS / 1 FAIL / 0 NOT-RUN
+
+Full transcript: `SWARM/runs/cycle-008-verify.mjs` output, reproduced above in full.
+
+**A2 is the load-bearing cell and it corrected me.** I expected `@v5`. The builder measured `@v7`
+from `gh api repos/actions/{checkout,setup-node}/releases/latest`, and A2 — which derives the
+expected major from that same API at run time rather than from any number I wrote down — agreed:
+checkout latest `v7.0.1`, setup-node latest `v7.0.0`. Had the cell hardcoded my guess it would
+have failed a correct file. This is the shape a gate is supposed to have.
+
+## The A4 red, which was mine, and the 15th instrument defect this repo has recorded
+
+A4 reported `threshold-flag-introduced=true` against a file that introduces no such flag. The
+guard was `/--test-coverage-(lines|branches|functions)/` applied to the **whole file**, and
+`test.yml:36` is a COMMENT that names those flags precisely in order to forbid them:
+
+    36:      # No threshold flag (--test-coverage-lines/
+    37:      # -branches/-functions) is used anywhere in this file, and none should
+    38:      # ever be added here.
+
+**The cell read the prohibition as the violation.** Two independent facts settle it, and neither
+is "the code looks right":
+
+    $ grep -n "test-coverage" .github/workflows/test.yml
+    30,36,42,43   — line 36 is the comment above; 42/43 are --experimental-test-coverage, a
+                    different flag, in the informational step that is already continue-on-error
+    $ git show 057d00c:.github/workflows/test.yml | grep -c -- "--test-coverage-"
+    1             — the SAME string is in the pre-dispatch blob, so the builder cannot have
+                    introduced it
+
+There is a sharp irony worth naming rather than burying: this run ships a standing QA prompt line
+reading *"Never assert against prose matched by regex — read a structural marker the document
+owns, or retire the check."* My own cell did exactly what that line forbids. The lesson the run
+hands its agents was the one the conductor broke.
+
+Two mitigating properties, stated because they are the difference between this and the worst
+defect in this repo's history: it failed **CLOSED** (it accused a clean file rather than clearing
+a dirty one) — unlike run #3 cycle 15's S1, which under-measured and still exited 0.
+
+**Repaired ADDITIVELY. The sealed gate is left byte-unedited and the original FAIL stays on the
+record** — the standing precedent from run #3 cycles 4/12/14 and run #4 cycle 1 is that
+rewriting a gate after it has run destroys the evidence of what it measured. The repair lives in
+`SWARM/runs/cycle-008-A4fix.mjs` and carries its own measurement in six columns. The fix itself
+is one property: comment lines are prose, not configuration.
+
+    COL  WHAT                                                    GOT     EXPECTED  VERDICT
+    A    OLD predicate on the REAL file (defect reproduced)      true    true      as expected
+    B    NEW predicate on the REAL file (defect repaired)        false   false     as expected
+    C    NEW predicate, real threshold flag in a run: step       true    true      as expected
+    D    NEW predicate, threshold flag inside a new comment      false   false     as expected
+    E    recomposed A4 on the REAL file                          true    true      as expected
+    F    control: A4 must go RED when glob-assert is deleted     false   false     as expected
+    REPAIR MEASURED SOUND — all six columns as expected
+
+C is the column that matters: the repair had to stay able to catch a real threshold flag added to
+a `run:` step, or it would be a blanket disable wearing a fix's clothes. D is its converse.
+F proves the recomposed cell is not a rubber stamp. **A4 recomposed = PASS**, so the gate stands
+at effectively 9 PASS / 0 FAIL with one adjudicated instrument defect.
+
+## What is verified, and what is explicitly NOT yet
+
+RF-4's acceptance has two halves and only one is closed at this commit.
+
+- **Closed:** both actions bumped to the current major, matrix and every test step untouched,
+  blast radius exactly one file, suite green at 120/120/0 against the ≥119 floor.
+- **NOT closed at this commit:** *"confirm the matrix stays green on all four Node majors against
+  a REAL run rather than a local inference."* Nothing local can settle that. RF-4 therefore stays
+  **todo** through this commit and is closed — or not — in the addendum below, after the push
+  produces a run to read. Reporting it done here would be the exact failure the item exists to
+  fix: replacing an unverified claim with a fresher unverified claim.
+
+**Converse control for the CI half, captured BEFORE the push** so the discriminator is proven
+rather than assumed — the annotation-absence check has to be shown capable of seeing an
+annotation that is present:
+
+    $ gh run view 32331910336
+    ✓ master test · 32331910336        ✓ test (18) (20) (22) (24) — all four green
+    ANNOTATIONS
+    ! Node.js 20 is deprecated. ... actions/checkout@v4, actions/setup-node@v4    × 4 jobs
+
+Four green jobs carrying four deprecation annotations: the old run was green *and* annotated,
+which is precisely why "green" was never sufficient evidence here and why the item was filed at
+all. `gh run view` surfaces these annotations, so their ABSENCE on the new run will be a real
+observation and not an empty API response.
+
+**Wave autotune: NOT credited, deliberately.** The work type was a build item, so unlike cycles 6
+and 7 autotune is in scope. But the wave is not "CLEAN — zero reverts, zero failed verifies":
+the gate did emit a FAIL and it took a conductor adjudication to clear it. Crediting it as clean
+would inflate `k_current` on a smoothness that did not quite happen — and `k_cap` is 1, so the
+credit would buy nothing this run but a wrong number on the board (the argument cycle 6
+recorded). Classified as "any other outcome": `wave_streak = 0`, `k_current` stays 3.
+
+**Backlog:** 30 items, unchanged in count. RF-4 stays todo pending CI; P-5 re-stamped with this
+cycle's evidence. `consecutive_no_value` stays 0 — real product-adjacent code shipped and was
+verified. Nothing new filed: a two-line bump that passes its gate files nothing, by design.
+
+## runfile-mirror
+
+    stop_at 1787276706 | usage_reset_at 1787276706 | mode guest dial 0.33 | auth subscription
+    gear 1 (target 1, rho 7.92) | k_cap 1 | demote true | promote false
+    weekly: used 100% / opus 100% at week 42.95% elapsed, heat 2.33, ceiling 2, promote_blocked
+    targets: /opt/targets/aphorism-cli (active, weight 1) | rotation [0] cursor 0
+    watchdog pacer, plist_loaded true | caffeinate_pid 0 (Linux) | cycles_since_recycle 7
+    playbook auto: L-008 L-016 L-024 L-026 L-029 L-031 L-033 L-034 L-038 L-042 L-043 L-044 L-046

@@ -5,7 +5,7 @@
   "run_label": "improvement run #5",
   "run_started_at": "2026-08-20T01:52:10Z",
   "phase": "BUILD",
-  "cycle": 7,
+  "cycle": 8,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "spec_digest": [
@@ -519,14 +519,18 @@
     "consecutive_no_value": 0,
     "consecutive_failures": 0,
     "k_current": 3,
-    "wave_streak": 1,
+    "wave_streak": 0,
     "window_tokens_attributed": 0,
     "wave_autotune_note_cycle6": "Wave autotune NOT applied this cycle. cycle.md scopes it to “after a build-wave’s merges + verification complete”; this cycle’s work type was review-fix, not build-wave. k_current stays 3 and wave_streak stays 1. Recorded because silently crediting a review-fix pass as a clean build wave would inflate k on evidence autotune was never defined over — and the gear cap of 1 binds first regardless, so the credit would have bought nothing but a wrong number.",
-    "wave_autotune_note_cycle7": "Wave autotune NOT applied. cycle.md scopes it to \"after a build-wave's merges + verification complete\"; this cycle's work type was qa-verify full, not build-wave. k_current stays 3, wave_streak stays 1. Same call and same reason as cycle 6."
+    "wave_autotune_note_cycle7": "Wave autotune NOT applied. cycle.md scopes it to \"after a build-wave's merges + verification complete\"; this cycle's work type was qa-verify full, not build-wave. k_current stays 3, wave_streak stays 1. Same call and same reason as cycle 6.",
+    "wave_autotune_note_cycle8": "Wave autotune IN SCOPE this cycle (the work type was a build item, dispatched as a direct Agent call per the headless build-wave fallback) but NOT CREDITED. The rule requires CLEAN = zero reverts AND zero failed verifies; the sealed gate emitted one FAIL (A4) that took a conductor adjudication to clear. Adjudicated-clean is not clean. Crediting it would raise k_current to 4 while gear 1 pins k_cap at 1, buying nothing but a wrong number -- the same argument cycle 6 recorded. Classified \"any other outcome\": wave_streak = 0, k_current stays 3."
   },
   "last_cycle": {
     "cycle": 7,
     "work": "qa-verify full (3 sequential agents, direct dispatch)",
     "outcome": "clean - 4/4 scenarios pass on live tree, instrument proven sound by a 4x4 mutation matrix, zero look findings"
+  },
+  "instrument_defects": {
+    "cycle_008_run5": "DEFECT #15 in this repo's recorded history. Gate cell A4 guarded against a coverage THRESHOLD flag with /--test-coverage-(lines|branches|functions)/ over the WHOLE workflow file, and matched the comment at test.yml:36 that names those flags in order to FORBID them -- it read the prohibition as the violation. Disproved two ways independently of judgement: grep localises every hit to comment lines or to the different --experimental-test-coverage flag, and git show 057d00c of the same path contains the identical string, so the builder could not have introduced it. Failed CLOSED (accused a clean file), unlike run #3 cycle 15 S1 which under-measured and still exited 0. Repaired ADDITIVELY in SWARM/runs/cycle-008-A4fix.mjs with a six-column measurement (old predicate must still misfire; new must clear the real file; new must still catch a real flag in a run: step; new must ignore a flag in a new comment; recomposed A4 must pass; recomposed A4 must go red when glob-assert is deleted) -- all six as expected. Sealed gate left byte-unedited per run #3 cycles 4/12/14 and run #4 cycle 1. Standing lesson unchanged and again decisive: a gate is a program and needs its own baseline, not confidence. NOTED: the defect is exactly what this run's own standing QA prompt line forbids -- never assert against prose matched by regex."
   }
 }
