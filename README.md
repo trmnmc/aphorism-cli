@@ -177,21 +177,25 @@ that spawn the real binary and assert on stdout, stderr, and exit codes.
 
 ### Node support
 
-CI runs the whole suite on four Node majors on every push. As of commit `0c2ed40`
+CI runs the whole suite on four Node majors on every push. As of commit `5f833ab`
 (2026-08-20), the most recent full matrix run against a commit that actually changed
 `src/`, `bin/`, `test/`, or the workflow itself was
-[Actions run 32324495153](https://github.com/trmnmc/aphorism-cli/actions/runs/32324495153),
+[Actions run 32328776838](https://github.com/trmnmc/aphorism-cli/actions/runs/32328776838),
 which reported:
 
 | Node | Result |
 |---|---|
-| v18.20.8 | 119 tests, 119 pass, 0 fail |
-| v20.20.2 | 119 tests, 119 pass, 0 fail |
-| v22.23.2 | 119 tests, 119 pass, 0 fail |
-| v24.19.0 | 119 tests, 119 pass, 0 fail |
+| v18.20.8 | 120 tests, 119 pass, 0 fail, 1 skipped |
+| v20.20.2 | 120 tests, 119 pass, 0 fail, 1 skipped |
+| v22.23.2 | 120 tests, 119 pass, 0 fail, 1 skipped |
+| v24.19.0 | 120 tests, 119 pass, 0 fail, 1 skipped |
+
+The one skip is the same on all four and is expected: it is
+`test/node-support-citation.test.js`, the guard on THIS section, standing down because
+CI checks out shallow (see below).
 
 Later CI runs re-test byte-identical code as of this writing (see
-`git diff 0c2ed40..HEAD -- src bin test .github`), so this citation stays the reference
+`git diff 5f833ab..HEAD -- src bin test .github`), so this citation stays the reference
 matrix until that diff stops being empty. For the current state of CI — including any
 runs since this citation — see the
 [`test` workflow's run history](https://github.com/trmnmc/aphorism-cli/actions?query=workflow%3Atest).
@@ -206,12 +210,33 @@ runs since this citation — see the
 > because the self-guard is the reason the decay was catchable at all: the doc names the
 > exact command that falsifies it, so an audit can check the claim instead of believing it.
 
+> **Updated 2026-08-20 (cycle 5).** The citation above moved from run `32324495153` at
+> commit `0c2ed40` (a 119-test matrix) to run `32328776838` at commit `5f833ab`. Nothing
+> was wrong with the old citation when it was written; it was retired by its own stated
+> condition, and this time a test noticed rather than a person. `test/node-support-citation.test.js`
+> now parses the `git diff` command out of the paragraph above and runs it, so the section
+> is checked on every suite run instead of whenever someone happens to wonder.
+>
+> Two honest limits, recorded here because both were measured rather than assumed:
+>
+> 1. **The guard is inert in CI, by design.** `actions/checkout@v4` checks out at depth 1,
+>    so the cited base commit is not in CI's copy of the history and the test skips — that
+>    is the `1 skipped` in all four rows of the table above. It protects a maintainer with
+>    a full clone; it does not protect the matrix. Making it fail on an unreachable base
+>    would turn CI red for the wrong reason, which is worse.
+> 2. **Any commit touching `src/`, `bin/`, `test/` or `.github/` is transiently red on a
+>    full clone**, because it falsifies this citation the instant it lands and the CI run
+>    that would refresh the citation cannot exist until after the push. Commit `5f833ab`
+>    is exactly that: red locally, green in CI, and repaired by this commit. That window is
+>    intrinsic to a self-falsifying citation, not a defect in the test — it is the cost of
+>    the claim being checkable at all.
+
 Read "Node 18+" as **verified-at-18**: 18 is the lowest version actually tested, and it
 passes everything. It is **not proven minimal** — nothing here tests Node 16 or 17, so
 whether the CLI runs on them is unknown rather than ruled out.
 
 One incidental finding from that run, recorded because it bites anything that parses the
-suite output: Node 18, 20 and 22 print the TAP summary (`# tests 119`), while Node 24
-prints the spec-reporter summary (`ℹ tests 119`) — and that marker is U+2139
-INFORMATION SOURCE, not an ASCII `i`. The count moved with the suite; the split between
-the two reporters did not, and is re-confirmed in run `32324495153`.
+suite output: Node 18, 20 and 22 print the TAP summary (`# tests 120`), while Node 24
+prints the spec-reporter summary (`ℹ tests 120`) — and that marker is U+2139
+INFORMATION SOURCE, not an ASCII `i`. The count moved with the suite again (119 -> 120);
+the split between the two reporters did not, and is re-confirmed in run `32328776838`.
