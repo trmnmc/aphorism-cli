@@ -1,0 +1,185 @@
+cycle 2 — VERIFICATION EVIDENCE for backlog item P-2
+conductor-authored checks, written AT VERIFICATION TIME (after the builder returned).
+target: /opt/targets/aphorism-cli   commit under test: 0c2ed40 (tree as returned = b006098 + builder diff)
+
+================================================================================
+CHECK 1 — regression floor (P-5 standing guard) still holds
+================================================================================
+$ node --test test/*.test.js
+ℹ tests 119
+ℹ suites 0
+ℹ pass 119
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5042.910215
+VERDICT: PASS (>= 119 green)
+
+$ git diff --stat HEAD -- src/ bin/ test/
+(no output)
+$ git diff --stat HEAD -- src/corpus.js
+(no output)
+VERDICT: PASS (product tree and corpus byte-identical; the change is CI + docs only)
+
+================================================================================
+CHECK 2 — "NO threshold, ratchet or gate is added anywhere"
+================================================================================
+$ grep -rn -e "--test-coverage" .github docs README.md REPORT.md bin src test
+.github/workflows/test.yml:26:      # docs/coverage-baseline.md. No threshold flag (--test-coverage-lines/
+docs/coverage-baseline.md:9:threshold flag (`--test-coverage-lines`, `--test-coverage-branches`, ...)
+VERDICT: PASS — the only two occurrences are PROSE saying not to add one. No
+         --test-coverage-lines / -branches / -functions flag is invoked anywhere.
+
+$ python3 -c "import yaml; d=yaml.safe_load(open('.github/workflows/test.yml')); ..."
+matrix: [18, 20, 22, 24]
+2 name= None                                        | continue-on-error= None | run= 'node --test test/*.test.js'
+3 name= Coverage report (informational, not a gate)  | continue-on-error= True | run= 'node --test --experimental-test-coverage ...'
+VERDICT: PASS — the pre-existing gate step (index 2) is byte-unchanged and carries
+         no continue-on-error; the new coverage step is a SEPARATE step and cannot
+         fail the job.
+
+================================================================================
+CHECK 3 — the builder's STABILITY claim, independently re-measured
+================================================================================
+Claim: the coverage numbers vary run-to-run on one Node version against an
+unchanged tree (builder reported 13/15 vs 2/15).
+
+Conductor's own instrument, 20 fresh runs, unchanged tree:
+
+    node v24.19.0  runs=20  tree=UNCHANGED
+     18/20  select=100.00 all=98.44 pass=119
+      2/20  select=95.24 all=96.92 pass=119
+    distinct rows = 2  (deterministic instrument => 1)
+
+VERDICT: PASS, REPRODUCED. Same two outcomes, same two percentage pairs, and all
+         20 runs green at 119/119. A fabricated instability could not have
+         produced an independent 20-run split at the identical percentages.
+
+================================================================================
+CHECK 4 — the builder's CAUSAL ATTRIBUTION for that instability  ***FAILED***
+================================================================================
+Claim under test (docs/coverage-baseline.md, first draft): the swing is
+src/select.js:83 being "exercised probabilistically" by UNSEEDED draws in
+test/select.test.js.
+
+(a) STRUCTURAL falsification — src/select.js, lines 79-86 as they exist on disk:
+
+    79:  let index;
+    80:  if (typeof seed === 'number' && !Number.isNaN(seed)) {
+    81:    const rng = mulberry32(toUint32Seed(seed));
+    82:    index = Math.floor(rng() * candidates.length);
+    83:    if (index >= candidates.length) index = candidates.length - 1;
+    84:  } else {
+    85:    index = Math.floor(Math.random() * candidates.length);
+    86:  }
+
+    Line 83 is inside the SEEDED arm. The unseeded Math.random() path is line 85
+    and has no clamp. An unseeded draw cannot reach line 83, so unseeded draws
+    cannot be the cause.
+
+(b) MEASURED falsification — 40 runs with --test-reporter=lcov, BRDA records
+    compared. Hit count first:
+
+    run 12: BRDA hit 63/64
+    ...
+    run 20: BRDA hit 63/65
+    run 21: BRDA hit 63/65
+    ...
+    run 40: BRDA hit 63/64
+    only ONE outcome seen in 40 lcov runs  <- the FIRST pass keyed on hit-count
+                                              and found no variation: hits were
+                                              63 in ALL 40 runs. The DENOMINATOR
+                                              moved (64 vs 65), not the numerator.
+
+    Second pass keyed on BRDA block index reported dozens of spurious diffs:
+    V8 RENUMBERS block indices between runs. Third pass, keyed on file:line:
+
+    denominators: 64 vs 65
+
+    per-line record-count differences (64-record run -> 65-record run):
+      select.js:83: 0 -> 1
+
+    NEVER-TAKEN records, 64-record run: ["aphorism.js:72"]
+    NEVER-TAKEN records, 65-record run: ["aphorism.js:72","select.js:83"]
+
+VERDICT: FAIL. src/select.js:83 is NEVER EXECUTED in either outcome. What is
+         nondeterministic is whether V8 emits a branch record for it at all —
+         the denominator of the ratio, not the execution of the suite.
+         The line citation was right; the mechanism was wrong.
+ACTION:  item P-2 recorded attempts=1. Conductor rewrote the Stability section
+         with the measured mechanism (marked as a conductor correction, in the
+         doc, not just here) rather than shipping a false measured-sounding claim.
+
+================================================================================
+CHECK 5 — arithmetic audit of the baseline fraction  ***FAILED***
+================================================================================
+The doc (and the cycle-1 journal it was drawn from) stated "64 of 65 branches
+executed" for 98.44%.
+
+    per-file lcov: bin/aphorism.js BRF 7 / BRH 6
+                   src/args.js     BRF 36 / BRH 36
+                   src/corpus.js   BRF 1  / BRH 1
+                   src/select.js   BRF 20 / BRH 20
+                   ------------------------------
+                   totals          64 found / 63 hit
+
+    63/64 = 0.984375 -> 98.44   <- what the table actually prints
+    64/65 = 0.98461  -> 98.46   <- what "64 of 65" would print
+
+VERDICT: FAIL. The fraction is 63/64, not 64/65. The claim's own supporting
+         numbers disprove it. Corrected in the doc as a marked conductor
+         correction; the cycle-1 journal's identical error is recorded in the
+         cycle-2 journal rather than edited in place.
+
+================================================================================
+CHECK 6 — "the Actions matrix emits the coverage report on all four Node
+           versions, proven by a REAL run URL and real log output"
+================================================================================
+$ git push && gh run watch 32324495153 --exit-status
+
+✓ master test · 32324495153
+  ✓ test (18) in 18s (ID 96292872313)
+  ✓ test (20) in 16s (ID 96292872427)
+  ✓ test (24) in 14s (ID 96292872475)
+  ✓ test (22) in 14s (ID 96292872604)
+
+URL: https://github.com/trmnmc/aphorism-cli/actions/runs/32324495153
+Full log archived at .swarm/runs/cycle-002-ci-32324495153.log
+
+$ grep -E "all files|NOTE: --experimental" <log>
+test (18) | Coverage report (informational, not a gate) | # all files | 99.11 | 92.57 | 98.61 |
+test (20) | Coverage report (informational, not a gate) | # all files |  99.11 |    92.57 |   98.61 |
+test (22) | Coverage report (informational, not a gate) | # all files |  99.11 |    92.57 |   98.61 |
+test (24) | Coverage report (informational, not a gate) | ℹ all files | 100.00 |    98.44 |  100.00 |
+
+The `|| echo "NOTE: --experimental-test-coverage exited non-zero ..."` fallback
+did NOT fire on any version (its only occurrences in the log are the runner
+echoing the command text, prefixed with the ANSI command-echo escape).
+
+VERDICT: PASS on emission — all four versions produced a report and all four jobs
+         are green — and a NEW MEASURED FINDING on comparability:
+
+  Node 18/20/22 include test/*.test.js in the report; Node 24 reports only bin/
+  and src/. From the 18-job table in the same log:
+      # test/pipe.test.js        | 96.73 | 83.33 | 100.00 | 50, 51, 89, 90, ...
+      # test/readme-tags.test.js | 98.71 | 86.81 |  96.15 | 125, 126, 146, ...
+  Those self-coverage rows are what drag 98.44 -> 92.57. The per-SOURCE-file rows
+  are IDENTICAL on all four versions (bin/aphorism.js 100/85.71/100; src/args.js,
+  src/corpus.js, src/select.js all 100/100/100).
+
+  => the instrument is consistent about the product and inconsistent about what it
+     counts. Recorded in the doc as: read the bin/ and src/ rows, never compare
+     the "all files" row across Node versions.
+
+================================================================================
+GATE OUTCOME
+================================================================================
+Builder return as delivered: FAILED the gate (checks 4 and 5 — two claims that
+read as measured and are not). attempts -> 1.
+Artifact as committed at 0c2ed40 + the follow-up correction: acceptance met —
+baseline written durably, report emitted on all four versions with a real run URL
+and real log output, no threshold/ratchet/gate anywhere, and the cross-version
+instability found by the acceptance clause's own escape hatch is written down as
+the deliverable it asked for.
+The pass is recorded against the CORRECTED artifact, not against the return.

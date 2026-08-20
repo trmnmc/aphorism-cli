@@ -444,8 +444,8 @@
       "kind": "fix",
       "effort": "S",
       "priority": 20,
-      "status": "todo",
-      "attempts": 0,
+      "status": "done",
+      "attempts": 1,
       "model": "sonnet",
       "deps": [
         "P-1"
@@ -455,7 +455,8 @@
         "docs/"
       ],
       "packages": [],
-      "acceptance": "The measured baseline (line/branch/funcs plus the single BOUNDARY branch) is written where the next reader finds it; the Actions matrix emits the coverage report on all four Node versions, proven by a REAL run URL and real log output, not by reading the YAML; NO threshold, ratchet or gate is added anywhere. If the flag output proves unstable across versions, that finding is the deliverable and the wiring is declined with evidence."
+      "acceptance": "The measured baseline (line/branch/funcs plus the single BOUNDARY branch) is written where the next reader finds it; the Actions matrix emits the coverage report on all four Node versions, proven by a REAL run URL and real log output, not by reading the YAML; NO threshold, ratchet or gate is added anywhere. If the flag output proves unstable across versions, that finding is the deliverable and the wiring is declined with evidence.",
+      "notes": "cycle 2: builder return FAILED the gate on two measured-sounding claims (causal attribution for the coverage instability, and the 64-of-65 arithmetic); both falsified by conductor measurement and corrected in docs/coverage-baseline.md as marked corrections. DONE recorded against the CORRECTED artifact at commit 0c2ed40 + follow-up, not against the return. Acceptance evidence: real Actions run 32324495153, all four Node versions green and all four emitting a coverage report; log archived at .swarm/runs/cycle-002-ci-32324495153.log; full gate transcript at .swarm/runs/cycle-002-verify-P-2.txt. NEW FINDING folded into the doc: Node 18/20/22 count test/*.test.js in the report (all files 92.57 branch) while Node 24 does not (98.44) — the per-source-file rows are identical on all four, so the all-files row must never be compared across versions."
     },
     {
       "id": "P-3",

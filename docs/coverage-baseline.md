@@ -137,26 +137,52 @@ the first sample, 2 of 20 in the conductor's independent re-measurement) — rou
 9 going red with zero code changes, on a suite that passed 119/119 every time. The report is
 safe to observe and unsafe to enforce.
 
-## What was NOT verified: behaviour on Node 18 / 20 / 22
+## Across the matrix: the "all files" line is NOT comparable between Node versions
 
-This finding matters and is stated plainly rather than silently assumed. Everything above was
-run on Node v24.19.0, the only version available in this environment (no `nvm`, no Docker, no
-network installs available to reproduce 18/20/22 locally). The CI workflow (`.github/workflows/test.yml`)
-adds a **second, separate step** that runs
-`node --test --experimental-test-coverage test/*.test.js` on all four matrix versions
-(18, 20, 22, 24), so the actual per-version behaviour will show up in real Actions run logs —
-that run log, not this document, is the authority on what 18/20/22 actually do.
+Everything above was measured on Node v24.19.0. What 18, 20 and 22 do was, at the time the CI
+step was written, **inferred and not measured** — so it was checked against a real run rather
+than left as an expectation.
 
-What follows is **inferred, not measured**, from general knowledge of the `node:test` coverage
-feature's history, offered only as a reader's expectation, not a claim this repo verifies:
-`--experimental-test-coverage` has existed since early Node 18.x/19.x lines and is expected to
-parse and run on all four matrix versions without a hard "bad option" startup error, but the
-exact report table formatting (column widths, path rendering, whether functions/branches are
-both reported) is known to have evolved across Node releases and was not checked against any
-version but 24 here.
+**Real run:** <https://github.com/trmnmc/aphorism-cli/actions/runs/32324495153> — commit
+`0c2ed40`, all four jobs green, full log archived in this repo at
+`.swarm/runs/cycle-002-ci-32324495153.log`. The flag ran on every version; the `|| echo
+"NOTE: …"` fallback did not fire on any of them. Real log output, `all files` row:
 
-Because that inference could be wrong, the CI step is deliberately built so a wrong inference
-costs nothing:
+```
+test (18)  # all files | 99.11 | 92.57 | 98.61 |
+test (20)  # all files |  99.11 |    92.57 |   98.61 |
+test (22)  # all files |  99.11 |    92.57 |   98.61 |
+test (24)  ℹ all files | 100.00 |    98.44 |  100.00 |
+```
+
+Same commit, same suite, a **six-point** spread in the headline branch number. The cause is
+visible one row up in the same logs: **Node 18, 20 and 22 include the `test/*.test.js` files
+themselves in the coverage report; Node 24 reports only `bin/` and `src/`.** The 18-job table
+lists six extra rows (`test/args.test.js`, `test/cli.test.js`, `test/pipe.test.js`,
+`test/readme-tags.test.js`, `test/select.test.js` …), and it is the test files' own
+self-coverage — e.g. `test/pipe.test.js` at 83.33% branch, `test/readme-tags.test.js` at
+86.81% — that drags the aggregate down. Node 24 also renders a directory-grouped table with
+box rules, where 18/20/22 render a flat one.
+
+**The per-source-file numbers, by contrast, agree exactly on all four versions:**
+
+| file | line % | branch % | funcs % | 18 | 20 | 22 | 24 |
+|---|---|---|---|---|---|---|---|
+| `bin/aphorism.js` | 100.00 | 85.71 | 100.00 | ✓ | ✓ | ✓ | ✓ |
+| `src/args.js` | 100.00 | 100.00 | 100.00 | ✓ | ✓ | ✓ | ✓ |
+| `src/corpus.js` | 100.00 | 100.00 | 100.00 | ✓ | ✓ | ✓ | ✓ |
+| `src/select.js` | 100.00 | 100.00 | 100.00 | ✓ | ✓ | ✓ | ✓ |
+
+So the instrument is *consistent about the product* and *inconsistent about what it counts*.
+Two rules follow, and they are the practical takeaway of this whole document:
+
+1. **Read the per-file rows for `bin/` and `src/`. Never compare the `all files` row across
+   Node versions** — it answers a different question on 18/20/22 than it does on 24.
+2. The baseline in "The numbers" above is a **Node 24** reading. Quoting it next to an 18/20/22
+   log will look like a regression that did not happen.
+
+The CI step was already built so that a wrong per-version inference would cost nothing, and
+that design stands unchanged now that the inference has been partly falsified:
 
 - The step is separate from the real test-gate step (`node --test test/*.test.js`), which is
   completely unchanged and remains the only thing that can fail a job.
@@ -169,9 +195,10 @@ costs nothing:
   scanning the Actions log for a given Node version can tell, without opening this document,
   whether that version produced a report or not.
 
-If a future run's real log shows the flag failing outright on 18, 20, or 22, that is new,
-measured information this document does not yet have — record it here rather than treating
-the current per-version inference as settled.
+If a future run's real log shows the flag failing outright on some version, that is new,
+measured information — record it here rather than treating the run above as settled for all
+time. Node's coverage reporter has already changed what it counts once between 22 and 24; it
+can change again.
 
 ## Reproduce
 
@@ -182,3 +209,9 @@ node --test --experimental-test-coverage test/*.test.js
 
 No install step, no dependency, no config file — this flag is built into Node's own test
 runner, and this repo has zero runtime and zero dev dependencies of any kind.
+
+Two things to expect when you run it, both measured above rather than guessed: on **Node 24**
+you will see the baseline table, and about **1 run in 9** it will read 96.92% instead of
+98.44% (see *Stability*). On **Node 18/20/22** the `all files` row will read ~92.57% branch
+because your test files are counted too (see *Across the matrix*). Neither is a regression.
+Compare the `bin/` and `src/` rows, not the total.

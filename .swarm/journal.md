@@ -17300,3 +17300,161 @@ held OUT of prompt_lines as browser-shaped on a terminal CLI — to be reported 
     (no output — byte-identical, P-5 floor holds)
 
 **Next:** cycle 2 — P-3 doc-claim audit (M-effort, the largest remaining item) and P-4.
+
+
+---
+
+# cycle 2 — 2026-08-20T02:04Z → 02:2xZ — build-wave k=1 (P-2), and the gate turned over two false claims — one of them cycle 1's own
+
+**Gear 2** (probe `gear_target` 1, ρ 4.00 — one-step hysteresis holds the applied gear at 2).
+The weekly governor went **hot** between cycle 1 and cycle 2 and this is the run's first
+sighting of it: `weekly_used_pct 100`, `opus_used_pct 100` at `week_elapsed_pct 41.11`, heat
+2.43, ceiling **2**, `promote_blocked: true`, `demote: true`, `k_cap: 2`. Window 7,496,825
+tokens / $7.22, 23.08M tok/h, projected depletion 02:39Z. Effective wave size
+min(k_current 3, gear cap 2) = 2; the wave actually dispatched **one** item, because P-2 is
+the only dispatchable todo whose `files_hint` is disjoint from the rest (P-3 shares `docs/`;
+P-4 and P-5 are conductor-owned).
+
+Orient: tree carried a one-line dirty `.swarm/state.json` — cycle 1's own commit SHA stamped
+after its commit. Coherent, folded into this cycle rather than salvage-committed separately.
+Control channel polled: `pending: []`, no `inject` array, nothing to triage.
+
+## The wave — P-2, one sonnet builder
+
+Item P-2, "coverage becomes a standing instrument: baseline written down + observable
+per-push in CI, never gated on". Scope handed to the builder was exactly
+`.github/workflows/test.yml` + `docs/`; `bin/`, `src/`, `test/` and `.swarm/` were fenced off,
+and the acceptance clause carried its own escape hatch — *"if the flag output proves unstable
+across versions, that finding is the deliverable and the wiring is declined with evidence."*
+It returned a CI step and a new `docs/coverage-baseline.md`, and — to its real credit — it went
+looking for instability instead of assuming determinism, running the coverage command 15 times
+and reporting a 13/2 split.
+
+That finding is real. **Two of the claims it was wrapped in were not**, and both are the exact
+class of defect this run exists to catch: an assertion that reads as measured and is not.
+
+## FALSIFIED #1 — the instability is real; its published cause was impossible
+
+The builder attributed the swing to `src/select.js:83` being *"exercised probabilistically"* by
+unseeded draws in `test/select.test.js`. Two independent falsifications:
+
+**Structural.** Line 83's clamp sits inside the **seeded** arm — `src/select.js:80` tests
+`typeof seed === 'number' && !Number.isNaN(seed)`, 81 builds the `mulberry32` rng, 82 draws, 83
+clamps. The unseeded `Math.random()` path is the `else` arm at line **85** and has no clamp at
+all. An unseeded draw can never reach line 83, so unseeded draws cannot be the mechanism. The
+line citation was right; the direction was wrong.
+
+**Measured.** 40 runs under `--test-reporter=lcov`. The first comparison pass keyed on the
+BRDA *hit* count and found **no variation at all: 63 hits in every one of the 40 runs**. What
+moves is the denominator — 64 records on the majority outcome, 65 on the minority. A second
+pass keyed on BRDA block index reported dozens of spurious differences, because **V8 renumbers
+block indices between runs** (worth knowing before anyone diffs lcov mechanically). Keyed on
+`file:line`, the difference is exactly one record:
+
+    per-line record-count differences (64-record run -> 65-record run):
+      select.js:83: 0 -> 1
+
+    NEVER-TAKEN records, 64-record run: ["aphorism.js:72"]
+    NEVER-TAKEN records, 65-record run: ["aphorism.js:72","select.js:83"]
+
+`src/select.js:83` is **never executed in either outcome**. What is nondeterministic is whether
+V8 *enumerates it as a branch at all*. The honest headline is stronger than the one shipped:
+it is not that a branch is flaky, it is that **the denominator of the coverage ratio is
+nondeterministic**, so this repo does not have "a" branch percentage — 98.44% and 96.92% are
+both honest readings of an unchanged tree.
+
+## FALSIFIED #2 — "64 of 65", and it came from cycle 1
+
+The doc said 98.44% is "64 of 65 branches executed". Cycle 1's journal said the same, and said
+it prominently: *"64 of 65 total branches, and the 65th is provably dead code."* Its own lcov
+numbers disprove it — BRF 7+36+1+20 = **64 found**, BRH 6+36+1+20 = **63 hit**, and
+63/64 = 98.4375 → the 98.44 the table prints, where 64/65 would print 98.46.
+
+**The fraction is 63/64.** Cycle 1 caught the kickoff writing a number it had not measured, and
+then wrote one of its own in the same breath — off by one in both numerator and denominator,
+in the very sentence claiming to close the question by measurement. Recorded here rather than
+edited into the cycle-1 block: the journal is an append-only record of what was believed when,
+and quietly fixing it would destroy the only evidence that the instrument caught its own
+operator twice in two cycles.
+
+## The cross-version answer — measured, not inferred, and it changes how the number is read
+
+The builder was explicit that per-version behaviour on 18/20/22 was **inferred**, not measured
+(no nvm, no Docker in the sandbox) and said so in the doc. Good practice, and it is why the
+push mattered: commit `0c2ed40` pushed, real run
+<https://github.com/trmnmc/aphorism-cli/actions/runs/32324495153>, **all four jobs green**, log
+archived at `.swarm/runs/cycle-002-ci-32324495153.log`. The `|| echo "NOTE: ..."` fallback did
+not fire anywhere — the flag runs on all four versions. But:
+
+    test (18)  # all files | 99.11 | 92.57 | 98.61 |
+    test (20)  # all files |  99.11 |    92.57 |   98.61 |
+    test (22)  # all files |  99.11 |    92.57 |   98.61 |
+    test (24)  ℹ all files | 100.00 |    98.44 |  100.00 |
+
+Six points of spread on one commit. Cause is one row up in the same log: **Node 18/20/22 count
+`test/*.test.js` in the coverage report and Node 24 does not** — `test/pipe.test.js` at 83.33%
+branch and `test/readme-tags.test.js` at 86.81% are what drag the aggregate down. The
+**per-source-file rows are identical on all four versions** (`bin/aphorism.js` 100/85.71/100;
+`src/args.js`, `src/corpus.js`, `src/select.js` all 100/100/100).
+
+So the instrument is consistent about the product and inconsistent about what it counts. The
+acceptance clause's escape hatch fires *partially*: the wiring is **kept** (a report really is
+emitted on all four), and the instability becomes the written deliverable — read the `bin/` and
+`src/` rows, never compare the `all files` row across Node versions.
+
+## Gate outcome, stated against the wave
+
+Builder return **as delivered: FAILED**, on checks 4 and 5. `attempts -> 1`. The conductor
+supplied the falsifying measurements and rewrote the two passages as **marked corrections**
+inside `docs/coverage-baseline.md` (not silently restated), plus the YAML comment that repeated
+the same wrong mechanism. P-2 is recorded `done` **against the corrected artifact, not against
+the return** — the distinction is in the backlog note and in the report, so the retro cannot
+read this as a clean wave.
+
+Wave autotune: one wave, one failed verify — neither the ≥2-failure demotion nor the clean-wave
+promotion. `k_current` unchanged at 3, `wave_streak = 0`. `consecutive_no_value = 0`.
+
+No threshold, ratchet or gate exists anywhere in the repo — verified by grep, not by reading
+the YAML; the only two occurrences of `--test-coverage` in the tree are prose saying not to add
+one. `bin/`, `src/`, `test/` untouched; `src/corpus.js` byte-identical.
+
+**Backlog:** todo 4 → 3 (P-3 doc-claim audit, P-4 allowlist handoff, P-5 standing guard), done
+12 → 13, blocked 7 unchanged (all human-owned).
+
+## VERIFICATION EVIDENCE
+
+Full 6-check gate transcript: `.swarm/runs/cycle-002-verify-P-2.txt` (fingerprinted by this
+cycle's commit). Excerpt:
+
+    $ node --test test/*.test.js
+    ℹ tests 119   ℹ pass 119   ℹ fail 0
+
+    conductor's own 20-run tally, unchanged tree, node v24.19.0:
+     18/20  select=100.00 all=98.44 pass=119
+      2/20  select=95.24  all=96.92 pass=119
+    distinct rows = 2  (deterministic instrument => 1)
+
+    40 lcov runs: BRDA hit 63/64 ... 63/65 ... hits NEVER varied; denominator did
+    per-line diff (64-record -> 65-record):  select.js:83: 0 -> 1
+    NEVER-TAKEN, 64-run: ["aphorism.js:72"]
+    NEVER-TAKEN, 65-run: ["aphorism.js:72","select.js:83"]
+
+    $ gh run watch 32324495153 --exit-status
+    ✓ master test · 32324495153
+      ✓ test (18) in 18s   ✓ test (20) in 16s   ✓ test (22) in 14s   ✓ test (24) in 14s
+
+    $ git diff --stat HEAD -- src/ bin/ test/
+    (no output — product tree untouched, P-5 floor holds)
+
+**Next:** cycle 3 — P-3, the bidirectional doc-claim audit, now with a live example of what it
+is hunting (a false claim propagating journal → doc in two cycles) and a fourth document to
+audit that did not exist this morning.
+
+## runfile-mirror
+
+    stop_at 1787276706 | usage_reset_at 1787276706 | mode guest dial 0.33 | auth subscription
+    gear 2 (target 1, rho 4.00) | k_cap 2 | demote true | promote false
+    weekly: used 100% / opus 100% at week 41.11% elapsed, heat 2.43, ceiling 2, promote_blocked
+    targets: /opt/targets/aphorism-cli (active, weight 1) | rotation [0] cursor 0
+    watchdog pacer, plist_loaded true | caffeinate_pid 0 (Linux) | cycles_since_recycle 1
+    playbook auto: L-008 L-016 L-024 L-026 L-029 L-031 L-033 L-034 L-038 L-042 L-043 L-044 L-046
