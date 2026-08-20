@@ -17197,3 +17197,106 @@ Suite re-verified at kickoff before anything was written:
 
 **Next:** cycle 1 — inline PLAN. The backlog does not yet cover P-1…P-5, so the PLAN gate
 holds until it does.
+
+---
+
+# cycle 1 — PLAN (inline), and a correction to this run's own kickoff claim
+
+Gear 3 (guest ceiling). Work type: inline PLAN — the backlog did not cover P-1…P-5, so the
+step-4 PLAN gate held. It is now covered: **P-1…P-5 written, 24 items total, 23 live
+(7 blocked + 12 done + 4 todo).** The 7 blocked items are the human-owned survivors carried
+in from run #4; none was reopened as agent work an agent cannot honestly finish.
+
+## The correction — this run's kickoff wrote a number it had not measured
+
+The kickoff SPEC and journal both said the branch gap was **"12 of 14"** branches. That
+number was INFERRED from the percentage 85.71% and never measured. It is wrong.
+
+    $ node --test --experimental-test-coverage --test-reporter=lcov \
+        --test-reporter-destination=.scratch-cov/lcov.info test/*.test.js
+    $ grep -E "^(SF|BRF|BRH)" .scratch-cov/lcov.info
+    SF:../targets/aphorism-cli/bin/aphorism.js
+    BRF:7
+    BRH:6
+    SF:../targets/aphorism-cli/src/args.js
+    BRF:36
+    BRH:36
+    SF:../targets/aphorism-cli/src/corpus.js
+    BRF:1
+    BRH:1
+    SF:../targets/aphorism-cli/src/select.js
+    BRF:20
+    BRH:20
+
+**Seven branches, six hit, exactly ONE missed.** 85.71% is 6/7, not 12/14. Corrected in
+SPEC.md (P-1 and the stress-test note, both marked as corrections rather than silently
+restated) and in the dashboard caption. Recorded prominently because a conductor's own
+unmeasured number is precisely the class of claim this run exists to catch — and it was
+caught by the same instrument the run was built around, one cycle after being written.
+
+## P-1 — CLOSED. The single branch, named and classified
+
+    $ grep "^BRDA" .scratch-cov/lcov.info | head -8      # bin/aphorism.js
+    BRDA:1,0,0,119
+    BRDA:29,1,0,5
+    BRDA:52,2,0,5
+    BRDA:59,3,0,32
+    BRDA:63,4,0,119
+    BRDA:72,5,0,0        <-- taken 0 times
+    BRDA:85,6,0,1027
+
+The one unexecuted branch is **`bin/aphorism.js:72`**, the FALSE arm of:
+
+    process.stdout.write(HELP.endsWith('\n') ? HELP : `${HELP}\n`);
+
+Classified **BOUNDARY**, not HOLE:
+
+    $ node -e 'const {HELP}=require("./src/args.js");
+               console.log(JSON.stringify(HELP.slice(-12)))'
+    "' | sort -u\n"
+
+`HELP` is a module constant exported from `src/args.js`; its literal ends in a newline. The
+condition is therefore TRUE for every possible input, and the false arm is unreachable
+without editing the source. Per **L-033**, a test here would pin unreachable code and
+produce a check that false-rejects honest output; per this run's own non-goal, raising the
+percentage is explicitly not a goal. **Zero tests added. Suite stays at 119.**
+
+**The finding, stated plainly, because it is worth more than the chore that produced it:**
+the aphorism-cli suite already executes **every reachable branch in the tree** — 64 of 65
+total branches, and the 65th is provably dead code. The four-run-old argument about whether
+this suite is "thin" is now closed by measurement instead of by assertion, in one cycle,
+without adding a single test.
+
+**Side finding, filed and deliberately NOT acted on:** line 72's ternary is defensive dead
+code and could be simplified to a plain `write(HELP)`. That edits shipped product code for
+no user-visible benefit and puts the regression floor at risk for a cosmetic gain. Recorded
+for a human; not touched.
+
+## What the correction does to the run's justification — stated against interest
+
+The reshape that justified a fifth run was sized on that wrong number. Measured properly,
+the new instrument did not open a night of work; it confirmed in one cycle that there was
+none. **The stress-test's original attack lands harder for it.** Remaining weight moves to
+P-3 (bidirectional doc-claim audit) and P-4 (the allowlist handoff), both genuinely
+unfinished. The SPEC's "an early finish is the honest outcome" moves from possible to
+**likely**, and the report will say so rather than pad the clock.
+
+## Housekeeping
+
+Scratch tree `.scratch-cov/` removed before commit and `git status --porcelain` confirmed
+clean — L-008's commit-hazard clause, applied to the conductor's own scratch, not just to
+agents'.
+
+Applied-lessons ledger line written to `playbook/applied.log` for run #5: 13 lessons,
+**HAND-WRITTEN and marked as such** (P-4; `record-applied` denied). L-021/L-022 staged but
+held OUT of prompt_lines as browser-shaped on a terminal CLI — to be reported not-exercised.
+
+## VERIFICATION EVIDENCE
+
+    $ node --test test/*.test.js
+    ℹ tests 119   ℹ pass 119   ℹ fail 0   ℹ skipped 0
+
+    $ git diff --stat HEAD~1 -- src/corpus.js
+    (no output — byte-identical, P-5 floor holds)
+
+**Next:** cycle 2 — P-3 doc-claim audit (M-effort, the largest remaining item) and P-4.

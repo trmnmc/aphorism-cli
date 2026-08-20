@@ -27,6 +27,17 @@
      dependency. That converts "harden tests" from an unfalsifiable instruction into a
      bounded, falsifiable, closable one. Re-aimed accordingly.
 
+     CYCLE-1 AMENDMENT, and it cuts against this run: the reshape above was sized on an
+     UNMEASURED reading of that 85.71%. Measured properly at cycle 1 (lcov: BRF 7 / BRH 6),
+     the gap is ONE branch, not twelve — the dead false-arm of a ternary whose condition is
+     a module constant. P-1 therefore closes in a single cycle with ZERO tests added, and
+     the honest headline is stronger than the one the kickoff wrote: this suite already
+     executes every REACHABLE branch in the tree, and the four-run-old "is the suite thin?"
+     argument is now closed by measurement rather than by assertion. But the stress-test's
+     original attack lands harder for it — the new instrument did not open a night of work,
+     it confirmed in one cycle that there was none. Weight moves to P-3 and P-4, and the
+     expected shape below (early DONE is the honest outcome) becomes the LIKELY shape.
+
      Taste judge (fresh subagent, spec text only): use-twice 3 / product-not-demo 6 /
      scope-fits-night 9 / one-memorable-thing 5. Verdict: "Load-bearing axis is use-twice:
      as scoped this is a well-designed, honestly-bounded half-night of chores that leaves
@@ -88,10 +99,19 @@ Three, and they are different people.
 <!-- The PLAN gate (cycle.md step 4) holds until every box is covered by a backlog item.
      Checked off only after conductor verification, never by an agent's claim. -->
 
+<!-- CORRECTED at cycle 1, before any work was planned on it. The kickoff draft of P-1
+     said the gap was "12 of 14" branches. That number was INFERRED from the 85.71%
+     percentage, never measured, and it is WRONG. The lcov reporter reports
+     `BRF:7 / BRH:6` for bin/aphorism.js: SEVEN branches, SIX hit, exactly ONE missed.
+     85.71% is 6/7, not 12/14. The correction shrinks P-1 from a night of work to a
+     single ternary arm, and it is recorded here rather than quietly restated, because a
+     conductor's own unmeasured number is exactly the class of claim this run exists to
+     catch. See the cycle-1 journal block for the full measurement. -->
+
 - [ ] **P-1 The branch-coverage gap is measured, classified, and closed or explicitly
       declined.** `bin/aphorism.js` sits at 85.71% branch — the only sub-100% cell in the
-      tree. Enumerate EXACTLY which branches the suite never takes, by construction and
-      not by guess. Classify each one HOLE (a real behaviour nothing pins) vs BOUNDARY
+      tree, and measured as exactly ONE unexecuted branch of seven. Enumerate it by
+      construction and not by guess. Classify it HOLE (a real behaviour nothing pins) vs BOUNDARY
       (unreachable in practice, or a distinction the SPEC does not decide — L-033), with
       the reasoning recorded per branch. Only a HOLE earns a test. Every added test must be
       proven FAILABLE and ATTRIBUTABLE (L-029: run the mutation twice, once with the test
