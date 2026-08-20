@@ -17699,3 +17699,12 @@ wants. P-6 is available if the clock allows.
     targets: /opt/targets/aphorism-cli (active, weight 1) | rotation [0] cursor 0
     watchdog pacer, plist_loaded true | caffeinate_pid 0 (Linux) | cycles_since_recycle 2
     playbook auto: L-008 L-016 L-024 L-026 L-029 L-031 L-033 L-034 L-038 L-042 L-043 L-044 L-046
+
+**cycle 3 addendum (post-commit).** Target commit `5203fa4` pushed to origin OK
+(9e17a13..5203fa4). SWARM-side push RETRIED per the cycle-2 addendum and FAILED again —
+`git -C /opt/swarm push` returns "Could not read from remote repository", so this is a
+standing credential/remote gap on the SWARM host, not a transient. Cycle 2 commit `b1a7052`
+remains durable on disk and unpushed; nothing new was owed on the SWARM side this cycle
+(runs/ is gitignored, playbook untouched). Per hard rule 1 this is journaled and does not
+block the cycle. Carried to the morning report as a host-config item for a human — the
+swarm cannot fix its own remote from inside a run.

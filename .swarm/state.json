@@ -494,6 +494,6 @@
     "n": 3,
     "work": "build-wave k=1 (P-3, haiku, read-only) + conductor verification gate + conductor repair",
     "outcome": "P-3 done by conductor repair; sealed gate 11P/0F + addendum G12 PASS, 5 failability controls RED under mutation; one real finding — README §Node support stale against its OWN named falsifier — repaired and re-anchored to a live CI matrix; agent summary overclaimed 71 TRUE vs 58 actual, corrected in-file; P-6 filed",
-    "commit": ""
+    "commit": "5203fa4"
   }
 }
