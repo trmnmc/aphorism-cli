@@ -114,7 +114,13 @@
     "n": 3,
     "work": "Q-7 — re-cite the Node-support CI matrix to a run that describes the post-Q-4 tree (1 builder, k=1, sonnet; gear-2 demote does not apply to kind:fix)",
     "outcome": "sealed gate 5ed845eb unchanged pre->post, 17 cells; suite 124 pass / 0 fail / 0 skipped — the cycle-2 RED is closed by re-citation, with A4/A5 proving the guard itself was never touched; C4a/C4b measured the still-open matrix-count hole as SILENT and handed Q-3 its specification",
-    "commit": null
+    "commit": "83cef40"
+  },
+  "post_commit_2026_08_20_cycle3": {
+    "commit": "83cef40",
+    "test_cmd_output": "tests 124 / pass 124 / fail 0 / skipped 0",
+    "cited_path_diff_at_commit": "git diff 4b63e91..HEAD -- src bin test .github -> empty",
+    "note": "GREEN AT COMMIT, measured after the commit rather than predicted. Unlike 4b63e91, this commit touches no path inside the cited pathspec (README.md, docs/, .swarm/ only), so it does not re-falsify the citation it just repaired and no second round trip is owed. Q-5's invariants held: corpus sha256 77a4de5c and --help sha256 d759d781 both unmoved, and the repo has no manifest to add a dependency to."
   },
   "qa": {
     "last_full_qa_cycle": 1

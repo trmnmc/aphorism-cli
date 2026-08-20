@@ -20459,3 +20459,21 @@ runfile-mirror:
   }
 }
 ```
+
+### Cycle 3 addendum — the post-commit state, measured rather than predicted
+
+Commit `83cef40`, pushed to origin/master. Re-measured after the commit:
+
+```
+# tests 124
+# pass 124
+# fail 0
+# skipped 0
+$ git diff 4b63e91..HEAD -- src bin test .github   -> (empty)
+```
+
+Unlike `4b63e91`, this commit touches no path inside the cited pathspec — only `README.md`,
+`docs/` and `.swarm/`. So it does not re-falsify the citation it just repaired, and no second
+round trip is owed. Cycle 2 predicted its own post-commit RED and then checked the prediction;
+this cycle predicted GREEN and checked that instead. Q-5 invariants re-confirmed at the commit:
+corpus sha256 `77a4de5c` and `--help` sha256 `d759d781` both unmoved.
