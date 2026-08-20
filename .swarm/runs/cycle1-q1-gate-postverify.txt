@@ -1,0 +1,16 @@
+SEALED GATE Q-1 — 7/7 cells pass
+
+[PASS] A. README.md contains zero `> **Updated 2026-08-20 (cycle N)**` blockquote headers
+        0 header(s) found in README.md (expected 0)
+[PASS] B. all 5 blockquotes present byte-identically in a dated docs/ file, in ascending cycle order
+        all 5 byte-identical in docs/node-support-citation-history.md; document order = [3, 5, 6, 9, 10] (ascending)
+[PASS] C. README.md at least 5000 bytes smaller than 16609
+        16609 -> 11165 bytes (shrink 5444)
+[PASS] D. node --test reports >= 121 tests and 0 fail
+        tests 121 / pass 121 / fail 0 (floor 121)
+[PASS] E. src/corpus.js and --help output byte-identical to 3a17cc5
+        corpus 77a4de5c (want 77a4de5c), help d759d781 (want d759d781)
+[PASS] F. README still states the live CI citation and both standing limits
+        all 5 live claims present
+[PASS] G. still zero dependencies
+        no package.json (zero-dep by construction)

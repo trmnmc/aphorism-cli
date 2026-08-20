@@ -68,6 +68,8 @@ entry in the filtered set, in corpus order.
 
 ## Tag vocabulary
 
+*Parts of this section exist mainly to satisfy an automated guard: `test/readme-tags.test.js` checks the counts below against the corpus and requires the single-entry sentence and the `#### ` band headings to keep their exact shape, which is why the next paragraph restates the same count twice.*
+
 The corpus contains 12 distinct tags. The distribution is uneven, but every tag is a real pool: 12 tags appear on 2 or more entries. On the other side of that count, 0 tags appear exactly once, which is to say 0 tags sit on exactly one entry, so `--tag` never returns a foregone conclusion.
 
 #### Robust pool (5+ entries)
@@ -177,11 +179,12 @@ that spawn the real binary and assert on stdout, stderr, and exit codes.
 
 ### Node support
 
-CI runs the whole suite on four Node majors on every push. As of commit `2b003ea`
-(2026-08-20), the most recent full matrix run against a commit that actually changed
-`src/`, `bin/`, `test/`, or the workflow itself was
-[Actions run 32337875271](https://github.com/trmnmc/aphorism-cli/actions/runs/32337875271),
-which reported:
+*This section is machine-checked: `test/node-support-citation.test.js` parses the CI citation and the retirement condition out of the prose below and executes them, so the exact shape of those two claims is load-bearing rather than stylistic.*
+
+CI runs the whole suite on four Node majors — 18, 20, 22 and 24 — on every push. The
+reference matrix is [Actions run 32337875271](https://github.com/trmnmc/aphorism-cli/actions/runs/32337875271)
+at commit `2b003ea` (2026-08-20), the most recent full matrix run against a commit that
+actually changed `src/`, `bin/`, `test/`, or the workflow itself. It reported:
 
 | Node | Result |
 |---|---|
@@ -190,120 +193,41 @@ which reported:
 | v22.23.2 | 121 tests, 119 pass, 0 fail, 2 skipped |
 | v24.19.0 | 121 tests, 119 pass, 0 fail, 2 skipped |
 
-The two skips are the same on all four and are expected: both are in
-`test/node-support-citation.test.js`, the guard on THIS section, standing down because
-CI checks out shallow (see below). It was one skip until cycle 10 gave the guard a
-second comparison; both arms share the same shallow-clone degradation, so the count
-moved from 1 to 2 without anything standing down that used to run.
+The two skips are the same on all four majors and are expected. Both are in
+`test/node-support-citation.test.js`, the guard on this section, and both stand down because
+CI checks out shallow — see the first standing limit below.
 
-Later CI runs re-test byte-identical code as of this writing (see
-`git diff 2b003ea..HEAD -- src bin test .github`), so this citation stays the reference
-matrix until that diff stops being empty. For the current state of CI — including any
-runs since this citation — see the
+That citation is the reference matrix until `git diff 2b003ea..HEAD -- src bin test .github`
+stops being empty. Once that diff is non-empty the cited run no longer describes this tree
+and the section needs a new run id; that is the section's own falsification condition, and it
+is stated here exactly once on purpose. For the current state of CI — including any runs
+since this citation — see the
 [`test` workflow's run history](https://github.com/trmnmc/aphorism-cli/actions?query=workflow%3Atest).
 
-> **Updated 2026-08-20 (cycle 3).** The paragraph above previously cited run
-> `32267338333` at commit `44702fb` with a 118-test matrix, and it had gone stale: the
-> `git diff` it names as its own retirement condition had stopped being empty (77 added
-> lines across `test/readme-tags.test.js` and `.github/workflows/test.yml`, from commits
-> `0230c23` and `0c2ed40`), while the citation stayed put. The old table was not false
-> about run `32267338333` — that run really did report 118 — it was a true statement about
-> a matrix that no longer described this tree. Recorded rather than quietly swapped,
-> because the self-guard is the reason the decay was catchable at all: the doc names the
-> exact command that falsifies it, so an audit can check the claim instead of believing it.
+Two standing limits apply to that guard. Both were measured, not assumed:
 
-> **Updated 2026-08-20 (cycle 10).** Moved from run `32335038575` at commit `c9dd7ff` to
-> run `32337875271` at commit `2b003ea`. Retired by its own stated condition, as designed —
-> `2b003ea` changed `test/`, which is inside the cited pathspec. What is new is WHEN that
-> became visible. Until this cycle the guard compared the cited base against `HEAD` only,
-> and `HEAD` excludes uncommitted work, so the commit that falsified the citation always
-> tested green and the breakage surfaced a cycle later on the next full clone — which is
-> exactly what happened to `c9dd7ff` (cycle 8 bumped the workflow and left the citation
-> behind; cycle 9 found main already red). `2b003ea` adds a second comparison against the
-> WORKING TREE, so a falsification is now visible to the run that causes it. The cost is
-> unchanged and still real: this commit was red on a full clone between the push and this
-> re-citation, because the CI run that refreshes the citation cannot exist until after the
-> push. That window is intrinsic to a self-falsifying claim, it is recorded rather than
-> papered over, and the standing conflict it creates with "green at every commit" is
-> human-owned (backlog P-7).
-
-> **Updated 2026-08-20 (cycle 5).** The citation above moved from run `32324495153` at
-> commit `0c2ed40` (a 119-test matrix) to run `32328776838` at commit `5f833ab`. Nothing
-> was wrong with the old citation when it was written; it was retired by its own stated
-> condition, and this time a test noticed rather than a person. `test/node-support-citation.test.js`
-> now parses the `git diff` command out of the paragraph above and runs it, so the section
-> is checked on every suite run instead of whenever someone happens to wonder.
->
-> Two honest limits, recorded here because both were measured rather than assumed:
->
-> 1. **The guard is inert in CI, by design.** `actions/checkout@v4` checks out at depth 1,
->    so the cited base commit is not in CI's copy of the history and the test skips — that
->    is the `1 skipped` in all four rows of the table above. It protects a maintainer with
->    a full clone; it does not protect the matrix. Making it fail on an unreachable base
->    would turn CI red for the wrong reason, which is worse.
-> 2. **Any commit touching `src/`, `bin/`, `test/` or `.github/` is transiently red on a
->    full clone**, because it falsifies this citation the instant it lands and the CI run
->    that would refresh the citation cannot exist until after the push. Commit `5f833ab`
->    is exactly that: red locally, green in CI, and repaired by this commit. That window is
->    intrinsic to a self-falsifying citation, not a defect in the test — it is the cost of
->    the claim being checkable at all.
-
-> **Updated 2026-08-20 (cycle 6).** The citation moved again, from run `32328776838` at
-> commit `5f833ab` to run `32331910336` at commit `c08562b`, by the same stated condition
-> as last time. What is worth recording is not the move but why it happened: a review pass
-> went looking at the guard that watches this section and found the guard could be steered
-> by the prose it reads.
->
-> It located its citation by taking the FIRST `git diff` command in this section. This
-> section is prose that grows — it already discusses two earlier citations — so the next
-> person to mention an old command in passing, anywhere above the live paragraph, would
-> have silently redirected the check at it. Measured, not theorised: with a decoy sentence
-> added above, a genuinely stale citation reported green, and a correct citation reported
-> `SKIP` on a full clone while blaming a shallow checkout that did not exist. The same
-> decoy placed *below* the citation changed nothing, which is what pinned the cause to
-> position rather than to the decoy's presence.
->
-> Two changes followed. The guard now requires this section to name its retirement
-> condition exactly **once** and fails loudly on ambiguity instead of resolving it by
-> position — so if you are editing this section and the suite starts complaining about two
-> commands, that is the guard doing its job, not a bug. And an unreachable base commit now
-> skips only when the checkout is genuinely shallow (`git rev-parse
-> --is-shallow-repository`); on a full clone, a cited commit that does not resolve is a
-> bogus citation and fails. The CI skip in the table above is unchanged and still expected.
->
-> The archived job logs for this run and the previous one now live in `.swarm/runs/`, so
-> the table stays checkable after GitHub's log retention drops the originals.
-
-> **Updated 2026-08-20 (cycle 9).** The citation moved from run `32331910336` at commit
-> `c08562b` to run `32335038575` at commit `c9dd7ff`, by the same stated condition as the
-> two moves above. `c9dd7ff` bumped `actions/checkout` and `actions/setup-node` from `@v4`
-> to `@v7`, which touches `.github/` and so falsifies this citation on sight.
->
-> What is worth recording this time is not the move but that **the repair was late**. Both
-> earlier moves refreshed the citation in the same commit that falsified it. This one did
-> not: `c9dd7ff` landed the bump and stopped, so the suite was red on a full clone for a
-> whole cycle before anything looked. Limits 1 and 2 above each explain half of why nothing
-> caught it, and the half that matters is what they add up to. The guard reads *committed*
-> history, so a pre-commit suite run cannot see a falsification still sitting in the working
-> tree — it reports green. CI would see it, but CI checks out shallow and skips. So no
-> signal available to the commit that breaks this citation can observe the break; only the
-> next full-clone run can. The transient-red window is intrinsic and was accepted knowingly
-> in cycle 5, but "transient" is doing real work in that sentence: it is only transient if
-> the same commit repairs it, and nothing enforces that.
->
-> One honest note on scope, since it is visible in this move. The bump changed which
-> *action versions* run, not which Node majors are tested — the matrix is still
-> `[18, 20, 22, 24]`, byte-identical. So this citation was retired by a change that does not
-> affect the claim it guards. That is the deliberate cost of a coarse pathspec: `.github`
-> catches everything in the workflow rather than trying to decide which edits are
-> claim-relevant, and a guard that guessed at relevance would be the easier thing to fool.
+1. **The guard is inert in CI, by design.** The workflow checks out at depth 1, so the cited
+   base commit is not in CI's copy of the history and the guard skips — that is the
+   `2 skipped` in all four rows above. The guard therefore protects a maintainer working from
+   a full clone; it does not protect the matrix. Making it fail on a base commit it cannot
+   reach would turn CI red for the wrong reason.
+2. **Any commit touching `src/`, `bin/`, `test/` or `.github/` is transiently red on a full
+   clone.** Such a commit falsifies the citation the instant it lands, and the CI run that
+   would supply a replacement run id cannot exist until after the push. That window is
+   intrinsic to a claim that names its own falsification condition rather than a defect in
+   the guard, and it closes only when a later commit re-cites. Nothing enforces that the same
+   commit does the repair.
 
 Read "Node 18+" as **verified-at-18**: 18 is the lowest version actually tested, and it
 passes everything. It is **not proven minimal** — nothing here tests Node 16 or 17, so
 whether the CLI runs on them is unknown rather than ruled out.
 
-One incidental finding from that run, recorded because it bites anything that parses the
-suite output: Node 18, 20 and 22 print the TAP summary (`# tests 120`), while Node 24
-prints the spec-reporter summary (`ℹ tests 120`) — and that marker is U+2139
-INFORMATION SOURCE, not an ASCII `i`. The count moved with the suite again (119 -> 120);
-the split between the two reporters did not, and is re-confirmed in run `32328776838`.
+One detail matters if you parse the suite output rather than read it: Node 18, 20 and 22
+print the TAP summary (`# tests <n>`), while Node 24 prints the spec-reporter summary
+(`ℹ tests <n>`) — and that marker is U+2139 INFORMATION SOURCE, not an ASCII `i`. The test
+count moves as the suite grows; the split between the two reporters does not.
+
+The cycle-by-cycle record of how this citation reached run `32337875271` — five entries
+covering every move since run `32267338333`, what retired each one, and what a review pass
+found in the guard itself — is preserved verbatim in
+[`docs/node-support-citation-history.md`](docs/node-support-citation-history.md).

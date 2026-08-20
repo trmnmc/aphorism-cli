@@ -7,7 +7,7 @@
       "priority": 1,
       "value": "H",
       "effort": "M",
-      "status": "todo",
+      "status": "done",
       "deps": [],
       "files_hint": [
         "README.md",
@@ -16,8 +16,8 @@
       "acceptance": "README.md contains zero blockquotes headed \"Updated 2026-08-20 (cycle N)\"; every moved line is present byte-identically in a dated file under docs/, in chronological order; README.md is at least 5000 bytes smaller than 16609; the Node-support section still states the live citation and its two standing limits in plain prose",
       "packages": [],
       "model": "haiku",
-      "attempts": 0,
-      "notes": "README:205-299, ~95 lines, cycles 3/10/5/6/9 out of chronological order. Run #5's own retro filed this as a house-rules proposal and never actioned it."
+      "attempts": 1,
+      "notes": "README:205-299, ~95 lines, cycles 3/10/5/6/9 out of chronological order. Run #5's own retro filed this as a house-rules proposal and never actioned it. | DONE cycle 1, sealed gate 7/7 (gate sha256 49b328d3, unchanged pre->post). README 16609 -> 11165 bytes (-5444, -33%); 309 -> 233 lines. All five blockquotes byte-identical in docs/node-support-citation-history.md, reordered 3,10,5,6,9 -> 3,5,6,9,10. Builder scope held exactly: only README.md + the new docs file (git status confirmed)."
     },
     {
       "id": "Q-2",
@@ -26,7 +26,7 @@
       "priority": 1,
       "value": "H",
       "effort": "M",
-      "status": "todo",
+      "status": "in_progress",
       "deps": [
         "Q-1"
       ],
@@ -38,8 +38,8 @@
       "acceptance": "every guard that breaks under Q-1 is repaired by re-anchoring it to a structural marker the document owns, never by restoring prose to satisfy it; each break is classified guard-defect or real-claim-loss with both columns reported; guards that did NOT break are named as the control",
       "packages": [],
       "model": "haiku",
-      "attempts": 0,
-      "notes": "L-043. The prose is guard-shaped, so moving it MEASURES whether each guard reads structure or prose. A guard that breaks on honest prose has reported its own defect."
+      "attempts": 1,
+      "notes": "L-043. The prose is guard-shaped, so moving it MEASURES whether each guard reads structure or prose. A guard that breaks on honest prose has reported its own defect. | CYCLE 1 MEASUREMENT — the headline result is a NEGATIVE, and it is the run's most valuable finding so far: 114 README lines deleted and the whole Node-support section rewritten, and ZERO guards broke (121/121 green). The builder was explicitly forbidden from touching test/ so the measurement could not be contaminated. Liveness then proven for test/node-support-citation.test.js rather than assumed (L-029/L-044): mutating the retirement base 2b003ea -> c9dd7ff made it FAIL loudly with a correct, self-naming assertion; restoring README byte-exactly (sha ebb0d9c4 both sides) returned it to 2 pass / 0 fail. Kill + converse control both observed, attribution pinned by running that file alone. REMAINING: same liveness proof for readme-tags.test.js (folds into Q-4) and citations.test.js."
     },
     {
       "id": "Q-3",
@@ -58,7 +58,7 @@
       "packages": [],
       "model": "haiku",
       "attempts": 0,
-      "notes": "README:186-191 reports 121 tests on all four majors; README:306-308 claims \"# tests 120\" and \"(119 -> 120)\". Measured truth at kickoff: 121 tests / 121 pass / 0 fail / 0 skipped on a full clone."
+      "notes": "README:186-191 reports 121 tests on all four majors; README:306-308 claims \"# tests 120\" and \"(119 -> 120)\". Measured truth at kickoff: 121 tests / 121 pass / 0 fail / 0 skipped on a full clone. | doc->doc half CLOSED incidentally by Q-1: README:306's 'tests 120' / '(119 -> 120)' is gone, replaced by '# tests <n>' / 'ℹ tests <n>' plus 'The test count moves as the suite grows'. That is the right repair — the durable claim is the TAP-vs-spec-reporter split and the U+2139 marker, and the literal count was the part that rotted. REMAINING: the guard that stops a count claim in that section silently disagreeing with its own matrix table."
     },
     {
       "id": "Q-4",

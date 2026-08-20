@@ -1,0 +1,42 @@
+cycle 1: Q-1 — the run journal leaves the README, and the guards did not break [verified 7/7]
+
+README.md 16,609 -> 11,165 bytes (-5,444, -33%); 309 -> 233 lines. The five stacked
+blockquotes headed "Updated 2026-08-20 (cycle 3/10/5/6/9)" — ~95 lines narrating individual
+build cycles of an autonomous run, in non-chronological order, sitting in the middle of a
+50-aphorism CLI's documentation — now live in docs/node-support-citation-history.md,
+byte-identical and reordered 3,5,6,9,10.
+
+The Node-support section was rewritten as documentation rather than as a changelog. It still
+states every checkable claim: the live citation (run 32337875271 @ 2b003ea), the four-row
+matrix, the retirement condition `git diff 2b003ea..HEAD -- src bin test .github` stated
+exactly once, both standing limits, and the verified-at-18 / not-proven-minimal caveat.
+
+VERIFIED, not claimed. Sealed gate authored and hash-locked before dispatch and held outside
+the target repo (script sha256 49b328d3, unchanged before and after — the check predated the
+work and the judged tree never moved). Pre-dispatch smoke run against unmodified HEAD scored
+4/7: A/B/C failed because the work was genuinely not done, D/E/F/G passed because the controls
+are live rather than dying on everything. That smoke run also caught a real defect in the
+instrument (require() inside an ESM module) before it ever judged any work. Post-dispatch: 7/7.
+
+THE HEADLINE IS A NEGATIVE. 114 lines deleted, the whole section rewritten, and ZERO guards
+broke — 121/121 green. This run's premise was that the padded prose existed because guards
+read it, so moving it would expose guards anchored to prose instead of structure. Measured:
+it did not. The premise was half wrong, in the useful direction.
+
+Zero-breaks could equally mean the guards are inert, so that was tested rather than assumed:
+mutating the retirement base 2b003ea -> c9dd7ff made node-support-citation.test.js FAIL loudly
+with an assertion that names the base, the pathspec and the reason; restoring the README
+byte-exactly (sha ebb0d9c4 on both sides) returned it to 2 pass / 0 fail. Kill and converse
+arms both observed, attribution pinned by running that file alone.
+
+Q-3's doc->doc half closed on the way: README:306 claimed "# tests 120" and "(119 -> 120)"
+while the matrix table 115 lines above said 121. It now reads "# tests <n>" / "ℹ tests <n>"
+with "The test count moves as the suite grows" — the durable claim is the reporter split and
+the U+2139 marker; the literal count was the part that rotted, and the new form cannot.
+
+Invariants held: corpus.js sha 77a4de5c and --help sha d759d781 both byte-identical to
+3a17cc5; zero dependencies; scope confined to README.md + the new docs file.
+
+Not done: Q-2 stays in_progress — liveness is proven for the citation guard only, not yet for
+readme-tags.test.js or citations.test.js. Q-3's guard against a count claim disagreeing with
+its own table is unbuilt. Q-4 untouched.

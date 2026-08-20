@@ -5,8 +5,8 @@
   "run_label": "improvement run #6",
   "run_started_at": "2026-08-20T14:36:57Z",
   "kickoff_source": "allocator",
-  "phase": "DESIGN",
-  "cycle": 0,
+  "phase": "BUILD",
+  "cycle": 1,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "spec_digest": [
@@ -52,6 +52,11 @@
       "cycle": 0,
       "what": "Taste-judge dissent recorded, not overridden, for the third consecutive run",
       "why": "use-twice scored 4/10. Every candidate that would move it is a new user-visible feature, excluded by the allocator brief. Operator lever, not a swarm one."
+    },
+    {
+      "cycle": 1,
+      "what": "Forbade the Q-1 builder from touching test/, and treated the resulting pass/fail list as the deliverable",
+      "why": "Which guards break under honest prose IS the measurement this run exists to take. A builder that repairs a failing guard mid-edit destroys the result. Zero broke — so the guards are anchored to structure, not to the padded prose, and the run's premise was half wrong in the useful direction."
     }
   ],
   "known_issues": [
@@ -68,11 +73,17 @@
       "cycle_found": 0
     }
   ],
-  "counters": { "consecutive_no_value": 0, "consecutive_failures": 0 },
+  "counters": {
+    "consecutive_no_value": 0,
+    "consecutive_failures": 0
+  },
   "last_cycle": {
-    "n": 0,
-    "work": "KICKOFF — stress-test, prior-art scout, taste judge, spec rewrite, backlog rebuild",
-    "outcome": "spec confirmed under allocator hints; Q-6 closed at kickoff; 6 items opened, 9 human-blocked carried",
+    "n": 1,
+    "work": "Q-1 extract five run-journal blockquotes README -> docs/ (1 builder, k=1); Q-2 guard-liveness measurement",
+    "outcome": "sealed gate 7/7 verified; README -33%; zero guards broke; citation guard proven live by kill + converse control",
     "commit": null
+  },
+  "qa": {
+    "last_full_qa_cycle": 1
   }
 }
