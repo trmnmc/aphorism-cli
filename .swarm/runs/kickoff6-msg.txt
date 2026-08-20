@@ -1,0 +1,40 @@
+cycle 0: KICKOFF improvement run #6 — re-aim the brief onto one falsifiable experiment
+
+Sixth consecutive run under the allocator TRICKLE brief. Stress-test verdict RESHAPE
+(confidence 7): three of four lenses landed — run #5 closed DONE at cycle 11 with ~19.4h
+unspent, all surviving backlog items are blocked on human rulings, and L-045 (written from
+this repo) says that means DONE, not another lap.
+
+The defence that held is narrow and measured. Run #5's own RETRO filed two house-rules
+proposals about README bloat and actioned NEITHER, because it closed DONE the same cycle it
+wrote them:
+
+  - README.md is 16,609 bytes for a tool with one command and six flags. It was 6,022
+    before run #5 — 2.76x growth in one night.
+  - README:205-299 hold five stacked blockquotes headed "Updated 2026-08-20 (cycle
+    3/10/5/6/9)" — ~95 lines, out of chronological order, narrating individual build
+    cycles of an autonomous run. A run journal that leaked into a user-facing README.
+  - README:306 claims the suite prints "# tests 120" and "(119 -> 120)" while the matrix
+    table 115 lines above it says 121. Measured truth: 121/121/0 fail/0 skipped.
+  - README:71 and :93 restate one number three ways — diagnosed by run #5's retro as prose
+    padded to satisfy a regex guard.
+
+Repairing damage SWARM itself caused is not churn; it is what "polish docs" names. And it
+converts the brief's other unfalsifiable heading into a measurement: the prose is
+guard-shaped, so moving it MEASURES whether each guard is anchored to a structural marker
+(L-043) or to the prose. A guard that breaks on honest prose has reported its own defect.
+
+Q-1 extract, Q-2 the guards are the experiment, Q-3 the stale count, Q-4 the padded
+sentence, Q-5 invariants, Q-6 the playbook item (CLOSED at kickoff in one read — escalate
+once, never re-derive).
+
+Taste judge: 4/8/8/6, "worth the night as scoped" but use-twice is load-bearing. Recorded
+as dissent for the third consecutive run; every candidate that would move it is a new
+feature the brief excludes. Operator lever, not a swarm one.
+
+Baselines verified, not claimed: 121 tests green, corpus sha256 77a4de5c, --help sha256
+d759d781. usage_reset_at set from a real ccusage probe (16:00Z), not to stop_at (L-038).
+
+Denials #34 (swarm-playbook.sh parse) and #35 (settings.json write) recorded once and not
+re-derived; the handoff's ask is unchanged. Watchdog DONE-guard is blind on an improvement
+run (L-037, KI-R6-1) — swarm-pacer.timer is enabled+active and is this run's recovery path.
