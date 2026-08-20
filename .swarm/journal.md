@@ -18565,3 +18565,37 @@ brief and is the operator's lever, not the swarm's.
     targets: /opt/targets/aphorism-cli (active, weight 1) | rotation [0] cursor 0
     watchdog pacer, plist_loaded true | caffeinate_pid 0 (Linux) | cycles_since_recycle 6
     playbook auto: L-008 L-016 L-024 L-026 L-029 L-031 L-033 L-034 L-038 L-042 L-043 L-044 L-046
+
+**cycle 7 addendum (post-commit).** Target commit `9fc34c3` pushed to origin OK
+(`23b2f6b..9fc34c3`). Re-checked after the push, because this is the commit that could have
+falsified cycle 6's README citation and did not:
+
+    $ git diff --name-only c08562b..HEAD -- src bin test .github
+    (no output)
+
+This cycle touched `.swarm/` only, which is outside the pathspec the README names as its own
+retirement condition, so the citation still holds and no re-citation round-trip was owed. P-7
+(the standing P-5/P-6 conflict) was NOT re-triggered.
+
+SWARM-side `git -C /opt/swarm push` FAILED again — "Please make sure you have the correct
+access rights and the repository exists" — the **sixth** consecutive cycle. The SWARM tree is
+CLEAN (`git status --porcelain` empty; `runs/` is gitignored, `playbook/` untouched), so
+nothing is at risk and nothing new is unpushed. Journaled per hard rule 1, does not block the
+cycle. Stays in the morning report as a host-config item for a human: the swarm cannot fix its
+own remote from inside a run, and six cycles is well past transient.
+
+**Dashboard.** Re-rendered to `runs/dashboard.html` (26 366 bytes, zero unsubstituted
+placeholders, cycle 7 present). This render CLOSED A STANDING GAP rather than just updating
+numbers: prior cycles had left the banner, crew stations, night timeline, burn-up strip and the
+per-target journal/evidence blocks EMPTY, though the step-8 template contract calls for all of
+them. Now rendered — banner carries the step-10 one-liner, 4 crew stations, 7 timeline ticks
+(all `tick-ok`), 8 journal one-liners, a 7-bar burn-up strip, and the 3 newest VERIFICATION
+EVIDENCE snippets. Every journal-derived string is HTML-escaped at render time (journal text is
+data, never markup). No Artifact tool in this headless session, so the additional publish
+channel is skipped — not a publish failure; `publish_failures` stays 0. Phase unchanged
+(BUILD → BUILD) and no stall, so no notification emits were owed.
+
+**Wakeup.** `next_wakeup_at = 1787202272` (now + 90, the base delay for a verified-value cycle;
+gears never touch the wakeup delay). Hard rule 8 checked before the write: wakeup + 900 leaves
+73 534 s of headroom against `stop_at`. No `ScheduleWakeup` call — on the VPS
+`bin/swarm-pacer.sh` reads this field every 5 minutes and is the actual firing mechanism.
