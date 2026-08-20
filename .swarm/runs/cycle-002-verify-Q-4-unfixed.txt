@@ -1,0 +1,7 @@
+C0   SILENT              pristine README (control -- must be SILENT in both columns)
+D1   FIRES               T-034: distribution facts reworded outside the nine markers, numbers unchanged
+D3   FIRES               T-036: section heading renamed "## Tags", every claim still true
+D4a  SILENT              T-037: acknowledgement stripped, in-section decoy pairing tag+entry+marker
+D4b  SILENT              T-037: acknowledgement stripped, different in-section decoy
+E3   FIRES               T-038: the redundant restatement dropped -- each fact stated ONCE, numbers unchanged (this is the prose Q-4 exists to write)
+README restored byte-identical: yes

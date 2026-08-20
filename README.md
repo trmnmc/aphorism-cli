@@ -68,9 +68,14 @@ entry in the filtered set, in corpus order.
 
 ## Tag vocabulary
 
-*Parts of this section exist mainly to satisfy an automated guard: `test/readme-tags.test.js` checks the counts below against the corpus and requires the single-entry sentence and the `#### ` band headings to keep their exact shape, which is why the next paragraph restates the same count twice.*
+The distribution is uneven, but every tag is a real pool. These counts are measured from
+`src/corpus.js` by `test/readme-tags.test.js`, so they cannot drift from it silently:
 
-The corpus contains 12 distinct tags. The distribution is uneven, but every tag is a real pool: 12 tags appear on 2 or more entries. On the other side of that count, 0 tags appear exactly once, which is to say 0 tags sit on exactly one entry, so `--tag` never returns a foregone conclusion.
+| Tag vocabulary | Count |
+|---|---|
+| Distinct tags | 12 |
+| Tags on 2 or more entries | 12 |
+| Tags on exactly one entry | 0 |
 
 #### Robust pool (5+ entries)
 | Tag | Count |

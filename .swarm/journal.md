@@ -19924,3 +19924,275 @@ runfile-mirror:
   }
 }
 ```
+
+---
+
+## Cycle 2 — 2026-08-20T17:42Z → 18:2xZ — Q-4 (build-wave, k=1)
+
+**Clock** `date +%s` = 1787247453. stop_at 2026-08-21T14:36:47Z (~21h out) — no admission pressure.
+**Budget probe** gear 2 (guest, dial 0.3 forced 1.0), ρ=0.74, k_cap 2, promote:false, demote:true,
+governor ceiling 2 (weekly_used 100%, heat 1.99). window_tokens 505,686 · $0.76 · 31.5M tok/h ·
+projected depletion 1787263885. The 16:00Z window reset landed between cycles (54.9M → 0.5M);
+`usage_reset_at` rolled forward to 2026-08-20T21:00:00Z.
+**Control channel** poll clean; `pending: []`, `inject: []`. Nothing to triage.
+
+### Orient — cycle 2 had already crashed once, mid-Q-4
+
+`git status` came back dirty: `README.md`, `test/readme-tags.test.js`, plus two untracked
+`cycle-002-*` artifacts. A previous cycle-2 attempt died after dispatching Q-4 and before
+persisting anything (runfile `last_cycle.n` still 1, `cycles_since_recycle` already 2).
+
+The tree was coherent, so per cycle.md step 2 it was salvaged rather than discarded — but NOT
+salvage-committed, because **it was red**. Measured before touching anything:
+
+```
+# tests 120
+# pass 118
+# fail 2
+✖ README Node support citation: base-to-working-tree diff must also be empty ...
+✖ README opening sentence must state correct multi-entry and single-entry tag counts
+```
+
+Baseline was 121/121. So the crashed cycle had left the suite two tests SHORTER and two tests
+RED. Committing that as WIP would have broken hard rule 4 and Q-5 in one stroke. The diff was
+archived to `.swarm/runs/cycle-002-q4-inflight.patch` (421 lines) and the work was finished
+instead of restarted.
+
+Reading the half-done work turned up a defect no test could have caught: the comment block
+replacing a deleted guard asserted its coverage was carried by "the renamed `README must state
+correct multi-entry and single-entry tag counts` test below, which reads that exact row via
+`readTagVocabCount`" — **that rename and re-anchor were never done**. The comment documented
+work that did not exist. Exactly the shape L-042 warns about (READ THE DIFF even when it comes
+back green); here the diff was red, and the false claim still had to be read for.
+
+### Sealed gate — authored before dispatch, held outside the repo
+
+14 cells, written from the acceptance clause in the conductor's own words, held at
+`SWARM/runs/cycle-002-q4-gate.mjs` — structurally unreachable by the builder, whose only
+`additionalDirectories` entry is the target (L-042). Sealed **sha256 `06813843…`**; re-hashed
+after the builder returned: **identical**. The check predated the work and the judged tree
+never moved.
+
+Pre-dispatch smoke run against unmodified HEAD (worktree at `23eaf9b`) scored **5/14** —
+S1–S4 and C1-REWORD green because the controls are live rather than dying on everything, and
+every Q-4-specific cell failing because the work genuinely was not done. That smoke run also
+caught one defect in the instrument before it judged anything: C2-PROSEGONE reported
+"mutation was a no-op" on HEAD because it anchored on a table that does not exist there. It
+was rewritten to locate the lead-in paragraph structurally so it is measurable against BOTH
+trees, and re-sealed (`7a578de0…` → `06813843…`). Both hashes are recorded here rather than
+the amendment being quietly folded in.
+
+### The measurement — both columns, on TRUE inputs
+
+The item exists to stop three counts being read out of English prose. The price of such a fix
+is only meaningful against the unfixed baseline (L-043), so the discriminating cell deletes the
+Tag-vocabulary section's lead-in prose paragraph outright — an honest edit under which every
+remaining number stays true:
+
+| control | UNFIXED (`23eaf9b`) | FIXED (cycle 2) |
+|---|---|---|
+| lead-in prose paragraph deleted | **FIRES, fail=4** | **GREEN** |
+| lead-in prose reworded, table untouched | GREEN | GREEN |
+
+Four guards false-rejected honest writing before; none do now. That is the whole item, measured
+rather than argued.
+
+Kill arms, each attributable to a named guard (L-029), each paired against the controls above
+(L-044): a wrong value in any of the three rows fires (K1/K2/K3); a duplicated row label, a row
+under a label no guard reads, and the table deleted outright all fire (K4/K5/K6).
+
+### VERIFICATION EVIDENCE
+
+`node /opt/swarm/runs/cycle-002-q4-gate.mjs /opt/targets/aphorism-cli` — full output archived at
+`.swarm/runs/cycle-002-verify-Q-4-gate.txt`, gate script committed at `.swarm/runs/cycle-002-q4-gate.mjs`
+(`git check-ignore` confirms neither is ignored — a seal under an ignored path protects nothing):
+
+```
+  S1-SUITE        PASS  tests=124 pass=123 fail=1 — failures confined to the citation guard
+  S2-COUNT        PASS  tests=124 (>= 121, the Q-5 floor)
+  S3-CORPUS       PASS  sha256=77a4de5c777a (unchanged)
+  S4-HELP         PASS  sha256=d759d781ddca (unchanged)
+  S5-NOPROSE      PASS  no retired prose-count regex survives in executable code
+  S6-STRUCTURAL   PASS  all three counts read via readTagVocabCount(<label>)
+  K1-DISTINCT     PASS  fail=1 — README must state total unique tags correctly
+  K2-MULTI        PASS  fail=1 — README must state correct multi-entry and single-entry tag counts
+  K3-SINGLE       PASS  fail=2 — README Tag vocabulary counts table "Tags on exactly one entry" row ...
+  K4-DUP          PASS  fail=3    K5-UNRECOGNISED PASS  fail=3    K6-TABLEGONE PASS  fail=3
+  C1-REWORD       PASS  green under an honest prose reword
+  C2-PROSEGONE    PASS  green under the lead-in prose paragraph removed entirely
+VERDICT: 14/14 cells PASS
+```
+
+`test_cmd` run by the conductor directly, not asked of any agent:
+
+```
+not ok 59 - README Node support citation: base-to-working-tree diff must also be empty ...
+# tests 124
+# pass 123
+# fail 1
+# skipped 0
+```
+
+Test count, independently attributed: `test/readme-tags.test.js` 28 → 31 (HEAD worktree measured
+at 28, not taken from the builder's report); whole suite 121 → 124.
+
+### The builder's out-of-scope change — kept, rationale NOT accepted as written
+
+The builder deleted J-5's prose allowlist (`RECOGNISED_TAG_COUNT_CLAIM_PATTERNS`), calling it a
+live silent hole. That is a claim; it was measured (`.swarm/runs/cycle-002-j5-probe.mjs`), and
+the first probe measured the wrong thing — a FALSE injected count, which both trees catch. Re-run
+with the TRUE count, which is the claim actually being made:
+
+```
+UNFIXED true-count    SILENT
+FIXED   true-count    FIRES   fail=1 — ... must contain no unrecognised count-claim digits (J-5)
+  injected: "The corpus contains 12 distinct tags."  (true count is 12)
+```
+
+So the allowlist was **not** permitting unverified counts while the prose readers were alive —
+those readers checked them. It went dead when they were retired (S5-NOPROSE establishes no prose
+reader remains, so an allowlisted prose count would from now on be verified by nothing and would
+rot silently the next time the corpus moved — that half is deduction from a measured premise, not
+a measurement, and is labelled as such). The deletion is kept: it puts this section on the same
+policy the Attribution section already runs (counts in tables, no digits in prose). Its real cost
+is recorded rather than buried — **an honest, TRUE restatement of a count in prose is now refused.**
+
+### Committed RED, knowingly, and the repair filed rather than bought
+
+`test/node-support-citation.test.js` is red on this commit. Its subject is a git pathspec
+covering `test/`, and Q-4 necessarily edits `test/`; the CI run that would refresh the citation
+cannot exist until after the push. The README's own "Node support" standing limit 2 and playbook
+L-043 both name this window and both forbid every way of closing it here — narrowing the
+pathspec or relaxing the assertion is opening the gate by weakening it. Recorded as a walked
+exception, stated in the commit message, and filed as **Q-7** so the second half of the
+two-commit round trip is an item rather than a good intention. Post-commit the sibling
+`base..HEAD` check goes red too, for the same reason.
+
+**Not done, stated plainly**
+
+- Q-2 remains in_progress: `citations.test.js` still has not had the kill/converse treatment.
+- Q-3 untouched this cycle.
+- KI-R6-3 filed: two guards now read the same table row. The redundancy was **induced by the
+  conductor's own dispatch** (mandating the re-anchor and a no-shrink floor together); the builder
+  disclosed it instead of hiding it. Low severity, candidate consolidation.
+- The builder reports the Attribution helpers have no direct unit tests either — the same gap,
+  unclosed on that side. Not filed as an item this cycle; noted for the next planning pass.
+
+**Next:** cycle 3 — Q-7 re-cite once CI has run against this push, then Q-3.
+
+runfile-mirror:
+```json
+{
+  "version": 1,
+  "targets": [
+    {
+      "path": "/opt/targets/aphorism-cli",
+      "status": "active",
+      "weight": 1
+    }
+  ],
+  "rotation_cursor": 0,
+  "rotation_schedule": [
+    "/opt/targets/aphorism-cli"
+  ],
+  "stop_at": "2026-08-21T14:36:47Z",
+  "usage_reset_at": "2026-08-20T21:00:00Z",
+  "model_policy": "value-routing",
+  "auth_mode": "subscription",
+  "kickoff_source": "allocator",
+  "run_label": "improvement run #6",
+  "pacing": {
+    "mode": "guest",
+    "dial": 0.3
+  },
+  "budget": {
+    "api_cap_usd": null,
+    "api_spend_usd": 0,
+    "gear": 2,
+    "gear_target": 2,
+    "ratio": 0.74,
+    "k_cap": 2,
+    "promote": false,
+    "demote": true,
+    "ceiling": 2,
+    "probe_ok": true,
+    "probe_failures": 0,
+    "weekly_used_pct": 100,
+    "opus_used_pct": 100,
+    "week_elapsed_pct": 50.37,
+    "weekly_heat": 1.99,
+    "probed_at": 1787236617,
+    "window_end_epoch": 1787259600,
+    "mode": "guest",
+    "source": "probe",
+    "last_probe_ts": 1787247739,
+    "last_real_probe_ts": 1787247739,
+    "window_tokens": 505686,
+    "window_cost_usd": 0.76307625,
+    "tokens_per_hour": 31553333,
+    "projected_depletion_at": 1787263885,
+    "weekly_ok": true
+  },
+  "playbook": {
+    "apply_mode": "auto",
+    "applied": [
+      "L-008",
+      "L-016",
+      "L-024",
+      "L-026",
+      "L-029",
+      "L-031",
+      "L-033",
+      "L-034",
+      "L-038",
+      "L-039",
+      "L-041",
+      "L-042",
+      "L-043",
+      "L-044",
+      "L-045",
+      "L-046",
+      "L-047"
+    ],
+    "vetoed": [],
+    "held_out": [
+      "L-022"
+    ],
+    "held_out_reason": "L-022 instructs persisted-UI-state cleanup in beforeEach for components that mount in a browser; this target is a zero-dependency terminal CLI with no browser surface. Staged as applied, deliberately kept OUT of prompt_lines, to be reported not-exercised at WRAP_UP.",
+    "wave_k": null,
+    "routing_recs": [
+      "core-logic->fable (L-026)"
+    ],
+    "staged_by": "direct Read of /opt/swarm/playbook/learnings.md — bin/swarm-playbook.sh parse was DENIED this session (denial #34); the file was NOT validated by the script's parser",
+    "ledger_line_written": true
+  },
+  "heartbeat": {
+    "ts": 1787247739,
+    "next_wakeup_at": 1787250439,
+    "pid": 3203883,
+    "limp": false,
+    "degraded_tiers": []
+  },
+  "watchdog": {
+    "mode": "normal",
+    "plist_loaded": true,
+    "lockfile": "/opt/swarm/runs/watchdog.lock",
+    "relaunch_attempts": 0,
+    "note": "swarm-watchdog.timer enabled+active, but its DONE-guard is satisfied by REPORT.md existing (present from cycle 0 on an improvement run), so it is expected to no-op every firing — L-037, tracked as KI-R6-1. swarm-pacer.timer is enabled+active and is this run's real recovery path."
+  },
+  "caffeinate_pid": null,
+  "wrap_up_complete": false,
+  "cycles_since_recycle": 2,
+  "artifact": {
+    "url": null,
+    "file": "/opt/swarm/runs/dashboard.html",
+    "publish_failures": 0
+  },
+  "last_cycle": {
+    "n": 2,
+    "target": "/opt/targets/aphorism-cli",
+    "outcome": "Q-4 done, sealed gate 14/14 (gate sha256 06813843 unchanged across dispatch); suite 121->124; honest-prose-deletion control fail=4 unfixed vs GREEN fixed; committed RED on the citation guard by design, filed as Q-7",
+    "commit": null
+  }
+}
+```

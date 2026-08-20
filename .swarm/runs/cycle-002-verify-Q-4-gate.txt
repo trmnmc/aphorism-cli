@@ -1,0 +1,18 @@
+CELL RESULTS — Q-4 sealed gate (cycle 2, improvement run #6)
+target: /opt/targets/aphorism-cli
+  S1-SUITE        PASS  tests=124 pass=123 fail=1 — failures confined to the citation guard: README Node support citation: base-to-working-tree diff must
+  S2-COUNT        PASS  tests=124 (>= 121, the Q-5 floor)
+  S3-CORPUS       PASS  sha256=77a4de5c777a (unchanged)
+  S4-HELP         PASS  sha256=d759d781ddca (unchanged)
+  S5-NOPROSE      PASS  no retired prose-count regex survives in executable code
+  S6-STRUCTURAL   PASS  all three counts read via readTagVocabCount(<label>)
+  K1-DISTINCT     PASS  fail=1 — README must state total unique tags correctly
+  K2-MULTI        PASS  fail=1 — README must state correct multi-entry and single-entry tag counts
+  K3-SINGLE       PASS  fail=2 — README Tag vocabulary counts table "Tags on exactly one entry" row matches the corpus (str
+  K4-DUP          PASS  fail=3 — README must state total unique tags correctly
+  K5-UNRECOGNISED PASS  fail=3 — README must state total unique tags correctly
+  K6-TABLEGONE    PASS  fail=3 — README must state total unique tags correctly
+  C1-REWORD       PASS  green under an honest prose reword that leaves every number and the table untouched
+  C2-PROSEGONE    PASS  green under the lead-in prose paragraph removed entirely, every remaining number intact
+
+VERDICT: 14/14 cells PASS

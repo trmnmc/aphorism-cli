@@ -39,7 +39,7 @@
       "packages": [],
       "model": "haiku",
       "attempts": 1,
-      "notes": "L-043. The prose is guard-shaped, so moving it MEASURES whether each guard reads structure or prose. A guard that breaks on honest prose has reported its own defect. | CYCLE 1 MEASUREMENT — the headline result is a NEGATIVE, and it is the run's most valuable finding so far: 114 README lines deleted and the whole Node-support section rewritten, and ZERO guards broke (121/121 green). The builder was explicitly forbidden from touching test/ so the measurement could not be contaminated. Liveness then proven for test/node-support-citation.test.js rather than assumed (L-029/L-044): mutating the retirement base 2b003ea -> c9dd7ff made it FAIL loudly with a correct, self-naming assertion; restoring README byte-exactly (sha ebb0d9c4 both sides) returned it to 2 pass / 0 fail. Kill + converse control both observed, attribution pinned by running that file alone. REMAINING: same liveness proof for readme-tags.test.js (folds into Q-4) and citations.test.js."
+      "notes": "L-043. The prose is guard-shaped, so moving it MEASURES whether each guard reads structure or prose. A guard that breaks on honest prose has reported its own defect. | CYCLE 1 MEASUREMENT — the headline result is a NEGATIVE, and it is the run's most valuable finding so far: 114 README lines deleted and the whole Node-support section rewritten, and ZERO guards broke (121/121 green). The builder was explicitly forbidden from touching test/ so the measurement could not be contaminated. Liveness then proven for test/node-support-citation.test.js rather than assumed (L-029/L-044): mutating the retirement base 2b003ea -> c9dd7ff made it FAIL loudly with a correct, self-naming assertion; restoring README byte-exactly (sha ebb0d9c4 both sides) returned it to 2 pass / 0 fail. Kill + converse control both observed, attribution pinned by running that file alone. REMAINING: same liveness proof for readme-tags.test.js (folds into Q-4) and citations.test.js. cycle 2: readme-tags.test.js guards now measured live (6 kill arms, 2 converse controls, all attributable). citations.test.js still untreated."
     },
     {
       "id": "Q-3",
@@ -67,7 +67,7 @@
       "priority": 2,
       "value": "M",
       "effort": "S",
-      "status": "todo",
+      "status": "done",
       "deps": [],
       "files_hint": [
         "README.md",
@@ -76,8 +76,8 @@
       "acceptance": "README:71 states the tag distribution once, in one sentence, and the restatement at README:93 is gone; the guard reads the tag table rather than the prose; fixed-vs-unfixed columns on true inputs are reported",
       "packages": [],
       "model": "haiku",
-      "attempts": 0,
-      "notes": "Run #5 retro: \"prose that restates one number three ways is a guard-satisfaction artifact, not writing\"."
+      "attempts": 1,
+      "notes": "Run #5 retro: \"prose that restates one number three ways is a guard-satisfaction artifact, not writing\". cycle 2: sealed gate 14/14 (gate sha256 06813843, unchanged before and after dispatch). Three Tag-vocabulary counts moved out of prose into a `| Tag vocabulary | Count |` table and read by label via readTagVocabCount. Priced on TRUE inputs, both columns: deleting the section lead-in prose fired 4 guards on the unfixed tree (23eaf9b) and is GREEN on the fixed tree."
     },
     {
       "id": "Q-5",
@@ -313,6 +313,23 @@
       "packages": [],
       "acceptance": "A human rules on ONE of: (a) P-5 wording is amended to exempt the single commit that introduces a src/bin/test/.github change from the full-clone green requirement, on the stated ground that the CI run which refreshes the citation cannot exist before the push; (b) the citation design changes so the window closes; or (c) the guard is retired. Until then the exception stands recorded, never re-labelled as a pass.",
       "notes": "MEASURED cycle 5, not inferred. P-6 mechanizes README Node-support own falsifier. Because the pathspec it cites is `src bin test .github`, ANY commit touching those paths makes the cited diff non-empty at that commit, so the suite is RED on a full clone until a follow-up commit re-cites to a CI run for it — and that CI run cannot exist until after the push. Commit 5f833ab is exactly that case: red on a full clone, green in CI (the guard skips on depth-1 checkout), repaired by c0337f1. P-5 requires green at >=119 on EVERY commit this run makes, so 5f833ab is a genuine exception and is recorded as one in .swarm/runs/cycle-005-verify-P-6.txt. WHY THIS IS HUMAN-OWNED: every available disposition edits a locked SPEC must-have or deletes a shipped claim, and this run non-goals forbid the swarm doing either for itself. Note the window is not a defect in the test — it is the price of the claim being checkable at all, and the alternative (a citation nothing runs) is the state that let the claim go stale undetected two cycles ago. | cycle 10 SHARPENED THE CONFLICT WITHOUT RESOLVING IT. RF-5 made the guard fire on the WORKING TREE, so the exception is no longer discovered a cycle late by a full clone — it is now visible pre-commit, to the very run that causes it. That is strictly better for detection and it changes nothing about the disposition: the window between push and re-citation still exists and still violates \"green at every commit\", because CI cannot describe a commit that has not been pushed. Ruling (a)/(b)/(c) is still a human call, and it is now a call a human will meet on EVERY commit touching src/bin/test/.github rather than occasionally. | carried into improvement run #6 unchanged; the brief forbids the ruling this needs"
+    },
+    {
+      "id": "Q-7",
+      "title": "Re-cite the Node-support CI matrix to a run that describes the post-Q-4 tree",
+      "kind": "fix",
+      "status": "todo",
+      "priority": 5,
+      "effort": "S",
+      "attempts": 0,
+      "deps": [],
+      "files_hint": [
+        "README.md"
+      ],
+      "packages": [],
+      "model": "sonnet",
+      "acceptance": "test/node-support-citation.test.js is green on a full clone: the section cites a CI run id whose commit satisfies an empty `git diff <base>..HEAD -- src bin test .github`, and the four-row matrix reports that run's real numbers. Never bought by narrowing the pathspec or relaxing the assertion.",
+      "notes": "Created by cycle 2's commit, which touched test/ and so falsified the citation by its own stated condition (README \"Node support\" standing limit 2; playbook L-043). The replacement CI run cannot exist until after the push, so this is the second half of a knowingly-budgeted two-commit round trip."
     }
   ]
 }

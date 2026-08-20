@@ -6,7 +6,7 @@
   "run_started_at": "2026-08-20T14:36:57Z",
   "kickoff_source": "allocator",
   "phase": "BUILD",
-  "cycle": 1,
+  "cycle": 2,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "spec_digest": [
@@ -57,6 +57,16 @@
       "cycle": 1,
       "what": "Forbade the Q-1 builder from touching test/, and treated the resulting pass/fail list as the deliverable",
       "why": "Which guards break under honest prose IS the measurement this run exists to take. A builder that repairs a failing guard mid-edit destroys the result. Zero broke — so the guards are anchored to structure, not to the padded prose, and the run's premise was half wrong in the useful direction."
+    },
+    {
+      "cycle": 2,
+      "what": "Committed with test/node-support-citation.test.js RED, knowingly, and filed the re-cite as Q-7 rather than buying green",
+      "why": "That guard's subject is a git pathspec covering test/. Q-4 necessarily edits test/, so the guard cannot be green on this commit — the CI run that would refresh its citation cannot exist until after the push. L-043 and the README section's own standing limit 2 both name this window and both forbid the alternatives (narrowing the pathspec, relaxing the assertion). Recorded as a walked exception, never re-labelled as a pass."
+    },
+    {
+      "cycle": 2,
+      "what": "Kept the builder's out-of-scope deletion of J-5's prose allowlist, but did NOT accept its stated rationale",
+      "why": "The builder called the allowlist a live silent hole. Measured both arms myself: a FALSE prose count fires on both trees; a TRUE prose count is SILENT on the unfixed tree and FIRES on the fixed one. So the allowlist was not permitting unverified counts while the prose readers lived — it went dead when they were retired, and the deletion converts the section to the Attribution section's existing C7 policy (counts in tables, no digits in prose). Defensible and kept; the justification as written overstated the case, and the real cost — an honest TRUE restatement in prose is now refused — is recorded rather than buried."
     }
   ],
   "known_issues": [
@@ -71,16 +81,24 @@
       "desc": "bin/swarm-playbook.sh has no allowlist entry under any of the 11 swarm-* forms in /opt/swarm/.claude/settings.json; parse denied this session (#34) and the step-5 settings write denied (#35). Playbook directives were staged by direct Read of learnings.md, NOT by the script's validator. Permanently a human's item — see HANDOFF-allowlist-2026-08-17.md. Recorded ONCE; not to be re-derived (L-045).",
       "severity": "med",
       "cycle_found": 0
+    },
+    {
+      "id": "KI-R6-3",
+      "desc": "Two guards in test/readme-tags.test.js now read the same \"Tags on exactly one entry\" table row (the renamed multi/single-entry test and the structural replacement for the retired co-occurrence guard). This redundancy was INDUCED BY THE CONDUCTOR's dispatch, which mandated both the re-anchor and a no-shrink floor; the builder disclosed it rather than hiding it. Harmless but not coverage — a candidate consolidation once the Q-5 floor is not the binding constraint.",
+      "severity": "low",
+      "cycle_found": 2
     }
   ],
   "counters": {
     "consecutive_no_value": 0,
-    "consecutive_failures": 0
+    "consecutive_failures": 0,
+    "k_current": 1,
+    "wave_streak": 1
   },
   "last_cycle": {
-    "n": 1,
-    "work": "Q-1 extract five run-journal blockquotes README -> docs/ (1 builder, k=1); Q-2 guard-liveness measurement",
-    "outcome": "sealed gate 7/7 verified; README -33%; zero guards broke; citation guard proven live by kill + converse control",
+    "n": 2,
+    "work": "Q-4 completion — re-anchor the tag-vocabulary guards to a counts table (1 builder, k=1, opus after gear-2 demote)",
+    "outcome": "sealed gate 14/14; suite 121 -> 124; unfixed column fail=4 vs fixed GREEN on the honest-prose-deletion control; citation guard red by design, filed as Q-7",
     "commit": null
   },
   "qa": {

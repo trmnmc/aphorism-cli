@@ -105,34 +105,62 @@ test('README must state total unique tags correctly', () => {
   const tagsInCorpus = countTagsInCorpus();
   const totalUniqueTags = Object.keys(tagsInCorpus).length;
 
-  // Look for "X distinct tags" in the README
-  const match = readmeContent.match(/(\d+)\s+distinct tags/);
-  assert(match, 'README should state the total number of distinct tags');
+  // Read "Distinct tags" from the counts table (Q-4) rather than matching
+  // "X distinct tags" against prose -- see the Q-4 comment block above
+  // getTagVocabSection for why the claim moved out of a sentence.
+  const tagVocabSection = getTagVocabSection(readmeContent);
+  const table = parseTagVocabCountsTable(tagVocabSection);
+  assertTagVocabCountsTableWellFormed(table);
+  const statedCount = readTagVocabCount(table, 'Distinct tags');
 
-  const statedCount = parseInt(match[1], 10);
   assert.equal(statedCount, totalUniqueTags, 'README states ' + statedCount + ' distinct tags but corpus has ' + totalUniqueTags);
 });
 
-test('README must correctly describe single-entry tag count', () => {
-  const readmePath = path.join(__dirname, '..', 'README.md');
-  const readmeContent = fs.readFileSync(readmePath, 'utf8');
-  const tagsInCorpus = countTagsInCorpus();
-
-  // Count single-entry tags
-  let singleEntryCount = 0;
-  for (const tag of Object.keys(tagsInCorpus)) {
-    if (tagsInCorpus[tag] === 1) {
-      singleEntryCount++;
-    }
-  }
-
-  // Look for "remaining X tags" or "X tags appear exactly once"
-  const match = readmeContent.match(/(\d+)\s+tags appear exactly once/);
-  assert(match, 'README should state how many tags appear exactly once');
-
-  const statedCount = parseInt(match[1], 10);
-  assert.equal(statedCount, singleEntryCount, 'README states ' + statedCount + ' single-entry tags but corpus has ' + singleEntryCount);
-});
+// ---------------------------------------------------------------------------
+// Q-4 -- CLOSED via structural re-shape, not deleted outright.
+//
+// This file used to carry a test here ("README must correctly describe
+// single-entry tag count") that matched `/(\d+)\s+tags appear exactly
+// once/` against the whole README and compared it to the corpus's true
+// single-entry-tag count. The mutation it caught: the README's "X tags
+// appear exactly once" prose phrase stating a WRONG X while everything
+// else in the document stayed correct.
+//
+// That mutation is no longer expressible. The Tag vocabulary section's
+// opening paragraph no longer contains an "appear exactly once" phrase (or
+// any other prose rendering of this count) at all -- Q-4 moved it into the
+// counts table's "Tags on exactly one entry" row, the same row
+// `readTagVocabCount` reads it from now. No "<N> tags appear exactly once"
+// phrase exists anywhere in README.md any more (the deleted test scanned
+// the whole file, so that is the scope the claim is made at; the "21 tags
+// matched exactly one aphorism" sentence under "## Tag vocabulary changes"
+// is a historical figure about the retired 37-tag vocabulary, is not of
+// that phrase shape, and was never read by the deleted test). There is no
+// second prose phrasing of this count left for a mutation to land on, the
+// same way T-024b's deleted band-heading-count test lost no coverage once
+// its band headings stopped carrying a prose "N tags" figure at all (see
+// the T-024b comment block further down this file for that precedent).
+//
+// The mutation that IS still reachable -- the table's "Tags on exactly one
+// entry" row stating a wrong value -- is caught by the renamed
+// "README must state correct multi-entry and single-entry tag counts" test
+// below, which reads that exact row via readTagVocabCount and compares it
+// to a count derived from src/corpus.js at test time.
+//
+// REDUNDANCY, RECORDED RATHER THAN TRIMMED. Two tests now read that one
+// row: the renamed test just named, and the "counts table \"Tags on
+// exactly one entry\" row matches the corpus" test below, which is Q-4's
+// structural replacement for the retired token co-occurrence guard. They
+// are redundant in the strict sense -- a wrong value in that row fails both
+// and no mutation fails only one of them -- and that is stated here rather
+// than resolved by deleting one of them: Q-4's scope was to stop reading
+// these counts out of prose, not to prune guards, and dropping a green
+// guard is a coverage decision that wants its own item and its own
+// measurement. What is NOT true of this pair is that either one carries
+// coverage the other lacks, so neither should be cited as the reason the
+// prose test above could go: that reason is the paragraph above this one --
+// the phrase it read no longer exists to be made wrong.
+// ---------------------------------------------------------------------------
 
 test('README must list all single-entry tags', () => {
   const readmePath = path.join(__dirname, '..', 'README.md');
@@ -294,65 +322,133 @@ test('README must list all single-entry tags', () => {
 // not break, and the prediction in the T-031 block is now measured twice.
 // ===========================================================================
 //
-// RENAME NOTE (2026-08-18, verifier-reproduced finding). This test was
-// RENAMED and its matcher left byte-identical -- the sealed region below
-// (from `const singleEntryMarkers = [` through, but not including,
-// `assert(hasWarning`) was not touched. The old name and its assertion
-// message claimed the README "should acknowledge that some tags appear
-// only once," but as measured directly from src/corpus.js on this tree at
-// 2026-08-18 the corpus holds 12 distinct tags and 0 tags sit on exactly
-// one entry -- the limitation the old name named does not currently exist.
-// The guard is retained rather than deleted: it still checks token
-// co-occurrence (a tag word + an entry word + one of nine single-entry
-// marker phrases in the same sentence), and a human ruling on backlog item
-// T-040 (corpus retag consequences) could reintroduce single-entry tags,
-// at which point this guard would matter again. Because the name changed,
+// RENAME NOTE (2026-08-18, verifier-reproduced finding; the code it talks
+// about has since been deleted -- see the Q-4 note directly below it, and
+// read this one as the record of the state it was written against). This
+// test was RENAMED and its matcher left byte-identical -- the sealed region
+// that then followed (from `const singleEntryMarkers = [` through, but not
+// including, `assert(hasWarning`) was not touched. The old name and its
+// assertion message claimed the README "should acknowledge that some tags
+// appear only once," but as measured directly from src/corpus.js on this
+// tree at 2026-08-18 the corpus holds 12 distinct tags and 0 tags sit on
+// exactly one entry -- the limitation the old name named does not currently
+// exist. The guard was retained at that point rather than deleted: it still
+// checked token co-occurrence (a tag word + an entry word + one of nine
+// single-entry marker phrases in the same sentence), and a human ruling on
+// backlog item T-040 (corpus retag consequences) could reintroduce
+// single-entry tags, at which point a guard on this fact would matter again
+// -- a need the structural test below now serves, reading the count itself
+// rather than looking for a sentence about it. Because the name changed,
 // the historical probe harness at .swarm/runs/cycle-039-ackguard-probe.js
 // -- which selects this test by its OLD name via --test-name-pattern --
-// will no longer match; that file is a dated historical record and is
-// intentionally left unedited, so re-running it now requires substituting
-// the new name below.
+// no longer matches; that file is a dated historical record and is
+// intentionally left unedited. Neither name it could be re-pointed at
+// exists any more: Q-4 deleted the guard outright.
 // ---------------------------------------------------------------------------
-test('README Tag vocabulary section carries a tag+entry sentence with a single-entry marker (token co-occurrence guard, not a meaning check)', () => {
+//
+// Q-4 (2026-08-20) -- RETIRED in favour of a structural read. The token
+// co-occurrence guard this whole comment block documents (T-033 through the
+// RENAME NOTE above) has been deleted, and the test below replaces it: it
+// reads the Tag vocabulary counts table's "Tags on exactly one entry" row directly
+// via readTagVocabCount and compares it to the corpus at test time. This is
+// the "structural re-shape (T-024)" the FAMILY BOUNDARY block above named,
+// twice, as the recorded right fix rather than a fourth narrowing -- the
+// same move Q-4 already applied to this section's OTHER prose-count guards,
+// and the move this file's Attribution section applied first (see the
+// "Attribution section counts: read from STRUCTURE, not from an English
+// sentence" comment block further down this file).
+//
+// The FAMILY BOUNDARY block re-measured six cells (C0, D1, D3, D4a, D4b,
+// E3) against the retired guard. Re-examining each against the structural
+// replacement:
+//
+//   C0  (baseline, pristine README) -- still meaningful, still passes, but
+//       for a different reason: the old guard passed because SOME sentence
+//       happened to pair a tag word, an entry word and a marker phrase; the
+//       new guard passes because the table's row VALUE is correct. Not
+//       retired so much as superseded by a strictly more direct check of
+//       the same fact.
+//
+//   D1  (T-034, both acknowledgement sentences reworded outside the 9
+//       markers, numbers unchanged) -- INEXPRESSIBLE against the new guard.
+//       The false rejection this cell named was a property of scanning
+//       prose sentences for marker phrases; the new guard does not scan
+//       prose at all, so a prose reword that leaves the table's row
+//       untouched cannot make it fire. The failure mode is eliminated, not
+//       just unmeasured.
+//
+//   D3  (T-036, "## Tag vocabulary" renamed "## Tags") -- still
+//       EXPRESSIBLE, and still fires. Both the retired guard and its
+//       replacement scope to the section via getTagVocabSection, which
+//       itself asserts the literal heading text "## Tag vocabulary" exists;
+//       renaming it trips that shared helper's own assertion before either
+//       guard's own logic runs. Unchanged by this retirement.
+//
+//   D4a (T-037, acknowledgement stripped, in-section decoy "Tags are
+//       listed in alphabetical order, one entry per line.") -- the SILENT
+//       MISS this cell recorded is INEXPRESSIBLE against the new guard, for
+//       the same reason as D1: there is no sentence-marker scan left for a
+//       decoy sentence to fool. What replaces it is strictly stronger, not
+//       merely different -- the new guard does not ask whether SOME
+//       sentence superficially resembles an acknowledgement, it reads the
+//       exact row and compares its VALUE to the corpus, so a README that
+//       drops the real count while keeping a decoy sentence around now
+//       fails on the missing/wrong table row instead of passing.
+//
+//   D4b (T-037, decoy "A tag name is a single-entry token with no
+//       spaces.") -- same as D4a, same reasoning, INEXPRESSIBLE and
+//       superseded for the same reason.
+//
+//   E3  (T-038, honest two-sentence split of the distribution facts,
+//       numbers unchanged) -- INEXPRESSIBLE. The false rejection was a
+//       property of requiring tag-word, entry-word and marker to co-occur
+//       in one clause; the new guard reads a table cell, which a sentence
+//       split cannot touch.
+//
+// Net: four of six cells (D1, D4a, D4b, E3) are inexpressible against the
+// new guard because the entire mechanism they were measured against --
+// scanning prose sentences for marker co-occurrence -- no longer exists to
+// have a failure mode. One cell (D3) is unchanged, carried by a helper
+// shared with the old guard rather than by anything new. One cell (C0)
+// still holds, via a different and more direct mechanism. No cell in this
+// set becomes a newly-silent hole under the replacement; the two SILENT
+// cells (D4a, D4b) the old guard could not close are the ones the
+// replacement closes outright, which is the coverage gain the FAMILY
+// BOUNDARY block named the structural re-shape as the way to buy.
+//
+// WHAT IT COST, stated rather than claimed away: this replacement is not
+// free of false rejections, it just moves them onto document STRUCTURE,
+// where the README's own table is the thing being named. Two are live and
+// were measured on a scratch copy of this tree at 2026-08-20:
+//   - renaming or deleting the "Tags on exactly one entry" ROW (as opposed
+//     to rewording prose) fails this test loudly. That is the intended
+//     reading -- the row is the marker the document owns -- but it is a
+//     real edit that a maintainer can make in good faith and be stopped by.
+//   - Q-4 emptied the J-5 prose allowlist (see the Q-4 UPDATE in that
+//     block), so ANY digit in this section's prose now fails J-5, including
+//     an honest one that merely restates a table row.
+// What it does NOT cost is the cell set above: every FIRES cell there was a
+// correct README rejected for how a SENTENCE was written, and no rewording,
+// splitting or deletion of prose in this section can fail this test.
+// ---------------------------------------------------------------------------
+test('README Tag vocabulary counts table "Tags on exactly one entry" row matches the corpus (structural replacement for the retired token co-occurrence guard, Q-4)', () => {
   const readmePath = path.join(__dirname, '..', 'README.md');
   const readmeContent = fs.readFileSync(readmePath, 'utf8');
+  const tagVocabSection = getTagVocabSection(readmeContent);
+  const table = parseTagVocabCountsTable(tagVocabSection);
+  assertTagVocabCountsTableWellFormed(table);
 
-  // Scope to the Tag vocabulary section -- mirrors the inline slice the
-  // first test in this file already does (getTagVocabSection is defined
-  // later but hoisted; kept inline here too, matching that earlier test's
-  // own convention, rather than reaching forward for the helper).
-  const tagVocabStart = readmeContent.indexOf('## Tag vocabulary');
-  assert(tagVocabStart !== -1, 'README must have a Tag vocabulary section');
-  const nextSection = readmeContent.indexOf('\n## ', tagVocabStart + 1);
-  const tagVocabEnd = nextSection > -1 ? nextSection : readmeContent.length;
-  const tagVocabSection = readmeContent.substring(tagVocabStart, tagVocabEnd);
+  const statedSingleEntryCount = readTagVocabCount(table, 'Tags on exactly one entry');
 
-  const singleEntryMarkers = [
-    /\bexactly once\b/i,
-    /\bexactly one\b/i,
-    /\bonly once\b/i,
-    /\bjust once\b/i,
-    /\bonly one\b/i,
-    /\bsingle-entry\b/i,
-    /\bone entry\b/i,
-    /\bappears? once\b/i,
-    /\boccurs? once\b/i,
-  ];
-  // Domain words the claim must ALSO carry, in the SAME sentence as the
-  // marker, so a marker phrase landing in a sentence about something other
-  // than "how many corpus entries each tag has" cannot satisfy this test on
-  // its own (see the comment block above -- this is what T-035 adds).
-  const tagWord = /\btags?\b/i;
-  const entryWord = /\bentr(?:y|ies)\b/i;
+  const tagsInCorpus = countTagsInCorpus();
+  const trueSingleEntryCount = Object.keys(tagsInCorpus).filter((tag) => tagsInCorpus[tag] === 1).length;
 
-  const sentences = tagVocabSection.split(/[.\n]/);
-  const hasWarning = sentences.some((sentence) => {
-    if (!tagWord.test(sentence)) return false;
-    if (!entryWord.test(sentence)) return false;
-    return singleEntryMarkers.some((marker) => marker.test(sentence));
-  });
-
-  assert(hasWarning, 'README Tag vocabulary section must contain a sentence pairing a tag word and an entry word with one of the nine single-entry marker phrases -- this checks token co-occurrence only, NOT that the README actually states any single-entry limitation');
+  assert.equal(
+    statedSingleEntryCount,
+    trueSingleEntryCount,
+    'README Tag vocabulary counts table states ' + statedSingleEntryCount + ' tags on exactly one entry, but the corpus has ' +
+      trueSingleEntryCount
+  );
 });
 
 // ---------------------------------------------------------------------------
@@ -389,6 +485,383 @@ function getTagVocabSection(readmeContent) {
   const tagVocabEnd = nextSection > -1 ? nextSection : readmeContent.length;
   return readmeContent.substring(tagVocabStart, tagVocabEnd);
 }
+
+// ---------------------------------------------------------------------------
+// Q-4 -- the Tag vocabulary section's opening paragraph used to state its
+// single-entry-tag count TWICE in one sentence ("0 tags appear exactly
+// once, which is to say 0 tags sit on exactly one entry") purely so two
+// independent prose-reading guards (the deleted "README must correctly
+// describe single-entry tag count" test, whose place near the top of this
+// file is now a comment block, and the test since renamed "README must
+// state correct multi-entry and single-entry tag counts" further down)
+// would each have their own English phrase to match. Neither reads prose
+// any more. An italic note above the paragraph apologised for this
+// in so many words. Both were guard-satisfaction artifacts, not writing --
+// the same defect the J-5 comment block below named and explicitly deferred
+// as a README content change that was out of scope for a test-file-only
+// item. Q-4 is that content change, and the Q-4 UPDATE in that block
+// records what it cost J-5's own guard: its prose allowlist had nothing
+// left to justify it and is deleted.
+//
+// The fix is the one this file already applied to the Attribution section
+// (see the long "Attribution section counts: read from STRUCTURE, not from
+// an English sentence" comment block further down this file for the full
+// argued case -- six cycles of narrowing a prose reader, two independent
+// measured failure directions, the eventual move to a table). The same
+// shape, applied here: the three counts the Tag vocabulary section's
+// opening paragraph makes -- how many distinct tags exist, how many sit on
+// 2 or more entries, how many sit on exactly one -- now live in a
+// `| Tag vocabulary | Count |` table instead of a sentence. A table cell
+// has no grammar to misparse and nothing to restate twice for two guards'
+// benefit; one row, read by however many guards need it, is enough.
+//
+// parseTagVocabCountsTable below locates that table the same way
+// extractBandTablesFromReadme locates a band table and parseAttributionCountsTable
+// locates the Attribution table: by its header row's literal text
+// (`| Tag vocabulary | Count |`) plus the `|---|---|` separator row
+// immediately below it, never by scanning prose for a marker word. The
+// well-formedness rules mirror the Attribution table's exactly, for the
+// same reasons measured there: a duplicated row label is a loud failure
+// naming every value found under it (not a silent "last one wins"), and a
+// row under a label no guard reads (RECOGNISED_TAG_VOCAB_COUNT_LABELS
+// below) is a loud failure too, because such a row would sit inside the
+// table -- exempt from the J-5/C7-style digit sweep further down this file
+// -- and be read by nothing, the exact hole the Attribution table's
+// equivalent rule closes.
+// ---------------------------------------------------------------------------
+
+// The complete set of row labels the guards in this file check for the Tag
+// vocabulary counts table -- mirrors RECOGNISED_ATTRIBUTION_COUNT_LABELS's
+// role above. A set of label strings, not a count, so writing it down here
+// is not a "derive, never hardcode" violation: no number in the README is
+// ever compared against a literal in this file.
+const RECOGNISED_TAG_VOCAB_COUNT_LABELS = ['Distinct tags', 'Tags on 2 or more entries', 'Tags on exactly one entry'];
+
+// Helper: locate the Tag vocabulary section's counts table structurally --
+// by its header row (`| Tag vocabulary | Count |`) plus the `|---|---|`
+// separator row immediately below it. Returns { rows, headerIdx, tableEnd,
+// headerCount }, the same shape parseAttributionCountsTable returns and for
+// the same reasons: `rows` is a Map from each data row's label cell to the
+// ARRAY of raw (unparsed) value cell texts found under that label, so a
+// duplicated label is visible to the caller rather than silently resolved
+// by row order; `headerIdx`/`tableEnd` bound exactly the table's own lines
+// so a caller can exclude precisely those from a digit sweep and nothing
+// more; `headerCount` is reported, not resolved, so a second counts table
+// in the section is a loud failure rather than a silently-ignored extra.
+// Returns null -- never an empty Map -- if the header or separator row
+// cannot be found, so a caller can fail loud on "the table is missing or
+// malformed" rather than reading a clean pass out of nothing.
+function parseTagVocabCountsTable(sectionText) {
+  const lines = sectionText.split('\n');
+  const headerRowPattern = /^\|\s*Tag vocabulary\s*\|\s*Count\s*\|\s*$/;
+  const rowPattern = /^\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*$/;
+
+  const headerIndices = lines.reduce(
+    (acc, line, idx) => (headerRowPattern.test(line.trim()) ? acc.concat(idx) : acc),
+    []
+  );
+  if (headerIndices.length === 0) return null;
+  const headerIdx = headerIndices[0];
+
+  const separatorLine = lines[headerIdx + 1];
+  if (!separatorLine || !/^\|[-\s|]+\|$/.test(separatorLine.trim())) return null;
+
+  const rows = new Map();
+  let end = headerIdx + 2;
+  while (end < lines.length) {
+    const trimmed = lines[end].trim();
+    const rowMatch = trimmed.match(rowPattern);
+    if (!rowMatch) break;
+    const [, label, value] = rowMatch;
+    if (!rows.has(label)) rows.set(label, []);
+    rows.get(label).push(value);
+    end++;
+  }
+  if (rows.size === 0) return null;
+
+  return { rows, headerIdx, tableEnd: end, headerCount: headerIndices.length };
+}
+
+// Helper: assert the Tag vocabulary counts table's well-formedness --
+// existence, exactly one header, no duplicated row label, no row label
+// outside RECOGNISED_TAG_VOCAB_COUNT_LABELS -- mirrors
+// assertAttributionCountsTableWellFormed exactly; see that function's
+// comment for the measured reasons each rule exists (both were, in the
+// first cut of the Attribution design, silent holes that let a README
+// state a false count and stay green).
+function assertTagVocabCountsTableWellFormed(table) {
+  assert(
+    table !== null,
+    'could not find the "| Tag vocabulary | Count |" table in the README Tag vocabulary section -- ' +
+      'this claim must fail loud, not pass silently, when it cannot be parsed'
+  );
+
+  assert(
+    table.headerCount === 1,
+    'the README Tag vocabulary section contains ' + table.headerCount +
+      ' "| Tag vocabulary | Count |" header rows -- there must be exactly one counts table. Only the ' +
+      'first would be read, so every row of the others would be verified by nothing; delete the extra table.'
+  );
+
+  const duplicated = Array.from(table.rows.entries()).filter(([, values]) => values.length > 1);
+  assert(
+    duplicated.length === 0,
+    'the README Tag vocabulary counts table states the same row label more than once: ' +
+      duplicated
+        .map(
+          ([label, values]) =>
+            '"' + label + '" appears ' + values.length + ' times, with values ' +
+            values.map((v) => '"' + v + '"').join(' then ')
+        )
+        .join('; ') +
+      ' -- a table that states one figure twice, differently, is broken whichever value happens to be ' +
+      'correct, and no reading order may be allowed to decide it. Delete the wrong row.'
+  );
+
+  const unrecognised = Array.from(table.rows.keys()).filter(
+    (label) => !RECOGNISED_TAG_VOCAB_COUNT_LABELS.includes(label)
+  );
+  assert(
+    unrecognised.length === 0,
+    'the README Tag vocabulary counts table has row label(s) that no guard in this file checks: ' +
+      unrecognised.map((label) => '"' + label + '"').join(', ') +
+      ' -- the recognised labels are ' +
+      RECOGNISED_TAG_VOCAB_COUNT_LABELS.map((label) => '"' + label + '"').join(', ') +
+      '. Every number in this section must be either a table row a guard verifies or a loud failure, ' +
+      'and a row under an unread label is neither: the digit-hygiene sweep further down this file excises ' +
+      'the table from its scan, so nothing would check it. If this is a genuinely new count, that is fine ' +
+      'but it takes a test change -- add the label to RECOGNISED_TAG_VOCAB_COUNT_LABELS in ' +
+      'test/readme-tags.test.js and write the guard that derives and checks its true value. If it is not a ' +
+      'new count, rename the row to a recognised label or delete it.'
+  );
+}
+
+// Helper: fetch one labelled row's value out of a parseTagVocabCountsTable
+// result as an integer, asserting loudly at every point this can fail --
+// table missing entirely, row missing from the table, the label carrying
+// more than one row, or the row's cell not being a bare integer -- so a
+// caller can go straight to comparing numbers without re-deriving any of
+// these checks itself. Mirrors readAttributionCount exactly, including
+// duplicating the table-missing and duplicate-label assertions on purpose:
+// this helper must be safe to call on its own, so a guard added later which
+// forgets assertTagVocabCountsTableWellFormed still cannot read a single
+// number out of a contradictory or absent table.
+function readTagVocabCount(table, label) {
+  assert(
+    table !== null,
+    'could not find the "| Tag vocabulary | Count |" table in the README Tag vocabulary section -- ' +
+      'this claim must fail loud, not pass silently, when it cannot be parsed'
+  );
+  assert(
+    table.rows.has(label),
+    'the Tag vocabulary counts table has no "' + label + '" row -- rows found: ' +
+      Array.from(table.rows.keys()).map((k) => '"' + k + '"').join(', ')
+  );
+  const values = table.rows.get(label);
+  assert(
+    values.length === 1,
+    'the Tag vocabulary counts table has ' + values.length + ' rows labelled "' + label + '", with values ' +
+      values.map((v) => '"' + v + '"').join(' then ') +
+      ' -- this figure must be stated exactly once; delete the wrong row rather than letting row order pick one'
+  );
+  const raw = values[0];
+  assert(
+    /^\d+$/.test(raw),
+    'the Tag vocabulary counts table\'s "' + label + '" row has value "' + raw + '", which is not a plain integer'
+  );
+  return parseInt(raw, 10);
+}
+
+// ---------------------------------------------------------------------------
+// Direct unit tests for the three Q-4 helpers above.
+//
+// WHY THESE EXIST. The three README-reading guards that call these helpers
+// ("README must state total unique tags correctly", "README must state
+// correct multi-entry and single-entry tag counts", and the "Tags on exactly
+// one entry" row test) all run against the REAL README, which is well-formed.
+// They therefore exercise exactly one path through each helper: the happy
+// one. Every failure mode these helpers exist FOR -- the four the comment
+// block above parseTagVocabCountsTable claims they close -- was reachable
+// only by hand-mutating README.md, so nothing in the suite proved any of
+// them actually fires. Each test below drives a helper directly, on a
+// synthetic section, at one of those four modes:
+//
+//   1. a DUPLICATED row label (the measured Attribution defect: a Map built
+//      with one .set() per row let the LAST occurrence win, so the verdict
+//      depended on document order),
+//   2. a row label NO GUARD READS (measured there too: such a row sits
+//      inside the table, so the digit sweep skips it, and no guard asks for
+//      its label -- checked by nothing whatsoever),
+//   3. the table MISSING OR MALFORMED (must be a loud failure, never a
+//      clean pass read out of an empty parse), and
+//   4. a row value that is NOT A PLAIN INTEGER (parseInt would otherwise
+//      read "12 tags" as 12, and "twelve" as NaN, silently).
+//
+// These mirror, in structure and naming, the direct helper unit tests this
+// file already carries for extractBandTablesFromReadme and
+// getListBehaviourSection -- a synthetic document built inline, the helper
+// called on it, and the failure asserted by its message. They do NOT mirror
+// equivalent tests for parseAttributionCountsTable / readAttributionCount,
+// because there are none: as of this tree those three Attribution helpers
+// are exercised only through C1/C2/C7 against the real README, exactly the
+// gap described above. Closing that for the Attribution side is a separate
+// item, named here rather than silently done under a Q-4 heading.
+// ---------------------------------------------------------------------------
+
+// Small fixture builder: a Tag vocabulary section carrying the given counts
+// table rows, so each test below states only what it is mutating.
+function tagVocabSectionWithCountRows(rowLines) {
+  return ['## Tag vocabulary', '', 'Some honest prose with no numbers in it.', '', '| Tag vocabulary | Count |', '|---|---|']
+    .concat(rowLines)
+    .concat(['', '#### Robust pool (5+ entries)', '| Tag | Count |', '|---|---|', '| `design` | 14 |', ''])
+    .join('\n');
+}
+
+test('assertTagVocabCountsTableWellFormed fails loud on a DUPLICATED row label, whichever order the rows appear in (Q-4)', () => {
+  const rows = ['| Distinct tags | 12 |', '| Tags on exactly one entry | 0 |', '| Tags on exactly one entry | 3 |'];
+  const table = parseTagVocabCountsTable(tagVocabSectionWithCountRows(rows));
+
+  // Both values must be reported, not just the survivor of a last-write-wins
+  // Map: the message is what tells a maintainer which row to delete.
+  assert.throws(
+    () => assertTagVocabCountsTableWellFormed(table),
+    /same row label more than once[\s\S]*"Tags on exactly one entry" appears 2 times, with values "0" then "3"/,
+    'a table stating one figure twice, differently, must fail loud and name both values'
+  );
+
+  // ... and the reader refuses on its own, without the well-formedness call,
+  // so a guard added later that forgets it still cannot read a number out of
+  // a self-contradicting table.
+  assert.throws(
+    () => readTagVocabCount(table, 'Tags on exactly one entry'),
+    /has 2 rows labelled "Tags on exactly one entry"/,
+    'readTagVocabCount must not resolve a duplicated label by taking the first row'
+  );
+
+  // The verdict must not depend on which of the two rows comes first -- that
+  // order-dependence is the exact defect measured on the Attribution table.
+  const swapped = parseTagVocabCountsTable(
+    tagVocabSectionWithCountRows(['| Distinct tags | 12 |', '| Tags on exactly one entry | 3 |', '| Tags on exactly one entry | 0 |'])
+  );
+  assert.throws(
+    () => assertTagVocabCountsTableWellFormed(swapped),
+    /same row label more than once/,
+    'reversing the two duplicated rows must produce the same loud failure, not a pass'
+  );
+});
+
+test('assertTagVocabCountsTableWellFormed fails loud on a row label no guard in this file reads (Q-4)', () => {
+  const section = tagVocabSectionWithCountRows([
+    '| Distinct tags | 12 |',
+    '| Tags on 2 or more entries | 12 |',
+    '| Tags on exactly one entry | 0 |',
+    '| Tags on 5 or more entries | 99 |', // no guard asks for this label
+  ]);
+  const table = parseTagVocabCountsTable(section);
+
+  assert.throws(
+    () => assertTagVocabCountsTableWellFormed(table),
+    /row label\(s\) that no guard in this file checks: "Tags on 5 or more entries"/,
+    'a counts row under an unread label must be a loud failure, naming the label and the recognised set'
+  );
+
+  // WHY that rule is not decoration: the digit sweep excises every table
+  // line, so the unread row's "99" is invisible to it. Without the rule
+  // above, that number would sit in the README checked by nothing at all.
+  assert.deepEqual(
+    findUnrecognisedTagCountDigits(section),
+    [],
+    'the digit sweep must NOT be what catches an unread counts row -- it skips table lines by design, ' +
+      'which is precisely why assertTagVocabCountsTableWellFormed has to reject the row itself'
+  );
+});
+
+test('parseTagVocabCountsTable returns null when the counts table is missing or malformed, and both readers fail loud on that null (Q-4)', () => {
+  // (a) no counts table at all -- e.g. the section reduced to prose and band
+  // tables. A `| Tag | Count |` band table must NOT be mistaken for it.
+  const noTable = [
+    '## Tag vocabulary',
+    '',
+    'Prose only, no counts table.',
+    '',
+    '#### Robust pool (5+ entries)',
+    '| Tag | Count |',
+    '|---|---|',
+    '| `design` | 14 |',
+    '',
+  ].join('\n');
+  assert.equal(parseTagVocabCountsTable(noTable), null, 'a missing counts table must parse as null, not as an empty table');
+
+  // (b) header row present, separator row missing -- the two-anchor rule.
+  const noSeparator = ['## Tag vocabulary', '', '| Tag vocabulary | Count |', '| Distinct tags | 12 |', ''].join('\n');
+  assert.equal(parseTagVocabCountsTable(noSeparator), null, 'a header row with no `|---|---|` beneath it must not parse as a table');
+
+  // (c) header and separator present, no data rows at all.
+  const noRows = ['## Tag vocabulary', '', '| Tag vocabulary | Count |', '|---|---|', '', 'Prose.', ''].join('\n');
+  assert.equal(parseTagVocabCountsTable(noRows), null, 'a table with no data rows must parse as null, not as a table with zero rows');
+
+  // A null must reach every caller as a named failure, from either entry
+  // point -- an unparseable table can never be read as a clean run.
+  assert.throws(
+    () => assertTagVocabCountsTableWellFormed(null),
+    /could not find the "\| Tag vocabulary \| Count \|" table/,
+    'well-formedness on a missing table must fail loud'
+  );
+  assert.throws(
+    () => readTagVocabCount(null, 'Distinct tags'),
+    /could not find the "\| Tag vocabulary \| Count \|" table/,
+    'reading a row out of a missing table must fail loud'
+  );
+
+  // A SECOND counts table is the other malformation: only the first would
+  // ever be read, so every row of the second would be verified by nothing.
+  const twoTables = [
+    '## Tag vocabulary',
+    '',
+    '| Tag vocabulary | Count |',
+    '|---|---|',
+    '| Distinct tags | 12 |',
+    '',
+    '| Tag vocabulary | Count |',
+    '|---|---|',
+    '| Distinct tags | 37 |',
+    '',
+  ].join('\n');
+  assert.throws(
+    () => assertTagVocabCountsTableWellFormed(parseTagVocabCountsTable(twoTables)),
+    /contains 2 "\| Tag vocabulary \| Count \|" header rows/,
+    'a second counts table must be a loud failure, not a silently-ignored extra'
+  );
+});
+
+test('readTagVocabCount fails loud when a row value is not a plain integer, or when its row is absent (Q-4)', () => {
+  // parseInt would read "12 tags" as 12 and "twelve" as NaN, both silently:
+  // the first would pass a comparison it should never have been allowed to
+  // make, the second would fail with an unreadable NaN message.
+  for (const badValue of ['twelve', '12 tags', '~12', '1.5', '-1']) {
+    const table = parseTagVocabCountsTable(tagVocabSectionWithCountRows(['| Distinct tags | ' + badValue + ' |']));
+    assert.throws(
+      () => readTagVocabCount(table, 'Distinct tags'),
+      new RegExp('row has value "' + badValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '", which is not a plain integer'),
+      'a "Distinct tags" cell of "' + badValue + '" must fail loud, naming the cell it could not read'
+    );
+
+    // The division of labour, asserted rather than assumed: a bad VALUE is
+    // the reader's job, not the well-formedness check's, which rules on
+    // labels only. A guard that called only the latter would still be
+    // stopped -- by readTagVocabCount, above -- before comparing anything.
+    assertTagVocabCountsTableWellFormed(table);
+  }
+
+  // The missing-row case belongs to the same reader, and names what it did
+  // find so a renamed row is diagnosable rather than mysterious.
+  const renamed = parseTagVocabCountsTable(tagVocabSectionWithCountRows(['| Distinct tags | 12 |']));
+  assert.throws(
+    () => readTagVocabCount(renamed, 'Tags on exactly one entry'),
+    /has no "Tags on exactly one entry" row -- rows found: "Distinct tags"/,
+    'a missing row must fail loud and list the rows that are present'
+  );
+});
 
 // Helper: is `line` itself a real band heading? Used below both to decide
 // which lines the heading-to-table scan even treats as a heading, and to
@@ -1101,52 +1574,62 @@ test('extractBandTablesFromReadme derives a band\'s row count purely from its ta
   );
 });
 
-test('README opening sentence must state correct multi-entry and single-entry tag counts', () => {
+// ---------------------------------------------------------------------------
+// Q-4 (2026-08-20) -- RE-ANCHORED, and RENAMED for it. This test used to be
+// called "README opening sentence must state correct multi-entry and
+// single-entry tag counts" and it read both of its numbers out of the
+// section's opening sentence with two regexes:
+// `/(\d+)\s+tags?\b[^.;\n]*\bor more\b/` and
+// `/(\d+)\b[^.;\n]*\bexactly one\b/`. Those two phrases were the reason the
+// opening sentence stated its single-entry count twice -- once as "0 tags
+// appear exactly once" for the (now deleted) single-entry test, once as
+// "0 tags sit on exactly one entry" for this one -- and the reason an
+// italic note above the paragraph apologised for the restatement. Q-4 moved
+// all three counts into the `| Tag vocabulary | Count |` table, so the word
+// "sentence" no longer belongs in this test's name: both numbers are now
+// read from the table's own labelled rows, and nothing in this file matches
+// prose in this section for a count any more.
+//
+// Both counts are still DERIVED from src/corpus.js at test time and
+// compared to what the README states; neither expectation is a digit
+// literal written into this file. What changed is only where the README's
+// side of each comparison is read from.
+// ---------------------------------------------------------------------------
+test('README must state correct multi-entry and single-entry tag counts', () => {
   const readmePath = path.join(__dirname, '..', 'README.md');
   const readmeContent = fs.readFileSync(readmePath, 'utf8');
   const tagVocabSection = getTagVocabSection(readmeContent);
+  const table = parseTagVocabCountsTable(tagVocabSection);
+  assertTagVocabCountsTableWellFormed(table);
   const tagsInCorpus = countTagsInCorpus();
 
-  // "<N> tags ... or more <...>" -- the count of tags appearing on 2+
-  // entries. Keyed to "or more" (the mathematical content of the claim,
-  // i.e. an inclusive lower bound), not to any of the words around it, and
-  // scoped to a single clause (no '.', ';' or newline crossed) so it cannot
-  // accidentally span into an unrelated sentence or table heading.
-  const multiEntryMatch = tagVocabSection.match(/(\d+)\s+tags?\b[^.;\n]*\bor more\b/i);
-  assert(
-    multiEntryMatch,
-    'could not find a "<N> tags ... or more" claim in the Tag vocabulary section -- ' +
-      'this claim must fail loud, not pass silently, when it cannot be parsed'
-  );
-  const statedMultiEntryCount = parseInt(multiEntryMatch[1], 10);
+  // The count of tags appearing on 2 or more entries, read from the counts
+  // table's own "Tags on 2 or more entries" row. readTagVocabCount fails
+  // loud -- naming the missing table, the missing row, a duplicated row or a
+  // non-integer cell -- rather than letting an unreadable table pass as a
+  // clean run, which is the property the deleted "could not find a
+  // '<N> tags ... or more' claim" assertion used to carry for the prose.
+  const statedMultiEntryCount = readTagVocabCount(table, 'Tags on 2 or more entries');
   const expectedMultiEntryCount = Object.keys(tagsInCorpus).filter(tag => tagsInCorpus[tag] >= 2).length;
   assert.equal(
     statedMultiEntryCount,
     expectedMultiEntryCount,
-    'README states ' + statedMultiEntryCount + ' tags appear on 2 or more entries, but the corpus has ' +
-      expectedMultiEntryCount
+    'README Tag vocabulary counts table states ' + statedMultiEntryCount +
+      ' tags on 2 or more entries, but the corpus has ' + expectedMultiEntryCount
   );
 
-  // "<N> ... exactly one <...>" -- the count of tags appearing on exactly
-  // one entry, as stated in the section's OPENING sentence. Deliberately
-  // distinct from (and must independently agree with) the later "<N> tags
-  // appear exactly once" claim guarded elsewhere in this file: "exactly
-  // one" here does not match "exactly once" there, so the two claims are
-  // checked against the corpus separately and cannot silently drift from
-  // each other.
-  const singleEntryMatch = tagVocabSection.match(/(\d+)\b[^.;\n]*\bexactly one\b/i);
-  assert(
-    singleEntryMatch,
-    'could not find a "<N> ... exactly one" claim in the Tag vocabulary section -- ' +
-      'this claim must fail loud, not pass silently, when it cannot be parsed'
-  );
-  const statedSingleEntryCount = parseInt(singleEntryMatch[1], 10);
+  // The count of tags appearing on exactly one entry, read from the counts
+  // table's "Tags on exactly one entry" row. This is the SAME row the
+  // "counts table \"Tags on exactly one entry\" row matches the corpus"
+  // test above reads; see the Q-4 comment block near the top of this file
+  // for why that redundancy is recorded rather than trimmed here.
+  const statedSingleEntryCount = readTagVocabCount(table, 'Tags on exactly one entry');
   const expectedSingleEntryCount = Object.keys(tagsInCorpus).filter(tag => tagsInCorpus[tag] === 1).length;
   assert.equal(
     statedSingleEntryCount,
     expectedSingleEntryCount,
-    'README states ' + statedSingleEntryCount + ' tags appear on exactly one entry, but the corpus has ' +
-      expectedSingleEntryCount
+    'README Tag vocabulary counts table states ' + statedSingleEntryCount +
+      ' tags on exactly one entry, but the corpus has ' + expectedSingleEntryCount
   );
 });
 
@@ -1165,30 +1648,75 @@ test('README opening sentence must state correct multi-entry and single-entry ta
 // PROOF note below for the exact command).
 //
 // WHY NOT C7's blanket "no digit runs outside the table" rule (the guard
-// this mirrors, over in the Attribution section). Measured directly: this
-// section's own opening and closing sentences carry LEGITIMATE prose counts
-// -- "12 distinct tags", "12 tags appear on 2 or more entries", "0 tags
-// appear exactly once" -- and three guards above already derive and check
-// each of them against the corpus at test time. A blanket ban would reject
-// today's real, entirely correct README (proof below), which is exactly the
-// failure mode this whole guard family exists to avoid. Unlike the
-// Attribution section (which had no legitimate prose counts to protect and
-// so could move everything into a table, see the C7 comment block further
-// down this file), moving these counts out of prose would be a README
-// content change, out of scope for a test-file-only item.
+// this mirrors, over in the Attribution section). Measured directly AT THE
+// TIME (J-5, cycle 6): this section's own opening and closing sentences
+// carried LEGITIMATE prose counts -- "12 distinct tags", "12 tags appear on
+// 2 or more entries", "0 tags appear exactly once" -- and three guards above
+// derived and checked each of them against the corpus at test time. A
+// blanket ban would have rejected that real, entirely correct README (proof
+// below), which is exactly the failure mode this whole guard family exists
+// to avoid. Unlike the Attribution section (which had no legitimate prose
+// counts to protect and so could move everything into a table, see the C7
+// comment block further down this file), moving these counts out of prose
+// would have been a README content change, out of scope for a
+// test-file-only item. Q-4 made exactly that content change; see the Q-4
+// UPDATE below, which is why this guard no longer carries an allowlist.
 //
-// THE FIX: the same invariant C7 enforces, with an ALLOWLIST instead of a
-// blanket ban. A digit run in this section's prose is either part of one of
-// three RECOGNISED claim shapes -- each one the exact phrase pattern an
-// existing guard above already derives and verifies against the corpus, not
-// a new pattern invented for this test -- or it is a loud, named failure.
-// `| Tag | Count |` table rows and a real `#### ` heading's own "N+"/"N-M"
-// boundary token are excluded structurally (both are independently verified
-// by extractBandTablesFromReadme and its callers above), not by pattern
-// allowlist, so this guard cannot be satisfied by widening the allowlist to
-// swallow a table or heading defect some OTHER guard exists to catch.
+// THE FIX, AS J-5 SHIPPED IT: the same invariant C7 enforces, with an
+// ALLOWLIST instead of a blanket ban. A digit run in this section's prose
+// was either part of one of three RECOGNISED claim shapes -- each one the
+// exact phrase pattern a guard above then derived and verified against the
+// corpus, not a new pattern invented for this test -- or it was a loud,
+// named failure. `| Tag | Count |` table rows and a real `#### ` heading's
+// own "N+"/"N-M" boundary token are excluded STRUCTURALLY (both are
+// independently verified by extractBandTablesFromReadme and its callers
+// above), never by pattern allowlist -- that part is unchanged by Q-4, and
+// it is why this guard cannot be satisfied by widening some list to swallow
+// a table or heading defect another guard exists to catch.
 //
-// CLAUSE SPLITTING, MEASURED NECESSARY. An early version of this guard
+// Q-4 UPDATE (2026-08-20) -- THE ALLOWLIST IS GONE; THIS IS NOW C7's RULE,
+// EXACTLY. Q-4 moved all three of those counts out of this section's prose
+// and into a `| Tag vocabulary | Count |` table (see the Q-4 comment block
+// above parseTagVocabCountsTable), and re-anchored every guard that used to
+// read them to that table's labelled rows. That removed the one thing
+// justifying the three allowlist patterns: no guard in this file derives any
+// number from this section's PROSE any more, so a prose phrase of one of
+// those three shapes would have been permitted by the allowlist and checked
+// by NOTHING -- this item's own hole, reopened by this item's own
+// mechanism. MEASURED (2026-08-20, scratch copy of this tree): with the
+// three patterns restored and everything else as it stands here, the
+// sentence "The corpus contains 12 distinct tags." inserted into this
+// section leaves `node --test test/readme-tags.test.js` fully GREEN -- a
+// prose count no guard reads, exactly the J-5 defect. With the allowlist
+// deleted, that same insertion fails J-5, naming "12" and the clause it
+// sits in. So the allowlist is deleted rather than re-pointed. Like the
+// Attribution section after J-2a, this section now has no legitimate prose
+// count to protect, and the rule collapses to C7's one-liner:
+//
+//     every number written in digits in the Tag vocabulary section is
+//     either a `|` table row (verified by the band guards or, for the
+//     counts table, by the three count guards above), or a band heading's
+//     own boundary token, or a loud failure.
+//
+// THE COST, named here rather than discovered later: an honest prose edit
+// that restates one of these counts in digits ("12 distinct tags") now
+// FAILS this guard instead of passing it. That is the intended reading of
+// Q-4 -- the counts live in the table, so a prose copy of one is either
+// redundant with it or contradicting it -- and it is the same trade C7 has
+// imposed on the Attribution section since J-2a. The remedy in the failure
+// message is to move the number into the counts table (add the row, add its
+// label to RECOGNISED_TAG_VOCAB_COUNT_LABELS, and write the guard that
+// derives its true value from the corpus), never to re-add a prose
+// allowlist. Prose edits that carry no digits -- rewording the lead-in
+// paragraph, or deleting it outright -- are unaffected by this guard and by
+// every other guard in this file, which is the property Q-4 exists to buy.
+//
+// CLAUSE SPLITTING, MEASURED NECESSARY (for the allowlist J-5 shipped;
+// since Q-4 it no longer changes this guard's VERDICT, only the `context`
+// string each violation reports -- with no allowlist left, every digit
+// outside the structural exclusions is a violation whatever clause it sits
+// in. The measurement is kept as the record of why this guard is not
+// written as one whole-section match). An early version of this guard
 // matched each recognised pattern once against the whole section with a
 // greedy `[^.;\n]*` (the same style the "or more" / "exactly one" guards
 // above use, scoped to a full sentence). MEASURED FAILURE: the real
@@ -1200,12 +1728,14 @@ test('README opening sentence must state correct multi-entry and single-entry ta
 // one entry" -- was SILENTLY SWALLOWED: the greedy match for the *second*
 // "exactly one" reached backward across the decoy clause, past the comma,
 // and covered the "9" along with it. Splitting the prose into clauses on
-// '.', ',', ';' and newline BEFORE matching closes this: each recognised
-// phrase in the real README sits wholly inside one comma-delimited clause
-// (verified below), so a match can never reach into a neighbouring clause
-// to launder a decoy digit through it.
+// '.', ',', ';' and newline BEFORE matching closed this: each recognised
+// phrase in the then-current README sat wholly inside one comma-delimited
+// clause, so no match could reach into a neighbouring clause to launder a
+// decoy digit through it.
 //
-// PROOF (both directions), run against a throwaway clone under
+// PROOF (both directions), measured against the PRE-Q-4 README -- the one
+// whose opening sentence still carried the three prose counts -- run
+// against a throwaway clone under
 // /opt/swarm/scratch-aphorism-clone while sizing this fix, `node --test
 // test/*.test.js` each time:
 //   - real README, untouched: 101 pass / 0 fail (this test included; no
@@ -1237,50 +1767,40 @@ test('README opening sentence must state correct multi-entry and single-entry ta
 //      spelled-out small number, and no measurement here has sized a rule
 //      that closes the word form without a new false-rejection risk to
 //      weigh against it.
-//   2. The three recognised patterns are phrase shapes, not a general
-//      "explain yourself" mechanism. An honest future rewording of a
-//      recognised claim that inserts a comma where none exists today (e.g.
-//      "12 tags, in total, appear on 2 or more entries") would split across
-//      clauses and trip this guard even though the OTHER, more tolerant
-//      guard for the same claim (above) would still accept it correctly.
-//      Not reproduced against today's README (no such rewording exists), so
-//      not a live false rejection -- named here as a standing risk of the
-//      clause-splitting fix.
+//   2. SUPERSEDED BY Q-4, recorded so the trade is not silently rewritten.
+//      This note used to warn that an honest rewording which inserted a
+//      comma into a recognised claim (e.g. "12 tags, in total, appear on 2
+//      or more entries") would split across clauses and trip this guard
+//      even though the more tolerant guard for the same claim would still
+//      accept it. There are no recognised prose claims left to split, so
+//      that specific risk is retired -- and it is retired by being made
+//      WIDER, not narrower: per the Q-4 UPDATE above, ANY digit in this
+//      section's prose now fails this guard, comma or no comma. The
+//      remedy is the counts table, not a rewording.
 //   3. The closing sentence's "The smallest pool holds three aphorisms" is
 //      spelled out in words today and is not, and was never, checked by any
 //      guard in this file for correctness (it states an aphorism count, not
 //      a tag count -- a different claim shape than the three this item
-//      closes). Left uncovered by the allowlist on purpose: adding a
-//      "N aphorisms" pattern here with no corresponding correctness check
-//      would silently reopen a hole of exactly this item's shape, just
-//      spelled differently. Consequence, measured: an HONEST future edit of
-//      that word to a digit ("holds 3 aphorisms") would newly fail this
-//      guard, loudly, naming "3" -- a false rejection of a true, unrelated
-//      claim, traded on purpose against reopening a silent hole. If this
-//      claim needs covering, it needs its own correctness guard (deriving
-//      the true minimum band size from the corpus) added alongside a fourth
-//      allowlist entry, not a bare allowlist entry on its own.
+//      closes). Left uncovered on purpose: a mechanism that PERMITTED that
+//      number without a corresponding correctness check would silently
+//      reopen a hole of exactly this item's shape, just spelled
+//      differently. Consequence, measured: an HONEST future edit of that
+//      word to a digit ("holds 3 aphorisms") fails this guard, loudly,
+//      naming "3" -- a false rejection of a true, unrelated claim, traded
+//      on purpose against reopening a silent hole. If this claim needs
+//      covering, it needs a row in the counts table plus its own
+//      correctness guard (deriving the true minimum band size from the
+//      corpus), not a bare exemption on its own.
 // ---------------------------------------------------------------------------
 
-// The complete set of tag-count claim SHAPES this file verifies elsewhere --
-// mirrors RECOGNISED_ATTRIBUTION_COUNT_LABELS's role below: every digit run
-// in the section's prose must fall inside a match of one of these, or the
-// digit is unrecognised and this guard fails loud. Each pattern is the exact
-// phrase shape an existing test above already derives its number from and
-// checks against the corpus -- adding a new recognised prose count here
-// without also adding the guard that verifies it would reopen this item's
-// own hole; see boundary note 3 above.
-const RECOGNISED_TAG_COUNT_CLAIM_PATTERNS = [
-  /\d+\s+distinct tags/i, // "README must state total unique tags correctly"
-  /\d+\s+tags?\b[^,.;\n]*\bor more\b/i, // multi-entry count, opening-sentence test above
-  /\d+\b[^,.;\n]*\bexactly (?:one|once)\b/i, // single-entry count, both phrasings, opening-sentence test + T-D above
-];
-
 // Helper: every digit run in the Tag vocabulary section's prose that is not
-// accounted for by a `| Tag | Count |` table row, a real `#### ` heading's
-// own boundary token, or one of the RECOGNISED_TAG_COUNT_CLAIM_PATTERNS
-// above. Returns an array of { text, context } so the caller can name every
-// offending number and where it sits, not just report a boolean.
+// accounted for by a `|` table row or a real `#### ` heading's own boundary
+// token -- the two STRUCTURAL exclusions, each independently verified by a
+// guard above. Since Q-4 there is no prose allowlist beside them (see the
+// Q-4 UPDATE in the comment block above for why the three phrase patterns
+// that used to sit here were deleted rather than re-pointed). Returns an
+// array of { text, context } so the caller can name every offending number
+// and where it sits, not just report a boolean.
 function findUnrecognisedTagCountDigits(sectionText) {
   // Fenced code blocks are illustrative, not claims -- same rule the band
   // table extractor above applies, for the same reason (T-024b's fenced
@@ -1290,9 +1810,12 @@ function findUnrecognisedTagCountDigits(sectionText) {
 
   const residualLines = lines.map((line) => {
     // Table rows (header, separator or data) are independently verified by
-    // the band-table guards above; a stray table this file's band detection
-    // doesn't recognise is independently caught by the structural-table-
-    // count guard above too. Either way, not this guard's job.
+    // the band-table guards above -- and, for the `| Tag vocabulary | Count |`
+    // table Q-4 added, by the three count guards above plus
+    // assertTagVocabCountsTableWellFormed, which rejects any row under a
+    // label no guard reads. A stray table this file's band detection doesn't
+    // recognise is independently caught by the structural-table-count guard
+    // above too. Either way, not this guard's job.
     if (/^\s*\|.*\|\s*$/.test(line)) return '';
 
     // A real band heading: only its own boundary token ("N+" or "N-M",
@@ -1319,10 +1842,7 @@ function findUnrecognisedTagCountDigits(sectionText) {
     const digitPattern = /\d+/g;
     let digitMatch;
     while ((digitMatch = digitPattern.exec(clause)) !== null) {
-      const recognised = RECOGNISED_TAG_COUNT_CLAIM_PATTERNS.some((pattern) => pattern.test(clause));
-      if (!recognised) {
-        violations.push({ text: digitMatch[0], context: clause.trim().replace(/\s+/g, ' ') });
-      }
+      violations.push({ text: digitMatch[0], context: clause.trim().replace(/\s+/g, ' ') });
     }
   }
   return violations;
@@ -1338,11 +1858,13 @@ test('README Tag vocabulary section must contain no unrecognised count-claim dig
   const message =
     'README Tag vocabulary section states number(s) that no guard in this file checks: ' +
     violations.map((v) => '"' + v.text + '" (near "' + v.context + '")').join('; ') +
-    '. Every count in this section must be either a `| Tag | Count |` table row, a band heading\'s own ' +
-    'boundary token, or one of the recognised phrase shapes in RECOGNISED_TAG_COUNT_CLAIM_PATTERNS ' +
-    '(test/readme-tags.test.js) -- each backed by a guard that derives its true value from the corpus. ' +
-    'If this is a genuinely new, true count, add a recognised pattern here AND the guard that verifies it; ' +
-    'otherwise remove the stray number.';
+    '. Every count in this section must be either a table row -- a `| Tag | Count |` band row, or a row ' +
+    'of the `| Tag vocabulary | Count |` counts table -- or a band heading\'s own boundary token, each ' +
+    'backed by a guard in test/readme-tags.test.js that derives its true value from the corpus. There is ' +
+    'no prose exemption: since Q-4 these counts live in the counts table, so a number in this section\'s ' +
+    'prose is either redundant with that table or contradicting it. If this is a genuinely new, true ' +
+    'count, give it a row in the counts table, add its label to RECOGNISED_TAG_VOCAB_COUNT_LABELS AND ' +
+    'write the guard that verifies it; otherwise remove the stray number.';
 
   assert.equal(violations.length, 0, message);
 });
