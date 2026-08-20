@@ -1,12 +1,13 @@
 cycle-006 — RF-1 (FINDING 2) verification transcript
 ====================================================
 
-Two runs of .swarm/runs/cycle-006-repro-F2.mjs, before and after the fix.
+Three runs of .swarm/runs/cycle-006-repro-F2.mjs: before the fix, after the fix, and after
+the re-citation that closed the round trip.
 
-READ THE SECOND RUN CAREFULLY: the script's predictions encode the DEFECT, so after the
-fix the correct outcome is that several arms NO LONGER land as predicted. "4 arms did not
-land as predicted" in run 2 is the defect being gone, not a regression. Each is accounted
-for individually below.
+READ RUNS 2 AND 3 CAREFULLY: the script's predictions encode the DEFECT, so after the fix
+the correct outcome is that some arms NO LONGER land as predicted. "did not land as
+predicted" there is the defect being gone, not a regression. Every such arm is accounted
+for individually below, and run 3 is the settled state.
 
 
 ================================================================================
@@ -95,3 +96,37 @@ citation was re-pointed to Actions run 32331910336 at c08562b in the following c
 RUN 3 below re-runs the same script after that re-citation, where A0 and C2 must return to
 PASS while A2 and A3 must stay FAIL — the shape that shows the fix is real AND the tree is
 green again.
+
+
+================================================================================
+RUN 3 — POST-FIX, POST-RE-CITATION (HEAD e65ec37) — the settling shape
+================================================================================
+
+PREMISE CHECKS
+  HEAD                                    = e65ec37
+  git diff 81b0958..HEAD -- <cited paths> = NON-EMPTY (2 files changed, 216 insertions(+))
+  git diff e65ec37..HEAD -- <cited paths> = EMPTY
+
+  AS PREDICTED      A0  predicted PASS / actual PASS   <- tree green again
+  AS PREDICTED      A1  predicted FAIL / actual FAIL   <- guard still catches a stale citation
+  NOT AS PREDICTED  A2  predicted PASS / actual FAIL   <- FALSE-PASS IS DEAD
+  AS PREDICTED      C1  predicted FAIL / actual FAIL   <- control unchanged
+  NOT AS PREDICTED  A3  predicted SKIP / actual FAIL   <- FALSE-SKIP IS DEAD
+  AS PREDICTED      C2  predicted PASS / actual PASS   <- control unchanged, no over-trigger
+
+  scratch removed; `git status --porcelain` in target = (clean)
+  2 ARM(S) DID NOT LAND AS PREDICTED: A2, A3
+
+THIS IS THE INTENDED TERMINAL STATE, and the shape is what makes it evidence rather than
+assertion. The script's predictions encode the PRE-FIX defect. After the fix:
+
+  - exactly the two arms that ENCODED the defect (A2 false-pass, A3 false-skip) stop
+    landing, because the behaviour they predicted no longer exists;
+  - both CONTROLS (C1, C2) are unchanged, so the fix did not simply make the guard
+    reject everything;
+  - the regression floors (A0 pristine PASS, A1 stale FAIL) both hold, so the guard
+    still does the job it existed for;
+  - the tree is clean and the citation diff is empty, so the P-5 floor holds on final HEAD.
+
+A fix that had broken the guard would have shown C1/C2 moving too. A fix that had done
+nothing would have shown A2/A3 still landing. Neither happened.
