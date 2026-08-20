@@ -494,6 +494,6 @@
     "n": 4,
     "work": "conductor inline (P-4, no dispatch) + conductor verification gate",
     "outcome": "P-4 done via the hand-off branch — branch A stayed impossible (parse/validate/bash-form all denied again). Handoff rewritten: 8 single-variable probes; an env-var prefix alone defeats an exact-path allow entry, isolated on two scripts; ask re-derived against today bin/ and shrunk 6 lines -> 4 (swarm-watchdog.sh drops out, systemctl covers it); denial counter found double-booked at 31 and resolved by the file own RUNS unit; a --runfile flag for swarm-budget.sh filed to the morning report under hard rule 5. Gate 7 PASS / 0 FAIL, 6 of 7 cells proved red under mutation.",
-    "commit": "PENDING"
+    "commit": "ee7a5a4"
   }
 }

@@ -17890,3 +17890,27 @@ WRAP_UP.
     targets: /opt/targets/aphorism-cli (active, weight 1) | rotation [0] cursor 0
     watchdog pacer, plist_loaded true | caffeinate_pid 0 (Linux) | cycles_since_recycle 3
     playbook auto: L-008 L-016 L-024 L-026 L-029 L-031 L-033 L-034 L-038 L-042 L-043 L-044 L-046
+
+**cycle 4 addendum (post-commit).** Target commit `ee7a5a4` pushed to origin OK
+(`b01b937..ee7a5a4`). The SWARM-side commit `227b1c6` (the handoff rewrite) was made and
+`git -C /opt/swarm push` FAILED again with "Please make sure you have the correct access
+rights and the repository exists" — the third consecutive cycle, so the cycle-3 reading holds:
+a standing credential/remote gap on the SWARM host, not a transient. Commits `b1a7052`
+(cycle 2) and `227b1c6` (this cycle) are durable on disk and unpushed. Per hard rule 1 this is
+journaled and does not block the cycle, and it stays in the morning report as a host-config
+item for a human — the swarm cannot fix its own remote from inside a run. Note the shape it
+takes here: **the deliverable of this very cycle is a SWARM-side file**, so for P-4 the
+unpushed commit is the only copy off this droplet's disk; the target repo carries the
+journal, the gate program and the transcript, which is what makes the finding reconstructable
+by someone who never sees `/opt/swarm`.
+
+**Dashboard.** Re-rendered locally to `runs/dashboard.html` (22054 bytes, gen
+2026-08-20T03:15:21Z) — on the VPS that write IS the publication. No Artifact tool in this
+headless session, so the additional publish channel is skipped, which is not a publish
+failure (`publish_failures` stays 0). No phase change (BUILD → BUILD), no stall, so no
+notification emits were owed.
+
+**Wakeup.** `next_wakeup_at = now + 90` (base delay for a verified-value cycle; cycle.md
+step 9 is explicit that gears never touch the wakeup delay, so gear 1 does not stretch it).
+No `ScheduleWakeup` call: on the VPS `bin/swarm-pacer.sh` reads this field every 5 minutes
+and is the actual firing mechanism, so the 5-minute timer is the effective floor.
