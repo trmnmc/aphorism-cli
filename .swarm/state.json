@@ -5,7 +5,7 @@
   "run_label": "improvement run #5",
   "run_started_at": "2026-08-20T01:52:10Z",
   "phase": "BUILD",
-  "cycle": 4,
+  "cycle": 5,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "spec_digest": [
@@ -24,7 +24,8 @@
     "report_md_lines": 1578,
     "readme_md_bytes": 6022,
     "corpus_sha256": null,
-    "playbook_denials": 30
+    "playbook_denials": 30,
+    "suite_at_cycle_005": "tests 120 / pass 120 / fail 0 / skipped 0 (full clone, node v24.19.0); CI run 32328776838 on 5f833ab: 120/119/0/1 on each of v18.20.8, v20.20.2, v22.23.2, v24.19.0"
   },
   "decisions": [
     {
@@ -249,6 +250,18 @@
       "kind": "scope",
       "what": "Excluded REPORT.md and docs/report-history.md from the P-3 audit surface, and said so before auditing rather than after.",
       "why": "P-3's acceptance names 'README, --help output and docs/'. Taken literally that includes docs/report-history.md, which is 128 KB and 1595 lines of APPEND-ONLY history — dated statements of what was believed at a past cycle, structurally the same artifact as the journal. Auditing those against today's tree is a category error: they are not claims about now, and 'correcting' them would destroy the record of what was believed when, which is the same argument cycle 2 made when it recorded a falsified claim in a new block instead of editing the cycle-1 block that contained it. REPORT.md is excluded on a different ground: it is a live document, but it carries its own cycle-14 gate and WRAP_UP rewrites it, so auditing it now audits a draft. That leaves 567 lines of live claim surface across four documents, which is what was actually audited — a scope decision recorded here so the report cannot read as if 'docs/' had been swept whole."
+    },
+    {
+      "cycle": 5,
+      "kind": "verification",
+      "what": "The sealed gate was RIGHT AND SUFFICIENT, and caught a self-falsifying property BEFORE the commit landed. First time on this repo that an instrument pre-empted the decay class instead of recording it after a human read the diff.",
+      "why": "P-6 mechanizes README Node-support own quoted falsifier — `git diff <base>..HEAD -- src bin test .github`. The new test lives under test/, INSIDE that pathspec, so committing it makes the cited diff non-empty and the guard falsifies the citation it guards. The gate returned 7/9 with A3 and A7 red on that single root cause (A7 being the same cause surfacing in a second cell — the cells agreeing, not two defects), and I verified it independently of the cells with `git log --oneline -1 --name-only 0c2ed40` before acting. WHAT MAKES THE SHAPE NEW: eleven prior recorded outcomes on this repo were the instrument being WRONG, and two (cycle 14, run #4 cycle 4) were the gate being RIGHT AND INSUFFICIENT — twelve green cells over a document containing a falsehood none was aimed at, found by reading afterwards. This one was aimed at the right thing and fired before any commit existed. NOT RESOLVED BY WEAKENING: narrowing the pathspec or softening the assertion would each have been deleting a claim, which this run non-goals forbid. Resolved by the CI round trip the section itself prescribes — commit the test, push, read the archived log of run 32328776838, re-cite to it. The four jobs each reported 120 tests / 119 pass / 0 fail / 1 skipped, and that identical skip is real-world confirmation of the shallow-clone arm on all four Node majors, which is stronger evidence than the local depth-1 clone and settles the builder own UNVERIFIED caveat about Node 18/20/22."
+    },
+    {
+      "cycle": 5,
+      "kind": "scope",
+      "what": "Recorded a genuine P-5 EXCEPTION rather than re-labelling it, and filed the invariant conflict as P-7 for a human instead of resolving it.",
+      "why": "P-5 requires the suite green at >=119 on EVERY commit this run makes. Commit 5f833ab is RED on a full clone. It is green in CI (depth-1 checkout makes the cited base unreachable, so the guard skips) and c0337f1 restores full-clone green one commit later, but the intermediate commit genuinely does not meet the floor. THE WINDOW IS INTRINSIC, NOT A DEFECT: any commit touching src/bin/test/.github falsifies the citation the instant it lands, and the CI run that refreshes the citation cannot exist before the push. I considered and rejected three dodges — anchoring the citation to a branch/tag commit outside master history (unreadable for a document whose whole job is being checkable by a human), narrowing the pathspec (test/ genuinely belongs in it: adding a test changes the count the cited table asserts), and softening the assertion (deleting a claim). Every remaining disposition amends a locked SPEC must-have or retires a shipped guard, and this run non-goals forbid the swarm doing either for itself. So the honest move is to state the exception plainly, in the commit message, the transcript, the README and the report, and hand the ruling to the operator. Re-defining the floor to make a red commit read as green is the exact failure mode hard rule 2 forbids."
     }
   ],
   "decisions_archive": ".swarm/decisions.json (all 41, full text — moved at kickoff, nothing dropped)",
@@ -487,7 +500,7 @@
     "consecutive_no_value": 0,
     "consecutive_failures": 0,
     "k_current": 3,
-    "wave_streak": 0,
+    "wave_streak": 1,
     "window_tokens_attributed": 0
   },
   "last_cycle": {

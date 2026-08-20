@@ -1,0 +1,170 @@
+cycle 5 — item P-6 verification transcript
+target: /opt/targets/aphorism-cli
+gate:   .swarm/runs/cycle-005-gate-P-6.mjs
+        sha256 8e658830c8d4d69e83b2bb38c413b1d8c577ac2459e689bba34b69d1427bc09c
+        SEALED before dispatch; re-hashed after the scoring run and after both
+        controls — byte-identical to the seal. Held under SWARM/runs/ for the
+        duration of the dispatch window (run #3 cycle-14 precedent): hard rule 5
+        gives workflow agents target paths only, so a gate there is STRUCTURALLY
+        unreachable to the builder rather than merely forbidden to it.
+
+================================================================================
+PRE-DISPATCH BASELINE (before any agent ran)          2 PASS / 7 FAIL
+================================================================================
+  FAIL A1  readsREADME=true invokesGitDiff=false hardcodedBase=false hardcodedPathspec=false
+  FAIL A2  suite tests 119 / pass 119 / fail 0 (needed pass >= 120, fail 0)
+  FAIL A3  diff="" suite pass 119 fail 0
+  FAIL A4  stale base b006098 left the suite GREEN (pass 119 / fail 0)
+  FAIL A5  narrowed pathspec "src bin test" real diff="" but suite pass 119 fail 0
+  FAIL A6  base 0c2ed40 unreachable (git cat-file -e exit 128) | pass 119 fail 0 skipped 0
+  FAIL A7  current tests 119 pass 119 skipped 0 | shallow tests 119 pass 119 skipped 0
+  PASS A8  src/ bin/ unchanged; src/corpus.js identical to 81b0958 (77a4de5c)
+  PASS A9  README falsifier base 0c2ed40, pathspec "src bin test .github", anchor 0c2ed40
+
+All seven reds are work-dependent — the baseline asserts which cells MUST be red
+before the work exists, which is the only thing that can surface a cell that
+passes vacuously (run #4 cycle-8 A2 precedent).
+
+TWO CELLS CALIBRATED PRE-DISPATCH, both recorded rather than silently fixed:
+  A1  first draft required the literal string "git diff" in the test source. That
+      encodes a MEANS where the acceptance states an END — execFileSync('git',
+      ['diff', ...]) satisfies the item and contains no such substring. Instrument
+      defect #15's shape (cycle-2 A3). A1's load-bearing job is the HARDCODE BAN;
+      whether the command runs and asserts is proved BEHAVIOURALLY by A3/A4/A5/A6,
+      which no source regex can fake.
+  A6  failure message printed "reachable(exit 128)" when a NON-zero cat-file exit
+      means the base is UNREACHABLE — the label read as the opposite of what the
+      cell measured, on a line a human reads as evidence.
+Pre-dispatch calibration is distinct from editing a gate after it has judged a
+dispatch, which this repo does not do (cycle-4 / cycle-12 / cycle-14 precedent).
+
+================================================================================
+FIRST SCORING RUN (builder returned, nothing committed)   7 PASS / 2 FAIL
+================================================================================
+  FAIL A3  diff="test/node-support-citation.test.js" suite pass 119 fail 1
+  FAIL A7  current tests 120 pass 119 skipped 0 | shallow tests 120 pass 119 skipped 1
+
+ONE root cause, and it is a FINDING, not an instrument defect. The new test lives
+under test/, which is INSIDE the pathspec README §Node support cites. Committing it
+makes `git diff 0c2ed40..HEAD -- src bin test .github` non-empty — so the guard's
+own arrival falsifies the citation it guards, exactly as the section says must
+retire it. A7 is the same root cause surfacing in a second cell (the current arm's
+pass count is 119 rather than 120 because its test failed), not an independent
+problem — the cells agreeing, not two defects.
+
+Verified independently of the cells before acting on it:
+    $ git log --oneline -1 --name-only 0c2ed40
+    0c2ed40 cycle 2: P-2 — coverage becomes an observation, never a gate
+    .github/workflows/test.yml
+    docs/coverage-baseline.md
+
+NOTE THE SHAPE. Eleven of this repo's recorded gate outcomes were the instrument
+being WRONG, and two were the gate being RIGHT AND INSUFFICIENT (found by reading
+the diff afterwards). This is neither: the gate was right, sufficient, and caught a
+self-falsifying property BEFORE the commit landed. It is the first time an
+instrument on this repo has pre-empted the decay class rather than recorded it.
+
+================================================================================
+RESOLUTION — the CI round trip the section itself prescribes
+================================================================================
+Not resolved by weakening the assertion or narrowing the pathspec (both would be
+deleting a claim). Resolved the way README §Node support says it must be:
+
+  commit 5f833ab   test/node-support-citation.test.js
+                   RED on a full clone, GREEN in CI. Disclosed in the commit
+                   message rather than discovered later.
+  push             -> Actions run 32328776838
+
+  $ gh run view 32328776838 --log | grep -E "(# |ℹ )(tests|pass|fail|skipped) [0-9]+"
+    test (18)  v18.20.8   # tests 120  # pass 119  # fail 0  # skipped 1
+    test (20)  v20.20.2   # tests 120  # pass 119  # fail 0  # skipped 1
+    test (22)  v22.23.2   # tests 120  # pass 119  # fail 0  # skipped 1
+    test (24)  v24.19.0   ℹ tests 120  ℹ pass 119  ℹ fail 0  ℹ skipped 1
+
+  commit c0337f1   README §Node support re-cited to run 32328776838 at 5f833ab,
+                   every figure read out of the archived log. Restores green.
+
+The identical `1 skipped` on all four jobs is real-world confirmation of the
+shallow-clone arm on all four Node majors — stronger evidence than the local
+depth-1 clone, and it settles the builder's UNVERIFIED note about Node 18/20/22.
+
+================================================================================
+SCORING RUN AFTER REPAIR                              9 PASS / 0 FAIL
+================================================================================
+cycle-5 gate — item P-6 (mechanize the README §Node support falsifier)   9 PASS / 0 FAIL
+  PASS A1  test/ reads README.md and invokes git diff; base "5f833ab" and pathspec
+           "src bin test .github" appear 0 times in test sources (parsed, not hardcoded)
+  PASS A2  suite tests 120 / pass 120 / fail 0 / skipped 0 (floor >= 120 pass, 0 fail)
+  PASS A3  README falsifier `git diff 5f833ab..HEAD -- src bin test .github` => EMPTY;
+           suite 120/0 green
+  PASS A4  base -> d44f754 (real diff: 1 file changed, 143 insertions(+)); suite goes
+           RED: pass 119 / fail 1
+  PASS A5  base -> d44f754 AND pathspec -> "src bin .github" (real diff EMPTY); suite
+           stays GREEN pass 120 — the pathspec is read from the prose, and the A4 red is
+           attributable to the base, not to an over-broad hardcoded check
+  PASS A6  depth=1 clone: base 5f833ab unreachable (git cat-file -e => 128); suite
+           pass 119 / fail 0 / skipped 1 — degrades, does not fail
+  PASS A7  current 120 tests / 0 skipped vs shallow 120 tests / 1 skipped — identical
+           test count, the skip is the falsifier test standing down and nothing else
+           went quiet
+  PASS A8  src/ bin/ unchanged this cycle; src/corpus.js identical to 81b0958
+           (77a4de5c); no package.json, no lockfile, no node_modules
+  PASS A9  README §Node support: falsifier base 5f833ab, pathspec "src bin test
+           .github", "As of commit" anchor 5f833ab — anchored and parseable
+
+A4 and A5 are a MATCHED PAIR and neither is sufficient alone. A4 (stale base, full
+pathspec -> must go RED) proves the base is read from the prose. A5 (same stale
+base, pathspec narrowed to the paths that did NOT change -> must stay GREEN) proves
+the pathspec is too, and is simultaneously a must-NOT-overreach control: a test that
+hardcoded the pathspec produces exactly the red A5 forbids. A test hardcoding both
+would pass A5 and fail A4. Both directions are covered.
+
+A6/A7 are a matched pair the same way: A6 requires the shallow arm to be green with
+>= 1 skip, A7 requires the shallow arm's test COUNT to equal the full arm's and the
+pass drop to equal the skip count exactly — so the green cannot be bought by the
+suite quietly failing to collect tests (run #3 cycle-15's S1 defect, where an
+under-measuring instrument still exited 0).
+
+================================================================================
+FAILABILITY CONTROLS
+================================================================================
+A3/A4/A5/A6/A7 are mutation ARMS by construction — each builds a real git repository
+with a deliberately different falsifier command and asserts which direction the
+suite must move. They are their own controls. The two pure-assertion cells were
+mutated explicitly:
+
+  $ node c005-gate-P-6.mjs --mutate A1     (inject a hardcoded base sha into the
+                                            scanned test sources)
+    FAIL A1  readsREADME=true invokesGitDiff=true hardcodedBase=true hardcodedPathspec=false
+    CONTROL PASSED (cell A1 went red under mutation)
+
+  $ node c005-gate-P-6.mjs --mutate A2     (raise the suite floor to 999)
+    FAIL A2  suite tests 120 / pass 120 / fail 0 (needed pass >= 999, fail 0)
+    CONTROL PASSED (cell A2 went red under mutation)
+
+================================================================================
+SCOPE / P-5 FLOOR
+================================================================================
+    $ git diff --name-only 5f833ab..HEAD -- src bin test .github
+    (no output)
+
+    $ node --test test/*.test.js  (full clone, base reachable)
+    ℹ tests 120  ℹ pass 120  ℹ fail 0  ℹ skipped 0
+
+    src/corpus.js sha256 77a4de5c — identical to 81b0958
+    no package.json, no package-lock.json, no node_modules
+    src/ and bin/ untouched this cycle
+
+P-5 EXCEPTION, STATED AS AN EXCEPTION AND NOT RE-LABELLED: commit 5f833ab is red on
+a full clone. P-5 requires the suite green at >= 119 on EVERY commit this run makes,
+and that commit does not meet it. It is green in CI (the guard skips on a shallow
+checkout) and the very next commit restores full-clone green, but the intermediate
+commit is a genuine, disclosed exception rather than a pass. The window is intrinsic
+to a self-falsifying citation — any commit touching src/bin/test/.github falsifies it
+on landing, and the CI run that refreshes the citation cannot exist before the push —
+so it is a property a human should rule on, not something a cycle should decide by
+quietly redefining the floor. Filed as P-7.
+
+Arms were built once, after the builder had finished, by copying the tree into
+SWARM/runs/c005-arms/ and committing INSIDE the copy; the live target tree was never
+mutated by the gate, and every arm is a real git repository with real history.

@@ -515,7 +515,7 @@
       "kind": "qa",
       "effort": "S",
       "priority": 35,
-      "status": "todo",
+      "status": "done",
       "attempts": 0,
       "model": "sonnet",
       "deps": [],
@@ -525,7 +525,26 @@
       ],
       "packages": [],
       "acceptance": "README §Node support names its own falsifier as an executable command and that is the ONLY reason cycle 3 could catch the citation going stale — but nothing was running it, and the cell that now does (G12) lives in SWARM/runs and dies with this run. A test in test/ runs the section's own quoted `git diff <base>..HEAD -- <paths>` command, parsed out of the prose rather than hardcoded, and fails when it returns non-empty. It MUST DEGRADE, NOT FAIL, on a shallow clone: CI checks out with --depth=1, so when the base commit is unreachable (`git cat-file -e <base>^{commit}` non-zero) the test skips with a stated reason rather than turning the matrix red for the wrong cause. Prove both arms: the test must fail against a deliberately stale base, pass against the current one, and skip (not fail) in a shallow clone.",
-      "notes": "Filed by cycle 3 out of its own finding. The general shape is the valuable part: a doc claim that names the command which falsifies it is checkable forever; one that does not is only ever checkable by a human who happens to wonder. Scoped as test hardening (explicitly in this run's brief), not a feature: no new flag, no user-visible behaviour, and it raises the suite count, which the P-5 floor (>=119) permits."
+      "notes": "Filed by cycle 3 out of its own finding. The general shape is the valuable part: a doc claim that names the command which falsifies it is checkable forever; one that does not is only ever checkable by a human who happens to wonder. Scoped as test hardening (explicitly in this run's brief), not a feature: no new flag, no user-visible behaviour, and it raises the suite count, which the P-5 floor (>=119) permits. CLOSED cycle 5, 9/9 sealed gate (sha256 8e658830, byte-unchanged after scoring), both pure-assertion cells control-proven failable. Delivered as test/node-support-citation.test.js, byte-identical to what the builder returned — the README re-citation in c0337f1 is a CONSEQUENCE of the item, not a repair of the deliverable. The gate caught, before anything was committed, that the new test lives inside the pathspec README cites, so the guard falsifies the citation it guards the instant it lands; resolved by the CI round trip the section itself prescribes (run 32328776838 at 5f833ab, four jobs green, 1 skipped on every one). That skip is real-world confirmation of the shallow-clone arm on all four Node majors and settles the builder disclosed UNVERIFIED note about Node 18/20/22.",
+      "verified_cycle": 5
+    },
+    {
+      "id": "P-7",
+      "title": "P-5 (green at every commit) and P-6 (the self-falsifying citation guard) are in direct conflict, and only a human can rule on which gives",
+      "kind": "docs",
+      "effort": "S",
+      "priority": 2,
+      "status": "blocked",
+      "attempts": 0,
+      "model": "sonnet",
+      "deps": [],
+      "files_hint": [
+        ".swarm/SPEC.md",
+        "README.md"
+      ],
+      "packages": [],
+      "acceptance": "A human rules on ONE of: (a) P-5 wording is amended to exempt the single commit that introduces a src/bin/test/.github change from the full-clone green requirement, on the stated ground that the CI run which refreshes the citation cannot exist before the push; (b) the citation design changes so the window closes; or (c) the guard is retired. Until then the exception stands recorded, never re-labelled as a pass.",
+      "notes": "MEASURED cycle 5, not inferred. P-6 mechanizes README Node-support own falsifier. Because the pathspec it cites is `src bin test .github`, ANY commit touching those paths makes the cited diff non-empty at that commit, so the suite is RED on a full clone until a follow-up commit re-cites to a CI run for it — and that CI run cannot exist until after the push. Commit 5f833ab is exactly that case: red on a full clone, green in CI (the guard skips on depth-1 checkout), repaired by c0337f1. P-5 requires green at >=119 on EVERY commit this run makes, so 5f833ab is a genuine exception and is recorded as one in .swarm/runs/cycle-005-verify-P-6.txt. WHY THIS IS HUMAN-OWNED: every available disposition edits a locked SPEC must-have or deletes a shipped claim, and this run non-goals forbid the swarm doing either for itself. Note the window is not a defect in the test — it is the price of the claim being checkable at all, and the alternative (a citation nothing runs) is the state that let the claim go stale undetected two cycles ago."
     }
   ]
 }

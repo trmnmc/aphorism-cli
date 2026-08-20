@@ -17914,3 +17914,194 @@ notification emits were owed.
 step 9 is explicit that gears never touch the wakeup delay, so gear 1 does not stretch it).
 No `ScheduleWakeup` call: on the VPS `bin/swarm-pacer.sh` reads this field every 5 minutes
 and is the actual firing mechanism, so the 5-minute timer is the effective floor.
+
+---
+
+## cycle 5 — 2026-08-20T03:45Z — build-wave (P-6, 1 sonnet builder) + conductor verification gate
+
+**Clock.** `date +%s` = 1787196105 at open. `stop_at` 1787276706 — 22.4 h remaining, no
+admission pressure. `cycles_since_recycle` 3 → 4.
+
+**Budget.** Probe OK. `gear_target` 1, ρ **5.01** (up from 4.46), mode guest, dial 0.33,
+`k_cap` **1**, `demote: true`, `promote: false`. Weekly governor still HOT — weekly 100% /
+opus 100% at 41.88% of the week elapsed, heat 2.39, ceiling 2, promote blocked. Applied gear
+stays **1 (crawl)**. Burn 38.36 M window tokens, 23.65 M tokens/hour, projected depletion
+1787212233. Effective wave size = min(k_current 3, gear cap 1) = **1**.
+
+**Orient.** Tree clean at open (`git status --porcelain` empty), HEAD `d44f754`. Control
+channel: `swarm-notify.sh poll` exit 0, `control.json` `pending: []`, no `inject` array.
+Nothing to triage.
+
+**Re-anchor.** Cycle 5 is a `% 5 == 0` cycle, so the scheduled **full SPEC re-read** ran.
+P-1/P-2/P-3/P-4 all closed; P-5 is a standing guard that closes at WRAP_UP. **Backlog
+hygiene:** 25 items — 15 done, 7 blocked (all human-owned), 2 todo, 1 dropped. Well under
+the ~30 live cap, no duplicates, nothing stale enough to drop. No reprioritisation needed.
+
+**Pick.** P-6 (qa, S, sonnet) — the last non-standing item. **Routing is the TABLE being
+applied, not an override of it,** and that is worth one line because this run has recorded
+three genuine gear-demotion refusals and they should stay legible as overrides:
+`workflows.md` sends docs/polish at S to haiku and everything else build/fix to sonnet.
+P-6 is `kind: qa`, so the table says sonnet; gear 1's `demote: true` drops sonnet→haiku for
+docs/polish items ONLY and never lets build/fix fall below sonnet. No rule had to be bent.
+
+**Dispatch shape.** Direct Agent call, not `workflows/build-wave.js` — headless pacer-spawned
+`-p` cycle, where the Workflow tool is review-gated and direct Agent dispatch is the
+documented SKILL.md fallback. Same basis as cycles 2-4 and run #3 cycles 6/8/9/10/13/14. One
+agent, so no disjoint-scope arithmetic was needed.
+
+---
+
+## The gate caught the item falsifying its own premise, before anything was committed
+
+P-6 mechanizes README §Node support's own quoted falsifier — the section names
+`git diff <base>..HEAD -- src bin test .github` as its retirement condition, and cycle 3
+found that command had stopped returning empty while nobody was running it.
+
+The sealed gate came back **7 PASS / 2 FAIL**, and the two reds share one root cause:
+
+    FAIL A3  diff="test/node-support-citation.test.js" suite pass 119 fail 1
+    FAIL A7  current tests 120 pass 119 skipped 0 | shallow tests 120 pass 119 skipped 1
+
+**The new test lives under `test/`, which is inside the pathspec README cites.** So the
+guard's own arrival falsifies the citation it guards — exactly the condition the section
+says must retire it. A7 is the same root cause surfacing in a second cell (the current arm's
+pass count is 119 because its test failed), not a second problem: the cells agreeing.
+
+Verified independently of the cells before acting on it:
+
+    $ git log --oneline -1 --name-only 0c2ed40
+    0c2ed40 cycle 2: P-2 — coverage becomes an observation, never a gate
+    .github/workflows/test.yml
+    docs/coverage-baseline.md
+
+**NOTE THE SHAPE, because it is new for this repo.** Eleven of the recorded gate outcomes
+here were the instrument being WRONG. Two — cycle 14 and run #4 cycle 4 — were the gate being
+RIGHT AND INSUFFICIENT: a dozen green cells over a document containing a falsehood none of
+them was aimed at, found by a human reading the diff afterwards. This one was aimed at the
+right thing and fired **before any commit existed**. It is the first time an instrument on
+this repo has pre-empted the decay class rather than recorded it after the fact.
+
+## Resolved by the round trip the section prescribes, not by softening the assertion
+
+Three dodges were considered and rejected, and they are recorded because a silent rejection
+is how a run starts quietly deciding things: narrowing the pathspec (`test/` genuinely
+belongs in it — adding a test changes the very count the cited table asserts); anchoring the
+citation to a branch or tag commit outside master's history (unreadable, for a document
+whose entire job is being checkable by a human); softening the assertion (deleting a claim,
+which this run's non-goals forbid). Each would have bought a green gate by making the claim
+weaker, which is the one path hard rule 2 closes.
+
+    commit 5f833ab   test/node-support-citation.test.js
+                     RED on a full clone, GREEN in CI — disclosed in its own commit
+                     message rather than left to be discovered
+    push             -> Actions run 32328776838, four jobs green
+
+    commit c0337f1   README §Node support re-cited to that run, every figure read out of
+                     the archived log. Restores full-clone green.
+
+The identical `1 skipped` on all four jobs is **real-world confirmation of the shallow-clone
+arm on all four Node majors** — stronger than the local depth-1 clone, and it settles the
+one thing the builder honestly reported as UNVERIFIED (that it had not run the matrix and
+could not vouch for Node 18/20/22).
+
+**The builder's return needed no repair.** `test/node-support-citation.test.js` shipped
+byte-identical to what it returned; the README re-citation is a consequence of the item, not
+a correction of the deliverable. It disclosed its two unverified claims rather than
+inventing measurements, which is the opposite of the failure mode three prior cycles
+refused a haiku demotion over.
+
+## The exception this created is recorded as an exception, and handed to a human
+
+**P-5 requires the suite green at >= 119 on EVERY commit this run makes. Commit `5f833ab`
+is red on a full clone and does not meet it.** It is green in CI and green again one commit
+later, but the intermediate commit is a genuine miss, not a pass, and it is written down as
+one in the commit message, the transcript, the README and here.
+
+The window is intrinsic rather than a defect: any commit touching `src/bin/test/.github`
+falsifies the citation the instant it lands, and the CI run that refreshes the citation
+cannot exist until after the push. Every disposition — amend P-5, redesign the citation,
+retire the guard — either edits a locked SPEC must-have or deletes a shipped claim, and this
+run's non-goals forbid the swarm doing either for itself. **Filed as P-7, blocked,
+human-owned.** Re-defining the floor so a red commit reads as green is precisely what hard
+rule 2 forbids.
+
+Recorded in README too, because a reader deserves to know both limits without reading a
+journal: the guard is **inert in CI by design** (depth-1 checkout ⇒ it always skips there —
+it protects a maintainer with a full clone, not the matrix), and the transient-red window is
+the price of the claim being checkable at all. The alternative is the state that let this
+same citation go stale undetected two cycles ago.
+
+## VERIFICATION EVIDENCE
+
+Full transcript: `.swarm/runs/cycle-005-verify-P-6.txt` (baseline, both scoring runs, the CI
+log extract, and both controls). Gate copied to `.swarm/runs/cycle-005-gate-P-6.mjs` and
+re-hashed — `8e658830…`, matching the pre-dispatch seal byte for byte. Pre-dispatch baseline
+was **2 PASS / 7 FAIL**, all seven work-dependent; two cells were calibrated BEFORE dispatch
+(A1 required the literal string "git diff", encoding a MEANS where the acceptance states an
+END — instrument defect #15's shape; A6's failure message printed "reachable" for a
+non-zero `cat-file` exit, i.e. the opposite of what it measured).
+
+    cycle-5 gate — item P-6 (mechanize the README §Node support falsifier)   9 PASS / 0 FAIL
+      PASS A1  base "5f833ab" and pathspec "src bin test .github" appear 0 times in test
+               sources (parsed, not hardcoded)
+      PASS A2  suite tests 120 / pass 120 / fail 0 / skipped 0
+      PASS A3  `git diff 5f833ab..HEAD -- src bin test .github` => EMPTY; suite 120/0 green
+      PASS A4  base -> d44f754 (real diff: 1 file changed, 143 insertions(+)); suite goes
+               RED: pass 119 / fail 1
+      PASS A5  same stale base, pathspec -> "src bin .github" (real diff EMPTY); suite stays
+               GREEN pass 120 — the A4 red is attributable to the base, not to an
+               over-broad hardcoded check
+      PASS A6  depth=1 clone: base unreachable (cat-file -e => 128); pass 119 / fail 0 /
+               skipped 1 — degrades, does not fail
+      PASS A7  current 120 tests / 0 skipped vs shallow 120 tests / 1 skipped — identical
+               test count; nothing else went quiet
+      PASS A8  src/ bin/ unchanged; src/corpus.js identical to 81b0958 (77a4de5c); no
+               package.json, no lockfile, no node_modules
+      PASS A9  falsifier base 5f833ab, pathspec "src bin test .github", anchor 5f833ab
+
+    FAILABILITY CONTROLS — A3/A4/A5/A6/A7 are mutation ARMS by construction and are their
+    own controls; the two pure-assertion cells were mutated explicitly:
+      --mutate A1  (inject a hardcoded base sha)      -> FAIL A1  CONTROL PASSED
+      --mutate A2  (raise the suite floor to 999)     -> FAIL A2  CONTROL PASSED
+
+    A4/A5 are a MATCHED PAIR: A4 proves the base is read from the prose, A5 proves the
+    pathspec is AND is a must-NOT-overreach control (a hardcoded pathspec produces exactly
+    the red A5 forbids). A test hardcoding both would pass A5 and fail A4.
+    A6/A7 likewise: A7 pins the shallow arm's test COUNT to the full arm's, so the green
+    cannot be bought by the suite quietly failing to collect tests — run #3 cycle-15's S1
+    defect, where an under-measuring instrument still exited 0.
+
+    $ gh run view 32328776838 --log | grep -E "(# |ℹ )(tests|pass|fail|skipped) [0-9]+"
+      test (18)  v18.20.8   # tests 120  # pass 119  # fail 0  # skipped 1
+      test (20)  v20.20.2   # tests 120  # pass 119  # fail 0  # skipped 1
+      test (22)  v22.23.2   # tests 120  # pass 119  # fail 0  # skipped 1
+      test (24)  v24.19.0   ℹ tests 120  ℹ pass 119  ℹ fail 0  ℹ skipped 1
+
+    $ git diff --name-only 5f833ab..HEAD -- src bin test .github
+    (no output — P-5 floor holds on final HEAD)
+
+**Wave autotune:** one wave, one item, **zero reverts, zero failed verifies** — the item
+verified 9/9 and the builder's artifact shipped unmodified, so this scores CLEAN.
+`wave_streak` 0 → **1**; `k_current` unchanged at 3 (a bump needs a streak of 2, and the
+gear cap of 1 binds first regardless). `consecutive_no_value = 0` — verified value.
+
+**Backlog:** todo 2 → 1 (P-6 done, P-7 filed blocked), done 15 → 16, blocked 7 → 8, 1
+dropped, 26 total. The single remaining todo is **P-5**, a standing regression guard that
+closes at WRAP_UP. All 8 blocked items are human-owned. Product tree untouched: `src/` and
+`bin/` have zero diff this cycle and `src/corpus.js` is byte-identical to `81b0958`.
+
+**Next:** cycle 6 — the board is down to one standing guard and eight human-owned blockers,
+so the honest next move is the **VALUE_LOOP / DONE decision**, scored against the
+two-question ratchet on a settled tree. It should be made deliberately and NOT in the same
+breath as the cycle that just changed the board: run #3 cycle 8 declared DONE and was wrong
+four times over, and run #3 cycle 14 set the precedent of scoring one cycle and judging the
+next. Cycle 6 opens with this cycle's result already on the record.
+
+## runfile-mirror
+
+    stop_at 1787276706 | usage_reset_at 1787276706 | mode guest dial 0.33 | auth subscription
+    gear 1 (target 1, rho 5.01) | k_cap 1 | demote true | promote false
+    weekly: used 100% / opus 100% at week 41.88% elapsed, heat 2.39, ceiling 2, promote_blocked
+    targets: /opt/targets/aphorism-cli (active, weight 1) | rotation [0] cursor 0
+    watchdog pacer, plist_loaded true | caffeinate_pid 0 (Linux) | cycles_since_recycle 4
+    playbook auto: L-008 L-016 L-024 L-026 L-029 L-031 L-033 L-034 L-038 L-042 L-043 L-044 L-046
