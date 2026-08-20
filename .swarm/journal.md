@@ -18372,3 +18372,196 @@ churned for an advisory string.
 cycle; gears never touch the wakeup delay). Hard rule 8 checked before the write: wakeup +
 900 leaves 75269 s of headroom against `stop_at`. No `ScheduleWakeup` call — on the VPS
 `bin/swarm-pacer.sh` reads this field every 5 minutes and is the actual firing mechanism.
+
+## cycle 7 — 2026-08-20T04:42Z — qa-verify FULL (fable author → sonnet executor → fable look) + conductor gate
+
+**Clock.** `date +%s` = 1787200845 at open. `stop_at` 1787276706 — 21.1 h remaining. Admission:
+qa-verify (full) budgets 1200 s against 74 847 s of headroom, no pressure.
+`cycles_since_recycle` 5 → 6.
+
+**Budget.** Probe OK. `gear_target` 1, ρ **6.79** (up from 5.44), mode guest, `k_cap` 1,
+`demote: true`, `promote: false`. Weekly governor still HOT — weekly 100 % / opus 100 % at
+42.67 % of week elapsed, heat 2.34, ceiling 2. Applied gear **1 (crawl)**, seventh
+consecutive. Burn 70.17 M window tokens, 23.82 M tokens/hour.
+
+**Orient.** Tree clean at open, HEAD `23b2f6b`. Control channel polled: `pending: []`,
+`applied: []`, no `inject` array — nothing to triage.
+
+**Pick.** Cycle 6 handed forward that run #5 still owed **QA-full** and **TASTE** before
+POLISH / VALUE_LOOP. Took QA-full; TASTE stays last, because a `fundamental` verdict re-aims
+the remaining clock and it should be the newest information when that decision is made.
+
+---
+
+## The one thing worth reading in this block: a cycle-6 claim was measured and is false
+
+Cycle 6 sealed its verification gate under `SWARM/runs/` and justified the location like this:
+hard rule 5 gives agents target paths only, *"so a gate there is **structurally** unreachable
+to the fixer rather than merely forbidden by a prompt line."*
+
+That is not true in this harness, and this cycle found out by accident before confirming it on
+purpose.
+
+The QA executor — handed the target path and nothing else — hit a sandbox denial while trying
+to use `/tmp`. **The denial text itself names both allowed roots.** It read `/opt/swarm` off
+that error message and wrote its scratch directory there (`/opt/swarm/qa_tmp`, since removed;
+absence confirmed). So an agent that never receives a SWARM path is one refused command away
+from learning one.
+
+A dedicated haiku probe then settled the capability question directly:
+
+    ls /opt/targets/aphorism-cli/.swarm/   -> PERMITTED (15 entries)
+    ls /opt/swarm/runs/                    -> PERMITTED (~1100 entries)
+    ls /opt/some-nonexistent-dir-xyz/      -> REFUSED:
+       "may only list files in the allowed working directories for this session:
+        '/opt/swarm', '/opt/targets/aphorism-cli'"
+
+The sandbox allowlist is those two roots **for subagents too**. A gate under `SWARM/runs/` is
+protected by **obscurity, not structure** — it works only while the agent doesn't think to look.
+
+The defence that actually holds is already written down and is not this one: cycle.md step 6.1,
+**author the verify check AT VERIFICATION TIME**, after the builder has returned. A check that
+did not exist during the dispatch window cannot be read during it, whoever can list what.
+Cycle 6 also did that, and its gate was sound on those grounds; the load-bearing reason was
+just mis-stated. Per hard rule 5 this is a SWARM-tooling finding: journal + morning report, no
+live edit. It is the strongest playbook candidate this run has produced.
+
+## QA-full, and why the author's `tool_uses: 0` is the whole ballgame
+
+Dispatched as three DIRECT Agent calls (Workflow is review-gated in a `-p` session; same
+fallback as cycle 6).
+
+**Author — fable.** Judgment seat; the fable guard exempts it from gear 1's `demote`. It got
+the Domain rules, the binding must-haves, the out-of-scope list, and nothing else — no target
+path, no code. It returned **`tool_uses: 0`**. That number is the point: a spec-only answer key
+that peeked at the implementation would agree with whatever the code does, including the wrong
+parts, and would be undetectable downstream. `tool_uses: 0` is *mechanical* proof it never
+looked, which is a far better guarantee than the instruction that asked for it.
+
+It spent its four scenarios on rule *interactions* rather than the happy path, and correctly
+declined to assert things the spec does not say (e.g. it explicitly refused to require that
+different seeds produce different aphorisms). It labelled its corpus assumptions ASSUMPTION and
+gave each an exit-1 fallback shape, so "the key's premise was wrong" stays distinguishable from
+"the tool is broken."
+
+**Executor — sonnet.** Gear 1's `demote` reaches non-judgment seats, but sonnet→haiku is
+permitted only for docs/polish items and this is neither, so it held at sonnet. Returned 4/4
+pass.
+
+**And that return was not accepted.** The executor's own report disclosed that its sandbox
+blocked `$?` expansion, so it read exit codes off the Bash tool's error surfacing — silence
+inferred as 0. Honest of it to say so, and not good enough to close a gate on.
+
+## The gate: re-run everything, then prove the scenarios can fail
+
+Harness authored at verification time: `.swarm/runs/cycle-007-verify.mjs` (transcript
+`cycle-007-verify.txt`). Real exit codes via `spawnSync().status`. Arms built with
+`git archive HEAD` (L-042), never by copying the live tree. Two controls plus a mutation
+matrix, because a scenario nobody has shown can go RED is not evidence however green it is
+(L-029 failable+attributable, L-044 converse control).
+
+The first run of the harness had a hole and it was mine: MUT-A/B/C all lived in
+`src/select.js`, which left **S4 unproven as a discriminator**. Added MUT-D in `src/args.js`
+and re-ran.
+
+## VERIFICATION EVIDENCE
+
+    === ARM: LIVE (the real working tree) — this is the QA verdict ===
+      S1: PASS   S2: PASS   S3: PASS   S4: PASS
+    === ARM: PRISTINE (git archive HEAD) — converse control ===
+      S1: PASS   S2: PASS   S3: PASS   S4: PASS
+
+    === MUTATION MATRIX ===
+      MUT-A (--tag becomes substring-matching)      must kill S3   red: [S3]   OK
+        -> CRITICAL: desi line 1 has no literal "desi" tag (tags=["readability","design"])
+      MUT-B (--seed ignored; always random)         must kill S1   red: [S1]   OK
+        -> filtered: NOT byte-identical across two runs
+      MUT-C (--author needle case-SENSITIVE)        must kill S2   red: [S2]   OK
+        -> upper: exit 1 != lower's exit 0
+      MUT-D (unparseable --seed stops being usage)  must kill S4   red: [S4]   OK
+        -> list_seed_abc: exit 0 (expected exactly 2)
+
+    SOUND (pass on real code AND provably fail on broken code): true
+
+A clean diagonal: each mutant kills exactly its named scenario and no other. MUT-D killing S4
+precisely at `--list --seed abc` validates the author's least obvious derivation — the clause
+saying an unparseable seed is *still* a usage error under `--list`, where "list ignores the
+seed" and "bad seed is exit 2" pull in opposite directions.
+
+Real exit codes and stderr, captured directly rather than inferred:
+
+    exit=2  out=0B  err="aphorism: flag --seed requires a numeric value"   <- --list --seed abc
+    exit=2  out=0B  err="aphorism: flag --seed requires a numeric value"   <- --seed abc
+    exit=2  out=0B  err="aphorism: unknown flag: --frobnicate"             <- --frobnicate
+    exit=2  out=0B  err="aphorism: flag --author requires a value"         <- --author
+    exit=1  out=0B  err="aphorism: no aphorism matches those filters"      <- --tag desi
+
+**Derivation spot-check (cycle.md step 6.7).** Every clause the author quoted was checked
+against SPEC.md verbatim. All four derivations are sound. The distinction it drew in S4 —
+`--author` as final token is the enumerated *missing flag argument* (ruled, exit 2), NOT the
+*empty value* case (D-44, human-owned, out of scope) — is exactly right, and is the kind of
+thing a careless author collapses.
+
+**P-5 regression floor, conductor-run:**
+
+    $ node --test test/*.test.js
+    ℹ tests 120   ℹ pass 120   ℹ fail 0   ℹ skipped 0     (node v24.19.0)
+
+    $ git diff --name-only 81b0958..HEAD -- src bin
+    (no output — src/ and bin/ byte-identical to run start, so corpus.js is
+     unchanged BY DIFF, not merely by matching hash 77a4de5c...45d09e)
+
+    No package.json exists -> zero deps holds by construction.
+    Actions matrix green on HEAD 23b2f6b (run 32332414113, success).
+
+## Live-look: zero findings, and it refused to pad
+
+The look agent (fable) returned `findings: []` after 38 tool uses. It considered two
+error-message nits and **declined to report either**, having found both already adjudicated by
+a human — terse errors ruled a fenced feature in `docs/report-history.md`, accent-literal
+`--author` matching documented in README with workarounds. Declining to re-litigate settled
+human calls is the right instinct and worth recording, since padding is the cheaper way to
+look useful.
+
+Its claims were spot-checked, not accepted:
+
+    corpus entries: 50                                        CONFIRMED
+    distinct tags: 12                                         CONFIRMED
+    design 14, simplicity 12, humor 9, ... philosophy 3       matches the README table EXACTLY
+    ANSI escape bytes present: false                          CONFIRMED (0x1b absent)
+    ends with exactly one newline: true                       CONFIRMED
+    bare output lines: 2                                      CONFIRMED
+
+Its "229-char longest entry" is the rendered `--list` line (214-char text + the em-dash author
+suffix) — consistent, not a contradiction.
+
+**One conductor check went RED, and the red was mine.** My all-entries-terminally-punctuated
+check failed one entry — the Grace Hopper line, which ends with a period *inside* a closing
+ASCII apostrophe that my regex character class omitted. Adjudicated by opening the entry
+instead of believing my own instrument. The agent was right and the check was wrong. Recorded
+deliberately: this cycle spent its whole budget on not trusting agent claims, and the single
+disagreement that surfaced was the conductor being wrong — the evidence standard has to point
+both ways or it is just suspicion with extra steps.
+
+**Wave autotune: NOT applied.** Work type was qa-verify full, not build-wave. `k_current`
+stays 3, `wave_streak` stays 1 — same call and same reason as cycle 6.
+
+**Backlog:** unchanged at 30 items (19 done / 2 todo / 8 blocked / 1 dropped). A clean QA pass
+files nothing, which is the designed outcome, not an omission — P-3 already established on
+this repo that a clean audit is a valid result. P-5 stamped with this cycle's evidence.
+`consecutive_no_value = 0`: a mandated gate was discharged with an instrument proven sound.
+
+**Next:** **TASTE** is the last owed gate before POLISH / VALUE_LOOP, and the DONE decision is
+not ripe until it is paid. RF-4 (CI actions target the deprecated Node 20) stays todo as the
+one unblocked non-gate item. Standing escalation, third run running: the highest-value change
+available here — no-repeat-until-exhausted rotation — remains locked out by the allocator
+brief and is the operator's lever, not the swarm's.
+
+## runfile-mirror
+
+    stop_at 1787276706 | usage_reset_at 1787276706 | mode guest dial 0.33 | auth subscription
+    gear 1 (target 1, rho 6.79) | k_cap 1 | demote true | promote false
+    weekly: used 100% / opus 100% at week 42.67% elapsed, heat 2.34, ceiling 2, promote_blocked
+    targets: /opt/targets/aphorism-cli (active, weight 1) | rotation [0] cursor 0
+    watchdog pacer, plist_loaded true | caffeinate_pid 0 (Linux) | cycles_since_recycle 6
+    playbook auto: L-008 L-016 L-024 L-026 L-029 L-031 L-033 L-034 L-038 L-042 L-043 L-044 L-046

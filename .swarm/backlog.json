@@ -507,7 +507,8 @@
       "deps": [],
       "files_hint": [],
       "packages": [],
-      "acceptance": "node --test test/*.test.js green at >=119 on every commit this run makes; Actions matrix green on final HEAD; git diff shows zero changes to src/corpus.js; no new runtime or dev dependency anywhere in the tree; no new user-visible flag or behaviour."
+      "acceptance": "node --test test/*.test.js green at >=119 on every commit this run makes; Actions matrix green on final HEAD; git diff shows zero changes to src/corpus.js; no new runtime or dev dependency anywhere in the tree; no new user-visible flag or behaviour.",
+      "notes": "cycle 7: re-verified by the conductor. node --test test/*.test.js -> tests 120 / pass 120 / fail 0 (node v24.19.0). git diff --name-only 81b0958..HEAD -- src bin is EMPTY, so src/corpus.js is byte-identical to run start by diff, not merely by hash (sha256 77a4de5c...45d09e recorded). No package.json exists, so zero deps holds by construction. Actions matrix green on HEAD 23b2f6b (run 32332414113, success). Zero features added."
     },
     {
       "id": "P-6",

@@ -1,0 +1,35 @@
+=== ARM: LIVE (the real working tree) — this is the QA verdict ===
+  S1: PASS
+  S2: PASS
+  S3: PASS
+  S4: PASS
+
+=== ARM: PRISTINE (git archive HEAD) — converse control, must be all-PASS ===
+  S1: PASS
+  S2: PASS
+  S3: PASS
+  S4: PASS
+
+=== MUTATION MATRIX — does each scenario actually discriminate? ===
+
+  MUT-A (--tag becomes substring-matching)
+    must kill: S3   actually red: [S3]   ATTRIBUTION OK
+    kill reason: CRITICAL: desi line 1 has no literal "desi" tag (tags=["readability","design"]) -> --tag is substring-matching
+
+  MUT-B (--seed is ignored; selection is always random)
+    must kill: S1   actually red: [S1]   ATTRIBUTION OK
+    kill reason: filtered: NOT byte-identical across two runs -> "{\"text\":\"The competent programmer is fully aware of the strictly limited size of his own skull.\",\"author\":\"Edsger W. Dijkstra\",\"tags\":[\"complexity\",\"simplicity\"]}\n" vs "{\"text\":\"Testing shows the presence, not the absence, of bugs.\",\"author\":\"Edsger W. Dijkstra\",\"tags\":[\"debugging\"]}\n"
+
+  MUT-C (--author matching becomes case-SENSITIVE on the needle)
+    must kill: S2   actually red: [S2]   ATTRIBUTION OK
+    kill reason: upper: exit 1 != lower's exit 0
+
+  MUT-D (an unparseable --seed stops being a usage error (exit 2 -> accepted))
+    must kill: S4   actually red: [S4]   ATTRIBUTION OK
+    kill reason: list_seed_abc: exit 0 (expected exactly 2)
+
+=== VERDICT ===
+  LIVE all-pass:            true
+  PRISTINE all-pass:        true
+  every mutant attributed:  true
+  SOUND (scenarios both pass on real code AND provably fail on broken code): true
