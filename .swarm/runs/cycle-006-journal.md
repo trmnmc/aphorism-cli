@@ -1,149 +1,218 @@
 
-## cycle 6 | 2026-08-18T05:56:53+00:00 → 06:12:46Z | aphorism-cli | REVIEW -> QA
+## cycle 6 — 2026-08-20T04:35Z — review-fix (1 sonnet reviewer, 1 fable verifier, 1 sonnet fixer) + conductor gate
 
-work: QA FULL pass (spec-only author → executor → live-look). Chosen over the other two owed
-  passes on a MEASURED reason, not a hunch: `git diff --stat 3bd19f9~1..HEAD -- . ':(exclude).swarm'`
-  returns `REPORT.md | 71 +++`, one file. Run #3 has changed ZERO product source, so a
-  review-fix pass — the other candidate, and the one matching the entering phase — would have
-  put two reviewers and two adversarial verifiers onto 71 lines of documentation. QA is the
-  pass that actually points at the shipped binary. review-fix and TASTE remain owed before
-  POLISH; whoever runs review-fix later should scope it to src/ bin/ test/, NOT to this run's
-  diff, or it will review bookkeeping.
-dispatch: DIRECT Agent calls, not the Workflow tool — headless `-p` cycle (pid 2155401),
-  Workflow review-gated. Documented failure-table fallback, same as cycles 3-5.
-agents: 2 (author fable, live-look fable), run CONCURRENTLY. The qa-verify contract mandates
-  SEQUENTIAL stages, and its stated reason is that each server-using agent binds the same
-  conductor-assigned port. aphorism-cli is a CLI: no server, no port, so the reason does not
-  apply and the two read-only agents cannot collide. Executor stage: see deviation (2).
-models: author fable, look fable — both judgment seats, and the fable guard exempts judgment
-  seats from gear demotion in every gear. Executor would have been sonnet; gear-2 demotion is
-  a no-op there anyway (sonnet→haiku is docs/polish only).
-craft pack: node bin/swarm-craft.mjs -> degraded [] (ui 2969 / review 2233 / docs 1737 bytes).
-  Not spliced: the craft pack feeds build-wave / review-fix / polish-docs, not QA.
+**Clock.** `date +%s` = 1787197854 at open. `stop_at` 1787276706 — 21.9 h remaining, no
+admission pressure (review-fix budget 1800 s against 77 952 s of headroom).
+`cycles_since_recycle` 4 → 5.
 
-TWO DEVIATIONS from the qa-verify.js contract, both recorded, neither a weakening:
-  (1) Spec-blindness of the author. The script achieves it by passing `spec_text` INLINE, and
-      Workflow args must be literal JSON — reproducing 16 KB of SPEC.md by hand into a tool
-      call risks transcription drift in the one document that is the answer key. Instead the
-      author got a byte-identical COPY in a directory containing nothing else, plus an
-      explicit no-other-file instruction. Copy verified equal, not assumed:
-        $ sha256sum .swarm/SPEC.md .swarm/runs/cycle-006-qa-speconly/SPEC.md
-          b495c99f6dbcd4f03b89853f5edcb8a775218f14d1722fa159ed9b85bcd219b3  .swarm/SPEC.md
-          b495c99f6dbcd4f03b89853f5edcb8a775218f14d1722fa159ed9b85bcd219b3  ...qa-speconly/SPEC.md
-      Residual risk stated honestly: the isolation is now instruction-plus-empty-directory
-      rather than structural, so a disobedient author COULD have read src/. The step-6 defence
-      is unchanged — I checked each `derivation` against the Domain rules myself.
-  (2) The executor stage was run BY THE CONDUCTOR, not by a sonnet agent. For a CLI with no
-      dev server the scenarios are four plain invocations; running them here produces conductor
-      evidence directly instead of an agent claim that the gate would have to re-verify anyway.
-      This is strictly more evidence, not less — .swarm/runs/cycle-006-qa-exec.mjs is committed,
-      so the executor is re-runnable and auditable in a way an agent transcript is not.
+**Budget.** Probe OK. `gear_target` 1, ρ **5.44** (up from 5.01), mode guest, `k_cap` **1**,
+`demote: true`, `promote: false`. Weekly governor still HOT — weekly 100 % / opus 100 % at
+42.17 % of the week elapsed, heat 2.37, ceiling 2. Applied gear stays **1 (crawl)**, sixth
+consecutive. Burn 49.71 M window tokens, 23.46 M tokens/hour, projected depletion 1787212410.
+One note so two numbers do not read as a discrepancy: the script reports `dial 1.00` while
+`runfile.pacing.dial` is 0.33 — guest mode forces the dial to 1.0 (cycle.md Gear pacing), so
+the runfile value is inert under guest.
 
-budget: gear 2 CARRIED, not re-measured — and that is the rule, not a shortcut. probe_failures
-  is 6 (>= 3), so cycle.md step 1 says stop invoking the probe and re-invoke only when
-  now - last_real_probe_ts >= 1800. At cycle open that was 1037s, so no probe was DUE. The
-  clock-cruise fallback `PROBE_CMD=false bin/swarm-budget.sh` is itself denied by the same
-  allowlist gap, so the honest position is: gear 2 carried from cycle 5's REAL measurement
-  1037s earlier, k_cap 2, promote blocked, demote true. No new burn evidence was minted this
-  cycle and none is claimed. The weekly governor still binds and does not lift before
-  week_resets_at 1787547599.
+**Orient.** Tree clean at open, HEAD `68c318c`. Control channel: `pending: []`, no `inject`
+array, nothing to triage. Pacer log confirms exactly one spawn at 03:50:48 — no relaunch
+stacking.
 
-control: poll DENIED again — bin/swarm-notify.sh, 3rd denial for this helper this run
-  (cycle 5 saw two: `poll` and `send`). K-1 evidence continues to accumulate on the SAME
-  absolute-path entry set the hand-off patch adds. Fell back to file-sourced pending[]:
-  runs/control.json read directly — pending [], applied [], no inject array. Nothing to apply.
-orient: tree CLEAN at entry (git status --porcelain empty). No salvage needed.
-re-anchor: cycle 6, not a multiple of 5, so no full SPEC re-read. Digest restated: improvement
-  run #3, measure/repair/document, no new features; K-1..K-5 all closed at cycle 5.
-clock note: the cycle-5 journal recorded `stop_at 1787110108`. The runfile's ISO stop_at
-  (2026-08-19T03:48:28+00:00) parses to 1787111308 — the earlier figure was 1200s low. The
-  error was CONSERVATIVE (it would only ever have wrapped up early), so no rule was breached,
-  but the arithmetic is corrected here so it does not propagate.
+**Pick — the work type outranks the hand-off.** Cycle 5 asked cycle 6 to run the
+VALUE_LOOP / DONE decision. It did not run. cycle.md step 4 places ONE review-fix, ONE QA
+and ONE TASTE pass after BUILD and before POLISH, and **run #5 had run none of the three.**
+This is the identical call run #4 cycle 5 made for the identical reason, and it avoids the
+trap this repo has already paid for: run #3 cycle 8 declared DONE and was wrong four times
+over, every error tracing to a mandatory gate that had never run while the bookkeeping said
+it had. The `qa` markers in state.json (`last_full_qa_cycle` 7, `last_taste_cycle` 9) are
+RUN #3 numbers carried forward; this cycle added **run-scoped keys** so a later cycle cannot
+misread them the way run #3 cycle 12 caught someone doing.
 
-VERIFICATION EVIDENCE:
-  Gate authored at verification time, run by the conductor. Full output committed at
-  .swarm/runs/cycle-006-qa-verify.txt (54 lines); excerpt below.
+**Scope, measured rather than assumed.** `git diff --stat 81b0958..HEAD` excluding `.swarm/`
+= four files, 423 insertions: `.github/workflows/test.yml`, `README.md`,
+`docs/coverage-baseline.md`, `test/node-support-citation.test.js`. `src/` and `bin/` have
+ZERO diff this run, so pointing reviewers at product code would have been reviewing
+bookkeeping. One honest correction to my own framing: I told the reviewer "exactly four
+files", and the raw range touches 20 — the other 16 are `.swarm/` run artifacts. The
+substantive surface is four; the sentence should have said "excluding `.swarm/`", and the
+stage-2 verifier caught the imprecision and said so.
 
-  Spec-derived answer key, 4 scenarios, ALL PASS. I checked each `derivation` against the
-  Domain rules before running anything — the author correctly refused to invent corpus
-  strings it could not know and asserted derivable INVARIANTS instead, which is the behaviour
-  that makes a spec-only answer key worth having:
-    S1  --list --author dijk, --seed 7 vs --seed 99
-        exit1=0 exit2=0 | stderr both "" | byte-identical across seeds: true | lines=7
-        every line exactly one " U+2014 " separator: true | authors all contain "dijk": true
-        hyphen-minus or en-dash used as separator anywhere: false                      PASS
-    S2  --json --seed Infinity --tag design, run twice
-        byte-identical: true | stdout lines=1 | text/author/tags present, tags isArray
-        tags contains "design" (whole-tag, ci): true
-        DISCRIMINATOR: -Infinity also exit 0 AND selects a DIFFERENT entry than Infinity,
-        so the non-finite branch is genuinely seeded, not collapsed to a constant     PASS
-    S3  --json --tag desi   exit=1 (spec: exactly 1) | stdout 0 bytes | stderr 44 bytes
-        "aphorism: no aphorism matches those filters"                                  PASS
-    S4  --list --seed abc   exit=2 (spec: exactly 2) | stdout 0 bytes, listing suppressed
-        CONTROL: bare --list exits 0 with 50 lines, so the suppression is specific to the
-        usage error and the check is not one that dies on everything                   PASS
+---
 
-  Regression floor re-run at cycle close, unchanged by this cycle (no product code touched):
-    $ node --test test/*.test.js
-      tests 102 | pass 102 | fail 0 | duration_ms 4564.4                               PASS
+## Stage 1 returned zero findings — and that was the most interesting result of the cycle
 
-  LIVE-LOOK: 4 findings, ALL 4 conductor-reproduced. One agent severity claim MEASURED FALSE.
-    F-1 EPIPE, agent said HIGH on the mechanism "`--list | head -1` only survives by luck
-        because 50 lines fit the 64KB pipe buffer". I tested that mechanism instead of
-        accepting it, and it is WRONG:
-          CRASH err_bytes=1006 | --list | true
-          CRASH err_bytes=1006 | node bin/aphorism.js | true
-          CRASH err_bytes=1006 | --list | head -0
-          CRASH err_bytes=1045 | --list | /nonexistent-cmd-xyz
-          clean err_bytes=   0 | head -1, head -5, sed 1q, grep -q match, grep -q no-match,
-                                 wc -l, --list --json | head -2
-        The crash needs a consumer that closes the pipe WITHOUT READING AT ALL; every consumer
-        that reads even one line is clean. RE-SCORED HIGH -> MEDIUM. The defect is real (1006
-        bytes of Node internals where a Unix filter should exit quietly) and is filed; the
-        agent's story about it was not. Most realistic real trigger: downstream fails to exec.
-    F-2 Same root cause (no error handler on process.stdout, bin/aphorism.js:28,43,48). stdout
-        redirected to /dev/full -> ENOSPC stack trace AND exit 1, the code README defines as
-        "no aphorism matched". A script checking exit 1 mistakes a full disk for an empty
-        filter result. MEDIUM. Filed with F-1 as ONE item (Q-1) — one cause, one fix.
-    F-3 Corpus attribution "Antoine de Saint-Exupery" missing its acute accent. Reproduced by
-        CODEPOINT, not by eye:
-          codepoints around "Exup": E=U+0045 x=U+0078 u=U+0075 p=U+0070 e=U+0065 r=U+0072 y=U+0079
-          corpus contains any U+00E9: false | corpus contains U+2014: true
-        The discriminator matters: em dash present throughout proves UTF-8 transport works, so
-        this is data entry, not an encoding limit. LOW. In scope — repairing an existing entry
-        is repair, not the "corpus expansion" non-goal.
-    F-4 Empty `--seed` contradicts the Selection clause. REPRODUCED — and then found to be a
-        DUPLICATE. See the retraction below.
+The reviewer (sonnet: table seat opus, dropped one rung by gear 1's `demote`, which reaches
+reviewers because the fable guard exempts only judgment seats) read all four files, ran 27
+commands, and returned **COVERAGE lines with `findings=0` on every file** plus one honest
+`SUSPECTED` it could not close for want of network access.
 
-RETRACTION, same cycle, before commit: F-4 duplicates measured gap D-43, which cycle 5 had
-  already written into SPEC.md "## Undecided behaviours" and routed to J-7. I filed Q-3 and
-  KI-32 for it, then checked the SPEC and retracted BOTH. Kept instead: (a) the corroboration
-  — an instrument with no knowledge of D-43 independently re-derived it from the binary, which
-  is real evidence the gap is genuine and human-owned; (b) the ONE fact D-43 does not record,
-  folded into J-7's notes — whitespace-PADDED seeds are ACCEPTED (`--seed " 5 "` is
-  byte-identical to `--seed 5`, exit 0), so the refusal is specific to empty/whitespace-only.
-  src/args.js:55 rejects only when the TRIMMED value is empty, then passes the UNTRIMMED string
-  to Number(), which tolerates padding by itself. Consequence for the human ruling: "accept per
-  Number()" deletes one guard clause rather than reworking seed parsing.
-  Recorded because the near-miss IS the lesson: an independent instrument re-deriving a known
-  gap is corroboration, not new backlog. Filing it would have inflated this cycle's apparent
-  output with bookkeeping the run already owned — the exact failure mode a housekeeping run is
-  most prone to.
+The review-fix contract now says: send findings to adversarial verifiers, discard what
+cannot be reproduced, fix the rest. With zero findings that pipeline has nothing to consume
+and **the pass closes as clean.**
 
-outcome: VALUE. 4/4 spec scenarios verified PASS against a code-blind answer key; 4/4 look
-  findings conductor-reproduced; 1 agent severity claim refuted by measurement; 2 backlog items
-  filed (Q-1 priority 2, Q-2 priority 5); 1 known issue opened (KI-31); 1 duplicate retracted.
-  state.qa.last_full_qa_cycle = 6.
-counters: consecutive_no_value 0 (unchanged — this cycle produced verified value).
-  k_current 3 and wave_streak 1 UNCHANGED: Wave autotune keys on a build-wave's merges and
-  verification, and this cycle ran no build wave and merged nothing.
+That is exactly where this cycle could have gone quietly wrong. A demoted reviewer's
+characteristic failure mode is not a wrong finding — it is **silence**, and from outside,
+silence is indistinguishable from a clean surface. So stage 2 was aimed at the **clean
+verdict itself**: the reviewer's five specific claims were restated as attack targets for a
+fable verifier, under a rule that `UPHELD` is only a permitted answer if it names what was
+mutated to earn it.
 
-NEXT CYCLE, read this first: Q-1 is the highest-value item on the board (priority 2, S, the
-  stdout-error-handler fix closing both F-1 and F-2) and it is a real product repair, the first
-  of this run. Its acceptance already names the four crashing triggers as the mutants AND the
-  six clean pipelines as the must-stay-green controls, so the builder has a measured target and
-  the gate has a converse control by construction. Q-2 (accent, one character) is a natural
-  same-wave partner ONLY if scoped to src/corpus.js while Q-1 owns bin/aphorism.js — disjoint,
-  so k=2 fits gear 2 exactly. Still owed before POLISH: ONE review-fix pass (scope it to
-  src/ bin/ test/, NOT this run's diff) and ONE TASTE pass. N-9 (bound KI-26) remains todo and
-  is unaffected by any of this.
+**It refuted three of the five.** Had stage 2 been skipped for want of findings, all three
+would have shipped under the label "reviewed clean".
+
+## Three findings, and the conductor reproduced every one before touching anything
+
+Agent returns are claims. The verifier's returns are claims too, and its findings were
+re-derived here from scratch, not read off its report.
+
+**RF-1 — the guard is steerable by the prose it reads** (medium; false-pass AND false-skip).
+`parseCitedDiffCommand()` used `sectionText.match()` — first match wins — over a README
+section that GROWS: it already discusses two earlier citations. Any second
+`` `git diff <hex>..<ref> -- <paths>` `` appearing above the live citation silently becomes
+the thing the guard checks. Reproduced in `.swarm/runs/cycle-006-repro-F2.mjs`, **6/6 arms**,
+with controls in both directions:
+
+    AS PREDICTED  A0  PASS  pristine full clone                     (arms are live)
+    AS PREDICTED  A1  FAIL  stale citation, no decoy                (guard works)
+    AS PREDICTED  A2  PASS  stale citation + empty-diff decoy ABOVE  <-- FALSE PASS
+    AS PREDICTED  C1  FAIL  CONTROL: identical decoy placed BELOW    <-- mechanism is POSITION
+    AS PREDICTED  A3  SKIP  correct citation + unreachable decoy ABOVE <-- FALSE SKIP
+    AS PREDICTED  C2  PASS  CONTROL: benign sentence above it        <-- not an instrument that
+                                                                        reddens on any edit
+
+    A3's skip reason, verbatim, on a FULL clone:
+      "cited base commit decade5 is not reachable in this checkout (likely a shallow
+       clone) -- cannot evaluate the README's Node support citation"
+
+A3 is the worse half and the reason this is not a curiosity: the suite is **green**, the
+check **never ran**, and the stated reason is **false**. That is this repo's worst recorded
+species — run #3 cycle 15's S1, an under-measuring instrument that still exits 0.
+
+**RF-2 — a true claim resting on a false reason** (low). `docs/coverage-baseline.md` said
+`HELP` ends in a newline because "the source line immediately before the closing backtick is
+blank". `src/args.js:19` is the jq example line. The conclusion is true and independently
+verified (`HELP.endsWith('\n') = true`, last chars `"... sort -u\n"`); the justification was
+wrong. Reworded to the actual reason — the closing backtick opens its own line.
+
+**RF-3 — the CI gate can be green having run nothing** (medium). Measured under the GH
+Actions shell with an empty `test/`:
+
+    [gate step, line 19]      exit=0   ℹ tests 0   NOTE fired: false
+    CONTROL, one failing test present:
+    [gate step, line 19]      exit=1   ℹ tests 1 / pass 0 / fail 1
+
+Node ≥ 21 re-globs the literal itself, so an unmatched pattern collects zero files and exits
+0. Fixed with a collection guard (`ls test/*.test.js`, non-zero on an unmatched glob),
+**deliberately not a count floor** — a number goes stale on the next commit, which is the
+decay class this repo has filed eight times.
+
+## The fix, gated
+
+Sealed **before** dispatch and held under `SWARM/runs/` for the whole dispatch window — hard
+rule 5 gives agents target paths only, so a gate there is *structurally* unreachable to the
+fixer rather than merely forbidden by a prompt line (the run #3 cycle-14 practice).
+
+    gate sha256  9d3743cbf2254b2c640cb8c4a8c14118ed668d711d4dbb0ee1f0b504c0328a32
+    PRE-DISPATCH BASELINE   6 PASS / 4 FAIL
+      SOUND: B3, B4, B5, B8 all RED before the fix existed — each encodes the defect
+             rather than asserting nothing
+    POST-FIX                10 PASS / 0 FAIL   (gate re-hashed, byte-identical)
+
+Only one agent was dispatched (gear 1 cap = 1), scoped to one file, explicitly forbidden to
+touch `README.md` — editing the document so the guard agrees with it would be editing the
+world to satisfy the test. **The commit proves it complied**: `c08562b` contains
+`.github/workflows/test.yml`, `docs/coverage-baseline.md`,
+`test/node-support-citation.test.js` and two `.swarm/` artifacts, and `README.md` is absent.
+
+## The gate was then run a second time and scored 8/10 — adjudicated, not edited
+
+Re-run after the re-citation, two cells went red. **Neither is an instrument defect, and the
+count of those stays at 23.**
+
+- **B9** ("outside `.swarm/`, the only changed path is the guard file") asks whether the
+  FIXER edited README. By the re-run that window had CLOSED — the fix was committed and
+  README was dirty because *I* was doing the prescribed re-citation. Right property, wrong
+  moment; answered decisively by `c08562b`'s own file list instead.
+- **B6** (a genuine `--depth 1` clone must still SKIP) returned PASS. That is a TRUE reading
+  of a transient state: mid-round-trip the tree cited `c08562b` while HEAD *was* `c08562b`,
+  so the base was present even in a shallow clone and the guard could evaluate it for once.
+  **Resolved by measurement, not argument** — the re-citation was committed, HEAD moved past
+  the cited base, and B6 returned to SKIP.
+
+The lesson is narrower and newer than the standing "a gate is a program and needs its own
+baseline": **a gate cell has a valid WINDOW as well as a correct assertion**, and a cell
+whose subject is an agent dispatch stops meaning anything the moment the conductor starts
+editing.
+
+## The round trip the section prescribes, run again
+
+Committing the fix touches `test/` and `.github/`, both inside the pathspec README cites as
+its own retirement condition — so it falsifies the citation the instant it lands. This is
+the intrinsic window already recorded as **P-7** and handed to a human. It was **disclosed
+in the commit message**, not discovered later:
+
+    c08562b  the three fixes            RED on a full clone, by construction
+    push     -> Actions run 32331910336, four jobs green, INCLUDING the new
+                "Assert the test glob matches at least one file" step on all four majors
+    <this>   README re-cited to that run — restores full-clone green
+
+    test (18) v18.20.8   # tests 120  # pass 119  # fail 0  # skipped 1
+    test (20) v20.20.2   # tests 120  # pass 119  # fail 0  # skipped 1
+    test (22) v22.23.2   # tests 120  # pass 119  # fail 0  # skipped 1
+    test (24) v24.19.0   ℹ tests 120  ℹ pass 119  ℹ fail 0  ℹ skipped 1
+
+**The reviewer's one SUSPECTED item was real and is closed.** It observed that the cycle-2
+citation has an archived log in `.swarm/runs/` while the cycle-5 citation had none, so the
+newest claim was the least checkable. I confirmed the citation itself live
+(`gh run view 32328776838` → sha `5f833ab`, four jobs success) — the claim was true — and
+then archived **both** logs, this cycle's and cycle 5's retroactively, so the tables survive
+GitHub's log retention. A citation nobody can check after 90 days is a claim, not evidence.
+
+**Dogfooding, unplanned:** the hardened guard immediately constrained how I could write the
+cycle-6 README block — it now refuses more than one `git diff` command in the section, so
+the update note had to reference the command without restating it. Gate cell B1 passing is
+the proof my own edit satisfied the rule I had just shipped.
+
+## VERIFICATION EVIDENCE
+
+Full transcripts: `.swarm/runs/cycle-006-verify-F2.txt` (repro, 6 arms),
+`cycle-006-gate-F2.mjs` (sealed gate, copied in post-verification),
+`cycle-006-repro-F2.mjs`, and the two archived CI logs.
+
+    $ node --test test/*.test.js          # live tree, after all three fixes
+    ℹ tests 120   ℹ pass 120   ℹ fail 0   ℹ skipped 0        (node v24.19.0)
+
+    $ git diff --name-only c08562b..HEAD -- src bin test .github
+    (no output — the re-cited citation is empty again; P-5 floor holds on final HEAD)
+
+    $ sha256sum cycle-006-gate-F2.mjs     # after scoring, unchanged from the seal
+    9d3743cb...0328a32
+
+    RF-3 fix, arm and control under the GH Actions shell:
+      ARM     (test/ empty)          guard exit 2   old gate exit 0   <-- the defect
+      CONTROL (one real test)        guard exit 0   old gate exit 0   <-- no over-trigger
+
+**Wave autotune: NOT applied.** cycle.md scopes it to "after a build-wave's merges +
+verification complete"; this cycle's work type was review-fix. `k_current` stays 3,
+`wave_streak` stays 1. Recorded because silently crediting a review-fix pass as a clean
+build wave would inflate `k` on evidence autotune was never defined over — and the gear cap
+of 1 binds first anyway, so the credit would have bought nothing but a wrong number.
+
+**Backlog:** 26 → 30 items (RF-1, RF-2, RF-3 done; RF-4 todo). Done 16 → 19, todo 1 → 2,
+blocked 8, dropped 1. RF-4 is the Node-20 deprecation annotation read off this cycle's own
+CI run — **filed, not fixed**, because cycle.md permits ONE work type per cycle and a fresh
+observation is not a reproduced review finding. `consecutive_no_value = 0`.
+
+**Next:** run #5 still owes **QA-full** and **TASTE** before POLISH / VALUE_LOOP. Cycle 7
+should pay one of them — QA-full is the natural next, TASTE last since a `fundamental`
+verdict re-aims the remaining clock. The DONE decision cycle 5 asked for is **not** ripe
+until both are paid; this cycle is the second consecutive demonstration that the board
+looking empty is not the same as the gates being discharged.
+
+## runfile-mirror
+
+    stop_at 1787276706 | usage_reset_at 1787276706 | mode guest dial 0.33 | auth subscription
+    gear 1 (target 1, rho 5.44) | k_cap 1 | demote true | promote false
+    weekly: used 100% / opus 100% at week 42.17% elapsed, heat 2.37, ceiling 2, promote_blocked
+    targets: /opt/targets/aphorism-cli (active, weight 1) | rotation [0] cursor 0
+    watchdog pacer, plist_loaded true | caffeinate_pid 0 (Linux) | cycles_since_recycle 5
+    playbook auto: L-008 L-016 L-024 L-026 L-029 L-031 L-033 L-034 L-038 L-042 L-043 L-044 L-046

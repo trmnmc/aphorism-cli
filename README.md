@@ -177,10 +177,10 @@ that spawn the real binary and assert on stdout, stderr, and exit codes.
 
 ### Node support
 
-CI runs the whole suite on four Node majors on every push. As of commit `5f833ab`
+CI runs the whole suite on four Node majors on every push. As of commit `c08562b`
 (2026-08-20), the most recent full matrix run against a commit that actually changed
 `src/`, `bin/`, `test/`, or the workflow itself was
-[Actions run 32328776838](https://github.com/trmnmc/aphorism-cli/actions/runs/32328776838),
+[Actions run 32331910336](https://github.com/trmnmc/aphorism-cli/actions/runs/32331910336),
 which reported:
 
 | Node | Result |
@@ -195,7 +195,7 @@ The one skip is the same on all four and is expected: it is
 CI checks out shallow (see below).
 
 Later CI runs re-test byte-identical code as of this writing (see
-`git diff 5f833ab..HEAD -- src bin test .github`), so this citation stays the reference
+`git diff c08562b..HEAD -- src bin test .github`), so this citation stays the reference
 matrix until that diff stops being empty. For the current state of CI — including any
 runs since this citation — see the
 [`test` workflow's run history](https://github.com/trmnmc/aphorism-cli/actions?query=workflow%3Atest).
@@ -230,6 +230,32 @@ runs since this citation — see the
 >    is exactly that: red locally, green in CI, and repaired by this commit. That window is
 >    intrinsic to a self-falsifying citation, not a defect in the test — it is the cost of
 >    the claim being checkable at all.
+
+> **Updated 2026-08-20 (cycle 6).** The citation moved again, from run `32328776838` at
+> commit `5f833ab` to run `32331910336` at commit `c08562b`, by the same stated condition
+> as last time. What is worth recording is not the move but why it happened: a review pass
+> went looking at the guard that watches this section and found the guard could be steered
+> by the prose it reads.
+>
+> It located its citation by taking the FIRST `git diff` command in this section. This
+> section is prose that grows — it already discusses two earlier citations — so the next
+> person to mention an old command in passing, anywhere above the live paragraph, would
+> have silently redirected the check at it. Measured, not theorised: with a decoy sentence
+> added above, a genuinely stale citation reported green, and a correct citation reported
+> `SKIP` on a full clone while blaming a shallow checkout that did not exist. The same
+> decoy placed *below* the citation changed nothing, which is what pinned the cause to
+> position rather than to the decoy's presence.
+>
+> Two changes followed. The guard now requires this section to name its retirement
+> condition exactly **once** and fails loudly on ambiguity instead of resolving it by
+> position — so if you are editing this section and the suite starts complaining about two
+> commands, that is the guard doing its job, not a bug. And an unreachable base commit now
+> skips only when the checkout is genuinely shallow (`git rev-parse
+> --is-shallow-repository`); on a full clone, a cited commit that does not resolve is a
+> bogus citation and fails. The CI skip in the table above is unchanged and still expected.
+>
+> The archived job logs for this run and the previous one now live in `.swarm/runs/`, so
+> the table stays checkable after GitHub's log retention drops the originals.
 
 Read "Node 18+" as **verified-at-18**: 18 is the lowest version actually tested, and it
 passes everything. It is **not proven minimal** — nothing here tests Node 16 or 17, so

@@ -545,6 +545,74 @@
       "packages": [],
       "acceptance": "A human rules on ONE of: (a) P-5 wording is amended to exempt the single commit that introduces a src/bin/test/.github change from the full-clone green requirement, on the stated ground that the CI run which refreshes the citation cannot exist before the push; (b) the citation design changes so the window closes; or (c) the guard is retired. Until then the exception stands recorded, never re-labelled as a pass.",
       "notes": "MEASURED cycle 5, not inferred. P-6 mechanizes README Node-support own falsifier. Because the pathspec it cites is `src bin test .github`, ANY commit touching those paths makes the cited diff non-empty at that commit, so the suite is RED on a full clone until a follow-up commit re-cites to a CI run for it — and that CI run cannot exist until after the push. Commit 5f833ab is exactly that case: red on a full clone, green in CI (the guard skips on depth-1 checkout), repaired by c0337f1. P-5 requires green at >=119 on EVERY commit this run makes, so 5f833ab is a genuine exception and is recorded as one in .swarm/runs/cycle-005-verify-P-6.txt. WHY THIS IS HUMAN-OWNED: every available disposition edits a locked SPEC must-have or deletes a shipped claim, and this run non-goals forbid the swarm doing either for itself. Note the window is not a defect in the test — it is the price of the claim being checkable at all, and the alternative (a citation nothing runs) is the state that let the claim go stale undetected two cycles ago."
+    },
+    {
+      "id": "RF-1",
+      "title": "The README-citation guard is steerable by the prose it reads: first-match parsing lets a decoy shadow the live citation",
+      "kind": "fix",
+      "effort": "S",
+      "priority": 5,
+      "status": "done",
+      "attempts": 0,
+      "model": "sonnet",
+      "deps": [],
+      "files_hint": [
+        "test/node-support-citation.test.js"
+      ],
+      "packages": [],
+      "acceptance": "parseCitedDiffCommand() used sectionText.match() over a prose section that grows over time, so the FIRST backtick-quoted `git diff <hex>..<ref> -- <paths>` wins. Two reproduced consequences on a FULL clone: a stale citation reads green when an empty-diff decoy sits above it, and a correct citation reports SKIP blaming a shallow clone that does not exist when an unreachable-base decoy sits above it. Required: ambiguity (more than one such command in the section) FAILS loudly and position-independently; an unreachable base SKIPs only when `git rev-parse --is-shallow-repository` is true and FAILs on a full clone; pristine PASS, genuinely stale FAIL, real depth-1 clone SKIP all preserved; suite >=120 green; blast radius one file.",
+      "notes": "Found by the cycle-6 review-fix pass. Stage 1 (sonnet reviewer) returned ZERO findings; stage 2 (fable adversarial verifier), aimed at that clean verdict rather than at findings, refuted it. Conductor re-reproduced independently in .swarm/runs/cycle-006-repro-F2.mjs, 6/6 arms with controls in BOTH directions (decoy placed after the citation stays red -> the mechanism is position; a benign sentence stays green -> the arms are not an instrument that reddens on any edit). Sealed gate cycle-006-gate-F2.mjs, sha256 9d3743cb..., discriminating baseline 6P/4F with B3/B4/B5/B8 red by construction, post-fix 10P/0F."
+    },
+    {
+      "id": "RF-2",
+      "title": "docs/coverage-baseline.md justifies a true claim with a false statement about src/args.js",
+      "kind": "docs",
+      "effort": "S",
+      "priority": 6,
+      "status": "done",
+      "attempts": 0,
+      "model": "conductor",
+      "deps": [],
+      "files_hint": [
+        "docs/coverage-baseline.md"
+      ],
+      "packages": [],
+      "acceptance": "The doc said HELP ends in a newline because \"the source line immediately before the closing backtick is blank\". src/args.js:19 is the jq example line, not blank. The CONCLUSION (HELP.endsWith(newline) === true) is independently verified true -- the justification was wrong, not the claim. Restate the actual reason: the closing backtick opens its own line (src/args.js:20), so the literal ends with the newline terminating line 19.",
+      "notes": "Low severity and worth recording anyway: this is the overclaiming class this repo tracks, in the mild direction -- a right answer resting on a wrong reason. Conductor repair rather than a dispatch, per the standing precedent that a one-sentence fix does not earn a cycle."
+    },
+    {
+      "id": "RF-3",
+      "title": "The CI gate step can report success having collected zero tests",
+      "kind": "fix",
+      "effort": "S",
+      "priority": 5,
+      "status": "done",
+      "attempts": 0,
+      "model": "conductor",
+      "deps": [],
+      "files_hint": [
+        ".github/workflows/test.yml"
+      ],
+      "packages": [],
+      "acceptance": "`node --test test/*.test.js` exits 0 printing \"tests 0\" when the glob matches nothing, because Node >= 21 re-globs the literal itself. The real gate step could therefore be green having run nothing. Add a collection guard that is loud on an unmatched glob, WITHOUT introducing a count floor (a number goes stale on the next commit). Measured: empty test dir -> guard exit 2, old gate exit 0; CONTROL one failing test present -> guard exit 0, gate exit 1.",
+      "notes": "Same species as run #3 cycle 15 defect S1, where a hardcoded six-file test list named two files that did not exist and the suite exited 0 over the four that did -- green and silently incomplete. Latent here (requires test/ to be emptied) but the fix is one line and stale-proof. Verified live: the new step ran green on all four Node majors in Actions run 32331910336."
+    },
+    {
+      "id": "RF-4",
+      "title": "CI actions target Node 20, which GitHub has deprecated on runners",
+      "kind": "fix",
+      "effort": "S",
+      "priority": 60,
+      "status": "todo",
+      "attempts": 0,
+      "model": "haiku",
+      "deps": [],
+      "files_hint": [
+        ".github/workflows/test.yml"
+      ],
+      "packages": [],
+      "acceptance": "Actions run 32331910336 annotated every job: \"Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4.\" The workflow is green today because the runner silently forces Node 24. Bump both to the major that targets Node 24 natively, and confirm the matrix stays green on all four Node majors against a REAL run rather than a local inference.",
+      "notes": "Observed, not inferred: read off the run annotations of this cycle own push. Filed rather than fixed -- cycle.md step 5 permits ONE work type per cycle and this cycle was review-fix, whose stage 3 is scoped to REPRODUCED findings from the review. This is a fresh observation, not a review finding, so folding it in would have been scope creep. Nothing is broken today; the deprecation is a future break."
     }
   ]
 }

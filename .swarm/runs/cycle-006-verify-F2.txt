@@ -1,0 +1,97 @@
+cycle-006 — RF-1 (FINDING 2) verification transcript
+====================================================
+
+Two runs of .swarm/runs/cycle-006-repro-F2.mjs, before and after the fix.
+
+READ THE SECOND RUN CAREFULLY: the script's predictions encode the DEFECT, so after the
+fix the correct outcome is that several arms NO LONGER land as predicted. "4 arms did not
+land as predicted" in run 2 is the defect being gone, not a regression. Each is accounted
+for individually below.
+
+
+================================================================================
+RUN 1 — PRE-FIX (HEAD 68c318c, guard at sha256 2aeba639...)
+         the defect reproducing, 6/6, with controls in both directions
+================================================================================
+
+PREMISE CHECKS (the arms are meaningless if these do not hold)
+  HEAD                                  = 68c318c
+  git diff 81b0958..HEAD -- <cited paths> = NON-EMPTY (2 files changed, 159 insertions(+))
+  git diff 68c318c..HEAD -- <cited paths> = EMPTY (decoy will read as satisfied)
+
+ARMS — guard run ALONE (node --test --test-reporter=tap test/node-support-citation.test.js)
+
+  AS PREDICTED  A0  predicted PASS / actual PASS
+        BASELINE: pristine clone, untouched citation
+        TAP: ok 1 - README Node support citation: cited git diff must be empty (or the check must skip on a missing precondition)
+        why it matters: establishes the guard really runs and really passes here — a SKIP would void every arm below
+
+  AS PREDICTED  A1  predicted FAIL / actual FAIL
+        STALE citation, no decoy: base -> 81b0958
+        TAP: not ok 1 - README Node support citation: cited git diff must be empty (or the check must skip on a missing precondition)
+        why it matters: the guard works: a genuinely stale citation is caught
+
+  AS PREDICTED  A2  predicted PASS / actual PASS
+        REFUTATION (false-pass): stale citation + empty-diff decoy BEFORE it
+        TAP: ok 1 - README Node support citation: cited git diff must be empty (or the check must skip on a missing precondition)
+        why it matters: same stale citation as A1, now GREEN — the decoy is parsed instead of the citation
+
+  AS PREDICTED  C1  predicted FAIL / actual FAIL
+        CONTROL: stale citation + the IDENTICAL decoy placed AFTER it
+        TAP: not ok 1 - README Node support citation: cited git diff must be empty (or the check must skip on a missing precondition)
+        why it matters: stays red -> mechanism is FIRST-MATCH position, not the mere presence of a decoy
+
+  AS PREDICTED  A3  predicted SKIP / actual SKIP
+        REFUTATION (false-skip): correct citation + unreachable-base decoy BEFORE it
+        TAP: ok 1 - README Node support citation: cited git diff must be empty (or the check must skip on a missing precondition) # SKIP cited base commit decade5 is not reachable in this checkout (likely a shallow clone) -- cannot evaluate the README's Node support citation
+        SKIP REASON: cited base commit decade5 is not reachable in this checkout (likely a shallow clone) -- cannot evaluate the README's Node support citation
+        why it matters: full clone, citation TRUE, guard stands down anyway and blames a shallow clone
+
+  AS PREDICTED  C2  predicted PASS / actual PASS
+        CONTROL: correct citation + benign sentence (no git-diff token) BEFORE it
+        TAP: ok 1 - README Node support citation: cited git diff must be empty (or the check must skip on a missing precondition)
+        why it matters: stays green -> the arms are not an instrument that reddens on any edit to the section
+
+scratch removed; `git status --porcelain` in target =
+?? .swarm/runs/cycle-006-repro-F2.mjs
+
+ALL 6 ARMS LANDED AS PREDICTED — FINDING 2 REPRODUCED, with both controls holding.
+
+
+================================================================================
+RUN 2 — POST-FIX, run at HEAD c08562b (the fix committed, README not yet re-cited)
+================================================================================
+
+  NOT AS PREDICTED  A0  predicted PASS / actual FAIL
+  AS PREDICTED      A1  predicted FAIL / actual FAIL
+  NOT AS PREDICTED  A2  predicted PASS / actual FAIL
+  AS PREDICTED      C1  predicted FAIL / actual FAIL
+  NOT AS PREDICTED  A3  predicted SKIP / actual FAIL
+  NOT AS PREDICTED  C2  predicted PASS / actual FAIL
+  4 ARM(S) DID NOT LAND AS PREDICTED: A0, A2, A3, C2
+
+ACCOUNTING, arm by arm — two distinct causes, both expected, neither a regression:
+
+  A2  predicted PASS, got FAIL  ->  THE FIX WORKING. This arm IS the false-pass: a stale
+                                    citation shadowed by a decoy. It now fails loudly on
+                                    ambiguity instead of reading green. The defect no
+                                    longer reproduces.
+  A3  predicted SKIP, got FAIL  ->  THE FIX WORKING. This arm IS the false-skip. It now
+                                    fails on ambiguity rather than standing down on a full
+                                    clone while blaming a shallow one.
+  A0  predicted PASS, got FAIL  ->  NOT the guard. This run's clone is committed HEAD
+      C2  (same cause)              c08562b, whose README still cites 5f833ab — and c08562b
+                                    touches test/ and .github/, so the cited diff is
+                                    non-empty. This is the DISCLOSED transient-red window
+                                    (P-7), stated in c08562b's own commit message before it
+                                    was observed here. Both arms are reading a genuinely
+                                    stale citation and correctly failing.
+  A1, C1                        ->  unchanged, still red, as they must be.
+
+A0/C2 are therefore the guard being RIGHT about a tree that really was stale for one commit.
+Resolved by the round trip the README section prescribes, not by weakening anything: the
+citation was re-pointed to Actions run 32331910336 at c08562b in the following commit.
+
+RUN 3 below re-runs the same script after that re-citation, where A0 and C2 must return to
+PASS while A2 and A3 must stay FAIL — the shape that shows the fix is real AND the tree is
+green again.
