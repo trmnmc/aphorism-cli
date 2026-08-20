@@ -20477,3 +20477,270 @@ Unlike `4b63e91`, this commit touches no path inside the cited pathspec — only
 round trip is owed. Cycle 2 predicted its own post-commit RED and then checked the prediction;
 this cycle predicted GREEN and checked that instead. Q-5 invariants re-confirmed at the commit:
 corpus sha256 `77a4de5c` and `--help` sha256 `d759d781` both unmoved.
+
+## Cycle 4 — 2026-08-20T18:36Z–18:55Z — Q-3, and the silence that stopped being silent
+
+**Gear 2** (guest mode, dial 0.3, ρ=0.59, k_cap 2, demote on, promote blocked by the weekly
+governor at 100% used / 51.0% elapsed, heat 1.96). Probe OK, `source: probe`. Wave of 1 —
+`k_current` is 2, but Q-3 was the only live unblocked candidate: Q-2's remainder turned out to
+be conductor measurement (below), and everything else is blocked or conductor-run. One builder,
+**sonnet**: Q-3 is `kind: "test"`, and the gear-2 demotion only drops sonnet→haiku for
+docs/polish, never a build item.
+
+**Gate sealed BEFORE dispatch**, sha256 `855beded361a0bc7f34f918fcb725f5f7b00880e7a0a5c8e317f144ac6614060`,
+re-hashed after the builder returned: **identical**. Twenty cells across five sections.
+
+### The result: the same two arms, before and after, on byte-identical inputs
+
+Cycle 3 measured the hole rather than describing it. Two control arms falsified the README's
+Node-support matrix table and the whole suite stayed green both times. Cycle 4's job was to make
+those exact arms fire. They do:
+
+```
+                                        cycle 3 (no guard)      cycle 4 (guarded)
+C4a  v20 row: 122 pass -> 121 pass       SILENT 124 pass/0 fail  FIRES  3 pass/4 fail
+C4b  v20 row -> 999 tests, 998 pass      SILENT 124 pass/0 fail  FIRES  3 pass/4 fail
+```
+
+The guard file is byte-identical across every arm (sha256 `f7ba6ae7…`, verified equal to the
+merged tree's copy) and only `README.md` varies, so each verdict is attributable to the table
+edit alone. The firing messages name the row and show the arithmetic:
+
+```
+C4a  "claims 124 tests but pass (121) + fail (0) + skipped (2) = 123 ... 124 !== 123"
+     "row for Node v20.20.2 ... does not agree with the Node v18.20.8 row"
+C4b  "claims 999 tests but pass (998) + fail (0) + skipped (2) = 1000 ... 999 !== 1000"
+```
+
+### VERIFICATION EVIDENCE (20 cells; full file `.swarm/runs/cycle-004-verify-Q-3.txt`)
+
+```
+A1  $ git diff --name-only e4797b3..HEAD   ->  test/readme-matrix-consistency.test.js  (only)
+A2  sha256 src/corpus.js  77a4de5c…  == baseline
+A3  sha256 `--help`       d759d781…  == baseline
+B1  $ node --test test/*.test.js
+    ℹ tests 129  ℹ pass 127  ℹ fail 2  ℹ skipped 0
+    ✖ README Node support citation: cited git diff must be empty …
+    ✖ README Node support citation: base-to-working-tree diff must also be empty …
+B2  $ node --test test/readme-matrix-consistency.test.js
+    ℹ tests 5  ℹ pass 5  ℹ fail 0  ℹ skipped 0    <- 0 skipped: a SKIP would be a false green
+D1  $ git diff --numstat e4797b3..HEAD  ->  238  0  test/readme-matrix-consistency.test.js
+```
+
+`B1`'s two failures were written into the sealed gate as a **prediction, before dispatch**, and
+then checked — not explained afterwards. This commit touches `test/`, which sits inside the
+pathspec the README cites as its own falsification condition, so both citation guards go RED the
+instant the file lands (README standing limit 2). Nothing else fails. Q-8 owns the re-citation.
+The pathspec was not narrowed and no assertion was relaxed: `D3` shows
+`test/node-support-citation.test.js` absent from the diff entirely.
+
+### Controls — eight arms, in a scratch harness, restored after
+
+| arm | change | result |
+|---|---|---|
+| C6 | unmodified TRUE table **[converse control]** | **GREEN** 5/0 |
+| C4a | v20 row: `122 pass` → `121 pass` | **FIRES** 3/4 |
+| C4b | v20 row → `999 tests, 998 pass` | **FIRES** 3/4 |
+| C8 | v22 row: `skipped` 2→1, `pass` 122→123 — own sum still balances | **FIRES** 4/2 |
+| C7 | **all four rows** → `200/198/0/2` (self-consistent, false) | **SILENT** 5/0 |
+| C9 | run id in the URL diverges from the run id in the link text | **FIRES** 4/2 |
+| C10 | commit in prose diverges from the diff-command base | **FIRES** 4/2 |
+| C5 | benign reword of unrelated prose **[converse control]** | **GREEN** 5/0 |
+
+**C8 is the arm that matters most after C4a/C4b.** Its row's own arithmetic still balances
+(124 = 123 + 0 + 1), so the per-row check is silent on it and only cross-row agreement fires.
+That the two checks are not redundant with each other is now a measurement, not an argument —
+which is worth stating because KI-R6-3 records a case earlier this run where two guards *were*
+redundant and it went unnoticed until a builder disclosed it.
+
+### C7 — the hole that is narrowed, not closed
+
+Move all four rows together to a self-consistent falsehood and the guard stays **silent**. The
+README can still claim a CI run that never happened, so long as it lies consistently. This was
+written into the sealed gate as cell C7 *before* the result was known, precisely so a good
+C4a/C4b outcome could not quietly imply more coverage than it bought.
+
+The internal-consistency anchor cannot see a consistent lie — that is a property of the anchor,
+not a defect in the implementation. Closing it needs something outside the document, and both
+mechanisms have real costs: live network provenance would make an offline suite depend on GitHub
+*and* would skip in exactly the shallow-CI environment the table describes (inert where it is
+most needed), while a committed machine-readable CI artifact avoids the network but adds a
+generated file and changes what CI is responsible for. That is an operator's choice. Filed as
+**KI-R6-4** and **Q-9**, not built.
+
+### Q-2 closed — its remaining work was a file that has never existed
+
+Q-2 has carried *"citations.test.js still untreated"* through two cycles of notes. There is no
+such file, and there never has been:
+
+```
+$ ls test/citations.test.js                          -> No such file or directory
+$ git log --all --oneline -- test/citations.test.js  -> (empty: never on any branch)
+$ git log --all --diff-filter=A --name-only -- 'test/*' | sort -u
+  args.test.js  cli.test.js  node-support-citation.test.js  pipe.test.js
+  readme-matrix-consistency.test.js  readme-tags.test.js  select.test.js
+```
+
+Seven test files have ever existed; none is that one. It was a PLAN-time `files_hint` that was
+never checked against the tree, and it then travelled forward as if it were an observation.
+Q-2's two *real* guard files both had the kill/converse treatment already — node-support-citation
+(cycle 1) and readme-tags (cycle 2, six kill arms and two converse controls). Q-2 → **done**.
+
+The finding worth carrying is not about the file. It is that a planning artifact was restated as
+a measurement, twice, and no cycle spent four seconds on `ls`. This run's whole premise is that
+guard-shaped prose should be executed rather than believed; a backlog note deserves the same
+suspicion.
+
+### Two conductor errors, recorded
+
+1. **A fence breach I caused.** The dispatch told the builder to create its worktree at
+   `$(mktemp -d)`. The sandbox blocks `mktemp` and blocks writes outside `/opt/swarm` and the
+   target, so the builder placed the worktree at `/opt/swarm/tmp-wave-1787251030-Q3` — inside
+   SWARM, which hard rule 5 limits to `runs/` and `playbook/`. It disclosed this unprompted. The
+   breach is the conductor's authoring error, not the builder's. Cleaned up this cycle
+   (`worktree remove --force` + `prune`; `git -C /opt/swarm status --porcelain` now clean).
+   Future dispatches on this VPS must name a writable worktree path explicitly.
+2. **A cell corrected from last cycle.** Cycle 3's gate cell A3 asserted a `package.json` that
+   does not exist in this repo. This cycle's A4 states the applicable form instead — with no
+   manifest present anywhere, no dependency can be declared. The Q-5 invariant is protected in a
+   stronger form than the original cell claimed.
+
+### Builder departures — three, all disclosed, all judged
+
+- Added the two **optional** cross-reference checks the brief invited (run id: link text vs URL;
+  commit: prose vs diff-command base). **Kept** — C9 and C10 show both are live instruments, and
+  both are offline and cheap.
+- **Declined** to tie the prose *"four Node majors — 18, 20, 22 and 24"* to the table's row
+  count, calling it fragile to parse. **Accepted, and it is the better call**: the guard
+  deliberately does not hardcode a row count, so a future cycle adding a Node major stays a
+  legitimate edit rather than a failure.
+- Disclosed the worktree-path deviation (error 1 above). Correct to disclose.
+
+**Not done, stated plainly**
+
+- Both citation guards are RED at this commit, by design; Q-8 closes them after CI runs.
+- C7 / KI-R6-4 unfixed and blocked on an operator ruling.
+- KI-R6-3 (two guards reading the same table row) unchanged.
+
+**Wave autotune:** clean wave — 0 reverts, 0 failed verifies. `wave_streak` 0 → **1**;
+`k_current` stays **2** (streak has not reached 2).
+
+**Next:** cycle 5 — Q-8 once CI has run against this commit; cycle 5 is also a `% 5` cycle, so a
+full SPEC re-read and backlog hygiene pass are due.
+
+runfile-mirror:
+```json
+{
+  "version": 1,
+  "targets": [
+    {
+      "path": "/opt/targets/aphorism-cli",
+      "status": "active",
+      "weight": 1
+    }
+  ],
+  "rotation_cursor": 0,
+  "rotation_schedule": [
+    "/opt/targets/aphorism-cli"
+  ],
+  "stop_at": "2026-08-21T14:36:47Z",
+  "usage_reset_at": "2026-08-20T21:00:00Z",
+  "model_policy": "value-routing",
+  "auth_mode": "subscription",
+  "kickoff_source": "allocator",
+  "run_label": "improvement run #6",
+  "pacing": {
+    "mode": "guest",
+    "dial": 0.3
+  },
+  "budget": {
+    "api_cap_usd": null,
+    "api_spend_usd": 0,
+    "gear": 2,
+    "gear_target": 2,
+    "ratio": 0.59,
+    "k_cap": 2,
+    "promote": false,
+    "demote": true,
+    "ceiling": 2,
+    "probe_ok": true,
+    "probe_failures": 0,
+    "weekly_used_pct": 100,
+    "opus_used_pct": 100,
+    "week_elapsed_pct": 50.95,
+    "weekly_heat": 1.96,
+    "probed_at": 1787249450,
+    "window_end_epoch": 1787259600,
+    "mode": "guest",
+    "source": "probe",
+    "last_probe_ts": 1787251030,
+    "last_real_probe_ts": 1787251030,
+    "window_tokens": 28142481,
+    "window_cost_usd": 22.061609749999995,
+    "tokens_per_hour": 28687966,
+    "projected_depletion_at": 1787265526,
+    "weekly_ok": true
+  },
+  "playbook": {
+    "apply_mode": "auto",
+    "applied": [
+      "L-008",
+      "L-016",
+      "L-024",
+      "L-026",
+      "L-029",
+      "L-031",
+      "L-033",
+      "L-034",
+      "L-038",
+      "L-039",
+      "L-041",
+      "L-042",
+      "L-043",
+      "L-044",
+      "L-045",
+      "L-046",
+      "L-047"
+    ],
+    "vetoed": [],
+    "held_out": [
+      "L-022"
+    ],
+    "held_out_reason": "L-022 instructs persisted-UI-state cleanup in beforeEach for components that mount in a browser; this target is a zero-dependency terminal CLI with no browser surface. Staged as applied, deliberately kept OUT of prompt_lines, to be reported not-exercised at WRAP_UP.",
+    "wave_k": null,
+    "routing_recs": [
+      "core-logic->fable (L-026)"
+    ],
+    "staged_by": "direct Read of /opt/swarm/playbook/learnings.md — bin/swarm-playbook.sh parse was DENIED this session (denial #34); the file was NOT validated by the script's parser",
+    "ledger_line_written": true
+  },
+  "heartbeat": {
+    "ts": 1787251030,
+    "next_wakeup_at": 1787253730,
+    "pid": 3230546,
+    "limp": false,
+    "degraded_tiers": []
+  },
+  "watchdog": {
+    "mode": "normal",
+    "plist_loaded": true,
+    "lockfile": "/opt/swarm/runs/watchdog.lock",
+    "relaunch_attempts": 0,
+    "note": "swarm-watchdog.timer enabled+active, but its DONE-guard is satisfied by REPORT.md existing (present from cycle 0 on an improvement run), so it is expected to no-op every firing — L-037, tracked as KI-R6-1. swarm-pacer.timer is enabled+active and is this run's real recovery path."
+  },
+  "caffeinate_pid": null,
+  "wrap_up_complete": false,
+  "cycles_since_recycle": 4,
+  "artifact": {
+    "url": null,
+    "file": "/opt/swarm/runs/dashboard.html",
+    "publish_failures": 0
+  },
+  "last_cycle": {
+    "n": 3,
+    "target": "/opt/targets/aphorism-cli",
+    "outcome": "Q-7 done, sealed gate 5ed845eb unchanged across dispatch, 17 cells; suite 124 pass / 0 fail / 0 skipped — cycle-2 RED closed by re-citation with A4/A5 proving the guard was never touched; cited the ELIGIBLE run (32400996331 @ 4b63e91), not the newer ineligible one; C4a/C4b measured the matrix-count hole SILENT and handed Q-3 its spec; GREEN AT COMMIT (post-commit re-measured, cited-path diff still empty) — unlike cycle 2 this commit touches no cited path",
+    "commit": "83cef40"
+  }
+}
+```

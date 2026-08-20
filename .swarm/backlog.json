@@ -26,7 +26,7 @@
       "priority": 1,
       "value": "H",
       "effort": "M",
-      "status": "in_progress",
+      "status": "done",
       "deps": [
         "Q-1"
       ],
@@ -39,7 +39,7 @@
       "packages": [],
       "model": "haiku",
       "attempts": 1,
-      "notes": "L-043. The prose is guard-shaped, so moving it MEASURES whether each guard reads structure or prose. A guard that breaks on honest prose has reported its own defect. | CYCLE 1 MEASUREMENT — the headline result is a NEGATIVE, and it is the run's most valuable finding so far: 114 README lines deleted and the whole Node-support section rewritten, and ZERO guards broke (121/121 green). The builder was explicitly forbidden from touching test/ so the measurement could not be contaminated. Liveness then proven for test/node-support-citation.test.js rather than assumed (L-029/L-044): mutating the retirement base 2b003ea -> c9dd7ff made it FAIL loudly with a correct, self-naming assertion; restoring README byte-exactly (sha ebb0d9c4 both sides) returned it to 2 pass / 0 fail. Kill + converse control both observed, attribution pinned by running that file alone. REMAINING: same liveness proof for readme-tags.test.js (folds into Q-4) and citations.test.js. cycle 2: readme-tags.test.js guards now measured live (6 kill arms, 2 converse controls, all attributable). citations.test.js still untreated."
+      "notes": "L-043. The prose is guard-shaped, so moving it MEASURES whether each guard reads structure or prose. A guard that breaks on honest prose has reported its own defect. | CYCLE 1 MEASUREMENT — the headline result is a NEGATIVE, and it is the run's most valuable finding so far: 114 README lines deleted and the whole Node-support section rewritten, and ZERO guards broke (121/121 green). The builder was explicitly forbidden from touching test/ so the measurement could not be contaminated. Liveness then proven for test/node-support-citation.test.js rather than assumed (L-029/L-044): mutating the retirement base 2b003ea -> c9dd7ff made it FAIL loudly with a correct, self-naming assertion; restoring README byte-exactly (sha ebb0d9c4 both sides) returned it to 2 pass / 0 fail. Kill + converse control both observed, attribution pinned by running that file alone. REMAINING: same liveness proof for readme-tags.test.js (folds into Q-4) and citations.test.js. cycle 2: readme-tags.test.js guards now measured live (6 kill arms, 2 converse controls, all attributable). citations.test.js still untreated. | CLOSED cycle 4 — and the remaining work turned out to be a file that does not exist. test/citations.test.js has NEVER existed in this repo, on any branch, in any commit: `git log --all -- test/citations.test.js` is empty, and the add-history of test/* lists seven files, none of them that one. It was a PLAN-time files_hint that was never checked against the tree, and it then travelled forward through two cycles of notes as if it were an observation. The two REAL guard files both had the kill/converse treatment already — node-support-citation.test.js (cycle 1) and readme-tags.test.js (cycle 2, 6 kill arms + 2 converse controls). Recorded as a phantom rather than quietly dropped. Evidence: cycle-004-verify-Q-3.txt section E."
     },
     {
       "id": "Q-3",
@@ -48,7 +48,7 @@
       "priority": 1,
       "value": "H",
       "effort": "M",
-      "status": "todo",
+      "status": "done",
       "deps": [],
       "files_hint": [
         "README.md",
@@ -56,9 +56,9 @@
       ],
       "acceptance": "every count claim in the Node-support section resolves to a measured value; a count claim in that section can no longer silently disagree with the matrix table it sits under; the new check is shown failable AND attributable, and is paired with a converse control that must stay green",
       "packages": [],
-      "model": "haiku",
+      "model": "sonnet",
       "attempts": 0,
-      "notes": "README:186-191 reports 121 tests on all four majors; README:306-308 claims \"# tests 120\" and \"(119 -> 120)\". Measured truth at kickoff: 121 tests / 121 pass / 0 fail / 0 skipped on a full clone. | doc->doc half CLOSED incidentally by Q-1: README:306's 'tests 120' / '(119 -> 120)' is gone, replaced by '# tests <n>' / 'ℹ tests <n>' plus 'The test count moves as the suite grows'. That is the right repair — the durable claim is the TAP-vs-spec-reporter split and the U+2139 marker, and the literal count was the part that rotted. REMAINING: the guard that stops a count claim in that section silently disagreeing with its own matrix table. | CYCLE 3 — the remaining half now has a MEASURED specification instead of a described one. Gate controls C4a/C4b ran the full suite against a deliberately falsified matrix in a scratch worktree: changing the v20 row from '122 pass' to '121 pass' (contradicting its own row) left the suite at 124 pass / 0 fail, and changing it to '999 tests, 998 pass' — absurd, contradicting the other three rows AND the actual suite — ALSO left it at 124 pass / 0 fail. Both arms SILENT. So the section's citation is guarded but the numbers inside it are not, and the hole is wide rather than marginal. Note the shape this dictates: the four rows report a REMOTE CI run's counts, not this checkout's, so the guard cannot simply assert the table against a local `node --test` run — v18/20/22/24 in CI legitimately report 2 skipped where a full clone reports 0. The honest anchor is internal consistency plus provenance (the four rows must agree with each other and with the cited run), not equality with the local suite. Evidence: .swarm/runs/cycle-003-verify-Q-7.txt § C4."
+      "notes": "README:186-191 reports 121 tests on all four majors; README:306-308 claims \"# tests 120\" and \"(119 -> 120)\". Measured truth at kickoff: 121 tests / 121 pass / 0 fail / 0 skipped on a full clone. | doc->doc half CLOSED incidentally by Q-1: README:306's 'tests 120' / '(119 -> 120)' is gone, replaced by '# tests <n>' / 'ℹ tests <n>' plus 'The test count moves as the suite grows'. That is the right repair — the durable claim is the TAP-vs-spec-reporter split and the U+2139 marker, and the literal count was the part that rotted. REMAINING: the guard that stops a count claim in that section silently disagreeing with its own matrix table. | CYCLE 3 — the remaining half now has a MEASURED specification instead of a described one. Gate controls C4a/C4b ran the full suite against a deliberately falsified matrix in a scratch worktree: changing the v20 row from '122 pass' to '121 pass' (contradicting its own row) left the suite at 124 pass / 0 fail, and changing it to '999 tests, 998 pass' — absurd, contradicting the other three rows AND the actual suite — ALSO left it at 124 pass / 0 fail. Both arms SILENT. So the section's citation is guarded but the numbers inside it are not, and the hole is wide rather than marginal. Note the shape this dictates: the four rows report a REMOTE CI run's counts, not this checkout's, so the guard cannot simply assert the table against a local `node --test` run — v18/20/22/24 in CI legitimately report 2 skipped where a full clone reports 0. The honest anchor is internal consistency plus provenance (the four rows must agree with each other and with the cited run), not equality with the local suite. Evidence: .swarm/runs/cycle-003-verify-Q-7.txt § C4. | DONE cycle 4, sealed gate 855beded unchanged across dispatch, all cells PASS. New file test/readme-matrix-consistency.test.js (238 insertions, 0 deletions; README.md NOT touched). Suite 124 -> 129, delta = exactly the 5 new tests, 0 skipped. THE RESULT: the two arms cycle 3 measured SILENT now FIRE on identical inputs — C4a (122->121 pass) 3 pass/4 fail, C4b (999 tests) 3 pass/4 fail. Converse controls C6 (true table) and C5 (benign reword) both stay GREEN 5/0. C8 earns the cross-row check its keep: v22 skipped 2->1 keeps its own arithmetic balanced (124=123+0+1) so only cross-row agreement fires — the two checks are not redundant, measured rather than argued. C9/C10 show the optional run-id and commit cross-reference checks are live. RESIDUAL, reported unfixed: C7 — all four rows moved TOGETHER to a self-consistent falsehood (200/198/0/2) is SILENT. Hole narrowed, not closed; see KI-R6-4. Evidence: .swarm/runs/cycle-004-verify-Q-3.txt"
     },
     {
       "id": "Q-4",
@@ -330,6 +330,44 @@
       "model": "sonnet",
       "acceptance": "test/node-support-citation.test.js is green on a full clone: the section cites a CI run id whose commit satisfies an empty `git diff <base>..HEAD -- src bin test .github`, and the four-row matrix reports that run's real numbers. Never bought by narrowing the pathspec or relaxing the assertion.",
       "notes": "Created by cycle 2's commit, which touched test/ and so falsified the citation by its own stated condition (README \"Node support\" standing limit 2; playbook L-043). The replacement CI run cannot exist until after the push, so this is the second half of a knowingly-budgeted two-commit round trip. | DONE cycle 3, sealed gate 5ed845eb unchanged pre->post dispatch, 17 cells. Re-cited to run 32400996331 at commit 4b63e91 — NOT the newest run on the branch (32401050374 at 2014bb9) but the newest eligible one, because the section's own stated rule requires a commit that actually changed src/bin/test/.github and 2014bb9 touched only .swarm/. Suite 124 pass / 0 fail / 0 SKIPPED (a skip here would have been a false green). Anti-cheat cell A4: `git diff 4b63e91..HEAD -- src bin test .github` empty on both committed history and working tree, and A5 pins test/node-support-citation.test.js byte-identical to its 4b63e91 blob (sha b3d9d6f5) — the RED was closed by re-citing, never by touching the guard. The four matrix rows were withheld from the builder and independently re-derived by it from the CI log; they agree with the conductor's pre-dispatch measurement byte-for-byte."
+    },
+    {
+      "id": "Q-8",
+      "title": "Re-cite the Node-support matrix to a run describing the post-Q-3 tree",
+      "kind": "fix",
+      "priority": 1,
+      "value": "H",
+      "effort": "S",
+      "status": "todo",
+      "deps": [],
+      "files_hint": [
+        "README.md",
+        "docs/node-support-citation-history.md"
+      ],
+      "acceptance": "the cited run id and base commit describe a tree in which `git diff <base>..HEAD -- src bin test .github` is empty; both citation guards green; the four matrix rows report that run ACTUAL counts, read from the CI log, never inferred from the local suite; the history file gains an append-only entry",
+      "packages": [],
+      "model": "sonnet",
+      "attempts": 0,
+      "notes": "The second half of the known two-commit round trip, identical in shape to Q-7 after cycle 2. Cycle 4 committed with both citation guards RED BY DESIGN: the commit touches test/, which is inside the cited pathspec, and README standing limit 2 says the replacement CI run cannot exist until after the push. NOT to be closed by narrowing the pathspec or relaxing an assertion (L-043). Two things differ from Q-7: (a) the matrix rows must now ALSO be updated, because the suite moved 124 -> 129, and the new guard in test/readme-matrix-consistency.test.js will check the new rows for per-row arithmetic and cross-row agreement; (b) expected CI shape is 129 tests / 127 pass / 0 fail / 2 skipped — the same 2 shallow-clone skips in node-support-citation.test.js; the 5 new matrix tests touch no git and do not skip. Read the counts out of `gh run view --log`; deriving them from the local suite would fabricate a CI result (the D1 trap)."
+    },
+    {
+      "id": "Q-9",
+      "title": "Human ruling: is a coordinated table-wide falsification worth an out-of-document anchor?",
+      "kind": "fix",
+      "priority": 8,
+      "value": "M",
+      "effort": "M",
+      "status": "blocked",
+      "deps": [],
+      "files_hint": [
+        "test/readme-matrix-consistency.test.js",
+        ".github/workflows/test.yml"
+      ],
+      "acceptance": "a human rules on whether the README matrix should be anchored to something outside the document, and if so which of the two mechanisms is acceptable",
+      "packages": [],
+      "model": "sonnet",
+      "attempts": 0,
+      "notes": "Measured, not speculated — gate cell C7, cycle 4: changing all four rows TOGETHER to a self-consistent falsehood (200 tests, 198 pass, 0 fail, 2 skipped) leaves the guard SILENT at 5 pass / 0 fail. The internal-consistency anchor cannot see a lie told consistently. Closing it needs an anchor OUTSIDE the document, and both options carry costs a swarm should not choose unilaterally: (1) live network provenance — makes an offline suite depend on GitHub and would SKIP in exactly the shallow-CI environment the table describes, i.e. inert where it is most needed; (2) a committed machine-readable CI artifact that the workflow writes and the guard reads — no network, but it adds a generated file to the repo and changes what CI is responsible for. BLOCKED on the operator, like P-7. Not a defect in Q-3, which never claimed this ground."
     }
   ]
 }

@@ -1,0 +1,184 @@
+VERIFICATION EVIDENCE — cycle 4, item Q-3 (+ Q-2 close-out)
+Gate sealed BEFORE dispatch: /opt/swarm/runs/gate-cycle004-Q3.md
+  sha256 855beded361a0bc7f34f918fcb725f5f7b00880e7a0a5c8e317f144ac6614060
+  re-hashed after the builder returned: IDENTICAL (same sha).
+Pre-dispatch HEAD e4797b3 -> merged HEAD a302f71.
+Verdict: PASS on every cell. One residual hole measured and reported unfixed (C7).
+
+================================================================================
+A — scope and Q-5 invariants
+================================================================================
+
+A1  $ git diff --name-only e4797b3..HEAD
+    test/readme-matrix-consistency.test.js
+    -> ONE new test file. README.md not touched at all. PASS.
+
+A2  $ sha256sum src/corpus.js
+    77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e   == baseline. PASS.
+
+A3  $ node bin/aphorism.js --help | sha256sum
+    d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64   == baseline. PASS.
+
+A4  $ find . -maxdepth 2 -name 'package*.json' -not -path '*/.git/*'
+    (no output) -> the repo has NO manifest, so no dependency can be declared.
+    NOTE: cycle 3 recorded an authoring error in this exact cell (it asserted a
+    package.json that does not exist). This is the corrected, applicable form.  PASS.
+
+A5  $ git diff --stat e4797b3..HEAD -- src bin
+    (empty)   PASS.
+
+================================================================================
+B — the suite, with the RED predicted before it was observed
+================================================================================
+
+B1  $ node --test test/*.test.js          (full clone, node v24.19.0)
+    ℹ tests 129   ℹ pass 127   ℹ fail 2   ℹ skipped 0
+    ✖ README Node support citation: cited git diff must be empty ...
+    ✖ README Node support citation: base-to-working-tree diff must also be empty ...
+
+    The sealed gate predicted, before dispatch, that exactly these two would be RED:
+    the commit touches test/, which is inside the pathspec the README cites as its own
+    falsification condition (README standing limit 2). Nothing else fails. The
+    prediction is confirmed rather than rationalised after the fact.
+    This is the guard working. It is NOT closed by narrowing the pathspec or relaxing
+    an assertion (L-043); it is closed by a re-citation, filed as Q-8.
+
+B2  $ node --test test/readme-matrix-consistency.test.js
+    ✔ table must be present and non-empty
+    ✔ each row's own arithmetic must hold (tests = pass + fail + skipped)
+    ✔ all rows must agree with each other
+    ✔ cited Actions run id must match between the link text and the link URL
+    ✔ cited commit must match between the prose and the falsification-condition command
+    ℹ tests 5  ℹ pass 5  ℹ fail 0  ℹ skipped 0
+    -> attributable, and 0 skipped: a SKIP here would be a false green.  PASS.
+
+B3  124 -> 129 tests. Delta = +5 = exactly the new guard's five tests.  PASS.
+
+================================================================================
+C — the measurement. The two arms that were SILENT last cycle must now FIRE.
+================================================================================
+
+Harness: /opt/swarm/runs/scratch-c4 — a scratch dir holding README.md plus the guard
+file. The guard file is BYTE-IDENTICAL across every arm
+(sha256 f7ba6ae701a8950f2abbf025bc029deaff9fd001d85862308560a458b48f3b8e, verified equal
+to the merged tree's copy), and ONLY README.md varies. Every verdict below is therefore
+attributable to the table edit alone.
+
+  arm   change                                                 verdict   (pass/fail)
+  ----  -----------------------------------------------------  --------  -----------
+  C6    unmodified TRUE table            [converse control]     GREEN     5 / 0
+  C4a   v20 row: 122 pass -> 121 pass                           FIRES     3 / 4
+  C4b   v20 row -> 999 tests, 998 pass                          FIRES     3 / 4
+  C8    v22 row: skipped 2->1, pass 122->123 (own sum balances) FIRES     4 / 2
+  C7    ALL FOUR rows -> 200/198/0/2 (self-consistent, false)   SILENT    5 / 0
+  C9    run id in the URL diverges from the run id in the text  FIRES     4 / 2
+  C10   commit in prose diverges from the diff-command base     FIRES     4 / 2
+  C5    benign reword of unrelated prose  [converse control]    GREEN     5 / 0
+
+  $ (restore) README.md identical to the merged tree -> true
+
+THE HEADLINE RESULT — the same two arms, before and after, on identical inputs:
+
+  cycle 3 (no guard):   C4a SILENT (124 pass / 0 fail)    C4b SILENT (124 pass / 0 fail)
+  cycle 4 (guarded):    C4a FIRES  (3 pass / 4 fail)      C4b FIRES  (3 pass / 4 fail)
+
+Firing messages, quoted from the run:
+  C4a  "claims 124 tests but pass (121) + fail (0) + skipped (2) = 123 ... 124 !== 123"
+       "row for Node v20.20.2 ... does not agree with the Node v18.20.8 row"
+  C4b  "claims 999 tests but pass (998) + fail (0) + skipped (2) = 1000 ... 999 !== 1000"
+
+C8 is the arm that earns the second check its keep: the v22 row's OWN arithmetic still
+balances (124 = 123 + 0 + 1), so the per-row check is silent on it and only cross-row
+agreement fires. The two checks are not redundant with each other — measured, not argued.
+
+C9/C10 show the two optional cross-reference checks are live instruments, not decoration.
+
+================================================================================
+C7 — THE RESIDUAL HOLE, MEASURED AND REPORTED UNFIXED
+================================================================================
+
+Changing all four rows TOGETHER to a self-consistent falsehood (200 tests, 198 pass,
+0 fail, 2 skipped) leaves the guard SILENT: 5 pass / 0 fail. The README can still
+claim a CI run that never happened, so long as it lies consistently.
+
+This was predicted in the sealed gate as cell C7 and is recorded as an unfixed column
+rather than left implied. The hole is NARROWED, not closed: a single-row error, a
+transcription slip, or a partial edit is now caught; a wholesale coordinated rewrite is
+not. Closing it needs an anchor OUTSIDE the document — live network provenance (which
+would make an offline suite depend on GitHub, and would skip in exactly the shallow-CI
+environment the table describes) or a committed machine-readable CI artifact. That is a
+design change with real costs, so it is filed for a human ruling (KI-R6-4), not built.
+
+================================================================================
+D — honesty cells
+================================================================================
+
+D1  $ git diff --numstat e4797b3..HEAD
+    238  0  test/readme-matrix-consistency.test.js
+    README.md is absent from the diff, so the four table rows are untouched. This is the
+    trap the cell existed for: the rows describe a REMOTE run (32400996331 @ 4b63e91)
+    that really did report 124/122/0/2. This commit adds five tests to THIS checkout,
+    which does not falsify a past CI run. Editing those counts to match the new local
+    suite would have fabricated a CI result that never ran. Not done.  PASS.
+
+D2  238 insertions, 0 deletions across the whole diff -> nothing was removed from any
+    existing test. No assertion deleted, no matcher relaxed, no t.skip() added to a
+    previously-live path.  PASS.
+
+D3  test/node-support-citation.test.js is absent from the diff -> the RED was not bought
+    by narrowing the cited pathspec or relaxing either assertion.  PASS.
+
+D4  By inspection, the guard's input is the table rows themselves:
+      /\|\s*(v[\d.]+)\s*\|\s*(\d+)\s*tests,\s*(\d+)\s*pass,\s*(\d+)\s*fail,\s*(\d+)\s*skipped\s*\|/g
+    It reads the `| Node | Result |` rows, not prose restating them.  PASS.
+
+D5  ℹ skipped 0 on a full clone (B1) -> no new test hides behind a skip.  PASS.
+
+================================================================================
+E — Q-2 close-out: the remaining work was a file that does not exist
+================================================================================
+
+Q-2 has carried "citations.test.js still untreated" for two cycles.
+
+E1  $ ls test/citations.test.js
+    ls: cannot access 'test/citations.test.js': No such file or directory
+    $ git log --all --oneline -- test/citations.test.js
+    (empty — never existed on any branch, in any commit)
+    $ git log --all --diff-filter=A --name-only --pretty=format: -- 'test/*' | sort -u
+    test/args.test.js
+    test/cli.test.js
+    test/node-support-citation.test.js
+    test/pipe.test.js
+    test/readme-matrix-consistency.test.js      <- added this cycle
+    test/readme-tags.test.js
+    test/select.test.js
+
+E2  Seven test files have ever existed; none is citations.test.js. It was a PLAN-time
+    files_hint that was never checked against the tree, and it then travelled forward
+    through two cycles of notes as if it were an observation. Q-2's two REAL guard files
+    both had the kill/converse treatment already: node-support-citation.test.js (cycle 1,
+    mutated base -> loud correct failure -> restored byte-exact -> green) and
+    readme-tags.test.js (cycle 2, 6 kill arms + 2 converse controls, all attributable).
+    Q-2 -> done. The phantom is recorded rather than quietly dropped.
+
+================================================================================
+Conductor errors and fence breaches, recorded
+================================================================================
+
+1. The dispatch prompt told the builder to create its worktree at `$(mktemp -d)`. The
+   sandbox blocks mktemp and blocks writes outside /opt/swarm and the target, so the
+   builder put the worktree at /opt/swarm/tmp-wave-1787251030-Q3 — INSIDE SWARM, which
+   hard rule 5 limits to runs/ and playbook/. It disclosed this unprompted. The breach
+   is the conductor's authoring error, not the builder's. Cleaned up this cycle:
+   $ git worktree remove /opt/swarm/tmp-wave-1787251030-Q3 --force && git worktree prune
+   $ git -C /opt/swarm status --porcelain   -> (clean)
+   Future dispatches on this VPS must name a writable worktree path explicitly.
+
+2. Builder departures, all three disclosed, all judged:
+   - Added the two OPTIONAL cross-reference checks (run id, commit) the brief invited.
+     KEPT: C9/C10 prove both are live, and both are offline and cheap.
+   - Declined to tie the prose "four Node majors — 18, 20, 22 and 24" to the table's row
+     count, calling it fragile to parse. ACCEPTED, and it is the better call: the guard
+     deliberately does not hardcode a row count, so a future cycle adding a Node major is
+     a legitimate edit rather than a failure.
+   - Disclosed the worktree-path deviation (item 1 above). Correct to disclose.

@@ -6,7 +6,7 @@
   "run_started_at": "2026-08-20T14:36:57Z",
   "kickoff_source": "allocator",
   "phase": "BUILD",
-  "cycle": 3,
+  "cycle": 4,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "spec_digest": [
@@ -82,6 +82,26 @@
       "cycle": 3,
       "what": "Accepted the builder's out-of-ask change of 'is preserved verbatim in' to 'is recorded in'",
       "why": "Five of the six history entries are byte-identical relocations of README blockquotes; the sixth was authored directly, because Q-1 retired the blockquote convention it would have been moved from. 'Preserved verbatim' was true of the file when it held five entries and became false the moment a sixth was written. The builder flagged it as beyond the literal ask; it is the smaller of two errors, and the alternative was a knowingly loose claim in a section that is machine-checked for exactly this kind of decay."
+    },
+    {
+      "cycle": 4,
+      "what": "Committed with both citation guards RED again, by design, and filed the re-cite as Q-8 rather than buying green",
+      "why": "Identical in shape to cycle 2, and predicted in the sealed gate BEFORE dispatch rather than explained afterwards. Q-3 necessarily adds a file under test/, which is inside the pathspec the README cites as its own falsification condition, so the guards cannot be green on this commit — the CI run that would refresh the citation cannot exist until after the push (README standing limit 2). The prediction was then checked: 129 tests / 127 pass / 2 fail, and the two failures are exactly the two predicted. A walked exception, never re-labelled as a pass."
+    },
+    {
+      "cycle": 4,
+      "what": "Forbade the builder from editing the four matrix rows, and made that a gate cell rather than a hope",
+      "why": "The rows describe a REMOTE run (32400996331 @ 4b63e91) that really did report 124/122/0/2. Adding five tests to this checkout does not falsify a past CI run, but it creates an obvious-looking discrepancy that invites a builder to 'fix' the rows to match the local suite — which would fabricate a CI result that never ran, inside the very section this run is hardening against exactly that decay. Gate cell D1 was authored to fail the item outright if it happened, regardless of a green suite. It did not happen: README.md is absent from the diff entirely."
+    },
+    {
+      "cycle": 4,
+      "what": "Reported C7 as an unfixed column instead of letting the C4a/C4b win imply more coverage than it bought",
+      "why": "The guard makes a single falsified row fire, and cannot see all four rows falsified together consistently (measured: 5 pass / 0 fail). Closing that needs an anchor outside the document, and both mechanisms — live network provenance, or a committed CI artifact — carry costs the operator should choose, not the swarm. Filed as KI-R6-4 / Q-9. A narrowed hole stated as narrowed is worth more than a closed hole claimed."
+    },
+    {
+      "cycle": 4,
+      "what": "Closed Q-2 by discovering its remaining work was a file that has never existed",
+      "why": "Q-2 carried 'citations.test.js still untreated' across two cycles of notes. It is a PLAN-time files_hint that was never checked against the tree; `git log --all` for that path is empty and only seven test files have ever been added. The lesson is not about the file — it is that a planning artifact was restated as an observation, twice, and no cycle spent the four seconds to `ls` it. Recorded rather than quietly dropped."
     }
   ],
   "known_issues": [
@@ -102,19 +122,25 @@
       "desc": "Two guards in test/readme-tags.test.js now read the same \"Tags on exactly one entry\" table row (the renamed multi/single-entry test and the structural replacement for the retired co-occurrence guard). This redundancy was INDUCED BY THE CONDUCTOR's dispatch, which mandated both the re-anchor and a no-shrink floor; the builder disclosed it rather than hiding it. Harmless but not coverage — a candidate consolidation once the Q-5 floor is not the binding constraint.",
       "severity": "low",
       "cycle_found": 2
+    },
+    {
+      "id": "KI-R6-4",
+      "desc": "The README Node-support matrix can still be falsified WHOLESALE: gate cell C7 (cycle 4) changed all four rows together to a self-consistent falsehood (200 tests, 198 pass, 0 fail, 2 skipped) and test/readme-matrix-consistency.test.js stayed SILENT at 5 pass / 0 fail. Per-row arithmetic and cross-row agreement catch a single bad row, a transcription slip, or a partial edit — not a lie told consistently. Closing it requires an anchor outside the document (live network provenance, which would skip in the shallow-CI environment the table describes; or a committed machine-readable CI artifact, which changes what CI is responsible for). Operator's call — Q-9.",
+      "severity": "low",
+      "cycle_found": 4
     }
   ],
   "counters": {
     "consecutive_no_value": 0,
     "consecutive_failures": 0,
     "k_current": 2,
-    "wave_streak": 0
+    "wave_streak": 1
   },
   "last_cycle": {
-    "n": 3,
-    "work": "Q-7 — re-cite the Node-support CI matrix to a run that describes the post-Q-4 tree (1 builder, k=1, sonnet; gear-2 demote does not apply to kind:fix)",
-    "outcome": "sealed gate 5ed845eb unchanged pre->post, 17 cells; suite 124 pass / 0 fail / 0 skipped — the cycle-2 RED is closed by re-citation, with A4/A5 proving the guard itself was never touched; C4a/C4b measured the still-open matrix-count hole as SILENT and handed Q-3 its specification",
-    "commit": "83cef40"
+    "n": 4,
+    "work": "Q-3 — guard the matrix table own numbers (1 builder, k=1, sonnet; gear-2 demote does not drop a kind:test build item below sonnet). Q-2 closed by conductor measurement.",
+    "outcome": "sealed gate 855beded unchanged across dispatch, every cell PASS; suite 124 -> 129 (127 pass / 2 fail / 0 skipped, both failures predicted before dispatch and owned by Q-8). THE RESULT: C4a and C4b, measured SILENT in cycle 3, now FIRE on byte-identical inputs. C8 proves cross-row agreement does independent work. C7 measured SILENT and reported as an unfixed column (KI-R6-4). Q-2 closed: its remaining guard file never existed.",
+    "commit": null
   },
   "post_commit_2026_08_20_cycle3": {
     "commit": "83cef40",
