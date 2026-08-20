@@ -177,10 +177,10 @@ that spawn the real binary and assert on stdout, stderr, and exit codes.
 
 ### Node support
 
-CI runs the whole suite on four Node majors on every push. As of commit `c08562b`
+CI runs the whole suite on four Node majors on every push. As of commit `c9dd7ff`
 (2026-08-20), the most recent full matrix run against a commit that actually changed
 `src/`, `bin/`, `test/`, or the workflow itself was
-[Actions run 32331910336](https://github.com/trmnmc/aphorism-cli/actions/runs/32331910336),
+[Actions run 32335038575](https://github.com/trmnmc/aphorism-cli/actions/runs/32335038575),
 which reported:
 
 | Node | Result |
@@ -195,7 +195,7 @@ The one skip is the same on all four and is expected: it is
 CI checks out shallow (see below).
 
 Later CI runs re-test byte-identical code as of this writing (see
-`git diff c08562b..HEAD -- src bin test .github`), so this citation stays the reference
+`git diff c9dd7ff..HEAD -- src bin test .github`), so this citation stays the reference
 matrix until that diff stops being empty. For the current state of CI — including any
 runs since this citation — see the
 [`test` workflow's run history](https://github.com/trmnmc/aphorism-cli/actions?query=workflow%3Atest).
@@ -256,6 +256,30 @@ runs since this citation — see the
 >
 > The archived job logs for this run and the previous one now live in `.swarm/runs/`, so
 > the table stays checkable after GitHub's log retention drops the originals.
+
+> **Updated 2026-08-20 (cycle 9).** The citation moved from run `32331910336` at commit
+> `c08562b` to run `32335038575` at commit `c9dd7ff`, by the same stated condition as the
+> two moves above. `c9dd7ff` bumped `actions/checkout` and `actions/setup-node` from `@v4`
+> to `@v7`, which touches `.github/` and so falsifies this citation on sight.
+>
+> What is worth recording this time is not the move but that **the repair was late**. Both
+> earlier moves refreshed the citation in the same commit that falsified it. This one did
+> not: `c9dd7ff` landed the bump and stopped, so the suite was red on a full clone for a
+> whole cycle before anything looked. Limits 1 and 2 above each explain half of why nothing
+> caught it, and the half that matters is what they add up to. The guard reads *committed*
+> history, so a pre-commit suite run cannot see a falsification still sitting in the working
+> tree — it reports green. CI would see it, but CI checks out shallow and skips. So no
+> signal available to the commit that breaks this citation can observe the break; only the
+> next full-clone run can. The transient-red window is intrinsic and was accepted knowingly
+> in cycle 5, but "transient" is doing real work in that sentence: it is only transient if
+> the same commit repairs it, and nothing enforces that.
+>
+> One honest note on scope, since it is visible in this move. The bump changed which
+> *action versions* run, not which Node majors are tested — the matrix is still
+> `[18, 20, 22, 24]`, byte-identical. So this citation was retired by a change that does not
+> affect the claim it guards. That is the deliberate cost of a coarse pathspec: `.github`
+> catches everything in the workflow rather than trying to decide which edits are
+> claim-relevant, and a guard that guessed at relevance would be the easier thing to fool.
 
 Read "Node 18+" as **verified-at-18**: 18 is the lowest version actually tested, and it
 passes everything. It is **not proven minimal** — nothing here tests Node 16 or 17, so
