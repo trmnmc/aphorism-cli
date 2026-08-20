@@ -140,7 +140,7 @@
     "n": 4,
     "work": "Q-3 — guard the matrix table own numbers (1 builder, k=1, sonnet; gear-2 demote does not drop a kind:test build item below sonnet). Q-2 closed by conductor measurement.",
     "outcome": "sealed gate 855beded unchanged across dispatch, every cell PASS; suite 124 -> 129 (127 pass / 2 fail / 0 skipped, both failures predicted before dispatch and owned by Q-8). THE RESULT: C4a and C4b, measured SILENT in cycle 3, now FIRE on byte-identical inputs. C8 proves cross-row agreement does independent work. C7 measured SILENT and reported as an unfixed column (KI-R6-4). Q-2 closed: its remaining guard file never existed.",
-    "commit": null
+    "commit": "7e50d6f"
   },
   "post_commit_2026_08_20_cycle3": {
     "commit": "83cef40",
@@ -159,5 +159,15 @@
       "README Node support citation: base-to-working-tree diff must also be empty"
     ],
     "note": "BOTH citation guards are red post-commit, as predicted pre-commit: the commit touched test/, which is inside the cited pathspec, so `git diff 2b003ea..HEAD -- src bin test .github` is no longer empty. This is the guard working, not failing. Q-7 closes it by re-citing to a CI run that describes 4b63e91. Never to be closed by narrowing the pathspec or relaxing the assertion (L-043)."
+  },
+  "post_commit_2026_08_20_cycle4": {
+    "commit": "7e50d6f",
+    "test_cmd_output": "tests 129 / pass 127 / fail 2 / skipped 0",
+    "failing": [
+      "README Node support citation: cited git diff must be empty",
+      "README Node support citation: base-to-working-tree diff must also be empty"
+    ],
+    "cited_path_diff_at_commit": "git diff 4b63e91..HEAD -- src bin test .github -> 1 file changed, 238 insertions (test/readme-matrix-consistency.test.js)",
+    "note": "RED AT COMMIT, as predicted in the sealed gate BEFORE dispatch and re-measured after the commit rather than assumed. The cited-path diff is non-empty by exactly one file — the new guard — which is the whole reason the citation guards fire. Same shape as cycle 2; Q-8 closes it by re-citing once CI has run against 7e50d6f, and it is NEVER to be closed by narrowing the pathspec or relaxing an assertion (L-043, README standing limit 2). Q-5 invariants re-confirmed at the commit: corpus sha256 77a4de5c and --help sha256 d759d781 both unmoved, and the repo has no manifest to add a dependency to."
   }
 }

@@ -1,0 +1,565 @@
+✔ zero args: no error, no filters set (4.357482ms)
+✔ --author <name> sets author string (0.286712ms)
+✔ --author=<name> equals form sets author string (0.219103ms)
+✔ --tag <tag> sets tag string (0.373881ms)
+✔ --tag=<tag> equals form sets tag string (0.448976ms)
+✔ combined --author X --tag Y sets both (0.278467ms)
+✔ --seed <n> parses as a number (0.437143ms)
+✔ --seed=<n> equals form parses as a number (0.260052ms)
+✔ --seed <n> accepts a negative number (1.714777ms)
+✔ --seed=<n> equals form accepts a negative number (0.422726ms)
+✔ non-numeric --seed is a usage error (0.433506ms)
+✔ non-numeric --seed= equals form is a usage error (0.584527ms)
+✔ --list sets list: true (0.15007ms)
+✔ --json sets json: true (0.841231ms)
+✔ --help sets help: true (0.154277ms)
+✔ -h sets help: true (0.161131ms)
+✔ unknown flag is a usage error (0.425229ms)
+✔ unknown short flag is a usage error (0.158856ms)
+✔ --author missing value at end of argv is a usage error (0.196088ms)
+✔ --tag missing value because next token is another flag is a usage error (0.156742ms)
+✔ --seed missing value at end of argv is a usage error (0.119651ms)
+✔ --author= with empty value is a usage error (0.137816ms)
+✔ a bare positional argument (not a flag) is a usage error (0.151923ms)
+✔ parseArgs never throws on malformed input (2.351604ms)
+✔ absent options are undefined/false, never null (0.201599ms)
+✔ HELP is a non-empty string mentioning every flag name (0.265952ms)
+✔ HELP fits comfortably on one 24-line terminal screen (0.169577ms)
+✔ --seed Infinity / --seed -Infinity parse to numbers, not a usage error (0.23331ms)
+✔ bare invocation prints one attributed aphorism and exits 0 (67.226555ms)
+✔ --seed is deterministic across separate processes (109.6759ms)
+✔ different seeds do not all collapse to one aphorism (719.689773ms)
+✔ --json emits a single-line JSON object with text/author/tags (65.957148ms)
+✔ --list prints every entry in the filtered set (57.039564ms)
+✔ --help prints usage to stdout and exits 0 (57.374741ms)
+✔ no match exits 1 with stderr only and zero bytes on stdout (50.75136ms)
+✔ unknown flag is a usage error, exit 2, stdout clean (56.751168ms)
+✔ non-numeric seed is a usage error, exit 2 (54.833961ms)
+✔ author filter is case-insensitive and narrows the list (117.7216ms)
+✔ output is pipe-safe — no ANSI escapes when not a TTY (59.234956ms)
+✔ --tag matches membership, not substring containment (103.484631ms)
+✔ --list prints exactly one line per matching entry, no drops (52.902318ms)
+✔ --list preserves corpus order (first and last line match) (49.084206ms)
+✔ --json output is exactly one line, never pretty-printed (51.906347ms)
+✔ --list --json emits newline-delimited JSON, one object per line, in corpus order (54.758355ms)
+✔ --json composes with --seed: the seeded JSON pick is reproducible AND is the same entry as the plain-text pick (960.256324ms)
+✔ --json composes with the filter flags: the JSON pick is always a member of the FILTERED set (1286.37435ms)
+✔ --list accepts a valid --seed and IGNORES it: output is byte-identical across seeds (528.140533ms)
+✔ --list --seed abc is a usage error, exit 2, stdout empty, stderr carries the diagnostic (52.219681ms)
+✔ --seed abc --list (erroring flag BEFORE --list) is still a usage error, exit 2, stdout empty (54.089987ms)
+✔ --list --seed=  (empty seed value) is a usage error, exit 2, stdout empty (53.719413ms)
+✔ --list --seed "   " (whitespace-only seed value) is a usage error, exit 2, stdout empty (56.708306ms)
+✔ --list --nosuchflag (unknown flag) is a usage error, exit 2, stdout empty — --list does not swallow it (66.641085ms)
+✔ --nosuchflag --list (unknown flag BEFORE --list) is still a usage error, exit 2, stdout empty (56.139327ms)
+✔ plain single-pick output is TWO lines: text, newline, four-space indent, EM DASH, space, author (55.977225ms)
+✔ --seed Infinity and --seed -Infinity (typed as CLI strings) are accepted and deterministic (211.867477ms)
+✔ --list with a filter that matches nothing is STILL exit 1, stderr only, stdout empty (110.168649ms)
+✔ --tag "" (bare empty-string value) matches nothing: whole-tag equality against the literal "" is not a filter no-op (52.523637ms)
+✖ README Node support citation: cited git diff must be empty (or the check must skip on a missing precondition) (42.557272ms)
+✖ README Node support citation: base-to-working-tree diff must also be empty, so an uncommitted falsification is visible now (or the check must skip on a missing precondition) (28.371171ms)
+✔ --list | true: exits quietly, zero stderr, no crash banner (57.49389ms)
+✔ | true (no --list, single aphorism): exits quietly, zero stderr (61.51922ms)
+✔ --list | head -0: exits quietly, zero stderr, no crash banner (68.912256ms)
+✔ --list | /nonexistent-cmd-xyz: no crash banner from the CLI itself (58.392823ms)
+✔ non-EPIPE stdout write failure: reported, not silent, not exit 1, no stack trace (57.420669ms)
+✔ usage error survives a closed stderr reader: still exits 2, not clobbered to 1 (199.755594ms)
+✔ no-match exit code survives a closed stderr reader: still exits 1, not misreported (181.166714ms)
+✔ non-EPIPE stderr write failure: not silent, not the earned exit code, no stack trace (61.557153ms)
+✔ control: --list | head -1 stays completely clean (54.450421ms)
+✔ control: --list | head -5 stays completely clean (62.101243ms)
+✔ control: --list | sed 1q stays completely clean (59.834462ms)
+✔ control: --list | grep -q . stays completely clean (54.231009ms)
+✔ control: | wc -l stays completely clean (54.284291ms)
+✔ control: --list --json | head -2 stays completely clean (55.100255ms)
+✔ control: exit 1 / exit 2 stderr messages and codes are unchanged (118.819167ms)
+✔ control: a normal (non-full) stdout target still exits 0 with empty stderr (114.194882ms)
+✔ README Node support matrix: table must be present and non-empty (1.98061ms)
+✔ README Node support matrix: each row's own arithmetic must hold (tests = pass + fail + skipped) (0.766207ms)
+✔ README Node support matrix: all rows must agree with each other (0.724857ms)
+✔ README Node support matrix: cited Actions run id must match between the link text and the link URL (2.557271ms)
+✔ README Node support matrix: cited commit must match between the prose and the falsification-condition command (0.973177ms)
+✔ README tags must exist in corpus (5.333183ms)
+✔ README tag counts must match corpus (0.837014ms)
+✔ README must state total unique tags correctly (1.671432ms)
+✔ README must list all single-entry tags (0.864687ms)
+✔ README Tag vocabulary counts table "Tags on exactly one entry" row matches the corpus (structural replacement for the retired token co-occurrence guard, Q-4) (0.922047ms)
+✔ assertTagVocabCountsTableWellFormed fails loud on a DUPLICATED row label, whichever order the rows appear in (Q-4) (2.63496ms)
+✔ assertTagVocabCountsTableWellFormed fails loud on a row label no guard in this file reads (Q-4) (2.523255ms)
+✔ parseTagVocabCountsTable returns null when the counts table is missing or malformed, and both readers fail loud on that null (Q-4) (2.162069ms)
+✔ readTagVocabCount fails loud when a row value is not a plain integer, or when its row is absent (Q-4) (3.570414ms)
+✔ extractBandTablesFromReadme tolerates a prose sentence between a band heading and its table (T-025), without mis-attaching a table when the real one is missing (1.392635ms)
+✔ extractBandTablesFromReadme does not let a band-shaped PROSE line steal a real heading's table (T-039) (0.758643ms)
+✔ extractBandTablesFromReadme does not read a fenced example block as a second, real band table (0.268557ms)
+✔ extractBandTablesFromReadme's recognised bands account for every structural `| Tag | Count |` table -- a table under an unrecognised heading shape is a loud mismatch, not a silent miss (1.214702ms)
+✔ every `| Tag | Count |` table in the real README Tag vocabulary section is a recognised band table (no table may hide under an unrecognised heading shape) (0.582513ms)
+✔ every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band (0.495636ms)
+✔ every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019) (0.764855ms)
+✔ extractBandTablesFromReadme derives a band's row count purely from its table, ignoring decoy "N tags" phrases in the heading line (T-024b) (0.235233ms)
+✔ README must state correct multi-entry and single-entry tag counts (0.376996ms)
+✔ README Tag vocabulary section must contain no unrecognised count-claim digits (J-5) (0.422104ms)
+✔ README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1) (1.856149ms)
+✔ README Attribution table "Rated HIGH risk" count must match the triage doc table (C2) (0.626458ms)
+✔ README Attribution section must contain no digit runs outside the counts table (C7) (0.489723ms)
+✔ README Layout section paths must exist on disk (C6) (0.552385ms)
+✔ getListBehaviourSection tolerates a reformatted "--list behaviour" heading with no backticks (T-021) (0.502298ms)
+✔ getListBehaviourSection still fails on a SEPARATOR MISMATCH (not a heading-parse error) when a reformatted heading's literal is mutated (T-021) (0.44543ms)
+✔ getListBehaviourSection reports ambiguity loudly instead of taking the first of two qualifying headings (T-021) (0.495665ms)
+✔ getListBehaviourSection does not let "--list-only" satisfy the standalone `--list` token (T-021) (0.253318ms)
+✔ getListBehaviourSection tolerates the American spelling "behavior" in the heading (T-027) (0.163315ms)
+✔ getListBehaviourSection still fails on a SEPARATOR MISMATCH (not a heading-parse error) under an American-spelled heading (T-027) (0.269419ms)
+✔ README `--list` format literal matches the shipped binary's actual --list output (T-017) (58.953004ms)
+✔ README `--author` matching section must state the correct count of distinct corpus authors (Q-8) (0.928229ms)
+✔ corpus has at least 40 entries (1.707352ms)
+✔ every corpus entry has non-empty text, non-empty author, and an array of tags (2.293632ms)
+✔ filter: author match is case-insensitive (1.409277ms)
+✔ filter: tag match is case-insensitive (0.381756ms)
+✔ filter: author and tag together narrow to the intersection (AND) (0.858125ms)
+✔ filter: undefined/absent options do not filter (0.314487ms)
+✔ pick: same seed over the same candidates always returns the same element (0.61699ms)
+✔ pick: different seeds generally produce different results (0.347149ms)
+✔ pick: undefined seed picks a valid member (random mode) (0.224342ms)
+✔ pick: null seed also triggers random mode and returns a valid member (0.478523ms)
+✔ pick: throws RangeError on empty candidates array (0.83472ms)
+✔ pick: Infinity seed is deterministic and returns a valid member (0.279038ms)
+✔ pick: -Infinity seed is deterministic and returns a valid member (0.238479ms)
+✔ pick: NaN seed still uses the random branch and returns a valid member (0.137786ms)
+✔ pick: finite seed determinism is unchanged by the non-finite-seed fix (0.2588ms)
+✔ pick: every candidate is REACHABLE by an unseeded draw (7.18813ms)
+✔ pick: unseeded draws split the interval EQUALLY across candidates (uniform) (2.506803ms)
+✔ pick: single-element candidates always returns that element regardless of seed (0.285901ms)
+ℹ tests 129
+ℹ suites 0
+ℹ pass 127
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5413.315307
+
+✖ failing tests:
+
+test at test/node-support-citation.test.js:187:1
+✖ README Node support citation: cited git diff must be empty (or the check must skip on a missing precondition) (42.557272ms)
+  AssertionError [ERR_ASSERTION]: README's "### Node support" section cites `git diff 4b63e91..HEAD -- src bin test .github` as its own retirement condition, and that diff is no longer empty -- the cited CI matrix no longer describes this tree. The section needs a new citation (see the repo's own note on how the previous stale citation was recorded).
+  + actual - expected
+  
+  + 'diff --git a/test/readme-matrix-consistency.test.js b/test/readme-matrix-consistency.test.js\n' +
+  +   'new file mode 100644\n' +
+  +   'index 0000000..a2d2b6e\n' +
+  +   '--- /dev/null\n' +
+  +   '+++ b/test/readme-matrix-consistency.test.js\n' +
+  +   '@@ -0,0 +1,238 @@\n' +
+  +   "+'use strict';\n" +
+  +   '+\n' +
+  +   `+// Guards the NUMBERS inside the README's "### Node support" matrix table,\n` +
+  +   '+// which `test/node-support-citation.test.js` does not cover. That file\n' +
+  +   "+// guards the section's CITATION (does the cited base commit still describe\n" +
+  +   '+// this tree, via `git diff <base>..HEAD`); it says nothing about whether the\n' +
+  +   '+// four rows of the table it cites are internally sane. A prior cycle proved\n' +
+  +   "+// the gap by hand: it flipped one row's pass count (`122` -> `121`) and\n" +
+  +   '+// separately replaced a whole row with absurd values (`999 tests, 998 pass`)\n' +
+  +   '+// against a deliberately falsified table, and the full suite stayed green at\n' +
+  +   '+// 124/124/0 both times -- neither the citation guard nor anything else\n' +
+  +   '+// noticed. This file is the guard that closes that hole.\n' +
+  +   '+//\n' +
+  +   '+// What this file deliberately does NOT do, and why:\n' +
+  +   '+//\n' +
+  +   '+// - It does NOT run `node --test` (or anything that re-executes this\n' +
+  +   "+//   checkout's own suite) and compare the result to the table. Two reasons.\n" +
+  +   '+//   First, a test file that spawns `node --test test/*.test.js` from inside\n' +
+  +   '+//   itself would re-run the whole suite recursively, including itself,\n' +
+  +   '+//   forever. Second, and more fundamentally, even if it could be done\n' +
+  +   '+//   safely, the comparison would be dishonest: the four table rows report a\n' +
+  +   "+//   REMOTE CI run's counts (Actions run 32400996331, shallow checkout, 2\n" +
+  +   "+//   legitimate skips), not this checkout's. A local full clone runs those\n" +
+  +   '+//   same 2 tests instead of skipping them, so a local `node --test` run\n' +
+  +   '+//   reports `0 skipped` where every table row honestly reports `2 skipped`.\n' +
+  +   '+//   Asserting the table against a local run would either fail permanently\n' +
+  +   '+//   on a correct table (wrong) or require hardcoding a "local counts always\n' +
+  +   '+//   differ from CI counts by exactly 2" fudge factor that has no anchor\n' +
+  +   '+//   other than "trust the table" -- which is circular, since the table is\n' +
+  +   '+//   the thing being checked.\n' +
+  +   '+// - It does NOT hit the network to re-fetch Actions run 32400996331 and\n' +
+  +   "+//   compare live. This suite runs offline; the run's actual reported counts\n" +
+  +   '+//   are a fact about the past that this checkout cannot re-observe, only\n' +
+  +   '+//   cite.\n' +
+  +   '+//\n' +
+  +   '+// So the anchor used here is INTERNAL CONSISTENCY -- the only thing an\n' +
+  +   '+// offline checkout can honestly check about a citation of a past remote run:\n' +
+  +   '+//\n' +
+  +   "+//   1. Each row's own arithmetic must hold: tests = pass + fail + skipped.\n" +
+  +   '+//      This alone would have caught both recorded falsification arms (the\n' +
+  +   '+//      `121 pass` row no longer sums to `124`; the `999 tests, 998 pass` row\n' +
+  +   '+//      no longer sums to `999` either), because both arms happened to break\n' +
+  +   '+//      per-row arithmetic. It would NOT catch a falsification that swaps two\n' +
+  +   "+//      rows' worth of numbers without breaking either row's own sum, so it\n" +
+  +   '+//      is paired with check 2.\n' +
+  +   "+//   2. The four rows must agree with each other. The section's own prose\n" +
+  +   '+//      asserts this ("The two skips are the same on all four majors"), and\n' +
+  +   '+//      the table as cited is in fact four identical rows -- one CI run\n' +
+  +   '+//      reporting the same result on four Node majors. A row that diverges\n' +
+  +   '+//      from the others, even if internally self-consistent, contradicts\n' +
+  +   '+//      that claim and the cited run.\n' +
+  +   '+//   3. The run id named in the link text ("Actions run 32400996331") must\n' +
+  +   "+//      match the run id embedded in that same link's URL\n" +
+  +   '+//      (".../actions/runs/32400996331"). These are two independent renderings\n' +
+  +   '+//      of the same fact sitting a few characters apart; if a future edit\n' +
+  +   '+//      updates one and not the other, the citation becomes internally\n' +
+  +   '+//      contradictory about which run it even names.\n' +
+  +   '+//   4. The commit named in the prose ("at commit `4b63e91`") must match the\n' +
+  +   "+//      commit embedded in the section's own falsification-condition command\n" +
+  +   '+//      ("git diff 4b63e91..HEAD -- ..."). Same reasoning as (3): two\n' +
+  +   '+//      independent mentions of what should be one fact.\n' +
+  +   '+//\n' +
+  +   '+// None of this asserts what the TRUE counts are -- only that the table does\n' +
+  +   "+// not contradict itself, and that the section's other doubled-up facts\n" +
+  +   '+// (run id, commit) do not contradict each other. That is deliberately\n' +
+  +   '+// weaker than "these counts are correct," because "correct" would require\n' +
+  +   '+// re-running CI, which this offline suite cannot honestly claim to do. Full\n' +
+  +   '+// arithmetic and cross-row agreement plus matching cross-references is the\n' +
+  +   '+// strongest claim obtainable without lying about what was measured.\n' +
+  +   '+\n' +
+  +   "+const test = require('node:test');\n" +
+  +   "+const assert = require('node:assert/strict');\n" +
+  +   "+const fs = require('fs');\n" +
+  +   "+const path = require('path');\n" +
+  +   '+\n' +
+  +   "+const REPO_ROOT = path.join(__dirname, '..');\n" +
+  +   '+\n' +
+  +   `+// Extract the "### Node support" section's raw text: from its own heading up\n` +
+  +   '+// to (but not including) the next heading of the same level or shallower\n' +
+  +   '+// ("## " or "### "), or the end of the file if it is the last section.\n' +
+  +   '+// Deliberately duplicated from test/node-support-citation.test.js rather\n' +
+  +   '+// than factored into a shared helper module: these two files guard distinct\n' +
+  +   '+// claims (citation freshness vs. table self-consistency) and each is meant\n' +
+  +   '+// to be independently readable and independently attributable when it\n' +
+  +   '+// fails, without a reader having to jump to a shared module to see what\n' +
+  +   '+// "the section" means.\n' +
+  +   '+function getNodeSupportSection(readmeContent) {\n' +
+  +   "+  const headingMarker = '### Node support';\n" +
+  +   '+  const start = readmeContent.indexOf(headingMarker);\n' +
+  +   `+  assert(start !== -1, 'README must have a "### Node support" section');\n` +
+  +   '+\n' +
+  +   '+  const rest = readmeContent.slice(start + headingMarker.length);\n' +
+  +   '+  const nextHeadingMatch = rest.match(/\\n(##|###) /);\n' +
+  +   '+  const end = nextHeadingMatch\n' +
+  +   '+    ? start + headingMarker.length + nextHeadingMatch.index\n' +
+  +   '+    : readmeContent.length;\n' +
+  +   '+\n' +
+  +   '+  return readmeContent.slice(start, end);\n' +
+  +   '+}\n' +
+  +   '+\n' +
+  +   "+// Parse the matrix table's rows out of the section text. Each row is\n" +
+  +   '+// expected in the shape `| vX.Y.Z | N tests, N pass, N fail, N skipped |`.\n' +
+  +   '+// Returns an array of { node, tests, pass, fail, skipped, raw }, in table\n' +
+  +   '+// order. Deliberately does not hardcode an expected row count -- a future\n' +
+  +   '+// cycle adding or dropping a Node major is a legitimate table edit, not a\n' +
+  +   '+// falsification, and this parser should follow it rather than block it.\n' +
+  +   '+function parseMatrixRows(sectionText) {\n' +
+  +   '+  const rowPattern =\n' +
+  +   '+    /\\|\\s*(v[\\d.]+)\\s*\\|\\s*(\\d+)\\s*tests,\\s*(\\d+)\\s*pass,\\s*(\\d+)\\s*fail,\\s*(\\d+)\\s*skipped\\s*\\|/g;\n' +
+  +   '+  const rows = [];\n' +
+  +   '+  let match;\n' +
+  +   '+  while ((match = rowPattern.exec(sectionText)) !== null) {\n' +
+  +   '+    rows.push({\n' +
+  +   '+      node: match[1],\n' +
+  +   '+      tests: Number(match[2]),\n' +
+  +   '+      pass: Number(match[3]),\n' +
+  +   '+      fail: Number(match[4]),\n' +
+  +   '+      skipped: Number(match[5]),\n' +
+  +   '+      raw: match[0],\n' +
+  +   '+    });\n' +
+  +   '+  }\n' +
+  +   '+  return rows;\n' +
+  +   '+}\n' +
+  +   '+\n' +
+  +   "+test('README Node support matrix: table must be present and non-empty', () => {\n" +
+  +   "+  const readmeContent = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');\n" +
+  +   '+  const section = getNodeSupportSection(readmeContent);\n' +
+  +   '+  const rows = parseMatrixRows(section);\n' +
+  +   '+\n' +
+  +   '+  assert(\n' +
+  +   '+    rows.length > 0,\n' +
+  +   `+    'README "### Node support" section no longer contains any parseable matrix rows in the ' +\n` +
+  +   "+      '`| vX.Y.Z | N tests, N pass, N fail, N skipped |` shape -- either the table was removed ' +\n" +
+  +   "+      'or its row format changed in a way this guard no longer recognizes. Update the guard ' +\n" +
+  +   "+      'deliberately if the row format changed on purpose; this failure is not itself evidence ' +\n" +
+  +   "+      'of a falsified table.'\n" +
+  +   '+  );\n' +
+  +   '+});\n' +
+  +   '+\n' +
+  +   "+test('README Node support matrix: each row\\'s own arithmetic must hold (tests = pass + fail + skipped)', () => {\n" +
+  +   "+  const readmeContent = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');\n" +
+  +   '+  const section = getNodeSupportSection(readmeContent);\n' +
+  +   '+  const rows = parseMatrixRows(section);\n' +
+  +   `+  assert(rows.length > 0, 'no matrix rows parsed -- see the "table must be present" test');\n` +
+  +   '+\n' +
+  +   '+  for (const row of rows) {\n' +
+  +   '+    const sum = row.pass + row.fail + row.skipped;\n' +
+  +   '+    assert.equal(\n' +
+  +   '+      row.tests,\n' +
+  +   '+      sum,\n' +
+  +   "+      'README Node support matrix row `' + row.raw + '` (Node ' + row.node + ') claims ' +\n" +
+  +   "+        row.tests + ' tests but pass (' + row.pass + ') + fail (' + row.fail + ') + skipped (' +\n" +
+  +   "+        row.skipped + ') = ' + sum + ' -- that row contradicts its own arithmetic. Fix the ' +\n" +
+  +   "+        'table to a measured value; do not just make the sum balance.'\n" +
+  +   '+    );\n' +
+  +   '+  }\n' +
+  +   '+});\n' +
+  +   '+\n' +
+  +   "+test('README Node support matrix: all rows must agree with each other', () => {\n" +
+  +   "+  const readmeContent = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');\n" +
+  +   '+  const section = getNodeSupportSection(readmeContent);\n' +
+  +   '+  const rows = parseMatrixRows(section);\n' +
+  +   `+  assert(rows.length > 0, 'no matrix rows parsed -- see the "table must be present" test');\n` +
+  +   '+\n' +
+  +   '+  const [first, ...rest] = rows;\n' +
+  +   '+  for (const row of rest) {\n' +
+  +   '+    const matches =\n' +
+  +   '+      row.tests === first.tests &&\n' +
+  +   '+      row.pass === first.pass &&\n' +
+  +   '+      row.fail === first.fail &&\n' +
+  +   '+      row.skipped === first.skipped;\n' +
+  +   '+    assert(\n' +
+  +   '+      matches,\n' +
+  +   "+      'README Node support matrix row for Node ' + row.node + ' (`' + row.raw + '`) does not ' +\n" +
+  +   "+        'agree with the Node ' + first.node + ' row (`' + first.raw + '`) -- the section\\'s own ' +\n" +
+  +   `+        'prose asserts the cited run reported the same result on every major ("The two skips ' +\n` +
+  +   `+        'are the same on all four majors"), so the table is expected to be N identical rows, ' +\n` +
+  +   "+        'one per major. A row that diverges from the others contradicts that claim, even if ' +\n" +
+  +   "+        'the diverging row is internally self-consistent on its own.'\n" +
+  +   '+    );\n' +
+  +   '+  }\n' +
+  +   '+});\n' +
+  +   '+\n' +
+  +   "+test('README Node support matrix: cited Actions run id must match between the link text and the link URL', () => {\n" +
+  +   "+  const readmeContent = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');\n" +
+  +   '+  const section = g'... 2263 more characters
+  - ''
+  
+      at TestContext.<anonymous> (/opt/targets/aphorism-cli/test/node-support-citation.test.js:215:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'diff --git a/test/readme-matrix-consistency.test.js b/test/readme-matrix-consistency.test.js\nnew file mode 100644\nindex 0000000..a2d2b6e\n--- /dev/null\n+++ b/test/readme-matrix-consistency.test.js\n@@ -0,0 +1,238 @@\n+\'use strict\';\n+\n+// Guards the NUMBERS inside the README\'s "### Node support" matrix table,\n+// which `test/node-support-citation.test.js` does not cover. That file\n+// guards the section\'s CITATION (does the cited base commit still describe\n+// this tree, via `git diff <base>..HEAD`); it says nothing about whether the\n+// four rows of the table it cites are internally sane. A prior cycle proved\n+// the gap by hand: it flipped one row\'s pass count (`122` -> `121`) and\n+// separately replaced a whole row with absurd values (`999 tests, 998 pass`)\n+// against a deliberately falsified table, and the full suite stayed green at\n+// 124/124/0 both times -- neither the citation guard nor anything else\n+// noticed. This file is the guard that closes that hole.\n+//\n+// What this file deliberately does NOT do, and why:\n+//\n+// - It does NOT run `node --test` (or anything that re-executes this\n+//   checkout\'s own suite) and compare the result to the table. Two reasons.\n+//   First, a test file that spawns `node --test test/*.test.js` from inside\n+//   itself would re-run the whole suite recursively, including itself,\n+//   forever. Second, and more fundamentally, even if it could be done\n+//   safely, the comparison would be dishonest: the four table rows report a\n+//   REMOTE CI run\'s counts (Actions run 32400996331, shallow checkout, 2\n+//   legitimate skips), not this checkout\'s. A local full clone runs those\n+//   same 2 tests instead of skipping them, so a local `node --test` run\n+//   reports `0 skipped` where every table row honestly reports `2 skipped`.\n+//   Asserting the table against a local run would either fail permanently\n+//   on a correct table (wrong) or require hardcoding a "local counts always\n+//   differ from CI counts by exactly 2" fudge factor that has no anchor\n+//   other than "trust the table" -- which is circular, since the table is\n+//   the thing being checked.\n+// - It does NOT hit the network to re-fetch Actions run 32400996331 and\n+//   compare live. This suite runs offline; the run\'s actual reported counts\n+//   are a fact about the past that this checkout cannot re-observe, only\n+//   cite.\n+//\n+// So the anchor used here is INTERNAL CONSISTENCY -- the only thing an\n+// offline checkout can honestly check about a citation of a past remote run:\n+//\n+//   1. Each row\'s own arithmetic must hold: tests = pass + fail + skipped.\n+//      This alone would have caught both recorded falsification arms (the\n+//      `121 pass` row no longer sums to `124`; the `999 tests, 998 pass` row\n+//      no longer sums to `999` either), because both arms happened to break\n+//      per-row arithmetic. It would NOT catch a falsification that swaps two\n+//      rows\' worth of numbers without breaking either row\'s own sum, so it\n+//      is paired with check 2.\n+//   2. The four rows must agree with each other. The section\'s own prose\n+//      asserts this ("The two skips are the same on all four majors"), and\n+//      the table as cited is in fact four identical rows -- one CI run\n+//      reporting the same result on four Node majors. A row that diverges\n+//      from the others, even if internally self-consistent, contradicts\n+//      that claim and the cited run.\n+//   3. The run id named in the link text ("Actions run 32400996331") must\n+//      match the run id embedded in that same link\'s URL\n+//      (".../actions/runs/32400996331"). These are two independent renderings\n+//      of the same fact sitting a few characters apart; if a future edit\n+//      updates one and not the other, the citation becomes internally\n+//      contradictory about which run it even names.\n+//   4. The commit named in the prose ("at commit `4b63e91`") must match the\n+//      commit embedded in the section\'s own falsification-condition command\n+//      ("git diff 4b63e91..HEAD -- ..."). Same reasoning as (3): two\n+//      independent mentions of what should be one fact.\n+//\n+// None of this asserts what the TRUE counts are -- only that the table does\n+// not contradict itself, and that the section\'s other doubled-up facts\n+// (run id, commit) do not contradict each other. That is deliberately\n+// weaker than "these counts are correct," because "correct" would require\n+// re-running CI, which this offline suite cannot honestly claim to do. Full\n+// arithmetic and cross-row agreement plus matching cross-references is the\n+// strongest claim obtainable without lying about what was measured.\n+\n+const test = require(\'node:test\');\n+const assert = require(\'node:assert/strict\');\n+const fs = require(\'fs\');\n+const path = require(\'path\');\n+\n+const REPO_ROOT = path.join(__dirname, \'..\');\n+\n+// Extract the "### Node support" section\'s raw text: from its own heading up\n+// to (but not including) the next heading of the same level or shallower\n+// ("## " or "### "), or the end of the file if it is the last section.\n+// Deliberately duplicated from test/node-support-citation.test.js rather\n+// than factored into a shared helper module: these two files guard distinct\n+// claims (citation freshness vs. table self-consistency) and each is meant\n+// to be independently readable and independently attributable when it\n+// fails, without a reader having to jump to a shared module to see what\n+// "the section" means.\n+function getNodeSupportSection(readmeContent) {\n+  const headingMarker = \'### Node support\';\n+  const start = readmeContent.indexOf(headingMarker);\n+  assert(start !== -1, \'README must have a "### Node support" section\');\n+\n+  const rest = readmeContent.slice(start + headingMarker.length);\n+  const nextHeadingMatch = rest.match(/\\n(##|###) /);\n+  const end = nextHeadingMatch\n+    ? start + headingMarker.length + nextHeadingMatch.index\n+    : readmeContent.length;\n+\n+  return readmeContent.slice(start, end);\n+}\n+\n+// Parse the matrix table\'s rows out of the section text. Each row is\n+// expected in the shape `| vX.Y.Z | N tests, N pass, N fail, N skipped |`.\n+// Returns an array of { node, tests, pass, fail, skipped, raw }, in table\n+// order. Deliberately does not hardcode an expected row count -- a future\n+// cycle adding or dropping a Node major is a legitimate table edit, not a\n+// falsification, and this parser should follow it rather than block it.\n+function parseMatrixRows(sectionText) {\n+  const rowPattern =\n+    /\\|\\s*(v[\\d.]+)\\s*\\|\\s*(\\d+)\\s*tests,\\s*(\\d+)\\s*pass,\\s*(\\d+)\\s*fail,\\s*(\\d+)\\s*skipped\\s*\\|/g;\n+  const rows = [];\n+  let match;\n+  while ((match = rowPattern.exec(sectionText)) !== null) {\n+    rows.push({\n+      node: match[1],\n+      tests: Number(match[2]),\n+      pass: Number(match[3]),\n+      fail: Number(match[4]),\n+      skipped: Number(match[5]),\n+      raw: match[0],\n+    });\n+  }\n+  return rows;\n+}\n+\n+test(\'README Node support matrix: table must be present and non-empty\', () => {\n+  const readmeContent = fs.readFileSync(path.join(REPO_ROOT, \'README.md\'), \'utf8\');\n+  const section = getNodeSupportSection(readmeContent);\n+  const rows = parseMatrixRows(section);\n+\n+  assert(\n+    rows.length > 0,\n+    \'README "### Node support" section no longer contains any parseable matrix rows in the \' +\n+      \'`| vX.Y.Z | N tests, N pass, N fail, N skipped |` shape -- either the table was removed \' +\n+      \'or its row format changed in a way this guard no longer recognizes. Update the guard \' +\n+      \'deliberately if the row format changed on purpose; this failure is not itself evidence \' +\n+      \'of a falsified table.\'\n+  );\n+});\n+\n+test(\'README Node support matrix: each row\\\'s own arithmetic must hold (tests = pass + fail + skipped)\', () => {\n+  const readmeContent = fs.readFileSync(path.join(REPO_ROOT, \'README.md\'), \'utf8\');\n+  const section = getNodeSupportSection(readmeContent);\n+  const rows = parseMatrixRows(section);\n+  assert(rows.length > 0, \'no matrix rows parsed -- see the "table must be present" test\');\n+\n+  for (const row of rows) {\n+    const sum = row.pass + row.fail + row.skipped;\n+    assert.equal(\n+      row.tests,\n+      sum,\n+      \'README Node support matrix row `\' + row.raw + \'` (Node \' + row.node + \') claims \' +\n+        row.tests + \' tests but pass (\' + row.pass + \') + fail (\' + row.fail + \') + skipped (\' +\n+        row.skipped + \') = \' + sum + \' -- that row contradicts its own arithmetic. Fix the \' +\n+        \'table to a measured value; do not just make the sum balance.\'\n+    );\n+  }\n+});\n+\n+test(\'README Node support matrix: all rows must agree with each other\', () => {\n+  const readmeContent = fs.readFileSync(path.join(REPO_ROOT, \'README.md\'), \'utf8\');\n+  const section = getNodeSupportSection(readmeContent);\n+  const rows = parseMatrixRows(section);\n+  assert(rows.length > 0, \'no matrix rows parsed -- see the "table must be present" test\');\n+\n+  const [first, ...rest] = rows;\n+  for (const row of rest) {\n+    const matches =\n+      row.tests === first.tests &&\n+      row.pass === first.pass &&\n+      row.fail === first.fail &&\n+      row.skipped === first.skipped;\n+    assert(\n+      matches,\n+      \'README Node support matrix row for Node \' + row.node + \' (`\' + row.raw + \'`) does not \' +\n+        \'agree with the Node \' + first.node + \' row (`\' + first.raw + \'`) -- the section\\\'s own \' +\n+        \'prose asserts the cited run reported the same result on every major ("The two skips \' +\n+        \'are the same on all four majors"), so the table is expected to be N identical rows, \' +\n+        \'one per major. A row that diverges from the others contradicts that claim, even if \' +\n+        \'the diverging row is internally self-consistent on its own.\'\n+    );\n+  }\n+});\n+\n+test(\'README Node support matrix: cited Actions run id must match between the link text and the link URL\', () => {\n+  const readmeContent = fs.readFileSync(path.join(REPO_ROOT, \'README.md\'), \'utf8\');\n+  const section = g'... 2263 more characters,
+    expected: '',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/node-support-citation.test.js:225:1
+✖ README Node support citation: base-to-working-tree diff must also be empty, so an uncommitted falsification is visible now (or the check must skip on a missing precondition) (28.371171ms)
+  AssertionError [ERR_ASSERTION]: README's "### Node support" section cites `git diff 4b63e91..HEAD -- src bin test .github` as its own retirement condition, and the same base compared against the WORKING TREE (`git diff 4b63e91 -- src bin test .github`, which includes uncommitted staged and unstaged changes) is no longer empty -- this tree, right now, no longer matches the cited citation, even though that change may not be committed yet. The section needs a new citation (see the repo's own note on how the previous stale citation was recorded).
+  + actual - expected
+  
+  + 'diff --git a/test/readme-matrix-consistency.test.js b/test/readme-matrix-consistency.test.js\n' +
+  +   'new file mode 100644\n' +
+  +   'index 0000000..a2d2b6e\n' +
+  +   '--- /dev/null\n' +
+  +   '+++ b/test/readme-matrix-consistency.test.js\n' +
+  +   '@@ -0,0 +1,238 @@\n' +
+  +   "+'use strict';\n" +
+  +   '+\n' +
+  +   `+// Guards the NUMBERS inside the README's "### Node support" matrix table,\n` +
+  +   '+// which `test/node-support-citation.test.js` does not cover. That file\n' +
+  +   "+// guards the section's CITATION (does the cited base commit still describe\n" +
+  +   '+// this tree, via `git diff <base>..HEAD`); it says nothing about whether the\n' +
+  +   '+// four rows of the table it cites are internally sane. A prior cycle proved\n' +
+  +   "+// the gap by hand: it flipped one row's pass count (`122` -> `121`) and\n" +
+  +   '+// separately replaced a whole row with absurd values (`999 tests, 998 pass`)\n' +
+  +   '+// against a deliberately falsified table, and the full suite stayed green at\n' +
+  +   '+// 124/124/0 both times -- neither the citation guard nor anything else\n' +
+  +   '+// noticed. This file is the guard that closes that hole.\n' +
+  +   '+//\n' +
+  +   '+// What this file deliberately does NOT do, and why:\n' +
+  +   '+//\n' +
+  +   '+// - It does NOT run `node --test` (or anything that re-executes this\n' +
+  +   "+//   checkout's own suite) and compare the result to the table. Two reasons.\n" +
+  +   '+//   First, a test file that spawns `node --test test/*.test.js` from inside\n' +
+  +   '+//   itself would re-run the whole suite recursively, including itself,\n' +
+  +   '+//   forever. Second, and more fundamentally, even if it could be done\n' +
+  +   '+//   safely, the comparison would be dishonest: the four table rows report a\n' +
+  +   "+//   REMOTE CI run's counts (Actions run 32400996331, shallow checkout, 2\n" +
+  +   "+//   legitimate skips), not this checkout's. A local full clone runs those\n" +
+  +   '+//   same 2 tests instead of skipping them, so a local `node --test` run\n' +
+  +   '+//   reports `0 skipped` where every table row honestly reports `2 skipped`.\n' +
+  +   '+//   Asserting the table against a local run would either fail permanently\n' +
+  +   '+//   on a correct table (wrong) or require hardcoding a "local counts always\n' +
+  +   '+//   differ from CI counts by exactly 2" fudge factor that has no anchor\n' +
+  +   '+//   other than "trust the table" -- which is circular, since the table is\n' +
+  +   '+//   the thing being checked.\n' +
+  +   '+// - It does NOT hit the network to re-fetch Actions run 32400996331 and\n' +
+  +   "+//   compare live. This suite runs offline; the run's actual reported counts\n" +
+  +   '+//   are a fact about the past that this checkout cannot re-observe, only\n' +
+  +   '+//   cite.\n' +
+  +   '+//\n' +
+  +   '+// So the anchor used here is INTERNAL CONSISTENCY -- the only thing an\n' +
+  +   '+// offline checkout can honestly check about a citation of a past remote run:\n' +
+  +   '+//\n' +
+  +   "+//   1. Each row's own arithmetic must hold: tests = pass + fail + skipped.\n" +
+  +   '+//      This alone would have caught both recorded falsification arms (the\n' +
+  +   '+//      `121 pass` row no longer sums to `124`; the `999 tests, 998 pass` row\n' +
+  +   '+//      no longer sums to `999` either), because both arms happened to break\n' +
+  +   '+//      per-row arithmetic. It would NOT catch a falsification that swaps two\n' +
+  +   "+//      rows' worth of numbers without breaking either row's own sum, so it\n" +
+  +   '+//      is paired with check 2.\n' +
+  +   "+//   2. The four rows must agree with each other. The section's own prose\n" +
+  +   '+//      asserts this ("The two skips are the same on all four majors"), and\n' +
+  +   '+//      the table as cited is in fact four identical rows -- one CI run\n' +
+  +   '+//      reporting the same result on four Node majors. A row that diverges\n' +
+  +   '+//      from the others, even if internally self-consistent, contradicts\n' +
+  +   '+//      that claim and the cited run.\n' +
+  +   '+//   3. The run id named in the link text ("Actions run 32400996331") must\n' +
+  +   "+//      match the run id embedded in that same link's URL\n" +
+  +   '+//      (".../actions/runs/32400996331"). These are two independent renderings\n' +
+  +   '+//      of the same fact sitting a few characters apart; if a future edit\n' +
+  +   '+//      updates one and not the other, the citation becomes internally\n' +
+  +   '+//      contradictory about which run it even names.\n' +
+  +   '+//   4. The commit named in the prose ("at commit `4b63e91`") must match the\n' +
+  +   "+//      commit embedded in the section's own falsification-condition command\n" +
+  +   '+//      ("git diff 4b63e91..HEAD -- ..."). Same reasoning as (3): two\n' +
+  +   '+//      independent mentions of what should be one fact.\n' +
+  +   '+//\n' +
+  +   '+// None of this asserts what the TRUE counts are -- only that the table does\n' +
+  +   "+// not contradict itself, and that the section's other doubled-up facts\n" +
+  +   '+// (run id, commit) do not contradict each other. That is deliberately\n' +
+  +   '+// weaker than "these counts are correct," because "correct" would require\n' +
+  +   '+// re-running CI, which this offline suite cannot honestly claim to do. Full\n' +
+  +   '+// arithmetic and cross-row agreement plus matching cross-references is the\n' +
+  +   '+// strongest claim obtainable without lying about what was measured.\n' +
+  +   '+\n' +
+  +   "+const test = require('node:test');\n" +
+  +   "+const assert = require('node:assert/strict');\n" +
+  +   "+const fs = require('fs');\n" +
+  +   "+const path = require('path');\n" +
+  +   '+\n' +
+  +   "+const REPO_ROOT = path.join(__dirname, '..');\n" +
+  +   '+\n' +
+  +   `+// Extract the "### Node support" section's raw text: from its own heading up\n` +
+  +   '+// to (but not including) the next heading of the same level or shallower\n' +
+  +   '+// ("## " or "### "), or the end of the file if it is the last section.\n' +
+  +   '+// Deliberately duplicated from test/node-support-citation.test.js rather\n' +
+  +   '+// than factored into a shared helper module: these two files guard distinct\n' +
+  +   '+// claims (citation freshness vs. table self-consistency) and each is meant\n' +
+  +   '+// to be independently readable and independently attributable when it\n' +
+  +   '+// fails, without a reader having to jump to a shared module to see what\n' +
+  +   '+// "the section" means.\n' +
+  +   '+function getNodeSupportSection(readmeContent) {\n' +
+  +   "+  const headingMarker = '### Node support';\n" +
+  +   '+  const start = readmeContent.indexOf(headingMarker);\n' +
+  +   `+  assert(start !== -1, 'README must have a "### Node support" section');\n` +
+  +   '+\n' +
+  +   '+  const rest = readmeContent.slice(start + headingMarker.length);\n' +
+  +   '+  const nextHeadingMatch = rest.match(/\\n(##|###) /);\n' +
+  +   '+  const end = nextHeadingMatch\n' +
+  +   '+    ? start + headingMarker.length + nextHeadingMatch.index\n' +
+  +   '+    : readmeContent.length;\n' +
+  +   '+\n' +
+  +   '+  return readmeContent.slice(start, end);\n' +
+  +   '+}\n' +
+  +   '+\n' +
+  +   "+// Parse the matrix table's rows out of the section text. Each row is\n" +
+  +   '+// expected in the shape `| vX.Y.Z | N tests, N pass, N fail, N skipped |`.\n' +
+  +   '+// Returns an array of { node, tests, pass, fail, skipped, raw }, in table\n' +
+  +   '+// order. Deliberately does not hardcode an expected row count -- a future\n' +
+  +   '+// cycle adding or dropping a Node major is a legitimate table edit, not a\n' +
+  +   '+// falsification, and this parser should follow it rather than block it.\n' +
+  +   '+function parseMatrixRows(sectionText) {\n' +
+  +   '+  const rowPattern =\n' +
+  +   '+    /\\|\\s*(v[\\d.]+)\\s*\\|\\s*(\\d+)\\s*tests,\\s*(\\d+)\\s*pass,\\s*(\\d+)\\s*fail,\\s*(\\d+)\\s*skipped\\s*\\|/g;\n' +
+  +   '+  const rows = [];\n' +
+  +   '+  let match;\n' +
+  +   '+  while ((match = rowPattern.exec(sectionText)) !== null) {\n' +
+  +   '+    rows.push({\n' +
+  +   '+      node: match[1],\n' +
+  +   '+      tests: Number(match[2]),\n' +
+  +   '+      pass: Number(match[3]),\n' +
+  +   '+      fail: Number(match[4]),\n' +
+  +   '+      skipped: Number(match[5]),\n' +
+  +   '+      raw: match[0],\n' +
+  +   '+    });\n' +
+  +   '+  }\n' +
+  +   '+  return rows;\n' +
+  +   '+}\n' +
+  +   '+\n' +
+  +   "+test('README Node support matrix: table must be present and non-empty', () => {\n" +
+  +   "+  const readmeContent = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');\n" +
+  +   '+  const section = getNodeSupportSection(readmeContent);\n' +
+  +   '+  const rows = parseMatrixRows(section);\n' +
+  +   '+\n' +
+  +   '+  assert(\n' +
+  +   '+    rows.length > 0,\n' +
+  +   `+    'README "### Node support" section no longer contains any parseable matrix rows in the ' +\n` +
+  +   "+      '`| vX.Y.Z | N tests, N pass, N fail, N skipped |` shape -- either the table was removed ' +\n" +
+  +   "+      'or its row format changed in a way this guard no longer recognizes. Update the guard ' +\n" +
+  +   "+      'deliberately if the row format changed on purpose; this failure is not itself evidence ' +\n" +
+  +   "+      'of a falsified table.'\n" +
+  +   '+  );\n' +
+  +   '+});\n' +
+  +   '+\n' +
+  +   "+test('README Node support matrix: each row\\'s own arithmetic must hold (tests = pass + fail + skipped)', () => {\n" +
+  +   "+  const readmeContent = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');\n" +
+  +   '+  const section = getNodeSupportSection(readmeContent);\n' +
+  +   '+  const rows = parseMatrixRows(section);\n' +
+  +   `+  assert(rows.length > 0, 'no matrix rows parsed -- see the "table must be present" test');\n` +
+  +   '+\n' +
+  +   '+  for (const row of rows) {\n' +
+  +   '+    const sum = row.pass + row.fail + row.skipped;\n' +
+  +   '+    assert.equal(\n' +
+  +   '+      row.tests,\n' +
+  +   '+      sum,\n' +
+  +   "+      'README Node support matrix row `' + row.raw + '` (Node ' + row.node + ') claims ' +\n" +
+  +   "+        row.tests + ' tests but pass (' + row.pass + ') + fail (' + row.fail + ') + skipped (' +\n" +
+  +   "+        row.skipped + ') = ' + sum + ' -- that row contradicts its own arithmetic. Fix the ' +\n" +
+  +   "+        'table to a measured value; do not just make the sum balance.'\n" +
+  +   '+    );\n' +
+  +   '+  }\n' +
+  +   '+});\n' +
+  +   '+\n' +
+  +   "+test('README Node support matrix: all rows must agree with each other', () => {\n" +
+  +   "+  const readmeContent = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');\n" +
+  +   '+  const section = getNodeSupportSection(readmeContent);\n' +
+  +   '+  const rows = parseMatrixRows(section);\n' +
+  +   `+  assert(rows.length > 0, 'no matrix rows parsed -- see the "table must be present" test');\n` +
+  +   '+\n' +
+  +   '+  const [first, ...rest] = rows;\n' +
+  +   '+  for (const row of rest) {\n' +
+  +   '+    const matches =\n' +
+  +   '+      row.tests === first.tests &&\n' +
+  +   '+      row.pass === first.pass &&\n' +
+  +   '+      row.fail === first.fail &&\n' +
+  +   '+      row.skipped === first.skipped;\n' +
+  +   '+    assert(\n' +
+  +   '+      matches,\n' +
+  +   "+      'README Node support matrix row for Node ' + row.node + ' (`' + row.raw + '`) does not ' +\n" +
+  +   "+        'agree with the Node ' + first.node + ' row (`' + first.raw + '`) -- the section\\'s own ' +\n" +
+  +   `+        'prose asserts the cited run reported the same result on every major ("The two skips ' +\n` +
+  +   `+        'are the same on all four majors"), so the table is expected to be N identical rows, ' +\n` +
+  +   "+        'one per major. A row that diverges from the others contradicts that claim, even if ' +\n" +
+  +   "+        'the diverging row is internally self-consistent on its own.'\n" +
+  +   '+    );\n' +
+  +   '+  }\n' +
+  +   '+});\n' +
+  +   '+\n' +
+  +   "+test('README Node support matrix: cited Actions run id must match between the link text and the link URL', () => {\n" +
+  +   "+  const readmeContent = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');\n" +
+  +   '+  const section = g'... 2263 more characters
+  - ''
+  
+      at TestContext.<anonymous> (/opt/targets/aphorism-cli/test/node-support-citation.test.js:259:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'diff --git a/test/readme-matrix-consistency.test.js b/test/readme-matrix-consistency.test.js\nnew file mode 100644\nindex 0000000..a2d2b6e\n--- /dev/null\n+++ b/test/readme-matrix-consistency.test.js\n@@ -0,0 +1,238 @@\n+\'use strict\';\n+\n+// Guards the NUMBERS inside the README\'s "### Node support" matrix table,\n+// which `test/node-support-citation.test.js` does not cover. That file\n+// guards the section\'s CITATION (does the cited base commit still describe\n+// this tree, via `git diff <base>..HEAD`); it says nothing about whether the\n+// four rows of the table it cites are internally sane. A prior cycle proved\n+// the gap by hand: it flipped one row\'s pass count (`122` -> `121`) and\n+// separately replaced a whole row with absurd values (`999 tests, 998 pass`)\n+// against a deliberately falsified table, and the full suite stayed green at\n+// 124/124/0 both times -- neither the citation guard nor anything else\n+// noticed. This file is the guard that closes that hole.\n+//\n+// What this file deliberately does NOT do, and why:\n+//\n+// - It does NOT run `node --test` (or anything that re-executes this\n+//   checkout\'s own suite) and compare the result to the table. Two reasons.\n+//   First, a test file that spawns `node --test test/*.test.js` from inside\n+//   itself would re-run the whole suite recursively, including itself,\n+//   forever. Second, and more fundamentally, even if it could be done\n+//   safely, the comparison would be dishonest: the four table rows report a\n+//   REMOTE CI run\'s counts (Actions run 32400996331, shallow checkout, 2\n+//   legitimate skips), not this checkout\'s. A local full clone runs those\n+//   same 2 tests instead of skipping them, so a local `node --test` run\n+//   reports `0 skipped` where every table row honestly reports `2 skipped`.\n+//   Asserting the table against a local run would either fail permanently\n+//   on a correct table (wrong) or require hardcoding a "local counts always\n+//   differ from CI counts by exactly 2" fudge factor that has no anchor\n+//   other than "trust the table" -- which is circular, since the table is\n+//   the thing being checked.\n+// - It does NOT hit the network to re-fetch Actions run 32400996331 and\n+//   compare live. This suite runs offline; the run\'s actual reported counts\n+//   are a fact about the past that this checkout cannot re-observe, only\n+//   cite.\n+//\n+// So the anchor used here is INTERNAL CONSISTENCY -- the only thing an\n+// offline checkout can honestly check about a citation of a past remote run:\n+//\n+//   1. Each row\'s own arithmetic must hold: tests = pass + fail + skipped.\n+//      This alone would have caught both recorded falsification arms (the\n+//      `121 pass` row no longer sums to `124`; the `999 tests, 998 pass` row\n+//      no longer sums to `999` either), because both arms happened to break\n+//      per-row arithmetic. It would NOT catch a falsification that swaps two\n+//      rows\' worth of numbers without breaking either row\'s own sum, so it\n+//      is paired with check 2.\n+//   2. The four rows must agree with each other. The section\'s own prose\n+//      asserts this ("The two skips are the same on all four majors"), and\n+//      the table as cited is in fact four identical rows -- one CI run\n+//      reporting the same result on four Node majors. A row that diverges\n+//      from the others, even if internally self-consistent, contradicts\n+//      that claim and the cited run.\n+//   3. The run id named in the link text ("Actions run 32400996331") must\n+//      match the run id embedded in that same link\'s URL\n+//      (".../actions/runs/32400996331"). These are two independent renderings\n+//      of the same fact sitting a few characters apart; if a future edit\n+//      updates one and not the other, the citation becomes internally\n+//      contradictory about which run it even names.\n+//   4. The commit named in the prose ("at commit `4b63e91`") must match the\n+//      commit embedded in the section\'s own falsification-condition command\n+//      ("git diff 4b63e91..HEAD -- ..."). Same reasoning as (3): two\n+//      independent mentions of what should be one fact.\n+//\n+// None of this asserts what the TRUE counts are -- only that the table does\n+// not contradict itself, and that the section\'s other doubled-up facts\n+// (run id, commit) do not contradict each other. That is deliberately\n+// weaker than "these counts are correct," because "correct" would require\n+// re-running CI, which this offline suite cannot honestly claim to do. Full\n+// arithmetic and cross-row agreement plus matching cross-references is the\n+// strongest claim obtainable without lying about what was measured.\n+\n+const test = require(\'node:test\');\n+const assert = require(\'node:assert/strict\');\n+const fs = require(\'fs\');\n+const path = require(\'path\');\n+\n+const REPO_ROOT = path.join(__dirname, \'..\');\n+\n+// Extract the "### Node support" section\'s raw text: from its own heading up\n+// to (but not including) the next heading of the same level or shallower\n+// ("## " or "### "), or the end of the file if it is the last section.\n+// Deliberately duplicated from test/node-support-citation.test.js rather\n+// than factored into a shared helper module: these two files guard distinct\n+// claims (citation freshness vs. table self-consistency) and each is meant\n+// to be independently readable and independently attributable when it\n+// fails, without a reader having to jump to a shared module to see what\n+// "the section" means.\n+function getNodeSupportSection(readmeContent) {\n+  const headingMarker = \'### Node support\';\n+  const start = readmeContent.indexOf(headingMarker);\n+  assert(start !== -1, \'README must have a "### Node support" section\');\n+\n+  const rest = readmeContent.slice(start + headingMarker.length);\n+  const nextHeadingMatch = rest.match(/\\n(##|###) /);\n+  const end = nextHeadingMatch\n+    ? start + headingMarker.length + nextHeadingMatch.index\n+    : readmeContent.length;\n+\n+  return readmeContent.slice(start, end);\n+}\n+\n+// Parse the matrix table\'s rows out of the section text. Each row is\n+// expected in the shape `| vX.Y.Z | N tests, N pass, N fail, N skipped |`.\n+// Returns an array of { node, tests, pass, fail, skipped, raw }, in table\n+// order. Deliberately does not hardcode an expected row count -- a future\n+// cycle adding or dropping a Node major is a legitimate table edit, not a\n+// falsification, and this parser should follow it rather than block it.\n+function parseMatrixRows(sectionText) {\n+  const rowPattern =\n+    /\\|\\s*(v[\\d.]+)\\s*\\|\\s*(\\d+)\\s*tests,\\s*(\\d+)\\s*pass,\\s*(\\d+)\\s*fail,\\s*(\\d+)\\s*skipped\\s*\\|/g;\n+  const rows = [];\n+  let match;\n+  while ((match = rowPattern.exec(sectionText)) !== null) {\n+    rows.push({\n+      node: match[1],\n+      tests: Number(match[2]),\n+      pass: Number(match[3]),\n+      fail: Number(match[4]),\n+      skipped: Number(match[5]),\n+      raw: match[0],\n+    });\n+  }\n+  return rows;\n+}\n+\n+test(\'README Node support matrix: table must be present and non-empty\', () => {\n+  const readmeContent = fs.readFileSync(path.join(REPO_ROOT, \'README.md\'), \'utf8\');\n+  const section = getNodeSupportSection(readmeContent);\n+  const rows = parseMatrixRows(section);\n+\n+  assert(\n+    rows.length > 0,\n+    \'README "### Node support" section no longer contains any parseable matrix rows in the \' +\n+      \'`| vX.Y.Z | N tests, N pass, N fail, N skipped |` shape -- either the table was removed \' +\n+      \'or its row format changed in a way this guard no longer recognizes. Update the guard \' +\n+      \'deliberately if the row format changed on purpose; this failure is not itself evidence \' +\n+      \'of a falsified table.\'\n+  );\n+});\n+\n+test(\'README Node support matrix: each row\\\'s own arithmetic must hold (tests = pass + fail + skipped)\', () => {\n+  const readmeContent = fs.readFileSync(path.join(REPO_ROOT, \'README.md\'), \'utf8\');\n+  const section = getNodeSupportSection(readmeContent);\n+  const rows = parseMatrixRows(section);\n+  assert(rows.length > 0, \'no matrix rows parsed -- see the "table must be present" test\');\n+\n+  for (const row of rows) {\n+    const sum = row.pass + row.fail + row.skipped;\n+    assert.equal(\n+      row.tests,\n+      sum,\n+      \'README Node support matrix row `\' + row.raw + \'` (Node \' + row.node + \') claims \' +\n+        row.tests + \' tests but pass (\' + row.pass + \') + fail (\' + row.fail + \') + skipped (\' +\n+        row.skipped + \') = \' + sum + \' -- that row contradicts its own arithmetic. Fix the \' +\n+        \'table to a measured value; do not just make the sum balance.\'\n+    );\n+  }\n+});\n+\n+test(\'README Node support matrix: all rows must agree with each other\', () => {\n+  const readmeContent = fs.readFileSync(path.join(REPO_ROOT, \'README.md\'), \'utf8\');\n+  const section = getNodeSupportSection(readmeContent);\n+  const rows = parseMatrixRows(section);\n+  assert(rows.length > 0, \'no matrix rows parsed -- see the "table must be present" test\');\n+\n+  const [first, ...rest] = rows;\n+  for (const row of rest) {\n+    const matches =\n+      row.tests === first.tests &&\n+      row.pass === first.pass &&\n+      row.fail === first.fail &&\n+      row.skipped === first.skipped;\n+    assert(\n+      matches,\n+      \'README Node support matrix row for Node \' + row.node + \' (`\' + row.raw + \'`) does not \' +\n+        \'agree with the Node \' + first.node + \' row (`\' + first.raw + \'`) -- the section\\\'s own \' +\n+        \'prose asserts the cited run reported the same result on every major ("The two skips \' +\n+        \'are the same on all four majors"), so the table is expected to be N identical rows, \' +\n+        \'one per major. A row that diverges from the others contradicts that claim, even if \' +\n+        \'the diverging row is internally self-consistent on its own.\'\n+    );\n+  }\n+});\n+\n+test(\'README Node support matrix: cited Actions run id must match between the link text and the link URL\', () => {\n+  const readmeContent = fs.readFileSync(path.join(REPO_ROOT, \'README.md\'), \'utf8\');\n+  const section = g'... 2263 more characters,
+    expected: '',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

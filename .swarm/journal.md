@@ -20744,3 +20744,22 @@ runfile-mirror:
   }
 }
 ```
+
+### Cycle 4 addendum — the post-commit state, measured rather than predicted
+
+Commit `7e50d6f`, pushed to origin/master. Re-measured after the commit:
+
+```
+# tests 129
+# pass 127
+# fail 2      <- both citation guards, predicted in the sealed gate before dispatch
+# skipped 0
+$ git diff 4b63e91..HEAD --stat -- src bin test .github
+  test/readme-matrix-consistency.test.js | 238 +++++++++++++++++++++
+```
+
+The cited-path diff is non-empty by exactly one file — the guard added this cycle — which is
+precisely why the citation guards fire. Cycle 3 predicted GREEN and checked it; this cycle
+predicted RED and checked that instead. Q-8 closes it once CI has run against `7e50d6f`.
+Q-5 invariants re-confirmed at the commit: corpus sha256 `77a4de5c` and `--help` sha256
+`d759d781` both unmoved.
