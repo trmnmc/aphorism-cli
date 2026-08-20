@@ -41,6 +41,21 @@
 // comes first would silently parse the wrong one depending on where in the
 // text it happens to land. That ambiguity FAILS loudly, naming the count
 // found, rather than resolving by position.
+//
+// One more gap: `HEAD` by definition excludes uncommitted work, so
+// `git diff <base>..HEAD -- <paths>` cannot see a falsification that is
+// still sitting uncommitted -- the very commit that breaks the citation
+// always tests green, and the break only shows up a whole cycle later, on
+// the next run against a clean checkout. A second comparison below reuses
+// the SAME cited base and pathspec but drops the `..HEAD` range entirely:
+// `git diff <base> -- <paths>` diffs the base commit against the working
+// tree (including staged and unstaged changes), so an uncommitted edit under
+// the cited paths is visible to THIS run, not just the next one. The two
+// comparisons are not redundant with each other: a committed change that is
+// then reverted uncommitted would show up in the base..HEAD diff but not the
+// base-to-worktree diff, and an uncommitted-only edit shows up in the
+// base-to-worktree diff but not the base..HEAD diff. Keeping both preserves
+// every signal the section's prose names.
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -98,17 +113,20 @@ function parseCitedDiffCommand(sectionText) {
   return { base, target, pathspec };
 }
 
-test('README Node support citation: cited git diff must be empty (or the check must skip on a missing precondition)', (t) => {
-  const readmePath = path.join(REPO_ROOT, 'README.md');
-  const readmeContent = fs.readFileSync(readmePath, 'utf8');
-  const section = getNodeSupportSection(readmeContent);
-  const { base, target, pathspec } = parseCitedDiffCommand(section);
-
+// Shared environment preconditions for both comparisons below: git present,
+// this checkout is a work tree, and the cited base commit is reachable (or
+// its unreachability is itself an explainable, skip-worthy shallow-clone
+// limitation rather than a bogus citation). Returns true if the caller
+// already got a t.skip() and must return immediately; returns false if the
+// base commit is confirmed reachable and the caller may proceed to run its
+// own comparison. A bogus citation on a full clone fails loudly via
+// assert.fail(), which throws, so no return value is needed for that case.
+function skipUnlessBaseIsEvaluable(t, base) {
   // Precondition: git binary present.
   const gitVersion = spawnSync('git', ['--version'], { encoding: 'utf8' });
   if (gitVersion.error || gitVersion.status !== 0) {
     t.skip('git binary is not available in this environment');
-    return;
+    return true;
   }
 
   // Precondition: this checkout is actually a git work tree.
@@ -119,7 +137,7 @@ test('README Node support citation: cited git diff must be empty (or the check m
   );
   if (isWorkTree.error || isWorkTree.status !== 0 || isWorkTree.stdout.trim() !== 'true') {
     t.skip('this checkout is not a git work tree');
-    return;
+    return true;
   }
 
   // Precondition: the cited base commit must be reachable in this history.
@@ -146,14 +164,14 @@ test('README Node support citation: cited git diff must be empty (or the check m
           'checkout is shallow could not be determined (`git rev-parse ' +
           '--is-shallow-repository` failed) -- cannot evaluate the README\'s Node support citation'
       );
-      return;
+      return true;
     }
     if (isShallow.stdout.trim() === 'true') {
       t.skip(
         'cited base commit ' + base + ' is not reachable in this checkout ' +
           '(this is a shallow clone) -- cannot evaluate the README\'s Node support citation'
       );
-      return;
+      return true;
     }
     assert.fail(
       'cited base commit ' + base + ' is not reachable in this checkout, and this checkout is ' +
@@ -161,6 +179,19 @@ test('README Node support citation: cited git diff must be empty (or the check m
         'clone an unresolvable cited base is not a history gap, it is a bogus citation, so this ' +
         'must fail rather than skip.'
     );
+  }
+
+  return false;
+}
+
+test('README Node support citation: cited git diff must be empty (or the check must skip on a missing precondition)', (t) => {
+  const readmePath = path.join(REPO_ROOT, 'README.md');
+  const readmeContent = fs.readFileSync(readmePath, 'utf8');
+  const section = getNodeSupportSection(readmeContent);
+  const { base, target, pathspec } = parseCitedDiffCommand(section);
+
+  if (skipUnlessBaseIsEvaluable(t, base)) {
+    return;
   }
 
   // Run the cited command itself. A non-zero exit here (e.g. an unresolvable
@@ -188,5 +219,52 @@ test('README Node support citation: cited git diff must be empty (or the check m
       pathspec.join(' ') + '` as its own retirement condition, and that diff is no longer ' +
       'empty -- the cited CI matrix no longer describes this tree. The section needs a new ' +
       'citation (see the repo\'s own note on how the previous stale citation was recorded).'
+  );
+});
+
+test('README Node support citation: base-to-working-tree diff must also be empty, so an uncommitted falsification is visible now (or the check must skip on a missing precondition)', (t) => {
+  const readmePath = path.join(REPO_ROOT, 'README.md');
+  const readmeContent = fs.readFileSync(readmePath, 'utf8');
+  const section = getNodeSupportSection(readmeContent);
+  const { base, pathspec } = parseCitedDiffCommand(section);
+
+  if (skipUnlessBaseIsEvaluable(t, base)) {
+    return;
+  }
+
+  // Same cited base, same cited pathspec, but no `..HEAD` range: `git diff
+  // <base> -- <paths>` diffs the base commit against the WORKING TREE
+  // (staged and unstaged changes included), not just the last commit. That
+  // is the whole point of this second check -- `git diff <base>..HEAD` can
+  // never see an edit that has not been committed yet, so the commit that
+  // falsifies the citation always tests green against that comparison; this
+  // one does not have that blind spot. A non-zero exit is, as with the
+  // committed-history comparison above, a "could not evaluate" signal, not a
+  // "stale" signal, so it also routes to skip rather than pass or fail for
+  // the wrong reason.
+  const diffResult = spawnSync(
+    'git',
+    ['diff', base, '--', ...pathspec],
+    { cwd: REPO_ROOT, encoding: 'utf8' }
+  );
+  if (diffResult.error || diffResult.status !== 0) {
+    t.skip(
+      'base-to-working-tree command `git diff ' + base + ' -- ' + pathspec.join(' ') +
+        '` could not be evaluated in this checkout (exit ' + diffResult.status +
+        (diffResult.stderr ? ': ' + diffResult.stderr.trim() : '') + ')'
+    );
+    return;
+  }
+
+  assert.equal(
+    diffResult.stdout.trim(),
+    '',
+    'README\'s "### Node support" section cites `git diff ' + base + '..HEAD -- ' +
+      pathspec.join(' ') + '` as its own retirement condition, and the same base compared ' +
+      'against the WORKING TREE (`git diff ' + base + ' -- ' + pathspec.join(' ') +
+      '`, which includes uncommitted staged and unstaged changes) is no longer empty -- this ' +
+      'tree, right now, no longer matches the cited citation, even though that change may not ' +
+      'be committed yet. The section needs a new citation (see the repo\'s own note on how the ' +
+      'previous stale citation was recorded).'
   );
 });
