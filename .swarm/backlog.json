@@ -58,7 +58,7 @@
       "packages": [],
       "model": "haiku",
       "attempts": 0,
-      "notes": "README:186-191 reports 121 tests on all four majors; README:306-308 claims \"# tests 120\" and \"(119 -> 120)\". Measured truth at kickoff: 121 tests / 121 pass / 0 fail / 0 skipped on a full clone. | doc->doc half CLOSED incidentally by Q-1: README:306's 'tests 120' / '(119 -> 120)' is gone, replaced by '# tests <n>' / 'ℹ tests <n>' plus 'The test count moves as the suite grows'. That is the right repair — the durable claim is the TAP-vs-spec-reporter split and the U+2139 marker, and the literal count was the part that rotted. REMAINING: the guard that stops a count claim in that section silently disagreeing with its own matrix table."
+      "notes": "README:186-191 reports 121 tests on all four majors; README:306-308 claims \"# tests 120\" and \"(119 -> 120)\". Measured truth at kickoff: 121 tests / 121 pass / 0 fail / 0 skipped on a full clone. | doc->doc half CLOSED incidentally by Q-1: README:306's 'tests 120' / '(119 -> 120)' is gone, replaced by '# tests <n>' / 'ℹ tests <n>' plus 'The test count moves as the suite grows'. That is the right repair — the durable claim is the TAP-vs-spec-reporter split and the U+2139 marker, and the literal count was the part that rotted. REMAINING: the guard that stops a count claim in that section silently disagreeing with its own matrix table. | CYCLE 3 — the remaining half now has a MEASURED specification instead of a described one. Gate controls C4a/C4b ran the full suite against a deliberately falsified matrix in a scratch worktree: changing the v20 row from '122 pass' to '121 pass' (contradicting its own row) left the suite at 124 pass / 0 fail, and changing it to '999 tests, 998 pass' — absurd, contradicting the other three rows AND the actual suite — ALSO left it at 124 pass / 0 fail. Both arms SILENT. So the section's citation is guarded but the numbers inside it are not, and the hole is wide rather than marginal. Note the shape this dictates: the four rows report a REMOTE CI run's counts, not this checkout's, so the guard cannot simply assert the table against a local `node --test` run — v18/20/22/24 in CI legitimately report 2 skipped where a full clone reports 0. The honest anchor is internal consistency plus provenance (the four rows must agree with each other and with the cited run), not equality with the local suite. Evidence: .swarm/runs/cycle-003-verify-Q-7.txt § C4."
     },
     {
       "id": "Q-4",
@@ -318,10 +318,10 @@
       "id": "Q-7",
       "title": "Re-cite the Node-support CI matrix to a run that describes the post-Q-4 tree",
       "kind": "fix",
-      "status": "todo",
+      "status": "done",
       "priority": 5,
       "effort": "S",
-      "attempts": 0,
+      "attempts": 1,
       "deps": [],
       "files_hint": [
         "README.md"
@@ -329,7 +329,7 @@
       "packages": [],
       "model": "sonnet",
       "acceptance": "test/node-support-citation.test.js is green on a full clone: the section cites a CI run id whose commit satisfies an empty `git diff <base>..HEAD -- src bin test .github`, and the four-row matrix reports that run's real numbers. Never bought by narrowing the pathspec or relaxing the assertion.",
-      "notes": "Created by cycle 2's commit, which touched test/ and so falsified the citation by its own stated condition (README \"Node support\" standing limit 2; playbook L-043). The replacement CI run cannot exist until after the push, so this is the second half of a knowingly-budgeted two-commit round trip."
+      "notes": "Created by cycle 2's commit, which touched test/ and so falsified the citation by its own stated condition (README \"Node support\" standing limit 2; playbook L-043). The replacement CI run cannot exist until after the push, so this is the second half of a knowingly-budgeted two-commit round trip. | DONE cycle 3, sealed gate 5ed845eb unchanged pre->post dispatch, 17 cells. Re-cited to run 32400996331 at commit 4b63e91 — NOT the newest run on the branch (32401050374 at 2014bb9) but the newest eligible one, because the section's own stated rule requires a commit that actually changed src/bin/test/.github and 2014bb9 touched only .swarm/. Suite 124 pass / 0 fail / 0 SKIPPED (a skip here would have been a false green). Anti-cheat cell A4: `git diff 4b63e91..HEAD -- src bin test .github` empty on both committed history and working tree, and A5 pins test/node-support-citation.test.js byte-identical to its 4b63e91 blob (sha b3d9d6f5) — the RED was closed by re-citing, never by touching the guard. The four matrix rows were withheld from the builder and independently re-derived by it from the CI log; they agree with the conductor's pre-dispatch measurement byte-for-byte."
     }
   ]
 }

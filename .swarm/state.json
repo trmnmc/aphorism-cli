@@ -6,7 +6,7 @@
   "run_started_at": "2026-08-20T14:36:57Z",
   "kickoff_source": "allocator",
   "phase": "BUILD",
-  "cycle": 2,
+  "cycle": 3,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "spec_digest": [
@@ -67,6 +67,21 @@
       "cycle": 2,
       "what": "Kept the builder's out-of-scope deletion of J-5's prose allowlist, but did NOT accept its stated rationale",
       "why": "The builder called the allowlist a live silent hole. Measured both arms myself: a FALSE prose count fires on both trees; a TRUE prose count is SILENT on the unfixed tree and FIRES on the fixed one. So the allowlist was not permitting unverified counts while the prose readers lived — it went dead when they were retired, and the deletion converts the section to the Attribution section's existing C7 policy (counts in tables, no digits in prose). Defensible and kept; the justification as written overstated the case, and the real cost — an honest TRUE restatement in prose is now refused — is recorded rather than buried."
+    },
+    {
+      "cycle": 3,
+      "what": "Cited run 32400996331 at commit 4b63e91, NOT the newer run 32401050374 at 2014bb9",
+      "why": "The README section states its own selection rule — 'the most recent full matrix run against a commit that actually changed src/, bin/, test/, or the workflow itself'. 2014bb9 is more recent and its run is green, but it touched only .swarm/, so it is ineligible under the section's own words. Citing the newest green run would have satisfied the machine guard (the diff would still be empty) while violating the prose rule the guard exists to serve — green bought by reading the check instead of the claim. The builder derived this independently and rejected 2014bb9 for the same reason."
+    },
+    {
+      "cycle": 3,
+      "what": "Ratified the builder's departure from the history file's 'Cycle N' labelling — for a better reason than it gave",
+      "why": "The builder labelled its entry 'Q-7 (improvement run #6)' because it could not verify a cycle number, and disclosed that a reviewer might prefer 'cycle 3'. The conductor CAN verify it: this is cycle 3. But the file already carries a '## Cycle 3' section from an earlier run, so a bare 'cycle 3' label would collide and make the chronological table ambiguous. The departure is correct; the builder's stated reason (uncertainty) was weaker than the real one (collision)."
+    },
+    {
+      "cycle": 3,
+      "what": "Accepted the builder's out-of-ask change of 'is preserved verbatim in' to 'is recorded in'",
+      "why": "Five of the six history entries are byte-identical relocations of README blockquotes; the sixth was authored directly, because Q-1 retired the blockquote convention it would have been moved from. 'Preserved verbatim' was true of the file when it held five entries and became false the moment a sixth was written. The builder flagged it as beyond the literal ask; it is the smaller of two errors, and the alternative was a knowingly loose claim in a section that is machine-checked for exactly this kind of decay."
     }
   ],
   "known_issues": [
@@ -92,14 +107,14 @@
   "counters": {
     "consecutive_no_value": 0,
     "consecutive_failures": 0,
-    "k_current": 1,
-    "wave_streak": 1
+    "k_current": 2,
+    "wave_streak": 0
   },
   "last_cycle": {
-    "n": 2,
-    "work": "Q-4 completion — re-anchor the tag-vocabulary guards to a counts table (1 builder, k=1, opus after gear-2 demote)",
-    "outcome": "sealed gate 14/14; suite 121 -> 124; unfixed column fail=4 vs fixed GREEN on the honest-prose-deletion control; citation guard red by design, filed as Q-7",
-    "commit": "4b63e91"
+    "n": 3,
+    "work": "Q-7 — re-cite the Node-support CI matrix to a run that describes the post-Q-4 tree (1 builder, k=1, sonnet; gear-2 demote does not apply to kind:fix)",
+    "outcome": "sealed gate 5ed845eb unchanged pre->post, 17 cells; suite 124 pass / 0 fail / 0 skipped — the cycle-2 RED is closed by re-citation, with A4/A5 proving the guard itself was never touched; C4a/C4b measured the still-open matrix-count hole as SILENT and handed Q-3 its specification",
+    "commit": null
   },
   "qa": {
     "last_full_qa_cycle": 1

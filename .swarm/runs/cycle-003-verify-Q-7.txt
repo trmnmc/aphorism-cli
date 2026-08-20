@@ -1,0 +1,147 @@
+CYCLE 3 VERIFICATION EVIDENCE — Q-7
+Gate sealed pre-dispatch, sha256 5ed845eb4b5415188e0d4061afa3e297df6f3031d8336c5bdcea913b59661cae
+Re-hashed post-dispatch: IDENTICAL. The cells below are the ones authored before the builder ran.
+Result: 17 cells run, 17 as specified. 1 cell restated (A3). Q-7 -> done.
+
+================================ A — INVARIANTS (Q-5) ================================
+
+A1  sha256(src/corpus.js)
+    77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e  src/corpus.js
+    expect 77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e     -> PASS
+
+A2  sha256(node bin/aphorism.js --help)
+    d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64  -
+    expect d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64     -> PASS
+
+A3  RESTATED, NOT PASSED AS WRITTEN. The cell said "package.json declares no dependencies
+    and is byte-identical to HEAD". There IS no package.json in this repo:
+        $ ls -a /opt/targets/aphorism-cli
+        .  ..  .git  .github  .swarm  README.md  REPORT.md  SWARM  bin  docs  src  test
+    So the cell as authored was inapplicable. The fact it was authored to protect holds in a
+    stronger form — with no manifest at all, no dependency can have been added. Recorded as a
+    conductor authoring error, not as a pass of the stated cell.
+
+A4  THE ANTI-CHEAT CELL — did the builder close the RED by re-citing, or by editing the
+    guarded paths?
+        $ git diff 4b63e91..HEAD    --stat -- src bin test .github   -> (no output)
+        $ git diff 4b63e91          --stat -- src bin test .github   -> (no output)
+    Both empty, committed history AND working tree.                            -> PASS
+
+A5  test/node-support-citation.test.js byte-identity vs its blob at 4b63e91 — "never bought
+    by narrowing the pathspec or relaxing the assertion", stated as bytes:
+        working tree : b3d9d6f55ffd792ee3eac13170d3934056fbe69995abbdfb9e75390a6a445e99
+        blob @4b63e91: b3d9d6f55ffd792ee3eac13170d3934056fbe69995abbdfb9e75390a6a445e99
+    Identical.                                                                 -> PASS
+
+A-extra  Working-tree scope. Builder was permitted README.md + docs/node-support-citation-history.md only:
+        $ git status --porcelain
+         M README.md
+         M docs/node-support-citation-history.md
+        ?? .swarm/runs/cycle-003-ci-4b63e91.log     (conductor-created, pre-dispatch)
+        ?? .swarm/runs/cycle-003-gate-A.sh          (conductor-created)
+        ?? .swarm/runs/cycle-003-gate.md            (conductor-created, pre-dispatch)
+    Scope held exactly.                                                        -> PASS
+
+================================ B — THE CLAIM ================================
+
+B1  Full suite, this full clone:
+        $ node --test test/*.test.js
+        ℹ tests 124
+        ℹ pass 124
+        ℹ fail 0
+        ℹ skipped 0
+        ℹ duration_ms 5011.786989
+    Expected 124/124/0/0 — on a full clone the cited base is reachable, so both guards must
+    PASS rather than skip. The cycle-2 RED (122 pass / 2 fail) is closed.       -> PASS
+
+B2  That file alone — attribution pinned, and a SKIP would be a FALSE GREEN:
+        $ node --test test/node-support-citation.test.js
+        ✔ README Node support citation: cited git diff must be empty ... (25.165455ms)
+        ✔ README Node support citation: base-to-working-tree diff must also be empty ... (20.918779ms)
+        ℹ tests 2  ℹ pass 2  ℹ fail 0  ℹ skipped 0
+    0 skipped: the guards actually evaluated the diff.                          -> PASS
+
+B3  Conductor's OWN parser (not the test's), run over README.md:
+        commands found in section: 1
+           base=4b63e91 target=HEAD pathspec=["src","bin","test",".github"]
+        run ids cited in section: ["32400996331"]
+    Exactly one command; base is a prefix of 4b63e9124de935be9996b01267a9f49487f937ff;
+    pathspec unchanged.                                                         -> PASS
+
+B4  The cited run resolves, and really is at the cited commit:
+        $ gh run view 32400996331 --repo trmnmc/aphorism-cli --json headSha,conclusion,...
+        headSha=4b63e9124de935be9996b01267a9f49487f937ff conclusion=success
+        branch=master created=2026-08-20T18:02:41Z                              -> PASS
+
+B5  INDEPENDENT AGREEMENT, not an echo. The conductor measured these from the CI log BEFORE
+    dispatch and deliberately withheld them from the builder, which re-derived them from
+    `gh run view --log` itself. Parsed back out of the written README:
+        v18.20.8  ->  124 tests, 122 pass, 0 fail, 2 skipped
+        v20.20.2  ->  124 tests, 122 pass, 0 fail, 2 skipped
+        v22.23.2  ->  124 tests, 122 pass, 0 fail, 2 skipped
+        v24.19.0  ->  124 tests, 122 pass, 0 fail, 2 skipped
+    Byte-for-byte the conductor's pre-dispatch ground truth (gate file, "Ground truth"
+    section), including the four Node patch versions.                           -> PASS
+
+B6  No leftover reference to the retired base anywhere in README.md:
+        $ grep -n "2b003ea\|32337875271\|32400996331\|4b63e91\|git diff" README.md
+        190:reference matrix is [Actions run 32400996331](.../actions/runs/32400996331)
+        191:at commit `4b63e91` (2026-08-20), the most recent full matrix run against a commit that
+        205:That citation is the reference matrix until `git diff 4b63e91..HEAD -- src bin test .github`
+        235:The cycle-by-cycle record of how this citation reached run `32400996331` — six entries
+    Zero hits for 2b003ea or 32337875271.                                       -> PASS
+
+B7  Count debt paid, archive not rewritten:
+        $ git diff --numstat -- docs/node-support-citation-history.md
+        35      0       docs/node-support-citation-history.md
+    35 insertions, ZERO deletions. Append-only held.                            -> PASS
+    (The builder disclosed unprompted that its FIRST attempt reworded an existing sentence,
+    that it caught this itself and reverted before reporting. The numstat is what settles it.)
+
+B8  No stale "reached run 32337875271" survives — see B6 line 235. And the replacement count
+    claim was itself checked rather than taken on trust:
+        $ grep -n "^## " docs/node-support-citation-history.md
+        25:## Order   50:## Cycle 3   62:## Cycle 5   85:## Cycle 6
+        113:## Cycle 9  139:## Cycle 10  156:## Q-7 (improvement run #6)
+        Order-table entry rows: 6
+    Six entries, six table rows. README's new "six entries" is TRUE.            -> PASS
+
+================================ C — CONTROLS ================================
+All four run in a throwaway `git worktree` at HEAD, never against the live tree. The worktree
+was removed afterwards. Because src/ bin/ test/ .github/ are identical between the arms, every
+verdict below is attributable to the README swap ALONE.
+
+C2  Reproduce the cycle-2 RED (worktree at HEAD, README still citing 2b003ea):
+        ✖ README Node support citation: cited git diff must be empty ...
+        ✖ README Node support citation: base-to-working-tree diff must also be empty ...
+        ℹ tests 2  ℹ pass 0  ℹ fail 2  ℹ skipped 0                             -> FIRES
+
+C-baseline  Same worktree, ONLY README replaced by the repaired one:
+        ✔ ✔   ℹ tests 2  ℹ pass 2  ℹ fail 0  ℹ skipped 0                       -> GREEN
+    2 fail -> 2 pass with nothing but README changed. The repair is what closed the RED.
+
+C1  KILL — cited base rewritten to 23eaf9b (a real, REACHABLE, wrong commit), so this tests
+    correctness of the citation and not mere resolvability:
+        ✖ ✖   ℹ tests 2  ℹ pass 0  ℹ fail 2  ℹ skipped 0                       -> FIRES
+    Green is a property of the citation being RIGHT, not of the guard being dead.
+
+C3  MUST-LIVE — benign reword of unrelated prose in the same section
+    ("18 is the lowest version actually tested" -> "...the matrix actually exercises"),
+    full suite:
+        ℹ tests 124  ℹ pass 124  ℹ fail 0  ℹ skipped 0                         -> GREEN
+    The instrument does not die on honest editing (the D1/D3/E3 false-rejection direction).
+
+C4  HONEST-HOLE CONTROL — expected SILENCE, and it is silent. This is not a Q-7 failure;
+    Q-7 never claimed to cover it. It MEASURES the hole Q-3 exists to close.
+      C4a  v20 row: "122 pass" -> "121 pass" (false, contradicts its own row):
+             ℹ tests 124  ℹ pass 124  ℹ fail 0  ℹ skipped 0                    -> SILENT
+      C4b  v20 row: "124 tests, 122 pass" -> "999 tests, 998 pass" (absurd, contradicts the
+           other three rows AND the actual suite):
+             ℹ tests 124  ℹ pass 124  ℹ fail 0  ℹ skipped 0                    -> SILENT
+    So the section can today carry a matrix cell claiming 999 tests while the suite runs 124,
+    and nothing anywhere fires. The citation is guarded; the NUMBERS INSIDE IT ARE NOT.
+    That is Q-3's specification, now measured rather than asserted.
+
+================================ DISPOSITION ================================
+Q-7 -> done. Wave was CLEAN (0 reverts, 0 failed verifies) -> wave_streak 1 -> 2 -> k_current 1 -> 2.
+Q-3 carries C4a/C4b forward as its exact, reproduced target.

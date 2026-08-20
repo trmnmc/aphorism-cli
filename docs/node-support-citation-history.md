@@ -35,10 +35,17 @@ chronological order by cycle number, so the citation chain reads forward:
 | 6 | run `32328776838` at commit `5f833ab` | run `32331910336` at commit `c08562b` |
 | 9 | run `32331910336` at commit `c08562b` | run `32335038575` at commit `c9dd7ff` |
 | 10 | run `32335038575` at commit `c9dd7ff` | run `32337875271` at commit `2b003ea` |
+| Q-7 (improvement run #6) | run `32337875271` at commit `2b003ea` | run `32400996331` at commit `4b63e91` |
 
 The cycle 3 entry records only the citation it retired; the run id it moved to is not stated
 in the entry itself, and is not inferred here. The last row is the citation the README still
 carries today.
+
+The row above labelled "Q-7 (improvement run #6)" is a later move, appended after this file
+was first written; unlike the five rows above it, it is not one of the five cycles this
+file's intro paragraph describes, and its label follows that later run's own task-id
+convention rather than this run's cycle numbering. It is now the citation the README carries;
+see "Q-7 (improvement run #6)" below for the entry.
 
 ## Cycle 3
 
@@ -145,3 +152,31 @@ carries today.
 > push. That window is intrinsic to a self-falsifying claim, it is recorded rather than
 > papered over, and the standing conflict it creates with "green at every commit" is
 > human-owned (backlog P-7).
+
+## Q-7 (improvement run #6)
+
+**2026-08-20, filed as Q-7 of improvement run #6.** Moved from run `32337875271` at commit
+`2b003ea` to run `32400996331` at commit `4b63e91`. This entry is written directly here
+rather than moved out of the README: the per-cycle "Updated ... (cycle N)" blockquote that
+used to live inside the README's `### Node support` section — the convention the five
+entries above were extracted from — was itself retired earlier in this run (its own Q-1),
+so there was no such blockquote in the README for this move to relocate. The voice above is
+matched; the quoting convention is not, because nothing was moved.
+
+Retired by commit `4b63e91` ("cycle 2: Q-4 — the tag counts leave the prose"), which rewrote
+`test/readme-tags.test.js` (708 insertions, 186 deletions) — inside the cited pathspec. That
+commit was pushed knowingly RED on the citation guard: the run's own cycle-2 decision log
+records committing with both citation checks failing rather than narrowing the pathspec or
+relaxing the assertion, exactly the walked exception standing limit 2 above describes. The
+gap was not same-commit: `4b63e91` landed in cycle 2, a cycle-2 addendum measured and
+recorded the resulting `fail 2` state rather than predicting it, and the re-citation itself
+landed a cycle later — closer to cycle 9's "the repair was late" shape above than to cycle
+10's same-cycle addendum.
+
+As in cycle 10, the commit that retired the old citation is the one now cited: `4b63e91` is
+both. Run `32400996331` (`conclusion: success`, `headSha: 4b63e91...`) reported, across all
+four Node majors (v18.20.8, v20.20.2, v22.23.2, v24.19.0): 124 tests, 122 pass, 0 fail, 2
+skipped — the test count rose from 121 to 124 because of the rewrite in `4b63e91` itself; the
+skip count, the two skipped tests' identities, and the reason (`test/node-support-citation.test.js`
+skipping on a shallow clone that cannot reach the cited base) are unchanged from the citation
+this replaces.
