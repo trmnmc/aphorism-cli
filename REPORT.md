@@ -148,10 +148,19 @@ Two classes, and the distinction matters to whoever picks this up:
   path forms — that denial came from how the command was composed, not from a missing
   entry. **The true count is 31, not 32.** Left uncorrected it would have handed the
   operator a second, unactionable ask.
-- **The final wrap-up commit's own CI run** is not cited above. The matrix is cited at the
-  last code-bearing HEAD (`9794dd9`). Wrap-up commits touch only `REPORT.md`, `docs/` and
-  `.swarm/`, none of which the suite reads, so the result cannot change — but "cannot
-  change" is an argument, not an observation, and it is labelled as one.
+- **The wrap-up's own commits were verified too, not argued about.** The matrix is green
+  4/4 at the last code-bearing HEAD `9794dd9`
+  ([run 32338243331](https://github.com/trmnmc/aphorism-cli/actions/runs/32338243331)),
+  **and** at the wrap-up commits `1d7fdcb`
+  ([run 32339843443](https://github.com/trmnmc/aphorism-cli/actions/runs/32339843443)) and
+  `b83bdde`
+  ([run 32339980630](https://github.com/trmnmc/aphorism-cli/actions/runs/32339980630)).
+  The regress terminates one commit later and is labelled rather than hidden: writing this
+  very sentence produces one further documentation-only commit whose CI necessarily runs
+  after the report is sealed. That commit touches `REPORT.md` alone — a file no test reads
+  and which sits outside the citation guard's `src bin test .github` pathspec — so its
+  result **cannot** differ. That last step is an argument, not an observation, and it is
+  the only one in this report.
 
 ## Stats
 
