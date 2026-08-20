@@ -1,177 +1,183 @@
 # aphorism-cli — run retro
 
-<!-- Written by /swarm WRAP_UP. Evidence rules: every entry cites cycle numbers from
-     .swarm/journal.md. No cycle number, no entry. Cycle numbers are RUN #4's own
-     counter (kickoff 2026-08-19T14:05Z); run #3's cycles are cited as "run #3 cN". -->
+<!-- Written by /swarm WRAP_UP to <target>/.swarm/RETRO.md. Evidence rules apply
+     here exactly as in the verification gate: every entry cites cycle numbers
+     from .swarm/journal.md. No cycle number, no entry — vibes are not evidence. -->
 
-Run: 2026-08-19 (improvement run #4) | cycles run: 12 | stop reason: **DONE** — all five
-must-haves closed and conductor-re-verified at cycle 12 (12 PASS / 0 FAIL); backlog todo
-reached 0 at cycle 11 with all 7 survivors human-owned; no VALUE_LOOP candidate cleared the
-two-question ratchet. ~18.5 h of clock handed back unspent, deliberately.
+Run: 2026-08-20 (improvement run #5) | cycles run: 12 (cycle 0 kickoff + cycles 1–11)
+| stop reason: **DONE — definition-of-done met, no VALUE_LOOP candidate cleared the ratchet
+inside the brief. Early finish, ~19.4h before `stop_at`.**
 
 ## What worked
 
-- **Sealing the gate by sha256 before dispatch, with a discriminating baseline recorded on
-  the UNFIXED tree** (L-042). Used on every dispatching cycle — 2 (10P/9F baseline), 3
-  (9P/6F), 4 (9P/5F), 5 (16P/4F), 8 (17P/10F), 10 (17P/4F), 11 (21P/10F). The baseline is
-  the part that paid: a gate that already passes on the unfixed tree measures nothing, and
-  the pre-dispatch smoke run caught **6 gate defects before they could judge anything** — 2
-  at cycle 5, 3 at cycle 8, 1 at cycle 10 (cycles 5, 8, 10).
-- **k=2 waves, dispatched as direct Agent calls with scopes declared in the prompt**
-  (L-016). Zero reverted merges and zero merge conflicts across the entire run: cycles 2
-  (2/2 verified), 3 (2/2), 4 (2 settled), 11 (2/2). `k_current` climbed 3 → 5 on clean-wave
-  streaks while the gear-2 cap held the effective size at 2 the whole time — the autotune
-  never actually got to spend what it earned (cycles 2–11).
-- **Adjudicating a gate FAIL in explicit columns instead of accepting it or rewriting the
-  gate.** Every FAIL this run turned out to be a defect in the conductor's own instrument,
-  and each was adjudicated in a named column set with the gate left BYTE-UNEDITED: cycle 2
-  (5 columns), 3 (17), 4 (11/11), 5 (13/13), 8 (8/8), 9 (7/7), 10 (11/11), 11 (11/11).
-  Rewriting a gate after it runs destroys the evidence of what it measured; leaving it
-  sealed and arguing in columns preserved it eight times.
-- **Reading the diff even when the gate came back green** (L-042's own later clause). At
-  cycle 10 the sealed gate passed on what it was aimed at, and a plain diff-read found an
-  unguarded numeric claim the gate was never pointed at — which became Q-8 and shipped at
-  cycle 11.
-- **Refuting the run's own premises rather than inheriting them** (L-034). Cycle 6 spent
-  itself demolishing three of this run's own diagnoses about the notify helper being denied;
-  all three were false, and the owed push went out. Cycle 7 ran the full QA pass
-  specifically because the premise that would have justified skipping it did not survive
-  checking — it returned 32/32 scenarios and 3 findings that shipped as repairs at cycle 8.
-- **Converse / must-die controls** (L-044). At cycle 5 a control went SILENT rather than
-  green — visible only because the run demands each must-die cell have a must-stay-green
-  twin. The cycle-12 closing gate carries two of them (M2-b, M4-b) for the same reason.
+- **Measuring the instrument instead of reading the code for gaps.** Cycle 0's kickoff text
+  inferred a "12 of 14 branches" coverage gap; cycle 1 measured it and found **1 unexecuted
+  branch of 7** (`bin/aphorism.js:72`, false arm), classified it BOUNDARY (dead code), and
+  added **zero tests**. The whole P-1 must-have closed on a measurement that contradicted
+  the run's own premise. This is the single highest-leverage thing the run did: the
+  alternative — building to the inferred number — is exactly the test-count churn this
+  repo's brief exists to stop. (cycles 0, 1)
+- **k=1 waves merged clean, all run, zero reverts.** Gear 1 pinned `k_cap` at 1 for all
+  eleven cycles; every dispatched item merged on first attempt and **no merge was ever
+  reverted**. One item took a second attempt (P-2, cycle 2) and that was the gate doing its
+  job, not a merge failure. (cycles 2, 3, 5, 6, 8, 10)
+- **Sealing the gate by sha256 before dispatch, with the seal committed.** Cycle 3 committed
+  the gate hash (`d94a42e6`, commit `92f04be`) plus its pre-dispatch baseline BEFORE the
+  builder was dispatched, so "the check predated the work" is a checkable claim rather than
+  an assurance. Cycle 5's sealed gate then caught a self-falsifying guard **pre-commit** —
+  the first time a gate on this repo prevented a bad commit rather than describing one.
+  (cycles 3, 5)
+- **Converse controls / must-die–must-live arms.** Cycle 9's cell A4 (a no-repeat sequence
+  must be reported as 40/40 distinct by the same counter) and cycle 10's two-arm citation
+  control (stale base → red, live base → green, `skipped=0` asserted in both arms) are the
+  reason the green results are evidence at all. A disabled guard and a passing guard look
+  identical from a summary line; these arms are what tell them apart. (cycles 9, 10)
+- **Refutation-shaped QA briefs.** The playbook's qa prompt line ("your job is to REFUTE the
+  central claim") produced three real defects in an already-green suite at cycle 6
+  (RF-1/RF-2/RF-3) and a genuinely red main at cycle 9 that the green suite had not shown.
+  (cycles 6, 7, 9)
+- **Publishing a gate's own failures instead of quietly re-running it.** Cycles 8 and 10 ran
+  sealed gates that emitted FAILs, published the failing output, then corrected the
+  instrument in a **separate** hash-sealed addendum rather than editing the sealed artifact.
+  (cycles 8, 10)
 
 ## What thrashed
 
-- **The conductor's own dashboard renderer — four separate defects in one run** — why: the
-  renderer had no staleness self-check, so regions that failed to update rendered as
-  confident current values rather than as unknown. Cycle 1 (KI-11's root cause, open since
-  run #3); cycle 3 addendum (published "notify off" while notify was ON — a check that
-  *could not run* rendered as a definite negative); cycle 5 addendum (cycle-1 text
-  published on four regions at once); cycle 7 (advertising cycle 7 beside cycle 6's work
-  text) (cycles 1, 3, 5, 7).
-- **A false denial diagnosis carried for two cycles** — why: the run recorded
-  `swarm-notify.sh` as denied from the *shape* of a failure rather than by executing the
-  helper under the exact form the allowlist grants. Cycle 4's addendum recorded "denial
-  #33"; cycle 6 refuted it — the helper was allowlisted under its absolute path the whole
-  time and had logged 11/11 ok. Two cycles of reasoning rested on it (cycles 4, 6).
-- **Prose-reading gate cells blind to line wrapping** — why: raw-substring readers assume
-  their target sits on one line, and documents wrap (L-043). Cycle 11's T3/T4 both
-  fail-closed on this; the adjudication's own column I found the worse case — T7 asserts an
-  ABSENCE, where a wrap-blind reader cannot distinguish "removed" from "still here but
-  wrapped" and would have produced a **FALSE PASS** (cycle 11).
-- **Builder scratch space had nowhere legal to go** — why: the target dir is an
-  `additionalDirectories` entry and `/tmp` is not, so a prompt naming `/tmp` is
-  unfollowable; the agent fell back to scratch trees *inside the repo*, and this repo has
-  no `.gitignore`, so for the duration of the wave a `git add -A` would have committed
-  them. Caught only because the scope check runs before the commit (cycle 11).
-- **The playbook allowlist gap, unmoved for its 31st run** — why: it is genuinely
-  structural, not incidental. `/opt/swarm/.claude/settings.json` was read directly at cycle
-  12 and carries no entry for `bin/swarm-playbook.sh` in any form, and the kickoff step-5
-  write that would add one is itself denied. Re-executed and denied again at cycle 12; the
-  ledger stays at #31 because a second reproduction inside one run does not advance it
-  (cycles 1, 12).
+- **The conductor's gate instrument was the dominant defect source of the run, not the
+  builders** — why: cycle 8's gate emitted 1 FAIL (cell A4 read a prohibition as its own
+  violation) and cycle 10's emitted 6 of 8 FAILs; **every one was an instrument defect and
+  every behavioural assertion passed on first execution of a correct instrument.** The
+  journal states it plainly: "it was my fault, not the builder's". The cost is not the
+  re-run — it is that each one required a written adjudication before the item's `attempts`
+  counter could be left alone, and an unadjudicated instrument FAIL would have charged a
+  correct builder with a failure. (cycles 8, 10)
+- **The red-commit window, three times, structurally** — why: `test/node-support-citation.js`
+  cites `git diff <base>..HEAD -- src bin test .github`, so **any** commit touching those
+  paths falsifies the citation at that commit, and the CI run that would refresh it cannot
+  exist until after the push. Commits `5f833ab` (c5), `c08562b` (c6) and `2b003ea` (c10)
+  were each knowingly red between push and re-citation. Every available fix — narrowing the
+  pathspec, relaxing the assertion — is opening the gate by weakening it, so the run took
+  the two-commit round trip each time and recorded the exception rather than re-labelling
+  it. Filed as **P-7, human-owned**; cycle 10's RF-5 made the window visible pre-commit
+  (strictly better detection, identical disposition). (cycles 5, 6, 10)
+- **The denial ledger was double-booked for five cycles** — why: cycle 4 recorded a
+  `swarm-notify.sh` denial as structural allowlist gap #32; cycle 9 grepped the allowlist
+  and found the script present under **both** path forms — the denial came from how the
+  command was composed, not from what it was. The real count is **31**, one gap
+  (`swarm-playbook.sh`, which has no entry in any form). Left uncorrected it would have
+  handed the operator a second, unactionable allowlist ask. (cycles 4, 9)
+- **P-2 needed a second attempt** — why: the cycle-2 gate turned over two false claims, one
+  of them authored by cycle 1 itself. Correct gate behaviour; recorded here because it is
+  the run's only `attempts ≥ 1` item. (cycles 1, 2)
+- **Six consecutive SWARM-side push failures** — why: a standing host gap, unrelated to the
+  target repo (whose pushes all succeeded). Handed off, never worked around. (cycles 2–7)
 
 ## Pacing honesty
 
-- Governor clamps: **every probed cycle of the run** — `weekly.ok` true but
-  `weekly_used_pct` 100 / `opus_used_pct` 100 against `week_elapsed_pct` ~37, i.e.
-  `weekly_heat` 2.69–2.71, holding `ceiling: 2` and `promote_blocked: true` throughout.
-  Ceilings hit: 2. Full-mode overrides: 0 (mode was `guest`, dial 0.3 — guest never
-  upshifts and is clamped to gears 1–3 anyway). Promote-rung promotions: 0 — blocked by the
-  governor on every cycle.
-- Applied gear was **2 for the whole run** (ρ 1.05–1.14 at the last two probes), so
-  demotion was live throughout: every non-judgment seat dropped one rung and the effective
-  wave size was pinned at 2 regardless of what autotune had earned.
-- Underused window: **this run ended with ~18.5 h of its ~24 h clock unspent, in gear 2.**
-  Recorded plainly because it is not a pacing failure — it is a *brief* outcome. The run
-  exhausted the work its non-goals permitted at cycle 11 and closed at 12. No amount of
-  thermostat tuning would have produced more permitted work.
+- Governor clamps: **11 of 11 cycles** (ceiling 2 every cycle; weekly 100% / opus 100% used
+  against 43–44% of the week elapsed, heat 2.29–2.32). Full-mode overrides: 0.
+  Promote-rung promotions: **0** — `promote_blocked` was true for the entire run.
+  Applied gear was **1 (crawl) on every single cycle**, with ρ ranging 3.92–9.79.
+  Voluntary idle cycles: **0**.
+- One in-run window reset, at cycle 11: `window_tokens` 96.19M → 6.55M, ρ 9.79 → 3.92.
+  Utilization at that reset was **100%** (the governor's own reading) — the window was
+  fully spent, which is the target, but it was spent at a ceiling of 2 the whole way.
+- **The run's `stop_at` was set equal to `usage_reset_at`** (both 1787276706). This is the
+  exact anti-pattern L-038 names, and the run paid its price: ten consecutive crawl cycles
+  in the emptiest part of a window it was scheduled to sit on the boundary of. The kickoff
+  was allocator-driven, so the boundary came from the hints file, not from a human answer —
+  which is where the fix belongs.
 
 ## Config recommendations
 
-- [process] Never name `/tmp` (or any path outside the target) as scratch space in a builder
-  prompt — it is outside `additionalDirectories`, so shell `cp`/`mkdir` are denied outright
-  and the agent silently falls back to writing inside the repo; name an in-repo scratch path
-  and require its removal, and treat a target with no `.gitignore` as a commit hazard for the
-  whole dispatch window [apply: prompt builder "Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory"] [confidence: high] [source: 2026-08-19 aphorism-cli] (evidence: cycle 11)
-- [qa] Whitespace-normalise any gate cell that reads prose, and treat a cell asserting an
-  ABSENCE as the dangerous case — a wrap-blind reader cannot distinguish "removed" from
-  "still present but hard-wrapped", so it fails OPEN with a false pass rather than closed
-  [apply: prompt qa "A gate cell that reads prose must normalise whitespace before matching; a cell asserting an absence must additionally prove the phrase was locatable in the unfixed input"] [confidence: high] [source: 2026-08-19 aphorism-cli] (evidence: cycle 11, adjudication columns A–D and I)
-- [process] A reporting instrument must render "could not run" as unknown, never as a
-  definite value — every one of this run's four dashboard defects was a region that failed
-  to update and published a confident answer anyway [apply: prompt all "A check that could not run renders as unknown, never as a negative or a stale value"] [confidence: high] [source: 2026-08-19 aphorism-cli] (evidence: cycles 1, 3, 5, 7)
-- [process] Before recording a tool as denied, EXECUTE it under the exact form the allowlist
-  grants (absolute path, no env prefix, no compound command) — a denial inferred from the
-  shape of a failure sent this run down two cycles of false reasoning, and the same session
-  proved the adjacent script had been working all along [confidence: high] [source: 2026-08-19 aphorism-cli] (evidence: cycles 4, 6)
-- [process] When the todo column empties and every survivor is human-owned, close the run
-  and hand the clock back with the reason on the record — do not manufacture work to fill it;
-  on a brief that forbids the only changes the taste instrument names, an early finish is the
-  correct outcome and the lever is the brief, not the machinery [confidence: high] [source: 2026-08-19 aphorism-cli] (evidence: cycles 9, 11, 12)
+- [qa] When a sealed gate FAILS, adjudicate instrument-versus-item before the failure
+  touches the item's `attempts` counter — on this run 7 of 7 sealed-gate FAILs were defects
+  in the conductor's own check and none were defects in the dispatched work, so an
+  unadjudicated FAIL would have charged correct builders and escalated them a routing rung
+  for nothing [apply: prompt all "A gate cell that fails must be proven to fail for the
+  reason it names before its verdict is recorded against the work; publish the failing
+  output and repair the instrument in a separate artifact, never by editing the sealed
+  one"] [confidence: high] [source: 2026-08-20 aphorism-cli]
+- [process] A guard that cites a git pathspec cannot be green on the commit that changes
+  that pathspec — budget the two-commit round trip (commit red, say so in the message, push,
+  re-cite to the CI run that describes it) and never buy green by narrowing the pathspec or
+  relaxing the assertion [confidence: high] [source: 2026-08-20 aphorism-cli]
+- [process] When a run's brief locks out every candidate that clears the value ratchet, go
+  DONE early and escalate the lever ONCE — do not spend the remaining clock re-deriving the
+  same escalation; this run re-derived "no-repeat rotation is the highest-value change and
+  is locked out by the brief" for the THIRD consecutive run, from four independent taste
+  judges, at the cost of three runs' worth of housekeeping cycles [confidence: high]
+  [source: 2026-08-20 aphorism-cli]
+- [process] Before counting a harness denial as a structural allowlist gap, grep the
+  allowlist for the script under every path form — an invocation-form denial (env-var
+  prefix, `bash <script>`, relative path) looks identical at the call site and inflates the
+  operator's ask with entries that already exist (evidence: the #32 → #31 correction)
+  [confidence: high] [source: 2026-08-20 aphorism-cli]
+- [process] Set `stop_at` strictly inside the usage-window boundary in ALLOCATOR-generated
+  hints too, not only in human kickoff answers — this run's hints file set
+  `stop_at == usage_reset_at` and bought eleven consecutive gear-1 cycles [confidence: med]
+  [source: 2026-08-20 aphorism-cli]
 
 ## House-rules proposals
 
-- [docs] A status document's counts must be re-derived at the moment of writing and dated to
-  the cycle that wrote them — this report's own open-item count was falsified twice by the
-  very commits that shipped it (cycles 3, 4).
-- [review] When a sealed gate returns green, still read the diff — green bounds what you
-  checked, never what is true (cycle 10).
+- [docs] A README section that exists to satisfy a guard should say so in one line and keep
+  its provenance apparatus in `docs/` — this run's README grew 6.0 KB → 16.6 KB in a night,
+  and the growth is citation bookkeeping a first-time reader of a 50-aphorism CLI meets
+  before they meet the tool.
+- [review] Prose that restates one number three ways is a guard-satisfaction artifact, not
+  writing; when a regex guard shapes the sentence, fix the guard's anchor rather than
+  padding the prose (README Tag vocabulary: "12 tags appear on 2 or more entries… 0 tags
+  appear exactly once, which is to say 0 tags sit on exactly one entry").
 
 ## Applied lessons check
 
-- **L-008** (conductor is sole committer): **re-observed** — carried in every builder and
-  reviewer prompt; zero agent commits across 4 dispatching cycles (cycles 2, 3, 4, 5, 8, 10, 11).
-- **L-016** (pairwise-disjoint fixer scopes; direct Agent calls when headless):
-  **re-observed** — every wave ran as direct k=2 Agent calls with scopes in the prompt; zero
-  conflicts, zero cross-scope contamination (cycles 2, 3, 4, 5, 11).
-- **L-024** (verify with a discriminator): **re-observed** — cycle 11's column J distinguished
-  a *sound* pass from a *lucky* one (column K) by a property a degenerate reader could not
-  produce (cycle 11).
-- **L-026** (route core logic to fable): **not-exercised** — this run made zero product-code
-  changes; `bin/` and `src/` were untouched end to end, so no core-logic item existed to route.
-- **L-029** (a new test must be FAILABLE and ATTRIBUTABLE): **re-observed** — the run's single
-  added test (cycle 11, Q-8) was proved failable and attributable before acceptance; suite
-  118 → 119, the only growth all run (cycle 11).
-- **L-031** (find holes by mutation-measuring, not by reading the suite): **re-observed** — the
-  29-clause Domain-rule coverage map re-run at cycle 3 came back 29 KILLED / 0 SURVIVED, which
-  is precisely why no tests were added for "thinness" (cycle 3).
-- **L-033** (classify survivors HOLE vs BOUNDARY first): **not-exercised** — zero survivors to
-  classify (cycle 3, 29/29 killed).
-- **L-034** (brief reviewers to REFUTE): **re-observed, twice, and it was the highest-yield
-  lesson of the run** — cycle 6 refuted three of the run's own diagnoses; cycle 7's QA pass
-  existed only because its skip-premise did not survive refutation and returned 3 shipping
-  findings (cycles 6, 7, 8).
-- **L-038** (reserve a mid-run cycle for the taste pass): **re-observed** — the TASTE gate ran
-  at cycle 9, mid-run rather than in the VALUE_LOOP tail, and it is the reason TS-6 exists at
-  all. Worth noting where it landed: on a non-goal wall — all 4 findings were unbuildable under
-  this run's brief (cycle 9).
-- **L-042** (seal the gate before dispatch; smoke it; read the diff anyway): **re-observed on
-  every dispatching cycle** — 6 instrument defects caught pre-seal, and the read-the-diff
-  clause produced Q-8 (cycles 2, 3, 4, 5, 8, 10, 11).
-- **L-043** (never bind an assertion to regex-matched prose; the one-line assumption is the
-  dominant failure): **re-observed, and sharpened** — cycle 11's T3/T4 are exactly the
-  wrapping failure this lesson predicts, and column I extends it: the absence-assertion case
-  fails OPEN, not closed (cycle 11).
-- **L-044** (pair every must-die cell with a must-stay-green control): **re-observed** — cycle
-  5's silent control was caught by its converse twin; the closing cycle-12 gate carries two
-  (cycles 5, 12).
-- **L-046** (implemented ≠ reachable): **re-observed, in an unexpected direction** — TS-5 at
-  cycle 11 is the mirror image: the SPEC's taste note promises a "dim" attribution that is not
-  implemented at all (zero ANSI on any path), while the SPEC's own Nice-to-haves list carries
-  it as still-unbuilt. Documented rather than built, since building it is a locked non-goal
-  (cycle 11).
+- L-008 (sole committer + legal scratch): **re-observed** — carried in every builder prompt
+  line; zero agent-authored commits across the run (cycles 2, 3, 5, 6, 8, 10).
+- L-016 (pairwise-disjoint fixer scopes): **re-observed** — cycle 6's review-fix split
+  RF-1/RF-2/RF-3 across disjoint files; zero merge conflicts (cycle 6).
+- L-024 (verify with a discriminator): **re-observed** — cycle 9's A4 control and cycle 10's
+  two-arm citation control are both discriminators a degenerate implementation could not
+  produce (cycles 9, 10).
+- L-026 (route core logic to fable): **not-exercised** — gear 1 held `demote: true` /
+  `promote: false` for all eleven cycles and no core-logic build item was dispatched; fable
+  appeared only in judgment seats (cycles 6, 7, 9), which is the fable guard, not this
+  routing recommendation.
+- L-029 (failable AND attributable): **re-observed** — applied in the negative at cycle 1
+  (no HOLE measured → zero tests added) and in the positive at cycle 10 (must-die/must-live
+  arms with `skipped=0` asserted) (cycles 1, 10).
+- L-031 (measure untested surfaces, don't read for them): **re-observed, strongly** — the
+  run's headline result; measurement returned 1-of-7 against an inferred 12-of-14 and
+  produced zero test churn (cycle 1).
+- L-033 (classify HOLE vs BOUNDARY before hardening): **re-observed** — `bin/aphorism.js:72`
+  false arm classified BOUNDARY (unreachable), hardening declined, reasoning recorded
+  (cycle 1).
+- L-034 (brief reviewers to REFUTE): **re-observed** — three real defects found in a green
+  suite at cycle 6; a red main found at cycle 9 (cycles 6, 7, 9).
+- L-038 (stop strictly inside the window boundary): **re-observed by violation** — this
+  run's `stop_at` equalled `usage_reset_at` and it cost eleven consecutive crawl cycles.
+  The lesson is right; the delivery path (allocator hints) does not yet apply it (cycles
+  1–11).
+- L-042 (seal the gate before dispatch, seal must be tracked): **re-observed** — cycle 3's
+  seal committed at `92f04be` before dispatch. Residual, open as KI-8: the sealed baseline
+  is readable by the builder, so the seal proves precedence, not secrecy (cycles 3, 5).
+- L-043 (never bind an assertion to prose matched by regex): **re-observed and sharpened** —
+  RF-1 was exactly this defect (the citation guard was steerable by the prose it read) and
+  the fix moved it to a structural marker. Residual, open as KI-12: the acknowledgement
+  guard is still token co-occurrence and documents itself as "NOT a meaning check"
+  (cycles 5, 6).
+- L-044 (pair every kill with a converse control that must stay GREEN): **re-observed** —
+  cycle 9 A4, cycle 10 ARM2 (cycles 9, 10).
+- L-046 (not shipped until exercised through the outermost layer): **not-exercised** — zero
+  user-visible features shipped by brief, so no domain capability existed to check.
 
 ## Telemetry (squeeze slice, 2026-08-14)
 
-- Weekly utilization at the last probe: overall **100%** / premium (opus) **100%**, at
-  `week_elapsed_pct` 37.24 — `weekly_heat` 2.69. The governor held `ceiling: 2` and
-  `promote_blocked: true` for the entire run.
-- Allocator: no `runs/allocator.json` bucket data was consulted by this run; allowance
-  granted vs burned is **not measured** — reported as not-run rather than estimated.
-- Auto-kickoffs: this run was an allocator improvement-run kickoff (hints `source:
-  allocator`, brief = housekeeping-only, no new features). Postures at start: pacing `guest`,
-  dial 0.3. Three-strike queue drops: none observed.
-- Final-hours floor release: **did not fire** — the run reached DONE at cycle 12 with ~18.5 h
-  remaining, so no release window was ever entered.
+- Weekly utilization achieved at reset: **100% overall / 100% premium** at 43.6% of the week
+  elapsed (heat 2.29). The account was in sustained overage for the entire run.
+- Allocator: this was an allocator auto-kickoff (`kickoff_source: "allocator"`) under a
+  TRICKLE posture brief. Allowance granted vs burned is not recorded on the target side;
+  the observable is that gear 1 and ceiling 2 bound every cycle, so the run never had the
+  headroom the posture assumed it might.
+- Auto-kickoffs this run: 1 (this one). 3-strike queue drops: none observed.
+- Final-hours floor release: **did not fire** — the run reached DONE ~19.4h before
+  `stop_at`, so there were no final hours to release into.

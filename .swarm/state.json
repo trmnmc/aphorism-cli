@@ -4,8 +4,8 @@
   "created_at": "2026-08-14T00:00:00+00:00",
   "run_label": "improvement run #5",
   "run_started_at": "2026-08-20T01:52:10Z",
-  "phase": "BUILD",
-  "cycle": 10,
+  "phase": "DONE",
+  "cycle": 11,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "spec_digest": [
@@ -305,6 +305,18 @@
       "kind": "process",
       "what": "Committed a knowingly-red intermediate commit (2b003ea), then closed the window in-cycle via the CI round trip the README section itself prescribes.",
       "why": "Hard rule 4 wants green main; the citation guard makes any commit touching src/bin/test/.github red until a CI run exists for it, and that run cannot exist before the push. The alternatives were to narrow the pathspec or relax the assertion, both of which are opening the gate by weakening it. Chose the recorded-exception path cycles 5 and 6 established: red is stated in the commit message, in the README, and in the journal, and the cycle FINAL HEAD is green at 121/121/0 with the matrix green on it."
+    },
+    {
+      "cycle": 11,
+      "ts": "2026-08-20T06:35:00Z",
+      "what": "Declared the target DONE and entered WRAP_UP with ~19.4h left on the clock, rather than manufacturing a POLISH item to fill the un-run gate stage.",
+      "why": "The DONE test is definition-of-done met AND no VALUE_LOOP candidate clearing the ratchet. Both were checked against the tree, not against the journal: all five must-haves closed; suite 121/121 green; matrix 4/4 green on HEAD; corpus byte-identical since run #4; zero deps. The POLISH stage had not run, and I looked for fodder before concluding there was none: every remaining backlog polish item (TS-1/2/3/6) is blocked on a human lifting a locked non-goal; the README's user-facing prose is shaped by live regex guards, so rewriting it fights the guards this run exists to keep honest; and TS-6's documentary half is already shipped in README, leaving only a --help change, which is shipped program output and so is forbidden by P-5's own \"no new user-visible behaviour\" clause. Leaning on a permissive sentence in a blocked item's notes to authorise that change would have been opening the gate by weakening it, in scope terms. SPEC.md pre-authorises this call in \"Expected shape of this run\": an early finish is the honest outcome here, not a failure."
+    },
+    {
+      "cycle": 11,
+      "ts": "2026-08-20T06:35:00Z",
+      "what": "Minted playbook lesson L-047 and archived L-021 to hold the 20-lesson cap, rather than merging the run's sharpest finding into L-041.",
+      "why": "L-041 covers instruments that UNDER-report a real failure; this run's finding is the over-report direction — 7 of 7 sealed-gate FAILs (c8, c10) were defects in the conductor's own instrument and 0 were defects in the dispatched work. Opposite blast radius, opposite remedy, and L-041 is already five clauses deep. The cap forced one drop; the tie-break (most-recent-observation date, then lowest id) and its cost are recorded in SWARM/playbook/DROP-RATIONALE-2026-08-20.md rather than left implicit."
     }
   ],
   "decisions_archive": ".swarm/decisions.json (all 41, full text — moved at kickoff, nothing dropped)",
@@ -563,7 +575,8 @@
     "wave_autotune_note_cycle7": "Wave autotune NOT applied. cycle.md scopes it to \"after a build-wave's merges + verification complete\"; this cycle's work type was qa-verify full, not build-wave. k_current stays 3, wave_streak stays 1. Same call and same reason as cycle 6.",
     "wave_autotune_note_cycle8": "Wave autotune IN SCOPE this cycle (the work type was a build item, dispatched as a direct Agent call per the headless build-wave fallback) but NOT CREDITED. The rule requires CLEAN = zero reverts AND zero failed verifies; the sealed gate emitted one FAIL (A4) that took a conductor adjudication to clear. Adjudicated-clean is not clean. Crediting it would raise k_current to 4 while gear 1 pins k_cap at 1, buying nothing but a wrong number -- the same argument cycle 6 recorded. Classified \"any other outcome\": wave_streak = 0, k_current stays 3.",
     "wave_autotune_note_cycle9": "Wave autotune NOT APPLIED. cycle.md scopes it to \"after a build-wave's merges + verification complete\"; this cycle's work type was qa-verify taste plus a conductor-authored doc repair, and no builder branch was merged. Same call and same reason as cycles 6 and 7. k_current stays 3, wave_streak stays 0. (Gear 1 pins k_cap at 1 regardless, so the credit would buy nothing but a wrong number -- the argument cycle 6 set.)",
-    "wave_autotune_note_cycle10": "Wave autotune IN SCOPE (a build/fix item dispatched as a direct Agent call per the headless build-wave fallback) and CREDITED CLEAN: zero reverts, zero failed verifies. The sealed gate's six FAILs were instrument defects adjudicated in a separate addendum, NOT failed verifies of the item — every behavioural assertion passed on first execution of a correct instrument. wave_streak 0 -> 1; that is below the threshold of 2, so k_current stays 3. Gear 1 pins k_cap at 1 regardless, so the credit changes nothing operationally this cycle; it is recorded because the streak is real evidence and suppressing it would understate the next run's starting k."
+    "wave_autotune_note_cycle10": "Wave autotune IN SCOPE (a build/fix item dispatched as a direct Agent call per the headless build-wave fallback) and CREDITED CLEAN: zero reverts, zero failed verifies. The sealed gate's six FAILs were instrument defects adjudicated in a separate addendum, NOT failed verifies of the item — every behavioural assertion passed on first execution of a correct instrument. wave_streak 0 -> 1; that is below the threshold of 2, so k_current stays 3. Gear 1 pins k_cap at 1 regardless, so the credit changes nothing operationally this cycle; it is recorded because the streak is real evidence and suppressing it would understate the next run's starting k.",
+    "wave_autotune_note_cycle11": "Wave autotune NOT applied. cycle.md scopes it to \"after a build-wave's merges + verification complete\"; cycle 11 dispatched no agents at all — it is the DONE decision plus WRAP_UP. k_current stays 3, wave_streak stays 1. Same call and same reason as cycles 6, 7 and 9."
   },
   "last_cycle": {
     "cycle": 10,
