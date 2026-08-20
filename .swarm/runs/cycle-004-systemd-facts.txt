@@ -1,0 +1,53 @@
+# /etc/systemd/system/swarm-pacer.service
+[Unit]
+Description=SWARM pacer — one wakeup-gate walk
+[Service]
+Type=oneshot
+User=swarm
+WorkingDirectory=/opt/swarm
+Environment=SWARM_DIR=/opt/swarm
+ExecStart=/bin/bash /opt/swarm/bin/swarm-pacer.sh
+TimeoutStartSec=4h
+# Belt-and-braces: the pacer runs cycles synchronously today (no detached children),
+# but if a future branch ever detaches one, control-group KillMode would reap it at
+# unit exit — mirror the watchdog's KillMode=process so that failure mode can't appear.
+KillMode=process
+
+# /etc/systemd/system/swarm-watchdog.service
+[Unit]
+Description=SWARM watchdog — one crash-recovery decision walk
+[Service]
+Type=oneshot
+User=swarm
+WorkingDirectory=/opt/swarm
+Environment=SWARM_DIR=/opt/swarm
+Environment=WATCHDOG_GRACE_MIN=15
+ExecStart=/bin/bash /opt/swarm/bin/swarm-watchdog.sh
+TimeoutStartSec=4h
+# do_relaunch detaches a `nohup claude -p` child that must OUTLIVE this oneshot:
+# the default control-group KillMode reaps every process in the unit's cgroup the
+# moment the unit exits, silently killing the relaunched conductor. KillMode=process
+# limits cleanup to the main watchdog process.
+KillMode=process
+
+# /etc/systemd/system/swarm-backup.service
+[Unit]
+Description=SWARM backup — nightly tarball of runs to swarm-state repo
+[Service]
+Type=oneshot
+User=swarm
+WorkingDirectory=/opt/swarm
+Environment=SWARM_DIR=/opt/swarm
+ExecStart=/bin/bash /opt/swarm/bin/swarm-backup.sh
+TimeoutStartSec=4h
+
+# /etc/systemd/system/swarm-health.service
+[Unit]
+Description=SWARM health — dead-man switch for a silent pacer
+[Service]
+Type=oneshot
+User=swarm
+WorkingDirectory=/opt/swarm
+Environment=SWARM_DIR=/opt/swarm
+ExecStart=/bin/bash /opt/swarm/bin/swarm-health.sh
+TimeoutStartSec=4h

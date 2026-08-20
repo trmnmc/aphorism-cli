@@ -17708,3 +17708,185 @@ remains durable on disk and unpushed; nothing new was owed on the SWARM side thi
 (runs/ is gitignored, playbook untouched). Per hard rule 1 this is journaled and does not
 block the cycle. Carried to the morning report as a host-config item for a human — the
 swarm cannot fix its own remote from inside a run.
+
+---
+
+## cycle 4 — 2026-08-20T03:13Z — conductor inline (P-4) + conductor verification gate
+
+**Clock.** `date +%s` = 1787194897 at open. `stop_at` 1787276706 — 22.7 h remaining, no
+admission pressure. `cycles_since_recycle` 2 → 3.
+
+**Budget.** Probe OK. `gear_target` 1, ρ **4.46** (up from 3.61), mode guest, dial 0.33,
+`k_cap` **1**, `demote: true`, `promote: false`. Weekly governor still HOT — weekly 100% /
+opus 100% at 41.68% of the week elapsed, heat 2.40, ceiling 2, promote blocked. Applied gear
+stays **1 (crawl)**. Burn 29.17 M window tokens, 22.59 M tokens/hour, projected depletion
+1787213270. Gear 1 wants haiku-priced or conductor work and a wave of exactly one; this
+cycle dispatched **nothing** — zero agent tokens.
+
+**Orient.** Tree clean at open (`git status --porcelain` empty), HEAD `b01b937`. Control
+channel: `swarm-notify.sh poll` exit 0, `control.json` `pending: []`, no `inject` array.
+Nothing to triage.
+
+**Re-anchor.** Cycle 4, so no scheduled full SPEC re-read. P-1/P-2/P-3 closed; P-4 is the
+last must-have that is not a standing guard, and cycle 3 handed off to it by name.
+
+**Pick.** P-4 (S, docs, conductor-owned). It is the correct gear-1 pick for a reason worth
+recording: it is the only remaining must-have that costs **zero agent tokens** to close, at
+ρ 4.46 with the weekly governor pinned at ceiling 2. P-6 (sonnet, test hardening) was
+available and was deliberately deferred — a wave of one, and the cheaper item is also the
+one the spec calls a must-have.
+
+---
+
+## Branch A was attempted first, again, and is still impossible
+
+P-4's acceptance offers two branches and names the good one first: the REAL STDOUT of the
+denied script, or a hand-off. Branch A was tried before anything was written.
+
+    /opt/swarm/bin/swarm-playbook.sh parse       -> DENIED
+    /opt/swarm/bin/swarm-playbook.sh validate    -> DENIED   (the doc's own confirming command)
+    bash /opt/swarm/bin/swarm-playbook.sh parse  -> DENIED
+
+Three forms, three denials. This is the **4th reproduction inside run #5** and it does not
+advance the run-counter — see the counter finding below.
+
+## The probes were redesigned so each pair differs by one token
+
+Run #4's sharpest probe was `cd /opt/swarm && RUNFILE=… bash bin/swarm-budget.sh` → DENIED.
+Four variables changed at once (cwd, `&&`, env prefix, `bash`, relative path), so it could
+only conclude that *something* in there defeats the match. This cycle isolated it:
+
+    /opt/swarm/bin/swarm-budget.sh                                  -> RAN (real probe JSON)
+    RUNFILE=/opt/swarm/runs/current.json /opt/swarm/bin/swarm-budget.sh -> DENIED
+    /opt/swarm/bin/swarm-notify.sh poll                             -> RAN (exit 0)
+    FOO=bar /opt/swarm/bin/swarm-notify.sh poll                     -> DENIED
+
+Same script, same absolute allowlisted path, same session; the only difference is a leading
+`VAR=value`. Two scripts, both directions controlled. **An environment-variable prefix
+defeats an exact-path allow entry.**
+
+That is not a curiosity. `swarm-budget.sh` reads its runfile from `$RUNFILE` and nothing
+else (`bin/swarm-budget.sh:36`), so the only reachable invocation form can only ever probe
+the **default** runfile. Right for this run; wrong for any run driven from a non-default
+runfile path. There is no allow syntax that authorises an env prefix, so the fix is a tool
+change — a `--runfile` flag — and hard rule 5 forbids doing it in-run. Filed to the handoff
+and to the morning report, not done.
+
+## The ask was re-derived rather than restated, and it shrank
+
+`bin/` holds 14 helpers. Instead of repeating run #4's list, every one was classified against
+evidence: systemd `ExecStart` lines (captured to `runs/c004-systemd-facts.txt` via
+`systemctl cat`), the parent script that spawns it, or `allow[]` itself. Twelve need no
+entry. **`swarm-watchdog.sh` drops out of the ask** — SKILL.md's Linux kickoff path uses
+`systemctl enable --now swarm-watchdog.timer`, `Bash(systemctl:*)` is allowlisted, and
+`systemctl list-units` shows the timer loaded and active. The plist path that would need the
+script is macOS-only.
+
+Remaining ask: **2 scripts, 4 lines** — `swarm-playbook.sh` (load-bearing: `parse` and
+`record-applied` at every kickoff, `append` at every WRAP_UP) and `swarm-warmup.sh`
+(human-invoked mode only). Down from run #4's 6 lines and run #3's 9.
+
+Also measured: the allowlist has **moved** since run #4 read it. The budget-probe family
+gained three entries, and `swarm-usage-probe.sh` / `swarm-weekly-from-allocator.sh` appeared
+— but **relative-form only**, which is the exact cwd-fragile shape `L-039` and this file's
+own §"The seventh line" warn about. Reported as a structural read, **not** a reproduction:
+re-measuring needs a session whose cwd is elsewhere, and changing cwd requires a compound
+command the harness refuses on separate grounds. Not-run, never passed.
+
+## The finding that only cross-checking two artifacts could produce
+
+**The denial counter is double-booked at 31.** The handoff's run-#4-cycle-2 section says
+"Denial count: 31 runs". The newest line of `playbook/applied.log` (2026-08-20T01:45:30Z,
+this run's kickoff) says "denial #31". Both cannot be 31.
+
+Resolved by the file's own stated rule, not by preference. Run #3's text: *"ten is a count of
+RUNS, not of denials, and cycle 15 does not advance it because it is the same run."* Under
+that unit the run #4 cycle-2 increment from 30 → 31 was against the rule, and the ledger's
+assignment is the consistent one. **Run #4 = 30, run #5 = 31**, and this cycle's four
+reproductions do not advance it.
+
+The run #4 text was left **unedited**: rewriting a dated measurement to fix a later
+arithmetic error destroys the record of what was believed when (cycle-2 and cycle-3
+precedent). One exception is disclosed in-document rather than left to be noticed — the run
+#4 heading's pointer phrase "READ THIS FIRST. The ask is now 3 scripts" now reads "The ask
+was 3 scripts", because two sections cannot both be read first. Its body is byte-unchanged.
+
+And the tally itself is now honestly labelled: it is **hand-carried and predates
+`applied.log`**. What is mechanically checkable is narrower — six lines in that file carry an
+explicit denial note. The 31 is not derivable from any artifact in this repo, and the
+document now says so instead of presenting it as a measurement.
+
+## The gate, its baseline, and its own defect
+
+No agent ran this cycle, so there was no dispatch to seal against and no builder to fence
+out — stated plainly rather than performing a seal ritual that would protect nothing (the
+L-042 seal exists to stop a builder coding to the check). The gate's value here is different:
+it re-derives every claim in the new section **from the tree** rather than from the prose
+asserting it.
+
+Baseline BEFORE the document was written: **2 PASS / 5 FAIL** — the four cells covering
+unwritten work, plus one real gate defect. G6 parsed the suite summary as `# pass N`, the TAP
+form; this host runs node 24, whose spec reporter emits `ℹ pass N`, so the cell read
+`pass=-1` and **failed closed**. Repaired to accept either marker rather than pinning the one
+this host happens to run — and it is worth noting *which direction* it failed in: a summary
+the parser cannot read must never be readable as zero failures (L-041). Recalibrated
+baseline **3 PASS / 4 FAIL**, the four being exactly the work not yet done.
+
+Two `--mutate` branches were also repaired after the first control run, and the reason is
+recorded rather than buried: the original G6 control compared the corpus against commit
+`b006098`, where `src/corpus.js` is byte-identical — a mutation that mutated nothing, and the
+control correctly reported CONTROL FAILED. Replaced with two real input mutations (append a
+byte before hashing; shrink the test-file set). The assertion code is byte-unchanged; only
+the `--mutate` branches, which never execute in a scoring run, differ. The clean gate was
+re-run afterwards and returns the same 7 PASS / 0 FAIL.
+
+## VERIFICATION EVIDENCE
+
+Full transcript: `.swarm/runs/cycle-004-verify-P-4.txt` (clean run + five controls);
+gate program copied to `.swarm/runs/cycle-004-gate-P-4.mjs`, sha256 `590dc8f7…` matching the
+SWARM-side original byte for byte; its systemd input at `.swarm/runs/cycle-004-systemd-facts.txt`.
+Handoff doc sha256 `5ab91153…`, 490 lines.
+
+    cycle-4 gate — item P-4 (playbook allowlist handoff)   7 PASS / 0 FAIL
+      PASS G2  8 probe rows, every verdict re-derived from allow[] (3 RAN / 5 DENIED)
+      PASS G3  ask = swarm-playbook.sh, swarm-warmup.sh (4 lines), all absent from allow[];
+               12 other bin/ entries classified, every justification re-derived; 14/14 covered
+      PASS G4  run #5 = denial #31, matching the newest applied.log line; doc counts
+               [31, 31, 30], the repeat is explained in-section
+      PASS G5  newest ledger line marked HAND-WRITTEN, 13 ids identical to runfile.playbook.applied
+      PASS G6  suite pass=119 fail=0; src/corpus.js identical to 81b0958 (77a4de5c)
+      PASS G7  confirming command `/opt/swarm/bin/swarm-playbook.sh validate` invokes
+               swarm-playbook.sh and is unauthorised by allow[] — the ask is still real
+
+    FAILABILITY CONTROLS (6 of 7 cells; G1 went red naturally in the pre-work baseline)
+      --mutate G2  (inject a fake swarm-playbook.sh allow entry)
+                   FAIL G2 2/8 rows disagree with allow[]  |  FAIL G3 asked for but ALREADY
+                   allowlisted  |  FAIL G7 the ask is stale        -> CONTROL PASSED
+      --mutate G4  FAIL G4 doc says 38, newest applied.log line says 31 -> CONTROL PASSED
+      --mutate G5  FAIL G5 ledger applied=[12 ids] != runfile applied=[13] -> CONTROL PASSED
+      --mutate G6a FAIL G6 src/corpus.js differs from 81b0958          -> CONTROL PASSED
+      --mutate G6b FAIL G6 suite pass=28 fail=0 (floor is >=119 / 0)   -> CONTROL PASSED
+
+    $ git diff --stat HEAD -- src bin test .github
+    (no output — product tree untouched, P-5 floor holds)
+
+**Wave autotune:** no build wave dispatched, so `k_current` stays 3 and `wave_streak` stays
+0 (the "any other outcome" arm). `consecutive_no_value = 0` — verified value this cycle.
+
+**Backlog:** todo 3 → 2 (P-4 done), done 14 → 15, blocked 7 unchanged and all human-owned,
+1 dropped. Product tree untouched; `src/corpus.js` byte-identical to `81b0958`.
+
+**Next:** cycle 5 — P-6, the last non-standing item: mechanize README §Node support's own
+quoted falsifier as a test in `test/`, with the shallow-clone arm skipping rather than
+failing. It is a sonnet-priced S item, and cycle 5 is also a `% 5 == 0` cycle, so it carries
+the scheduled full SPEC re-read and backlog hygiene. P-5 is a standing guard and closes at
+WRAP_UP.
+
+## runfile-mirror
+
+    stop_at 1787276706 | usage_reset_at 1787276706 | mode guest dial 0.33 | auth subscription
+    gear 1 (target 1, rho 4.46) | k_cap 1 | demote true | promote false
+    weekly: used 100% / opus 100% at week 41.68% elapsed, heat 2.40, ceiling 2, promote_blocked
+    targets: /opt/targets/aphorism-cli (active, weight 1) | rotation [0] cursor 0
+    watchdog pacer, plist_loaded true | caffeinate_pid 0 (Linux) | cycles_since_recycle 3
+    playbook auto: L-008 L-016 L-024 L-026 L-029 L-031 L-033 L-034 L-038 L-042 L-043 L-044 L-046

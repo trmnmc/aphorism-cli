@@ -483,7 +483,7 @@
       "kind": "docs",
       "effort": "S",
       "priority": 40,
-      "status": "todo",
+      "status": "done",
       "attempts": 0,
       "model": "conductor",
       "deps": [],
@@ -491,7 +491,9 @@
         "playbook/HANDOFF-allowlist-2026-08-17.md"
       ],
       "packages": [],
-      "acceptance": "Either the REAL STDOUT of the previously-denied swarm-playbook.sh pasted into the journal plus a script-written record-applied ledger line, OR the handoff doc updated with denial #31, the exact JSON lines to add, and the single command a human runs to confirm — with this run ledger line hand-written and MARKED as hand-written. Never \"it should work now\"."
+      "acceptance": "Either the REAL STDOUT of the previously-denied swarm-playbook.sh pasted into the journal plus a script-written record-applied ledger line, OR the handoff doc updated with denial #31, the exact JSON lines to add, and the single command a human runs to confirm — with this run ledger line hand-written and MARKED as hand-written. Never \"it should work now\".",
+      "verified_cycle": 4,
+      "notes": "RUN #5 cycle 4 VERIFIED, branch B (hand-off), because branch A stayed impossible: swarm-playbook.sh parse, validate and the bash-prefixed form were ALL denied again this cycle. Handoff rewritten with a run #5 section: 8 single-variable probes; NEW shape fact — a leading VAR=value defeats an exact-path allow entry, isolated on TWO different scripts against their own bare forms (run #4 had only a four-variable probe); ask re-derived against today bin/ (14 helpers) and SHRUNK from 6 lines to 4 — swarm-watchdog.sh drops out because the Linux kickoff path uses systemctl, which is allowlisted and live; denial counter found DOUBLE-BOOKED at 31 (doc gave it to run #4 c2, applied.log to run #5 kickoff) and resolved by the file own stated RUNS unit, with the tally honest-labelled as hand-carried and not derivable from any artifact. Consequence filed for a human: swarm-budget.sh takes its runfile ONLY from $RUNFILE, so the reachable form can never point at a non-default runfile — a --runfile flag is the fix and hard rule 5 forbids doing it in-run. Gate SWARM/runs/c004-gate-P-4.mjs 7 PASS / 0 FAIL, sha256 590dc8f7, 6 of 7 cells proved red under mutation (G1 red naturally in the pre-work baseline)."
     },
     {
       "id": "P-5",

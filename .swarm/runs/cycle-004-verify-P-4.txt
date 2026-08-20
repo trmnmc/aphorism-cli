@@ -1,0 +1,53 @@
+cycle-4 gate — item P-4 (playbook allowlist handoff)   7 PASS / 0 FAIL
+  PASS G1  run #5 section at line 13, 142 lines, above the run #4 section at line 157
+  PASS G2  8 probe rows, every verdict re-derived from allow[] (3 RAN / 5 DENIED)
+  PASS G3  ask = swarm-playbook.sh, swarm-warmup.sh (4 lines), all absent from allow[]; 12 other bin/ entries classified, every justification re-derived; 14/14 of bin/ covered
+  PASS G4  run #5 = denial #31, matching the newest applied.log line; doc counts [31, 31, 30], the repeat is explained in-section
+  PASS G5  newest ledger line marked HAND-WRITTEN, 13 ids identical to runfile.playbook.applied
+  PASS G6  suite pass=119 fail=0; src/corpus.js identical to 81b0958 (77a4de5c)
+  PASS G7  confirming command `/opt/swarm/bin/swarm-playbook.sh validate` invokes swarm-playbook.sh and is unauthorised by allow[] — the ask is still real
+cycle-4 gate — item P-4 (playbook allowlist handoff)   4 PASS / 3 FAIL   [--mutate G2]
+  PASS G1  run #5 section at line 13, 142 lines, above the run #4 section at line 157
+  FAIL G2  2/8 rows disagree with allow[]: /opt/swarm/bin/swarm-playbook.sh parse claims DENIED; /opt/swarm/bin/swarm-playbook.sh validate claims DENIED
+  FAIL G3  asked for but ALREADY allowlisted: swarm-playbook.sh
+  PASS G4  run #5 = denial #31, matching the newest applied.log line; doc counts [31, 31, 30], the repeat is explained in-section
+  PASS G5  newest ledger line marked HAND-WRITTEN, 13 ids identical to runfile.playbook.applied
+  PASS G6  suite pass=119 fail=0; src/corpus.js identical to 81b0958 (77a4de5c)
+  FAIL G7  the confirming command is ALREADY authorised by allow[] — the ask is stale: /opt/swarm/bin/swarm-playbook.sh validate
+FAILABILITY CONTROL: CONTROL PASSED (cell G2 can fail)
+cycle-4 gate — item P-4 (playbook allowlist handoff)   6 PASS / 1 FAIL   [--mutate G4]
+  PASS G1  run #5 section at line 13, 142 lines, above the run #4 section at line 157
+  PASS G2  8 probe rows, every verdict re-derived from allow[] (3 RAN / 5 DENIED)
+  PASS G3  ask = swarm-playbook.sh, swarm-warmup.sh (4 lines), all absent from allow[]; 12 other bin/ entries classified, every justification re-derived; 14/14 of bin/ covered
+  FAIL G4  doc says 38, newest applied.log line says 31
+  PASS G5  newest ledger line marked HAND-WRITTEN, 13 ids identical to runfile.playbook.applied
+  PASS G6  suite pass=119 fail=0; src/corpus.js identical to 81b0958 (77a4de5c)
+  PASS G7  confirming command `/opt/swarm/bin/swarm-playbook.sh validate` invokes swarm-playbook.sh and is unauthorised by allow[] — the ask is still real
+FAILABILITY CONTROL: CONTROL PASSED (cell G4 can fail)
+cycle-4 gate — item P-4 (playbook allowlist handoff)   6 PASS / 1 FAIL   [--mutate G5]
+  PASS G1  run #5 section at line 13, 142 lines, above the run #4 section at line 157
+  PASS G2  8 probe rows, every verdict re-derived from allow[] (3 RAN / 5 DENIED)
+  PASS G3  ask = swarm-playbook.sh, swarm-warmup.sh (4 lines), all absent from allow[]; 12 other bin/ entries classified, every justification re-derived; 14/14 of bin/ covered
+  PASS G4  run #5 = denial #31, matching the newest applied.log line; doc counts [31, 31, 30], the repeat is explained in-section
+  FAIL G5  ledger applied=[L-016,L-024,L-026,L-029,L-031,L-033,L-034,L-038,L-042,L-043,L-044,L-046] != runfile.playbook.applied=[L-008,L-016,L-024,L-026,L-029,L-031,L-033,L-034,L-038,L-042,L-043,L-044,L-046]
+  PASS G6  suite pass=119 fail=0; src/corpus.js identical to 81b0958 (77a4de5c)
+  PASS G7  confirming command `/opt/swarm/bin/swarm-playbook.sh validate` invokes swarm-playbook.sh and is unauthorised by allow[] — the ask is still real
+FAILABILITY CONTROL: CONTROL PASSED (cell G5 can fail)
+cycle-4 gate — item P-4 (playbook allowlist handoff)   6 PASS / 1 FAIL   [--mutate G6a]
+  PASS G1  run #5 section at line 13, 142 lines, above the run #4 section at line 157
+  PASS G2  8 probe rows, every verdict re-derived from allow[] (3 RAN / 5 DENIED)
+  PASS G3  ask = swarm-playbook.sh, swarm-warmup.sh (4 lines), all absent from allow[]; 12 other bin/ entries classified, every justification re-derived; 14/14 of bin/ covered
+  PASS G4  run #5 = denial #31, matching the newest applied.log line; doc counts [31, 31, 30], the repeat is explained in-section
+  PASS G5  newest ledger line marked HAND-WRITTEN, 13 ids identical to runfile.playbook.applied
+  FAIL G6  src/corpus.js differs from 81b0958
+  PASS G7  confirming command `/opt/swarm/bin/swarm-playbook.sh validate` invokes swarm-playbook.sh and is unauthorised by allow[] — the ask is still real
+FAILABILITY CONTROL: CONTROL PASSED (cell G6a can fail)
+cycle-4 gate — item P-4 (playbook allowlist handoff)   6 PASS / 1 FAIL   [--mutate G6b]
+  PASS G1  run #5 section at line 13, 142 lines, above the run #4 section at line 157
+  PASS G2  8 probe rows, every verdict re-derived from allow[] (3 RAN / 5 DENIED)
+  PASS G3  ask = swarm-playbook.sh, swarm-warmup.sh (4 lines), all absent from allow[]; 12 other bin/ entries classified, every justification re-derived; 14/14 of bin/ covered
+  PASS G4  run #5 = denial #31, matching the newest applied.log line; doc counts [31, 31, 30], the repeat is explained in-section
+  PASS G5  newest ledger line marked HAND-WRITTEN, 13 ids identical to runfile.playbook.applied
+  FAIL G6  suite pass=28 fail=0 (floor is >=119 / 0)
+  PASS G7  confirming command `/opt/swarm/bin/swarm-playbook.sh validate` invokes swarm-playbook.sh and is unauthorised by allow[] — the ask is still real
+FAILABILITY CONTROL: CONTROL PASSED (cell G6b can fail)
