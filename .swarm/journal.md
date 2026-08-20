@@ -18791,3 +18791,76 @@ verified. Nothing new filed: a two-line bump that passes its gate files nothing,
     targets: /opt/targets/aphorism-cli (active, weight 1) | rotation [0] cursor 0
     watchdog pacer, plist_loaded true | caffeinate_pid 0 (Linux) | cycles_since_recycle 7
     playbook auto: L-008 L-016 L-024 L-026 L-029 L-031 L-033 L-034 L-038 L-042 L-043 L-044 L-046
+
+**cycle 8 addendum (post-commit).** Target commit `c9dd7ff` pushed to origin OK
+(`057d00c..c9dd7ff`). This is the half of RF-4 that no local check could settle.
+
+**RF-4 CI half — CLOSED, and closed against a proven discriminator.** Actions run
+**32335038575** on `c9dd7ff`:
+
+    $ gh run view 32335038575
+    ✓ master test · 32335038575
+    ✓ test (24) 16s   ✓ test (20) 15s   ✓ test (18) 17s   ✓ test (22) 14s
+    (NO ANNOTATIONS SECTION AT ALL)
+
+    $ gh run view 32335038575 --log | grep -E "tests|pass|fail|skipped"   [Run node --test steps]
+    test (18)  tests 120  pass 119  fail 0  skipped 1
+    test (20)  tests 120  pass 119  fail 0  skipped 1
+    test (22)  tests 120  pass 119  fail 0  skipped 1
+    test (24)  tests 120  pass 119  fail 0  skipped 1
+
+    per-step: ✓ Run actions/checkout@v7   ✓ Run actions/setup-node@v7   on every job
+
+Three things are established here that "the job is green" would not have established on its own:
+
+1. **The annotations are gone, and their absence is a real observation.** The converse control
+   captured before the push showed the SAME command on run 32331910336 printing four deprecation
+   annotations under a four-green-job run. Green was never the discriminator — the old run was
+   green too. Annotation-presence is, and it has now been seen in both states with one tool.
+2. **All four majors actually ran tests.** 120 collected per job, not the silent zero-file case
+   the glob-assert step exists to catch. The acceptance said "against a REAL run rather than a
+   local inference" and that is what this is.
+3. **The counts match the recorded CI baseline exactly** — 120/119/0/1 per major, the same as
+   run 32328776838 on 5f833ab. The 1 skip is environment-dependent and pre-existing (local
+   node v24.19.0 reports 120/120/0/0); it is NOT a regression introduced here, and it is noted
+   only because it is visible in the evidence above and would otherwise look like one.
+
+RF-4 → **done**. Both halves paid: the local gate at 9 effective PASS / 0 FAIL, and the CI half
+on a real run. P-5's "Actions matrix green on final HEAD" is stamped at `c9dd7ff`.
+
+**A note on the number the builder returned.** I expected `@v5` and would have been wrong. The
+builder measured `@v7` from `gh api .../releases/latest`; cell A2 independently re-derived the
+same expectation from the same API at gate-run time rather than from anything I wrote down; and
+the CI run then showed `Run actions/checkout@v7` executing green on four Node majors. Three
+independent confirmations, none of them my prior.
+
+**SWARM-side repo.** `git -C /opt/swarm status --porcelain` is EMPTY — nothing was written
+outside `runs/` (gitignored) this cycle and `playbook/` was untouched, so there is nothing to
+commit and no push was owed. The push-failure streak recorded at cycles 2-7 is therefore not
+extended by this cycle; it also is not resolved, and stays in the morning report as a
+host-config item a human owns. The swarm cannot fix its own remote from inside a run.
+
+**Denial ledger.** `bin/swarm-notify.sh poll` denied by the harness this cycle — **denial #32**,
+the same class as the kickoff `swarm-playbook.sh parse` denial (#31). Both are hard rule 5
+territory: the fix is an allowlist entry, which a run may not write to `SWARM/.claude/settings.json`
+mid-flight. Handed to the morning report, not patched live. Note that the ledger line for #31 had
+to be hand-written for exactly this reason, and #32 is now in the same position.
+
+**Dashboard — a stale-render defect found and repaired, not just a numbers refresh.** The live
+`<!-- TARGETS -->` region still contained the **cycle-0 goodnight empty-note** ("goodnight — run 5
+opens on a repo run 4 declared DONE… cycle 6 (carried from run 4)") while the banner directly
+above it read cycle 7. Cycle 7's journal recorded the per-target block, burn-up strip and
+evidence pane as rendered — and they were, but into the template's *documentation comment* at
+the top of the file rather than into the live region, because the substitution is global and the
+template documents each placeholder's shape by embedding the placeholder itself inside a comment.
+A viewer's eye never reaches the comment. So the one region a 3 AM glance actually reads had been
+contradicting the banner for at least a cycle. Repaired: the live region now carries the real
+cycle-8 section (progress bar, counts, 8 journal one-liners, 8-bar burn-up, 3 newest evidence
+snippets), and the crew stations now use the `.ava`/`.who`/`.chip` markup the stylesheet actually
+styles instead of a bare `<b>`/`<span>` pair that rendered unstyled. This is the same lesson as
+A4 in one more costume: **a render that reports success is not a render that was seen.**
+
+Every journal-derived string is HTML-escaped at render time. No Artifact tool in this headless
+session, so the additional publish channel is skipped — not a publish failure; `publish_failures`
+stays 0. Phase unchanged (BUILD → BUILD), no stall, so no notification emits were owed — and
+`swarm-notify.sh send` would have been denied in any case, per #32 above.
