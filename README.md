@@ -177,25 +177,27 @@ that spawn the real binary and assert on stdout, stderr, and exit codes.
 
 ### Node support
 
-CI runs the whole suite on four Node majors on every push. As of commit `c9dd7ff`
+CI runs the whole suite on four Node majors on every push. As of commit `2b003ea`
 (2026-08-20), the most recent full matrix run against a commit that actually changed
 `src/`, `bin/`, `test/`, or the workflow itself was
-[Actions run 32335038575](https://github.com/trmnmc/aphorism-cli/actions/runs/32335038575),
+[Actions run 32337875271](https://github.com/trmnmc/aphorism-cli/actions/runs/32337875271),
 which reported:
 
 | Node | Result |
 |---|---|
-| v18.20.8 | 120 tests, 119 pass, 0 fail, 1 skipped |
-| v20.20.2 | 120 tests, 119 pass, 0 fail, 1 skipped |
-| v22.23.2 | 120 tests, 119 pass, 0 fail, 1 skipped |
-| v24.19.0 | 120 tests, 119 pass, 0 fail, 1 skipped |
+| v18.20.8 | 121 tests, 119 pass, 0 fail, 2 skipped |
+| v20.20.2 | 121 tests, 119 pass, 0 fail, 2 skipped |
+| v22.23.2 | 121 tests, 119 pass, 0 fail, 2 skipped |
+| v24.19.0 | 121 tests, 119 pass, 0 fail, 2 skipped |
 
-The one skip is the same on all four and is expected: it is
+The two skips are the same on all four and are expected: both are in
 `test/node-support-citation.test.js`, the guard on THIS section, standing down because
-CI checks out shallow (see below).
+CI checks out shallow (see below). It was one skip until cycle 10 gave the guard a
+second comparison; both arms share the same shallow-clone degradation, so the count
+moved from 1 to 2 without anything standing down that used to run.
 
 Later CI runs re-test byte-identical code as of this writing (see
-`git diff c9dd7ff..HEAD -- src bin test .github`), so this citation stays the reference
+`git diff 2b003ea..HEAD -- src bin test .github`), so this citation stays the reference
 matrix until that diff stops being empty. For the current state of CI — including any
 runs since this citation — see the
 [`test` workflow's run history](https://github.com/trmnmc/aphorism-cli/actions?query=workflow%3Atest).
@@ -209,6 +211,21 @@ runs since this citation — see the
 > a matrix that no longer described this tree. Recorded rather than quietly swapped,
 > because the self-guard is the reason the decay was catchable at all: the doc names the
 > exact command that falsifies it, so an audit can check the claim instead of believing it.
+
+> **Updated 2026-08-20 (cycle 10).** Moved from run `32335038575` at commit `c9dd7ff` to
+> run `32337875271` at commit `2b003ea`. Retired by its own stated condition, as designed —
+> `2b003ea` changed `test/`, which is inside the cited pathspec. What is new is WHEN that
+> became visible. Until this cycle the guard compared the cited base against `HEAD` only,
+> and `HEAD` excludes uncommitted work, so the commit that falsified the citation always
+> tested green and the breakage surfaced a cycle later on the next full clone — which is
+> exactly what happened to `c9dd7ff` (cycle 8 bumped the workflow and left the citation
+> behind; cycle 9 found main already red). `2b003ea` adds a second comparison against the
+> WORKING TREE, so a falsification is now visible to the run that causes it. The cost is
+> unchanged and still real: this commit was red on a full clone between the push and this
+> re-citation, because the CI run that refreshes the citation cannot exist until after the
+> push. That window is intrinsic to a self-falsifying claim, it is recorded rather than
+> papered over, and the standing conflict it creates with "green at every commit" is
+> human-owned (backlog P-7).
 
 > **Updated 2026-08-20 (cycle 5).** The citation above moved from run `32324495153` at
 > commit `0c2ed40` (a 119-test matrix) to run `32328776838` at commit `5f833ab`. Nothing
