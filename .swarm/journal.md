@@ -20957,3 +20957,54 @@ The taste verdict is unchanged for the third consecutive run and the fourth inde
 **use-twice scores 4/10**, and every candidate that would move it is a user-visible feature the
 allocator brief locks out. That is an operator lever. The swarm has now re-derived it three
 times; it should not be asked to derive it a fourth.
+
+### CORRECTION — KI-R6-6 was diagnosed wrong, and the wrong version had already shipped
+
+Written after the wrap-up commit, before the run closed. It is recorded as a correction
+rather than quietly edited into the earlier text, because how the error was made is worth
+more than the fact it was fixed.
+
+**What the first version said:** "the pacer produced no cycle for 25.5 hours." It went into
+`state.json`, `REPORT.md`, `RETRO.md`, and the L-037 clause appended to the playbook.
+
+**What one command said:**
+
+```
+$ node .c5-gap.mjs            # window 2026-08-20T18:42 -> 2026-08-22T16:05
+spawned in gap:      504
+cycle-failed in gap: 503
+readable records: 429 = 503 | other = 0 | unreadable/absent = 0
+
+distinct failure reasons:
+  503 x 429 You've hit your weekly limit · resets Aug 24, 5am (UTC)
+```
+
+The pacer was never dead. It fired every ~5 minutes for 25.5 hours, exactly as designed, and
+spawned **504** cycles. Every one of the 503 that completed died in about 380 ms with an HTTP
+**429 weekly limit**, before its first turn. The classification is exhaustive — every
+`cycle-failed` record in the window was opened and read, and there was no second cause.
+
+**Why limp mode never fired:** it structurally cannot see this. Limp needs a session alive
+enough to run the tier probe, and these sessions died before turn one. That is not a gap in
+limp — it is **L-037's first clause, verbatim**, which already says the *spawner* must set the
+limp flag itself on a usage-shaped launch failure instead of respawning on the same schedule.
+`swarm-pacer.sh` logs `cycle-failed` and retries at the same cadence. It burned 504 spawns
+against a wall while a crashed cycle's finished work sat uncommitted in the working tree.
+
+**Why the wrong version was worse than imprecise.** It recommended a *pacer liveness check* —
+assert the timer has spawned within the last interval. That check **would have passed every
+single time.** The pacer was alive throughout; what was dead was every session it started. A
+fix aimed at the wrong layer would have been implemented, looked correct, and changed nothing.
+The right check is on spawn **outcomes**, never spawner liveness.
+
+**How the error was made, since that is the transferable part.** The diagnosis was inferred
+from the *shape* of the evidence — a long gap, no commits, a watchdog already known to be
+no-op — and the shape fit a dead pacer well enough that it was never checked at its source.
+This is the identical failure mode this run spent five cycles hunting in documents: a claim
+restated confidently from adjacent evidence rather than measured where it lives. Cycle 5's own
+gate got this right about a CI citation — cells 2, 3 and 5 went to GitHub's API rather than to
+the document doing the citing — and then the write-up got it wrong about the harness, in the
+same cycle, roughly twenty minutes later.
+
+`state.json`, `REPORT.md`, `RETRO.md`, and the playbook's L-037 clause are all corrected.
+Nothing carries the original claim.

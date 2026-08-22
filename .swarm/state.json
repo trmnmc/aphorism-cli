@@ -122,6 +122,11 @@
       "cycle": 5,
       "what": "Ran WRAP_UP on a run that was already ~25.5h past stop_at, instead of taking one more work cycle",
       "why": "stop_at was 2026-08-21T14:36:47Z; this session woke at 2026-08-22T16:04:09Z. Step 1's clock check is unconditional. The uncommitted tree was worth verifying and committing — that is salvage, which WRAP_UP explicitly does — but nothing new was started. The run overshot because the pacer fired no cycle between; that gap is itself reported rather than smoothed over."
+    },
+    {
+      "cycle": 5,
+      "what": "Corrected KI-R6-6's diagnosis mid-WRAP_UP after reading the pacer log, having already written the wrong version into state.json, REPORT.md, RETRO.md and the playbook",
+      "why": "The first diagnosis was inferred from the SHAPE of the evidence — a 25.5h gap with no commits, plus a known-dead watchdog — and it named the pacer as the thing that failed. Reading /opt/swarm/runs/pacer.log falsified it in one command: 504 spawns, 503 completions, every one a 429 weekly-limit. The wrong version was not merely imprecise, it pointed at the wrong fix: a pacer liveness check would have passed every time while the run stayed dead. This is the same error class this run spent five cycles hunting in documents — a claim restated confidently from adjacent evidence instead of measured at its source — committed by the conductor, in the write-up, about its own harness. Corrected in all five artifacts rather than left standing with a footnote."
     }
   ],
   "known_issues": [
@@ -157,7 +162,7 @@
     },
     {
       "id": "KI-R6-6",
-      "desc": "The run OVERSHOT stop_at by 25.5 hours with no cycle firing. Cycle 4 committed ~2026-08-20T18:55Z; the next session woke 2026-08-22T16:04:09Z against a stop_at of 2026-08-21T14:36:47Z. swarm-pacer.timer was this run's designated recovery path (named as the mitigation for KI-R6-1 at kickoff) and produced no cycle in that window, while the watchdog was already structurally no-op. A crashed cycle 5's FINISHED work sat uncommitted in the working tree the entire time and no mechanism detected it. The mitigation for a known-dead recovery path was single-point, and it was the point that broke. Human item: the pacer needs its own liveness check (assert it has SPAWNED within the last interval, not merely that its timer is enabled).",
+      "desc": "The run overshot stop_at by 25.5h — and the FIRST diagnosis of why, written earlier this same cycle, was WRONG and is corrected here. It said 'the pacer produced no cycle'. The pacer log says otherwise: between 2026-08-20T18:59:48Z and 2026-08-22T16:04:02Z it fired faithfully every ~5 minutes and SPAWNED 504 cycles. 503 of them completed; ALL 503 died in ~380ms with HTTP 429, `You've hit your weekly limit · resets Aug 24, 5am (UTC)`, before their first turn. Zero other failure causes — the classification is exhaustive, not a sample. This is precisely L-037's FIRST clause re-observed: a spawned conductor that dies on a usage-limit error before its first turn is invisible to limp mode, because limp needs a session alive enough to run the tier probe, so the SPAWNER must set the limp flag itself on a usage-shaped launch failure instead of respawning on the same schedule. It does not: swarm-pacer.sh logs `cycle-failed` and retries at the same cadence, burning 504 spawns against a wall. The runfile's own last probe had already recorded weekly_used_pct: 100. Human item, and note the correction cost: a liveness check on the pacer (the fix the wrong diagnosis implied) would have PASSED throughout — the pacer was alive; what was dead was every session it started.",
       "severity": "high",
       "cycle_found": 5
     }
