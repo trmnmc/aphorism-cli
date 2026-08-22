@@ -86,7 +86,7 @@
       "priority": 1,
       "value": "H",
       "effort": "S",
-      "status": "todo",
+      "status": "done",
       "deps": [],
       "files_hint": [
         "src/corpus.js",
@@ -96,7 +96,8 @@
       "packages": [],
       "model": "haiku",
       "attempts": 0,
-      "notes": "Hard rule 4. Conductor-run, never delegated."
+      "notes": "Hard rule 4. Conductor-run, never delegated.",
+      "verified_cycle": 5
     },
     {
       "id": "Q-6",
@@ -338,7 +339,7 @@
       "priority": 1,
       "value": "H",
       "effort": "S",
-      "status": "todo",
+      "status": "done",
       "deps": [],
       "files_hint": [
         "README.md",
@@ -348,7 +349,8 @@
       "packages": [],
       "model": "sonnet",
       "attempts": 0,
-      "notes": "The second half of the known two-commit round trip, identical in shape to Q-7 after cycle 2. Cycle 4 committed with both citation guards RED BY DESIGN: the commit touches test/, which is inside the cited pathspec, and README standing limit 2 says the replacement CI run cannot exist until after the push. NOT to be closed by narrowing the pathspec or relaxing an assertion (L-043). Two things differ from Q-7: (a) the matrix rows must now ALSO be updated, because the suite moved 124 -> 129, and the new guard in test/readme-matrix-consistency.test.js will check the new rows for per-row arithmetic and cross-row agreement; (b) expected CI shape is 129 tests / 127 pass / 0 fail / 2 skipped — the same 2 shallow-clone skips in node-support-citation.test.js; the 5 new matrix tests touch no git and do not skip. Read the counts out of `gh run view --log`; deriving them from the local suite would fabricate a CI result (the D1 trap)."
+      "notes": "The second half of the known two-commit round trip, identical in shape to Q-7 after cycle 2. Cycle 4 committed with both citation guards RED BY DESIGN: the commit touches test/, which is inside the cited pathspec, and README standing limit 2 says the replacement CI run cannot exist until after the push. NOT to be closed by narrowing the pathspec or relaxing an assertion (L-043). Two things differ from Q-7: (a) the matrix rows must now ALSO be updated, because the suite moved 124 -> 129, and the new guard in test/readme-matrix-consistency.test.js will check the new rows for per-row arithmetic and cross-row agreement; (b) expected CI shape is 129 tests / 127 pass / 0 fail / 2 skipped — the same 2 shallow-clone skips in node-support-citation.test.js; the 5 new matrix tests touch no git and do not skip. Read the counts out of `gh run view --log`; deriving them from the local suite would fabricate a CI result (the D1 trap).",
+      "verified_cycle": 5
     },
     {
       "id": "Q-9",
@@ -368,6 +370,20 @@
       "model": "sonnet",
       "attempts": 0,
       "notes": "Measured, not speculated — gate cell C7, cycle 4: changing all four rows TOGETHER to a self-consistent falsehood (200 tests, 198 pass, 0 fail, 2 skipped) leaves the guard SILENT at 5 pass / 0 fail. The internal-consistency anchor cannot see a lie told consistently. Closing it needs an anchor OUTSIDE the document, and both options carry costs a swarm should not choose unilaterally: (1) live network provenance — makes an offline suite depend on GitHub and would SKIP in exactly the shallow-CI environment the table describes, i.e. inert where it is most needed; (2) a committed machine-readable CI artifact that the workflow writes and the guard reads — no network, but it adds a generated file to the repo and changes what CI is responsible for. BLOCKED on the operator, like P-7. Not a defect in Q-3, which never claimed this ground."
+    },
+    {
+      "id": "Q-10",
+      "status": "blocked",
+      "priority": 6,
+      "kind": "docs",
+      "effort": "S",
+      "title": "History file paraphrases the citation-selection rule; the paraphrase selects a different run than the README's rule",
+      "acceptance": "docs/node-support-citation-history.md quotes the README's selection-rule sentence verbatim rather than restating it, so the two documents cannot disagree. Verify by confirming the quoted string appears identically in both files.",
+      "files_hint": [
+        "docs/node-support-citation-history.md"
+      ],
+      "blocked_reason": "Found at WRAP_UP, past stop_at. WRAP_UP finishes nothing new. Next run or a human; one-line edit.",
+      "cycle_found": 5
     }
   ]
 }

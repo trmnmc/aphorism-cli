@@ -20763,3 +20763,125 @@ precisely why the citation guards fire. Cycle 3 predicted GREEN and checked it; 
 predicted RED and checked that instead. Q-8 closes it once CI has run against `7e50d6f`.
 Q-5 invariants re-confirmed at the commit: corpus sha256 `77a4de5c` and `--help` sha256
 `d759d781` both unmoved.
+
+---
+
+## Cycle 5 — 2026-08-22T16:04Z — WRAP_UP, and a salvage that had to earn its way in
+
+The clock opened the cycle, as it always does, and answered the only question that mattered:
+
+```
+$ date -Iseconds
+2026-08-22T16:04:09+00:00
+stop_at: 2026-08-21T14:36:47Z
+```
+
+**25.5 hours past stop_at.** Step 1's check is unconditional, so this cycle is WRAP_UP. No
+new work was started. That overshoot is a real finding about the harness, not a footnote —
+the pacer fired no cycle in the ~25h between cycle 4's commit and this session, and the
+watchdog could not have covered for it because KI-R6-1 has it no-opping on every firing all
+run. It is reported in the retro rather than smoothed over.
+
+### The tree was dirty, and it was not WIP
+
+```
+$ git -C /opt/targets/aphorism-cli status --porcelain
+ M README.md
+ M docs/node-support-citation-history.md
+```
+
+A crashed cycle 5 had done Q-8 — the re-citation owed since cycle 4 — and died before
+committing. No `.swarm/runs/cycle-005-*.json` exists, so it never reached a persist step.
+
+cycle.md step 2 offers `WIP: crashed cycle N` for coherent partial work. WRAP_UP step 1
+admits only *verified* work. This tree was neither: complete and coherent, but never gated.
+Committing it as WIP would have deferred the judgment to a morning that has no context;
+discarding it would have thrown away the change that takes the suite from two red guards to
+zero. So it was gated properly instead — **the conductor authored a 6-cell check at
+verification time**, which the (long-dead) builder never saw.
+
+The full evidence is in `.swarm/runs/cycle-005-verify-Q-8.txt`. The two cells that matter:
+
+```
+CELL 1 — the working tree's suite
+  ℹ tests 129   ℹ pass 129   ℹ fail 0   ℹ skipped 0
+
+CELL 3 — what the cited run ACTUALLY reported, per major, from CI's own job logs
+  Node 18 (job 96543579607):  # tests 129  # pass 127  # fail 0  # skipped 2
+  Node 20 (job 96543579297):  # tests 129  # pass 127  # fail 0  # skipped 2
+  Node 22 (job 96543579578):  # tests 129  # pass 127  # fail 0  # skipped 2
+  Node 24 (job 96543579562):  ℹ tests 129  ℹ pass 127  ℹ fail 0  ℹ skipped 2
+  README matrix table, all four rows: 129 tests, 127 pass, 0 fail, 2 skipped.
+```
+
+**6/6 PASS.** Q-8 → done.
+
+Two things are worth naming about *how* that was checked. First, the guards went green
+without `test/` being touched at all — the diff is README.md and docs/ only. The two
+citation guards that were RED BY DESIGN at `7e50d6f` pass now because the claim was made
+true, which is the only honest path (hard rule 2, L-043). Second, cells 2, 3 and 5 went to
+GitHub's API and job logs, never to the document doing the citing. A gate that reads the
+README to check the README proves nothing — and a fabricated run id is precisely the failure
+cycle 4's gate cell D1 was written against.
+
+Cell 5 also confirmed the entry's causal claim rather than believing it:
+
+```
+$ gh run list --repo trmnmc/aphorism-cli --limit 15
+  3a5d6e3 32405575919 success 2026-08-20T18:52:29Z
+  7e50d6f 32405521233 success 2026-08-20T18:51:54Z
+  [...]                       <- neither a302f71 nor 22fdeac appears
+```
+
+The old rule really was unsatisfiable in fact: the only commit that changed the cited paths
+was never the head of a push, so no run would ever exist to cite it by. Rewriting the rule
+was correct, not a convenience.
+
+### The finding the gate did not cover
+
+While verifying cell 5, a defect surfaced that **no guard catches** — filed as
+**KI-R6-5 / Q-10**, and deliberately **not fixed**.
+
+The two documents state the rewritten rule differently, and they disagree on this tree:
+
+| document | rule as written | selects |
+|---|---|---|
+| `README.md` | "the matrix run for the push that carried the last change to `src/`, `bin/`, `test/`, or the workflow itself" | `7e50d6f` — uniquely, and correctly |
+| `docs/node-support-citation-history.md` | "the most recent run whose cited commit's … content is byte-identical to this tree's" | `3a5d6e3` @ run `32405575919` |
+
+Measured, not assumed:
+
+```
+$ git diff 7e50d6f..3a5d6e3 --stat -- src bin test .github
+  (empty)                       <- 3a5d6e3 is content-eligible
+   run 32405575919 @ 18:52:29Z  <- and 35 seconds MORE RECENT than the cited run
+```
+
+So the history file is not paraphrasing the README's rule — it is stating a *different* rule
+that returns a *different* answer, and it agrees with the committed citation only by
+accident. It is not repaired here because WRAP_UP finishes nothing new, and because the
+README, which is the document the guard parses and a human follows, is correct and green.
+The fix is one line: quote the rule instead of restating it.
+
+The general shape is bigger than the line, and it is this run's own lesson turned on itself:
+**a document that restates a machine-checked rule in its own words reintroduces exactly the
+drift the machine check exists to prevent.** Five cycles proved that about *counts*, and the
+remedy found for counts — put them in a table the guard parses — has a direct analogue for
+*rules*: quote them, never paraphrase.
+
+### Q-5, the standing gate, at its last commit
+
+```
+$ sha256sum src/corpus.js               -> 77a4de5c777a3bdb...   (baseline 77a4de5c) ✓
+$ node bin/aphorism.js --help | sha256  -> d759d781ddcac780...   (baseline d759d781) ✓
+$ ls package.json                       -> absent — no manifest, no dep can be added ✓
+```
+
+Zero features, zero new deps, corpus and `--help` byte-identical. Q-5 → done.
+
+### Where the run lands
+
+Six Q-items opened, six closed: Q-1, Q-2, Q-3, Q-4, Q-6, Q-7, Q-8 done and Q-5 held at every
+commit. Q-9 and Q-10 are open and both are operator rulings, not swarm work. The suite went
+121 → 129, every added test failable and converse-controlled, and no test was weakened at any
+point in the run.

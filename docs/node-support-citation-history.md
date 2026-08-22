@@ -36,6 +36,7 @@ chronological order by cycle number, so the citation chain reads forward:
 | 9 | run `32331910336` at commit `c08562b` | run `32335038575` at commit `c9dd7ff` |
 | 10 | run `32335038575` at commit `c9dd7ff` | run `32337875271` at commit `2b003ea` |
 | Q-7 (improvement run #6) | run `32337875271` at commit `2b003ea` | run `32400996331` at commit `4b63e91` |
+| Q-8 (improvement run #6) | run `32400996331` at commit `4b63e91` | run `32405521233` at commit `7e50d6f` |
 
 The cycle 3 entry records only the citation it retired; the run id it moved to is not stated
 in the entry itself, and is not inferred here. The last row is the citation the README still
@@ -46,6 +47,11 @@ was first written; unlike the five rows above it, it is not one of the five cycl
 file's intro paragraph describes, and its label follows that later run's own task-id
 convention rather than this run's cycle numbering. It is now the citation the README carries;
 see "Q-7 (improvement run #6)" below for the entry.
+
+The row above that, labelled "Q-8 (improvement run #6)", is a second later move, appended for
+the same reason as Q-7: it is not one of the five cycles this file's intro paragraph
+describes, and its label follows that later run's own task-id convention. It is now the
+citation the README carries; see "Q-8 (improvement run #6)" below for the entry.
 
 ## Cycle 3
 
@@ -180,3 +186,42 @@ skipped — the test count rose from 121 to 124 because of the rewrite in `4b63e
 skip count, the two skipped tests' identities, and the reason (`test/node-support-citation.test.js`
 skipping on a shallow clone that cannot reach the cited base) are unchanged from the citation
 this replaces.
+
+## Q-8 (improvement run #6)
+
+**2026-08-20, filed as Q-8 of improvement run #6.** Moved from run `32400996331` at commit
+`4b63e91` to run `32405521233` at commit `7e50d6f`. Retired the same way `4b63e91` retired
+its own predecessor: a later commit changed `test/` — here, `22fdeac` ("Q-3: guard the
+Node-support matrix table's own numbers"), which added `test/readme-matrix-consistency.test.js`
+— inside the cited pathspec, and the guard on this section went red on a full clone exactly as
+standing limit 2 above predicts. `22fdeac` was merged into the mainline as `a302f71`.
+
+This time the section's own selection rule, applied literally, selected nothing. That rule
+read "the most recent full matrix run against a commit that actually changed `src/`, `bin/`,
+`test/`, or the workflow itself." `22fdeac` is that commit, but neither it nor its merge
+`a302f71` ever got a CI run of its own: GitHub Actions runs once per push, not once per
+commit, and both landed in the same push as `7e50d6f`, whose SHA is what the run actually
+executed against. Applying the old rule literally would have kept citing `4b63e91` forever —
+no later commit that "actually changed" those paths would ever acquire its own run to replace
+it with, because the one that did change them was never the head of a push. The rule was
+satisfiable in principle and unsatisfiable in fact, given how this repo pushes; that is a
+defect in the rule, not a missing run to go find.
+
+The rule is rewritten rather than patched around. The section now names the most recent run
+whose cited commit's `src/`, `bin/`, `test/`, and `.github` content is byte-identical to this
+tree's, without requiring that the cited commit be the one that produced the change. `7e50d6f`
+is that commit — content-identical to `22fdeac`/`a302f71` in the cited paths, and the first
+SHA in that push with a run of its own. This version of the rule cannot fail the same way
+again: some run always eventually carries HEAD's own content in those paths, including HEAD's
+own commit if nothing else does.
+
+Run `32405521233` (`conclusion: success`, `headSha: 7e50d6f...`) reported, across all four
+Node majors (v18.20.8, v20.20.2, v22.23.2, v24.19.0): 129 tests, 127 pass, 0 fail, 2 skipped —
+the test count rose from 124 to 129 because `22fdeac` added
+`test/readme-matrix-consistency.test.js` (5 new tests); the skip count, the two skipped tests'
+identities, and the reason (`test/node-support-citation.test.js` skipping on a shallow clone
+that cannot reach the cited base) are unchanged from the citation this replaces. Locally, on a
+full clone, before this re-citation landed the suite reported 129 tests, 127 pass, 2 fail, 0
+skipped: the same two tests that skip in CI ran instead and failed, because the stale
+citation's own diff was non-empty on this tree. Those 2 fails were Q-8's to close, and this
+move closes them.

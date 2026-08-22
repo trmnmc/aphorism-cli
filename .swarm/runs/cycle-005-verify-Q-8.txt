@@ -1,0 +1,138 @@
+VERIFICATION EVIDENCE — Q-8 (re-cite the Node-support matrix), cycle 5 / WRAP_UP
+Authored by the conductor AT VERIFICATION TIME, after the crashed cycle 5 left the work
+uncommitted in the working tree. The builder never saw these checks.
+
+Gate: 6 cells. Every cell run by the conductor against the working tree and against
+GitHub's own record. PASS = 6/6.
+
+================================================================================
+CELL 1 — the working tree's suite is green, and green for the RIGHT reason
+================================================================================
+$ node --test test/*.test.js
+  ℹ tests 129
+  ℹ suites 0
+  ℹ pass 129
+  ℹ fail 0
+  ℹ cancelled 0
+  ℹ skipped 0
+  ℹ todo 0
+  ℹ duration_ms 5557.35471
+
+PASS. At commit 7e50d6f the same suite reported 129/127/2 fail/0 skipped, both failures
+being the citation guards. The re-citation moves them to pass WITHOUT touching test/ —
+the diff is README.md + docs/ only. The guards were satisfied by making the claim true,
+not by weakening the check (hard rule 2 / L-043).
+
+================================================================================
+CELL 2 — the cited run EXISTS and is what the doc says it is
+================================================================================
+$ gh run view 32405521233 --repo trmnmc/aphorism-cli --json conclusion,headSha,status
+  conclusion: success
+  headSha:    7e50d6f735cf3bffda96c4878de62b9fe0ad4c24
+  status:     completed
+  jobs:       test (18), test (20), test (22), test (24) — all success
+
+PASS. The run is real, green, four majors, and its head SHA is exactly the commit the
+README names. This is the cell that would have caught a fabricated run id — the failure
+mode cycle 4's gate cell D1 was written against.
+
+================================================================================
+CELL 3 — the cited run REPORTED the numbers the matrix table claims
+================================================================================
+Per-major summary lines pulled from the job logs themselves (not from any agent's report):
+
+  Node 18 (job 96543579607):  # tests 129  # pass 127  # fail 0  # skipped 2
+  Node 20 (job 96543579297):  # tests 129  # pass 127  # fail 0  # skipped 2
+  Node 22 (job 96543579578):  # tests 129  # pass 127  # fail 0  # skipped 2
+  Node 24 (job 96543579562):  ℹ tests 129  ℹ pass 127  ℹ fail 0  ℹ skipped 2
+
+README matrix table claims, all four rows: 129 tests, 127 pass, 0 fail, 2 skipped.
+
+PASS — byte-for-byte agreement on all four rows against CI's own logs. Note Node 24
+prints the spec-reporter marker (U+2139) while 18/20/22 print TAP (#), exactly as the
+README's own prose says.
+
+================================================================================
+CELL 4 — the new citation's OWN falsification condition holds
+================================================================================
+The README states: "That citation is the reference matrix until
+`git diff 7e50d6f..HEAD -- src bin test .github` stops being empty."
+
+$ git diff 7e50d6f..HEAD --stat -- src bin test .github
+  (empty)
+$ git diff 7e50d6f -- src bin test .github --stat        # incl. working tree
+  (empty)
+
+PASS. The tree is content-identical to the cited run in every cited path. The citation
+describes this tree.
+
+================================================================================
+CELL 5 — the doc's factual claim about why the old rule broke is TRUE
+================================================================================
+The history entry claims a302f71 / 22fdeac "never got a CI run of its own" because CI
+runs once per push, not once per commit.
+
+$ gh run list --repo trmnmc/aphorism-cli --limit 15 --json headSha,databaseId,conclusion
+  3a5d6e3 32405575919 success 2026-08-20T18:52:29Z
+  7e50d6f 32405521233 success 2026-08-20T18:51:54Z
+  e4797b3 32403570176 success 2026-08-20T18:30:28Z
+  83cef40 32403319940 success 2026-08-20T18:27:48Z
+  2014bb9 32401050374 success 2026-08-20T18:03:15Z
+  4b63e91 32400996331 success 2026-08-20T18:02:41Z
+  [...]
+
+PASS. Neither a302f71 nor 22fdeac appears. The old rule ("the most recent full matrix run
+against a commit that ACTUALLY CHANGED src/, bin/, test/, or the workflow") was therefore
+unsatisfiable in fact: the only commit that changed those paths was never the head of a
+push, so no run would ever exist to cite. The defect the entry describes is real.
+
+================================================================================
+CELL 6 — Q-5 invariants unmoved (standing gate, every commit)
+================================================================================
+$ sha256sum src/corpus.js        -> 77a4de5c777a3bdb...   (baseline 77a4de5c)
+$ node bin/aphorism.js --help | sha256sum
+                                 -> d759d781ddcac780...   (baseline d759d781)
+$ ls package.json                -> absent (no manifest; no dependency can be added)
+
+PASS. Zero features, zero new deps, corpus and --help byte-identical.
+
+================================================================================
+RESULT: 6/6 PASS. Q-8 -> done.
+================================================================================
+
+--------------------------------------------------------------------------------
+FINDING NOT COVERED BY THE GATE — filed as KI-R6-5 / Q-10, NOT fixed
+--------------------------------------------------------------------------------
+The two documents state the rewritten selection rule DIFFERENTLY, and they disagree on
+today's inputs. Found by the conductor while verifying cell 5; no guard catches it.
+
+  README.md (the rule the guard parses and the section actually carries):
+    "the matrix run for the push that carried the last change to src/, bin/, test/,
+     or the workflow itself"
+    -> selects 7e50d6f uniquely. The push carrying a302f71 was tested at 7e50d6f.
+
+  docs/node-support-citation-history.md (the restatement in the Q-8 entry):
+    "the most recent run whose cited commit's src/, bin/, test/, and .github content is
+     byte-identical to this tree's, without requiring that the cited commit be the one
+     that produced the change"
+    -> selects 3a5d6e3 @ run 32405575919, which is MORE RECENT (18:52:29Z vs 18:51:54Z)
+       and content-eligible:
+       $ git diff 7e50d6f..3a5d6e3 --stat -- src bin test .github
+         (empty)
+
+So the history file's restatement is not a paraphrase of the README's rule — it is a
+different rule that returns a different answer on this very tree. It agrees with the
+committed citation only by accident.
+
+Why this is NOT repaired here: WRAP_UP finishes nothing new (cycle.md WRAP_UP step 1).
+Every guard is green and the README — the document the guard reads and the one a user
+follows — is self-consistent and correct. The defect is confined to a prose restatement
+in a history file.
+
+What would settle it (one-line doc edit, next run): replace the history entry's
+restatement with the README's own wording verbatim, so the file quotes the rule instead
+of paraphrasing it. The general lesson is larger than the line: a doc that RESTATES a
+machine-checked rule in its own words reintroduces exactly the drift the machine check
+exists to prevent — this run spent five cycles proving that about counts, and the fix
+for counts (put them in a table the guard parses) has a direct analogue for rules
+(quote them, never paraphrase).

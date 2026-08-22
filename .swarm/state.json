@@ -5,8 +5,8 @@
   "run_label": "improvement run #6",
   "run_started_at": "2026-08-20T14:36:57Z",
   "kickoff_source": "allocator",
-  "phase": "BUILD",
-  "cycle": 4,
+  "phase": "DONE",
+  "cycle": 5,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "spec_digest": [
@@ -102,6 +102,26 @@
       "cycle": 4,
       "what": "Closed Q-2 by discovering its remaining work was a file that has never existed",
       "why": "Q-2 carried 'citations.test.js still untreated' across two cycles of notes. It is a PLAN-time files_hint that was never checked against the tree; `git log --all` for that path is empty and only seven test files have ever been added. The lesson is not about the file — it is that a planning artifact was restated as an observation, twice, and no cycle spent the four seconds to `ls` it. Recorded rather than quietly dropped."
+    },
+    {
+      "cycle": 5,
+      "what": "Salvaged the crashed cycle 5's uncommitted Q-8 work and committed it as VERIFIED rather than as WIP",
+      "why": "cycle.md step 2 offers WIP-commit for coherent partial work, but WRAP_UP step 1 admits only verified work. The tree was neither: it was complete, coherent work that had never been through a gate. So the conductor authored a 6-cell gate at verification time (the builder that wrote it is long dead and never saw the checks) and ran every cell — including pulling GitHub's own job logs for all four Node majors. 6/6 PASS, so it enters as verified work, not as a WIP the morning would have to re-litigate."
+    },
+    {
+      "cycle": 5,
+      "what": "Verified the cited CI run against GitHub's API and its per-major job LOGS, not against the document that cites it",
+      "why": "The whole run has been about documents whose numbers drift from the thing they describe. A gate that reads the README to check the README proves nothing. Cells 2, 3 and 5 go to the only ground truth there is — run 32405521233's own conclusion, headSha, and four job logs. The matrix's four rows (129/127/0/2) match CI's own summary lines byte for byte, and the entry's claim that a302f71 never got its own run is confirmed against the run list rather than believed."
+    },
+    {
+      "cycle": 5,
+      "what": "Filed the README-vs-history rule-wording disagreement as KI-R6-5 / Q-10 and did NOT fix it",
+      "why": "Found while verifying cell 5, caught by no guard. The history file paraphrases the rewritten selection rule instead of quoting it, and its paraphrase selects a DIFFERENT run than the README's rule does on this very tree (3a5d6e3 @ 32405575919 is more recent and content-eligible; measured, not assumed). It agrees with the committed citation only by accident. WRAP_UP finishes nothing new, and the README — the document the guard parses and a human follows — is correct and green. Reported as an open one-line doc item with the exact fix named, rather than silently repaired past the stop boundary or quietly dropped."
+    },
+    {
+      "cycle": 5,
+      "what": "Ran WRAP_UP on a run that was already ~25.5h past stop_at, instead of taking one more work cycle",
+      "why": "stop_at was 2026-08-21T14:36:47Z; this session woke at 2026-08-22T16:04:09Z. Step 1's clock check is unconditional. The uncommitted tree was worth verifying and committing — that is salvage, which WRAP_UP explicitly does — but nothing new was started. The run overshot because the pacer fired no cycle between; that gap is itself reported rather than smoothed over."
     }
   ],
   "known_issues": [
@@ -128,6 +148,12 @@
       "desc": "The README Node-support matrix can still be falsified WHOLESALE: gate cell C7 (cycle 4) changed all four rows together to a self-consistent falsehood (200 tests, 198 pass, 0 fail, 2 skipped) and test/readme-matrix-consistency.test.js stayed SILENT at 5 pass / 0 fail. Per-row arithmetic and cross-row agreement catch a single bad row, a transcription slip, or a partial edit — not a lie told consistently. Closing it requires an anchor outside the document (live network provenance, which would skip in the shallow-CI environment the table describes; or a committed machine-readable CI artifact, which changes what CI is responsible for). Operator's call — Q-9.",
       "severity": "low",
       "cycle_found": 4
+    },
+    {
+      "id": "KI-R6-5",
+      "desc": "docs/node-support-citation-history.md PARAPHRASES the rewritten citation-selection rule instead of quoting the README's wording, and the paraphrase is a different rule: it selects 'the most recent run whose cited commit's src/bin/test/.github content is byte-identical to this tree', which on this tree selects 3a5d6e3 @ run 32405575919 (more recent, and `git diff 7e50d6f..3a5d6e3 -- src bin test .github` is empty) — NOT the 7e50d6f the README cites. The README's own rule ('the matrix run for the push that carried the last change to those paths') selects 7e50d6f uniquely and is correct. No guard reads the history file's prose, so nothing catches the disagreement. Fix is one line: quote the README's rule verbatim instead of restating it. Q-10.",
+      "severity": "low",
+      "cycle_found": 5
     }
   ],
   "counters": {
@@ -137,10 +163,10 @@
     "wave_streak": 1
   },
   "last_cycle": {
-    "n": 4,
-    "work": "Q-3 — guard the matrix table own numbers (1 builder, k=1, sonnet; gear-2 demote does not drop a kind:test build item below sonnet). Q-2 closed by conductor measurement.",
-    "outcome": "sealed gate 855beded unchanged across dispatch, every cell PASS; suite 124 -> 129 (127 pass / 2 fail / 0 skipped, both failures predicted before dispatch and owned by Q-8). THE RESULT: C4a and C4b, measured SILENT in cycle 3, now FIRE on byte-identical inputs. C8 proves cross-row agreement does independent work. C7 measured SILENT and reported as an unfixed column (KI-R6-4). Q-2 closed: its remaining guard file never existed.",
-    "commit": "7e50d6f"
+    "n": 5,
+    "work": "WRAP_UP (25.5h past stop_at) — salvaged and verified the crashed cycle 5 Q-8 re-citation, then closed the run.",
+    "outcome": "Q-8 verified 6/6 against GitHub's own job logs and committed; suite 129/129/0 fail/0 skipped — the two citation guards that were RED BY DESIGN at 7e50d6f are green because the claim was made true, not because the check was weakened. Q-5 invariants held (corpus 77a4de5c, --help d759d781). New finding KI-R6-5/Q-10: the history file paraphrases the selection rule and its paraphrase picks a different run than the README's rule does — filed, not fixed.",
+    "commit": "pending"
   },
   "post_commit_2026_08_20_cycle3": {
     "commit": "83cef40",
