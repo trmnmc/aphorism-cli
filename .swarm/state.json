@@ -154,6 +154,12 @@
       "desc": "docs/node-support-citation-history.md PARAPHRASES the rewritten citation-selection rule instead of quoting the README's wording, and the paraphrase is a different rule: it selects 'the most recent run whose cited commit's src/bin/test/.github content is byte-identical to this tree', which on this tree selects 3a5d6e3 @ run 32405575919 (more recent, and `git diff 7e50d6f..3a5d6e3 -- src bin test .github` is empty) — NOT the 7e50d6f the README cites. The README's own rule ('the matrix run for the push that carried the last change to those paths') selects 7e50d6f uniquely and is correct. No guard reads the history file's prose, so nothing catches the disagreement. Fix is one line: quote the README's rule verbatim instead of restating it. Q-10.",
       "severity": "low",
       "cycle_found": 5
+    },
+    {
+      "id": "KI-R6-6",
+      "desc": "The run OVERSHOT stop_at by 25.5 hours with no cycle firing. Cycle 4 committed ~2026-08-20T18:55Z; the next session woke 2026-08-22T16:04:09Z against a stop_at of 2026-08-21T14:36:47Z. swarm-pacer.timer was this run's designated recovery path (named as the mitigation for KI-R6-1 at kickoff) and produced no cycle in that window, while the watchdog was already structurally no-op. A crashed cycle 5's FINISHED work sat uncommitted in the working tree the entire time and no mechanism detected it. The mitigation for a known-dead recovery path was single-point, and it was the point that broke. Human item: the pacer needs its own liveness check (assert it has SPAWNED within the last interval, not merely that its timer is enabled).",
+      "severity": "high",
+      "cycle_found": 5
     }
   ],
   "counters": {
@@ -166,7 +172,7 @@
     "n": 5,
     "work": "WRAP_UP (25.5h past stop_at) — salvaged and verified the crashed cycle 5 Q-8 re-citation, then closed the run.",
     "outcome": "Q-8 verified 6/6 against GitHub's own job logs and committed; suite 129/129/0 fail/0 skipped — the two citation guards that were RED BY DESIGN at 7e50d6f are green because the claim was made true, not because the check was weakened. Q-5 invariants held (corpus 77a4de5c, --help d759d781). New finding KI-R6-5/Q-10: the history file paraphrases the selection rule and its paraphrase picks a different run than the README's rule does — filed, not fixed.",
-    "commit": "pending"
+    "commit": "180e9da"
   },
   "post_commit_2026_08_20_cycle3": {
     "commit": "83cef40",
@@ -195,5 +201,12 @@
     ],
     "cited_path_diff_at_commit": "git diff 4b63e91..HEAD -- src bin test .github -> 1 file changed, 238 insertions (test/readme-matrix-consistency.test.js)",
     "note": "RED AT COMMIT, as predicted in the sealed gate BEFORE dispatch and re-measured after the commit rather than assumed. The cited-path diff is non-empty by exactly one file — the new guard — which is the whole reason the citation guards fire. Same shape as cycle 2; Q-8 closes it by re-citing once CI has run against 7e50d6f, and it is NEVER to be closed by narrowing the pathspec or relaxing an assertion (L-043, README standing limit 2). Q-5 invariants re-confirmed at the commit: corpus sha256 77a4de5c and --help sha256 d759d781 both unmoved, and the repo has no manifest to add a dependency to."
+  },
+  "post_commit_2026_08_22_cycle5": {
+    "commit": "180e9da",
+    "test_cmd_output": "tests 129 / pass 129 / fail 0 / skipped 0",
+    "cited_path_diff_at_commit": "git diff 7e50d6f..HEAD -- src bin test .github -> empty",
+    "note": "GREEN AT COMMIT, re-measured after the commit rather than predicted. Unlike cycles 2 and 4, this commit touches no path inside the cited pathspec (README.md, docs/, .swarm/ only), so it does not re-falsify the citation it just repaired and NO round trip is owed — the two-commit cycle that ran twice this run is closed, not left open. Q-5 invariants held at the commit: corpus sha256 77a4de5c and --help sha256 d759d781 both unmoved, and the repo has no manifest to add a dependency to.",
+    "ci_verification": "Cited run 32405521233 verified against GitHub's API and all four job logs at wrap-up: conclusion success, headSha 7e50d6f735cf..., and 129 tests / 127 pass / 0 fail / 2 skipped on Node 18 (job 96543579607), 20 (96543579297), 22 (96543579578) and 24 (96543579562) — byte-identical to the four README matrix rows."
   }
 }

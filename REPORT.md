@@ -1,234 +1,99 @@
-# aphorism-cli — report
+# aphorism-cli — overnight build report
 
-A tiny, zero-dependency Node.js CLI that prints one attributed programming aphorism —
-`fortune(6)` for programmers, quiet and pipeable. This page is the current status in one
-screen. The complete forensic history — five SWARM runs, every correction and every dated
-claim, moved verbatim rather than summarized — is in
-[`docs/report-history.md`](docs/report-history.md).
+Improvement run #6 repaired the README regression run #5 caused and, more usefully, **measured** the guards that shaped it — turning an unfalsifiable "harden tests / polish docs" brief into one experiment whose result contradicted the run's own premise.
 
-_No screenshot captured this run — this is a CLI with no rendered surface._
+_No screenshot captured this run — the target is a terminal CLI with no visual surface._
 
 ## Run it
 
-```sh
+```
 node bin/aphorism.js
 ```
 
-## What ships
+Suite: `node --test test/*.test.js` — **129 tests, 129 pass, 0 fail, 0 skipped** at the final commit `180e9da`.
 
-**Unchanged by improvement run #5.** This run added zero features, zero flags, zero
-dependencies and did not touch `src/corpus.js`, `src/select.js` or `bin/aphorism.js`.
+## Must-haves
 
-- **Run it:** `node bin/aphorism.js` — no install step, no `package.json`, zero runtime
-  dependencies; Node plus this repo is the whole requirement.
-- **Corpus:** 50 curated aphorisms in `src/corpus.js` — 24 distinct authors, 12 tags,
-  smallest pool 3 entries / largest 14.
-- **Flags:** `--author <name>`, `--tag <tag>`, `--seed <n>`, `--list`, `--json`,
-  `--help`/`-h`. Full semantics in [README.md](README.md).
-- **Error contract:** exit 1 = no match (message on stderr, zero bytes on stdout);
-  exit 2 = unknown flag or unparseable `--seed`; exit 3 = the output could not be
-  delivered, distinct from "no match".
-
-## What run #5 was for, and what it found
-
-The brief was housekeeping under a TRICKLE posture: harden tests, fix playbook items,
-polish docs, **no new features**. Five must-haves, all closed and conductor-verified.
-
-| Must-have | Status | Evidence |
+| Must-have | Status | Reason / evidence |
 |---|---|---|
-| **P-1** — enumerate the `bin/aphorism.js` branch gap, classify each branch HOLE or BOUNDARY, pin every HOLE with a failable + attributable + converse-controlled test | ✅ shipped | Measured, cycle 1. The kickoff had *inferred* a "12 of 14 branches" gap; measurement returned **1 unexecuted branch of 7** (`bin/aphorism.js:72`, false arm), classified **BOUNDARY** — it is unreachable dead code. **Zero tests added**, because zero HOLEs existed. The suite already executes 64 of 65 reachable branches. |
-| **P-2** — coverage baseline written down and observable per-push in CI on Node 18/20/22/24, cited to a real run, and never gated on | ✅ shipped | [`docs/coverage-baseline.md`](docs/coverage-baseline.md) + an informational coverage step in the Actions matrix. Took two attempts: the cycle-2 gate turned over two false claims, one of them authored by cycle 1 itself. Explicitly **not** a gate — an enforced coverage threshold is a locked non-goal of this run. |
-| **P-3** — audit every README/`--help`/docs claim in both directions, every citation form including the bare `:N` shorthand | ✅ shipped | Cycle 3. The mechanical surfaces came back **clean**, which is a valid result and is reported as one. One claim had documented its own falsifier, which is what P-6 then mechanized. |
-| **P-4** — prove the playbook allowlist gap closed by *executing* the denied script, else hand off denial #31 with an exact patch | ✅ shipped (as a hand-off) | Cycle 4 re-derived and **shrank** the ask; the script is still denied. See "Reported as not-run" below. |
-| **P-5** — suite green ≥ 119 on every commit, Actions matrix green on final HEAD, zero features, zero deps, `src/corpus.js` byte-identical | ✅ shipped, **with one recorded exception class** | Verified at close; the exception is P-7, below, and it is recorded rather than re-labelled. |
+| **Q-1** — the five `Updated 2026-08-20 (cycle N)` run-journal blockquotes move verbatim out of README.md to `docs/`; README ≥ 5000 bytes smaller; zero tests weakened | ✅ shipped | README 16,609 → **11,046 bytes (−5,563)**, verified by `wc -c` at wrap-up. Blockquotes live in `docs/node-support-citation-history.md`. Gate 7/7, cycle 1. **Zero guards broke** — which is the run's headline finding, below. |
+| **Q-2** — every guard that breaks is repaired AT ITS ANCHOR, never by restoring prose; each classified guard-defect vs real-claim-loss, both columns reported, survivors named as the control | ✅ shipped | Vacuously satisfied in the useful direction: zero guards broke under the extraction (cycle 1), so the guard-defect column is empty and every guard is a survivor/control. Its one carried-forward item was closed in cycle 4 by discovering the file it named (`citations.test.js`) **has never existed on any branch** — `git log --all` for that path is empty. |
+| **Q-3** — Node-support section audited doc→code AND doc→doc; the `tests 120` vs `121` self-contradiction fixed to a measured value; a count claim there can no longer silently disagree with its own matrix table, failable + attributable + converse-controlled | ✅ shipped | Gate 20/20, cycle 4. `test/readme-matrix-consistency.test.js` added (5 tests, suite 124 → 129). Cells C4a/C4b, **measured SILENT in cycle 3**, fire on byte-identical inputs after the fix (3 pass / 4 fail each); converse controls C6/C5 stayed green 5/0; C8 proved cross-row agreement does independent work. |
+| **Q-4** — tag-vocabulary guard re-anchored to the table, one honest sentence restored, fixed-vs-unfixed columns on true inputs reported | ✅ shipped | Gate 14/14, cycle 2. Both columns measured and reported: a FALSE prose count fires on both trees; a TRUE prose count is SILENT on the unfixed tree and FIRES on the fixed one. The real cost — an honest TRUE restatement in prose is now refused — is recorded, not buried. |
+| **Q-5** — suite green ≥ 121 at every commit, zero features, zero new deps, `src/corpus.js` and `--help` byte-identical | ✅ shipped | Held at every commit and re-checked at wrap-up: corpus `sha256 77a4de5c…`, `--help` `sha256 d759d781…`, both **unmoved from the kickoff baseline**; no manifest exists, so no dependency can be added. Suite never below 121. See the two RED-BY-DESIGN windows under "Known issues" — both were predicted, walked knowingly, and closed. |
+| **Q-6** — the playbook allowlist item is CLOSED at kickoff by one read; escalate once, never re-derive | ✅ shipped | Closed at cycle 0 by a single structural read of live `settings.json` (L-045). Re-confirmed once at wrap-up, as the fallback path required — see KI-R6-2. |
+| **Q-8** — re-cite the Node-support matrix to a run describing the post-Q-3 tree | ✅ shipped | Gate 6/6, cycle 5, **salvaged from a crashed cycle and gated at salvage time** — details below. |
 
-Beyond the must-haves the run also closed a review-fix pass (RF-1/2/3, cycle 6), a full QA
-pass (4/4 clean, cycle 7), a CI deprecation bump (RF-4, cycle 8), a taste pass (cycle 9),
-and RF-5 (cycle 10), which made the README's citation guard able to fire on the working
-tree — on the very commit that breaks it — instead of a cycle later.
+Also closed: **Q-7** (cycle 3, gate 17/17) — the first of the two re-citation round trips.
 
-## What is machine-verified
+## Decisions log
 
-Every number here was re-run by the conductor against the shipped tree at the closing gate.
-None is taken from an agent's claim.
+- **cycle 0**: Re-aimed the brief's three open-ended chore headings onto ONE falsifiable experiment — extract the guard-shaped prose out of README.md and treat every guard that breaks as the finding — because "harden tests" and "polish docs" are unfalsifiable as written and produced churn for five runs.
+- **cycle 0**: Closed Q-6 at kickoff in one read rather than opening it as work (L-045: escalate the locked lever once, never re-derive it).
+- **cycle 0**: Derived `usage_reset_at` from a real probe rather than setting it equal to `stop_at` — run #5's retro showed that defect bought eleven consecutive gear-1 cycles.
+- **cycle 0**: Recorded taste-judge dissent (use-twice: 4/10) for the third consecutive run rather than overriding it. Every candidate that would move it is a new user-visible feature, excluded by the brief. **Operator lever, not a swarm one.**
+- **cycle 1**: Forbade the Q-1 builder from touching `test/`, and treated the resulting pass/fail list as the deliverable — a builder that repairs a failing guard mid-edit destroys the measurement.
+- **cycle 2**: Committed with a citation guard RED, knowingly, filing the re-cite as Q-7 rather than buying green. The guard's subject is a git pathspec covering `test/`, so it cannot be green on the commit that changes it.
+- **cycle 2**: Kept the builder's out-of-scope deletion of a prose allowlist but **rejected its stated rationale** — measured both arms directly; the allowlist was not a live hole, it went dead when the prose readers were retired.
+- **cycle 3**: Cited run `32400996331` @ `4b63e91`, NOT the newer `32401050374` @ `2014bb9` — the newer run was ineligible under the section's own selection rule. Citing it would have satisfied the machine guard while violating the prose rule the guard exists to serve.
+- **cycle 3**: Ratified the builder's departure from the history file's "Cycle N" labelling — for a better reason than it gave (label collision, not the builder's stated uncertainty).
+- **cycle 4**: Committed with both citation guards RED again, **predicted in the sealed gate BEFORE dispatch** rather than explained afterwards; the prediction was then checked and matched exactly.
+- **cycle 4**: Forbade the builder from editing the four matrix rows and made that a gate cell rather than a hope — the rows describe a real past CI run, and "fixing" them to match the local suite would fabricate a result that never ran.
+- **cycle 4**: Reported C7 as an **unfixed column** rather than letting the C4a/C4b win imply coverage it did not buy.
+- **cycle 4**: Closed Q-2 by discovering its remaining work was a file that has never existed — a PLAN-time `files_hint` restated as an observation, twice, with no cycle spending four seconds to `ls` it.
+- **cycle 5**: Salvaged the crashed cycle's uncommitted Q-8 work and committed it as **verified, not WIP** — authored a 6-cell gate at verification time that the (long-dead) builder never saw.
+- **cycle 5**: Verified the cited CI run against **GitHub's API and its four job logs**, not against the document doing the citing.
+- **cycle 5**: Filed the README-vs-history rule disagreement as KI-R6-5/Q-10 and **did not fix it** — WRAP_UP finishes nothing new.
 
-- **Test suite, full clone:** `node --test test/*.test.js` → **121 tests, 121 pass, 0 fail,
-  0 skipped** (node v24.19.0).
-- **Actions matrix on final code-bearing HEAD:**
-  [run 32338243331](https://github.com/trmnmc/aphorism-cli/actions/runs/32338243331) —
-  **4/4 green** on v18.20.8, v20.20.2, v22.23.2, v24.19.0, each reporting
-  **121 tests / 119 pass / 0 fail / 2 skipped**.
-- **Why CI shows 2 skips and a full clone shows 0:** both skips are the two arms of
-  `test/node-support-citation.test.js`, the guard on README's own Node-support claim. CI
-  checks out shallow, so the guard cannot read the history it needs and **stands down
-  loudly rather than passing silently**. On a full clone both arms execute. This is the
-  guard being honest about what it could not measure, not a suppressed failure.
-- **Zero features, zero dependencies:** no `package.json` and no `node_modules` exist, so
-  the dependency claim holds by construction rather than by audit.
-- **`src/corpus.js` byte-identical:** last modified at commit `64a465f` (2026-08-18,
-  during run #4) and untouched for all of run #5.
+## Known issues
 
-## What is open
+- **KI-R6-1** (med, cycle 0): The watchdog DONE-guard keys on `REPORT.md` *existing*, which on an improvement run is true from cycle 0 because run #5 wrote it — so `swarm-watchdog.timer` read "all-done / reports-present" and **no-opped on every firing for the entire run**. Mitigation at kickoff was `swarm-pacer.timer`; that mitigation then failed (see KI-R6-6). Tool bug; hard rule 5 forbids repairing it mid-run. **Human item.**
+- **KI-R6-2** (med, cycle 0): `bin/swarm-playbook.sh` has **no allowlist entry under any path form** in `/opt/swarm/.claude/settings.json`. Confirmed structural at wrap-up per L-039's diagnostic: re-executed under the bare absolute-path form (no env prefix, no compound command), denied, then confirmed by grepping the settings file — `swarm-budget.sh` and `swarm-notify.sh` are both present; this one has never been added. Denial #36, 10th consecutive. Playbook directives were staged by direct `Read`, so **the file was never validated by the script's own parser this run**. **Human item** — see `HANDOFF-allowlist-2026-08-17.md`.
+- **KI-R6-3** (low, cycle 2): Two guards in `test/readme-tags.test.js` read the same table row. **Induced by the conductor's dispatch**, which mandated both a re-anchor and a no-shrink floor; the builder disclosed it rather than hiding it. Harmless but not coverage — a candidate consolidation once the Q-5 floor is not binding.
+- **KI-R6-4** (low, cycle 4): The README Node-support matrix can still be falsified **wholesale**. Gate cell C7 changed all four rows together to a self-consistent falsehood and `test/readme-matrix-consistency.test.js` stayed SILENT (5 pass / 0 fail). Per-row arithmetic and cross-row agreement catch a single bad row, a transcription slip, or a partial edit — **not a lie told consistently**. Closing it needs an anchor outside the document (live network provenance, or a committed machine-readable CI artifact). **Operator's call — Q-9.**
+- **KI-R6-5** (low, cycle 5): `docs/node-support-citation-history.md` **paraphrases** the rewritten citation-selection rule instead of quoting it, and the paraphrase is a *different rule*: it selects "the most recent run whose cited commit's content is byte-identical to this tree", which on this tree selects `3a5d6e3` @ run `32405575919` (35 seconds more recent, and `git diff 7e50d6f..3a5d6e3 -- src bin test .github` is empty) — **not** the `7e50d6f` the README cites. The README's own rule is correct and green; no guard reads the history file's prose, so nothing catches the disagreement. Fix is one line: quote the rule verbatim. **Q-10.**
+- **KI-R6-6** (high, cycle 5, found at wrap-up): The run **overshot `stop_at` by 25.5 hours with no cycle firing**. Cycle 4 committed ~2026-08-20T18:55Z; the next session woke 2026-08-22T16:04Z. `swarm-pacer.timer` was the designated recovery path and produced no cycle in that window, while the watchdog was already structurally dead (KI-R6-1). A crashed cycle 5's **finished work sat uncommitted in the working tree the entire time** and no mechanism detected it. **Human item** — the pacer's own liveness needs a check.
 
-Backlog at close: **31 items — 22 done, 1 declined, 8 blocked, 0 todo, 0 in flight.** The
-run ended because the dispatchable column reached zero, not because the clock did.
+## Night log
 
-### The one conflict a human must rule on
+- **cycle 0**: KICKOFF. Stress-test verdict RESHAPE (confidence 7); brief re-aimed onto one falsifiable experiment. Q-6 closed by a single read. Watchdog no-op identified and journaled *before* it mattered.
+- **cycle 1**: Q-1 — the run journal leaves the README (−5,563 bytes). Gate 7/7. **Zero guards broke**, so they were anchored to structure, not to the padded prose: the run's premise was half wrong in the useful direction.
+- **cycle 2**: Q-4 — tag counts leave the prose; guards stop punishing honest writing. Gate 14/14. Committed with a citation guard RED by design; Q-7 filed.
+- **cycle 3**: Q-7 — re-cited to the run that is *eligible*, not the one that is newest. Gate 17/17, suite 124/124/0. Green at commit, re-measured rather than assumed.
+- **cycle 4**: Q-3 — the matrix table's own numbers get a guard, and the silence stops. Gate 20/20. C4a/C4b go SILENT → FIRES on byte-identical inputs. C7 measured silent and reported as an unfixed column. Q-2 closed on a file that never existed.
+- **cycle 5**: WRAP_UP, 25.5h late. Crashed-cycle salvage gated 6/6 against GitHub's own job logs; suite 129/129/0/0; KI-R6-5 found while reading the diff of a gate that had already passed.
 
-- **P-7** — **P-5 and P-6 are in direct conflict and only a human can settle it.**
-  README's Node-support section cites `git diff <base>..HEAD -- src bin test .github`
-  as its own retirement condition, and P-6 mechanized that condition into a test. The
-  consequence: **any** commit touching those paths falsifies the citation *at that commit*,
-  and the CI run that would refresh it cannot exist until after the push. So a commit that
-  changes `src/`, `bin/`, `test/` or `.github/` is red on a full clone for the minutes
-  between push and re-citation. This run walked that window knowingly three times
-  (`5f833ab` c5, `c08562b` c6, `2b003ea` c10), said so in each commit message, and closed
-  it each time with the round trip README itself prescribes.
-  *Settles when* a human picks one of: **(a)** amend P-5's wording to exempt the single
-  commit that introduces such a change; **(b)** change the citation design so the window
-  closes; **(c)** retire the guard. Until then the exception stands **recorded, never
-  re-labelled as a pass**. Note the window is not a defect in the test — it is the price
-  of the claim being checkable at all, and the alternative (a citation nothing runs) is
-  the state that let this claim go stale undetected in an earlier run.
+## Night control log
 
-### Blocked on a human ruling (8)
-
-Unchanged in substance from run #4's report, which describes each in full; none is
-re-described here as work a builder could pick up, because **no agent action can unblock
-any of them**.
-
-- **T-006** — corpus attribution audit (needs primary sources; network is a product
-  non-goal). Highest-severity open issue on the repo. Triage that a human can act on:
-  [`docs/corpus-attribution-triage.md`](docs/corpus-attribution-triage.md), 8 HIGH /
-  16 MEDIUM / 26 LOW of 50.
-- **T-040** — ratify or reverse the 26-name tag fold map, especially `testing → debugging`.
-- **J-7** — seven CLI behaviours SPEC.md leaves undecided.
-- **TS-1 / TS-2 / TS-3** — corpus depth, tag-pool depth, voice concentration. All three
-  need the locked "corpus expansion" non-goal lifted at a kickoff.
-- **TS-6** — `--tag` vocabulary is undiscoverable without `jq`. The **documentary half is
-  already shipped** (README lists all 12 tags with counts); the remaining half needs a new
-  flag, which is a locked non-goal.
-- **P-7** — above.
-
-### Declined, not dropped
-
-- **R-1** — README acknowledgement-guard reshape, ruled by the conductor at run #4 cycle 4;
-  the property is already covered twice by sibling guards that fail closed. The residual
-  is live as KI-12 below.
-
-### Known issues carried forward (18 open)
-
-Two classes, and the distinction matters to whoever picks this up:
-
-- **Product/repo issues (7):** KI-2 (unaudited attributions, **high** — the only high one
-  in this class), KI-12 (the README acknowledgement guard is a token co-occurrence check
-  and documents itself as *not* a meaning check), KI-24 (English number *words* are
-  invisible to the `\d+` guard), KI-27 ("Node 18+" is a floor claim proven at four specific
-  versions, not at 18.0.0), KI-28 (repeated `--tag`/`--author` unprotected and
-  spec-undecided), KI-29 (three domain-rule clauses undecided), KI-35 (per-cycle artifact
-  names collide across runs).
-- **SWARM tool gaps (11):** KI-6, KI-11, KI-13, KI-14, KI-15, KI-16, KI-25, KI-26, KI-30,
-  KI-33, KI-34. These are defects in the *build harness*, not in this CLI. Three are
-  **high**: KI-14 and KI-16 disable or fail-open a spend governor, and KI-26 silently
-  removes the run's crash-recovery net. All are reported to the morning report rather than
-  live-patched, because SWARM's own `bin/` and `reference/` are read-only during a run
-  (hard rule 5).
-
-## Reported as not-run, never as passed
-
-- **`bin/swarm-playbook.sh` is still denied — denial #31, now the 7th consecutive
-  occurrence**, including once at this wrap-up. The cause is structural and confirmed by
-  reading `/opt/swarm/.claude/settings.json` directly: the script has **no allowlist entry
-  under any path form**, while its sibling `swarm-notify.sh` is present under two. Exact
-  patch: `SWARM/playbook/HANDOFF-allowlist-2026-08-17.md`. Consequence for this run: both
-  the kickoff parse and this wrap-up's playbook distillation were done **by hand**, in the
-  documented fallback grammar. `SWARM/playbook/learnings.md` may need human review.
-- **A correction to the ledger itself:** cycle 4 recorded a second structural gap as
-  denial #32. Cycle 9 grepped the allowlist and found that script present under *both*
-  path forms — that denial came from how the command was composed, not from a missing
-  entry. **The true count is 31, not 32.** Left uncorrected it would have handed the
-  operator a second, unactionable ask.
-- **The wrap-up's own commits were verified too, not argued about.** The matrix is green
-  4/4 at the last code-bearing HEAD `9794dd9`
-  ([run 32338243331](https://github.com/trmnmc/aphorism-cli/actions/runs/32338243331)),
-  **and** at the wrap-up commits `1d7fdcb`
-  ([run 32339843443](https://github.com/trmnmc/aphorism-cli/actions/runs/32339843443)) and
-  `b83bdde`
-  ([run 32339980630](https://github.com/trmnmc/aphorism-cli/actions/runs/32339980630)).
-  The regress terminates one commit later and is labelled rather than hidden: writing this
-  very sentence produces one further documentation-only commit whose CI necessarily runs
-  after the report is sealed. That commit touches `REPORT.md` alone — a file no test reads
-  and which sits outside the citation guard's `src bin test .github` pathspec — so its
-  result **cannot** differ. That last step is an argument, not an observation, and it is
-  the only one in this report.
+_No commands received._
 
 ## Stats
 
 | Stat | Value |
 |---|---|
-| Cycles run | 12 (cycle 0 kickoff + cycles 1–11) |
-| Commits | 26 + wrap-up |
-| Stop reason | **DONE** — definition-of-done met, no candidate cleared the value ratchet inside the brief |
-| Clock returned unspent | **~19.4 hours** of a ~24-hour window |
-| Agents dispatched | 13, counted from the journal's per-cycle headers (1 planner; 5 builders across c2/c3/c5/c8/c10; 1 reviewer + 1 verifier + 1 fixer at c6; 3 QA seats at c7; 1 taste seat at c9). Cycle 4 and this wrap-up dispatched none. **k=1 on every wave** — gear 1 pinned the cap there all run |
-| Models used | fable (judgment seats only), sonnet (all build/fix work) |
-| Reverted merges | **0** |
-| Items reaching `attempts ≥ 2` | **0** |
-| Notifications sent | 1 (goodnight) + this wrap-up |
-| Pace | mode `guest`, gear **1 on all 11 cycles** (range 1–1), ρ 3.92–9.79, weekly governor clamped to ceiling 2 throughout, promote blocked; voluntary idle cycles: **0** |
+| Cycles run | **5** (0–5), against an expected shape of 3–5 |
+| Commits | 11 (baseline `3a17cc5` → `180e9da`), all pushed |
+| Agents dispatched | 5 builders (k=1 every wave) + 1 taste judge + 1 stress-test pass |
+| Models used | sonnet (build/test items), fable (judgment seats — never demoted, per the fable guard) |
+| Notifications sent | 8 `ok` lines in `runs/notify.log` |
+| Pace | mode **guest**, dial 0.3, gear range **2–2** (ρ ≈ 0.51; guest clamps to 1–3 and never upshifts). Window utilization at each in-run reset: **not measured — no probe ran after 2026-08-20T18:21Z**, and the run then idled ~25h across roughly five resets. Voluntary idle cycles: 0 (the 25h gap was a *failure*, not voluntary idle). |
 
 ## Honest hand-off
 
-**Machine-checked:** the 121-test suite; the 4-version Actions matrix; `src/corpus.js`
-byte-identical since 2026-08-18; zero dependencies by construction; the branch-coverage
-measurement and its BOUNDARY classification; every documented claim audited in both
-directions with the citation guard now able to fire pre-commit.
+**Machine-checked, and you can trust it:** the suite is 129/129/0/0 at `180e9da` and green in CI on Node 18, 20, 22 and 24. Every guard added this run was shown both *failable* and *attributable* (the mutation was run twice, once with the new test removed), and each was paired with a converse control that must stay green — so none of them is a snapshot hash wearing an assertion's clothes. The README's CI citation is verified against GitHub's API and all four job logs, not against itself. `src/corpus.js` and `--help` are byte-identical to the kickoff baseline; the CLI's behavior did not change at all this run, by design.
 
-**Only a human can finish** all eight blocked items and P-7's ruling. Corpus attribution
-(KI-2) is the highest-severity open issue on this repo and needs primary sources this CLI
-is designed never to reach.
+**Machine-checked, with a stated limit:** the matrix guard catches a single falsified row, a transcription slip, or a partial edit. It does **not** catch all four rows falsified together consistently — that was measured, not assumed (KI-R6-4), and closing it needs an anchor outside the document. A narrowed hole stated as narrowed is worth more than a closed hole claimed.
 
-**Two infrastructure items, both reported as not-done rather than done.**
+**Only a human can finish these:**
+1. **The product question, raised for the third consecutive run by a fourth independent taste judge.** "Would you use this twice?" scores **4/10**. The fix — corpus depth, or no-repeat rotation so 50 canon-only entries stop repeating by roughly the 9th draw — is a user-visible feature and is locked out by the allocator brief in every run so far. Three runs have now re-derived this same conclusion at the cost of three runs' worth of manufactured chores. **This is an operator lever; the swarm cannot pull it.** (Backlog: TS-1, TS-2, TS-3.)
+2. **Q-9 / KI-R6-4** — is a coordinated table-wide falsification worth an out-of-document anchor? Both mechanisms (live network provenance; a committed CI artifact) change what CI is responsible for. Your call, not the swarm's.
+3. **Q-10 / KI-R6-5** — one-line doc fix: make the history file quote the README's selection rule instead of paraphrasing it.
+4. **KI-R6-2** — add `bin/swarm-playbook.sh` to the allowlist. Ten consecutive denials; this run's playbook handling was staged by hand and **never validated by the script's parser**.
+5. **KI-R6-6** — the pacer stopped firing and nothing noticed for 25.5 hours. The watchdog could not cover for it (KI-R6-1). Both need a human.
+6. **Corpus attribution** (T-006, T-040) and **seven unspecified CLI behaviours** (J-7) remain human rulings, unchanged from prior runs.
 
-1. Disarming the watchdog timer needs root. `systemctl disable --now swarm-watchdog.timer`
-   was attempted at wrap-up and failed with *"Interactive authentication required"* —
-   the same result run #4 reported. Clear it with
-   `sudo systemctl disable --now swarm-watchdog.timer`. Harmless as it stands.
-2. **This run stops, but the pacer may start a *new* one in ~2 hours.** `wrap_up_complete`
-   is now true, and `bin/swarm-pacer.sh` honours it — every firing exits `run-complete`, so
-   no further cycle of *this* run will execute. But after `cooloff_hours` (unset in
-   `runs/allocator.json`, so the default 2) the pacer archives the runfile, and the next
-   firing lands in the no-runfile branch where the current posture — **`trickle`** — permits
-   an **auto-kickoff**. Left alone, that is likely to schedule a *fourth* consecutive
-   housekeeping run against this repo, under the same brief that has now locked out the only
-   changes worth making. **If the recommendation below is accepted, the allocator posture or
-   queue needs changing before that fires** — the wrap-up cannot do it, because
-   `runs/allocator.json` is the allocator's file and this run has no authority over the next
-   one's brief.
-
-**The standing finding, now for the third consecutive run.** The single highest-value
-change available to this product — **no-repeat-until-exhausted rotation** — has now been
-named independently by *four* taste judges across three runs. The corpus repeats by
-roughly the ninth invocation, and every run that has measured it has said so. It is not
-blocked by any engineering obstacle. It is blocked by the brief, which forbids new
-features, and the brief is the operator's lever.
-
-This run ran out of permitted work with 80% of its clock unspent, and spent that clock
-returning it rather than manufacturing churn — which is what the SPEC asked for
-("an early finish is the honest outcome here, not a failure"). But three runs of
-housekeeping on a repo whose own instruments keep pointing at the same unbuilt feature is
-a pattern, not a coincidence. **The next run should either permit the rotation feature, or
-permit corpus expansion paired with the attribution audit — or not be scheduled.** There is
-no third kind of useful work left here that a machine may do.
-
-## Full history
-
-Everything above is run #5's close, written 2026-08-20. Nothing was deleted to make room:
-run #4's `REPORT.md` was moved byte-for-byte into
-[`docs/report-history.md`](docs/report-history.md), joining the Build run and improvement
-runs #1–#3 already there.
+**Not run, and reported as not-run:** no full QA pass ran after cycle 1 (`qa.last_full_qa_cycle: 1`); no taste pass ran this run at all (`last_taste_cycle` unset — the cycle-0 taste judge ran at kickoff, before any code moved); no security review was performed; no window-utilization telemetry exists for the 25h idle gap. None of these should be read as passed.
 
 ---
 
-Repo tagged `improvement-run-5-2026-08-20`. Generated by /swarm WRAP_UP at
-2026-08-20T06:30Z.
+Repo tagged `improvement-run-6-2026-08-22`. Generated by /swarm WRAP_UP at 2026-08-22T16:04Z.

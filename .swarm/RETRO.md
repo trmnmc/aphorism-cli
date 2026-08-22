@@ -1,183 +1,80 @@
 # aphorism-cli — run retro
 
-<!-- Written by /swarm WRAP_UP to <target>/.swarm/RETRO.md. Evidence rules apply
-     here exactly as in the verification gate: every entry cites cycle numbers
-     from .swarm/journal.md. No cycle number, no entry — vibes are not evidence. -->
+Run: 2026-08-20 → 2026-08-22 (improvement run #6) | cycles run: 5 (0–5) | stop reason: WRAP_UP at step-1 clock check, **25.5 hours past `stop_at`** — see "What thrashed" for why that is a finding, not a footnote.
 
-Run: 2026-08-20 (improvement run #5) | cycles run: 12 (cycle 0 kickoff + cycles 1–11)
-| stop reason: **DONE — definition-of-done met, no VALUE_LOOP candidate cleared the ratchet
-inside the brief. Early finish, ~19.4h before `stop_at`.**
+The run's premise: repair the README regression run #5 caused, and **measure** the guards that shaped it. No new features, no new deps.
 
 ## What worked
 
-- **Measuring the instrument instead of reading the code for gaps.** Cycle 0's kickoff text
-  inferred a "12 of 14 branches" coverage gap; cycle 1 measured it and found **1 unexecuted
-  branch of 7** (`bin/aphorism.js:72`, false arm), classified it BOUNDARY (dead code), and
-  added **zero tests**. The whole P-1 must-have closed on a measurement that contradicted
-  the run's own premise. This is the single highest-leverage thing the run did: the
-  alternative — building to the inferred number — is exactly the test-count churn this
-  repo's brief exists to stop. (cycles 0, 1)
-- **k=1 waves merged clean, all run, zero reverts.** Gear 1 pinned `k_cap` at 1 for all
-  eleven cycles; every dispatched item merged on first attempt and **no merge was ever
-  reverted**. One item took a second attempt (P-2, cycle 2) and that was the gate doing its
-  job, not a merge failure. (cycles 2, 3, 5, 6, 8, 10)
-- **Sealing the gate by sha256 before dispatch, with the seal committed.** Cycle 3 committed
-  the gate hash (`d94a42e6`, commit `92f04be`) plus its pre-dispatch baseline BEFORE the
-  builder was dispatched, so "the check predated the work" is a checkable claim rather than
-  an assurance. Cycle 5's sealed gate then caught a self-falsifying guard **pre-commit** —
-  the first time a gate on this repo prevented a bad commit rather than describing one.
-  (cycles 3, 5)
-- **Converse controls / must-die–must-live arms.** Cycle 9's cell A4 (a no-repeat sequence
-  must be reported as 40/40 distinct by the same counter) and cycle 10's two-arm citation
-  control (stale base → red, live base → green, `skipped=0` asserted in both arms) are the
-  reason the green results are evidence at all. A disabled guard and a passing guard look
-  identical from a summary line; these arms are what tell them apart. (cycles 9, 10)
-- **Refutation-shaped QA briefs.** The playbook's qa prompt line ("your job is to REFUTE the
-  central claim") produced three real defects in an already-green suite at cycle 6
-  (RF-1/RF-2/RF-3) and a genuinely red main at cycle 9 that the green suite had not shown.
-  (cycles 6, 7, 9)
-- **Publishing a gate's own failures instead of quietly re-running it.** Cycles 8 and 10 ran
-  sealed gates that emitted FAILs, published the failing output, then corrected the
-  instrument in a **separate** hash-sealed addendum rather than editing the sealed artifact.
-  (cycles 8, 10)
+- **Re-aiming an unfalsifiable brief onto one falsifiable experiment.** The allocator brief said "harden tests" and "polish docs" — unfalsifiable as written, and the source of churn for five prior runs. Cycle 0 reshaped it into a single measurable question: extract the guard-shaped prose out of README.md and treat *every guard that breaks* as the finding. That made both halves of the brief checkable at once (cycle 0 decision; stress-test verdict RESHAPE, confidence 7).
+
+- **Forbidding the builder from touching `test/`, and treating the pass/fail list as the deliverable.** Which guards break under honest prose *is* the measurement. A builder that repairs a failing guard mid-edit destroys the result. Zero guards broke — so they were anchored to structure, not to the padded prose, and the run's own premise turned out half wrong in the useful direction (cycle 1).
+
+- **Sealed gates, unchanged across dispatch, every cycle.** Gate `5ed845eb` held 17/17 cells (cycle 3); gate `855beded` held 20/20 (cycle 4); the cycle-5 salvage gate ran 6/6. In all three the hash was identical before and after dispatch, which is the only thing that proves the check predated the work (L-042).
+
+- **Predicting RED before dispatch instead of explaining it afterwards.** Cycle 2 committed with a citation guard red and filed Q-7. Cycle 4 did the same and filed Q-8 — but *predicted* it in the sealed gate before the builder ran, then checked the prediction: 129 tests, 127 pass, 2 fail, and the two failures were exactly the two predicted. Each was recorded as a walked exception, never re-labelled as a pass (cycles 2, 4).
+
+- **Converse controls doing real work.** Cycle 4's headline result: C4a and C4b, *measured silent* in cycle 3, fire on byte-identical inputs after Q-3 (3 pass / 4 fail each), while converse controls C6/C5 stayed green 5/0 and C8 proved cross-row agreement is independent of per-row arithmetic. The silence was measured first and closed second — not assumed (cycles 3, 4; L-044, L-029).
+
+- **Verifying citations against the cited system, not the citing document.** Cycle 5's gate went to GitHub's API and all four job logs: run `32405521233`, conclusion success, headSha `7e50d6f`, and 129/127/0/2 on Node 18/20/22/24 — byte-identical to the four matrix rows. A gate that reads the README to check the README proves nothing (cycle 5, cells 2/3/5).
+
+- **k=1 waves on a guard-editing run.** Every build cycle dispatched a single builder. Zero merge conflicts, zero reverts, zero cross-scope contamination across cycles 1–4. On a run whose items all edit the same two or three documents, disjoint `files_hint` is unachievable at k≥2, and k=1 was the honest answer rather than a timid one (L-016).
+
+- **Closing an item by discovering its work did not exist.** Q-2 carried "citations.test.js still untreated" across two cycles of notes. `git log --all` for that path is empty; only seven test files have ever been added. It was a PLAN-time `files_hint` restated as an observation, twice (cycle 4).
 
 ## What thrashed
 
-- **The conductor's gate instrument was the dominant defect source of the run, not the
-  builders** — why: cycle 8's gate emitted 1 FAIL (cell A4 read a prohibition as its own
-  violation) and cycle 10's emitted 6 of 8 FAILs; **every one was an instrument defect and
-  every behavioural assertion passed on first execution of a correct instrument.** The
-  journal states it plainly: "it was my fault, not the builder's". The cost is not the
-  re-run — it is that each one required a written adjudication before the item's `attempts`
-  counter could be left alone, and an unadjudicated instrument FAIL would have charged a
-  correct builder with a failure. (cycles 8, 10)
-- **The red-commit window, three times, structurally** — why: `test/node-support-citation.js`
-  cites `git diff <base>..HEAD -- src bin test .github`, so **any** commit touching those
-  paths falsifies the citation at that commit, and the CI run that would refresh it cannot
-  exist until after the push. Commits `5f833ab` (c5), `c08562b` (c6) and `2b003ea` (c10)
-  were each knowingly red between push and re-citation. Every available fix — narrowing the
-  pathspec, relaxing the assertion — is opening the gate by weakening it, so the run took
-  the two-commit round trip each time and recorded the exception rather than re-labelling
-  it. Filed as **P-7, human-owned**; cycle 10's RF-5 made the window visible pre-commit
-  (strictly better detection, identical disposition). (cycles 5, 6, 10)
-- **The denial ledger was double-booked for five cycles** — why: cycle 4 recorded a
-  `swarm-notify.sh` denial as structural allowlist gap #32; cycle 9 grepped the allowlist
-  and found the script present under **both** path forms — the denial came from how the
-  command was composed, not from what it was. The real count is **31**, one gap
-  (`swarm-playbook.sh`, which has no entry in any form). Left uncorrected it would have
-  handed the operator a second, unactionable allowlist ask. (cycles 4, 9)
-- **P-2 needed a second attempt** — why: the cycle-2 gate turned over two false claims, one
-  of them authored by cycle 1 itself. Correct gate behaviour; recorded here because it is
-  the run's only `attempts ≥ 1` item. (cycles 1, 2)
-- **Six consecutive SWARM-side push failures** — why: a standing host gap, unrelated to the
-  target repo (whose pushes all succeeded). Handed off, never worked around. (cycles 2–7)
+- **The run overshot `stop_at` by 25.5 hours with no cycle firing** — why: `stop_at` was 2026-08-21T14:36:47Z; the next session woke at 2026-08-22T16:04:09Z. Cycle 4 committed at ~18:55Z on 08-20 and then *nothing ran for ~25 hours*. `swarm-pacer.timer` was the designated recovery path and produced no cycle in that window, and the watchdog could not cover for it because of KI-R6-1. Worse, a crashed cycle 5 had already done real work and left it uncommitted the entire time — a session death that no mechanism detected (cycles 4→5).
+
+- **The watchdog was structurally dead for the whole run** — why: its DONE-guard is satisfied by `<target>/REPORT.md` *existing*, which on an improvement run is true from cycle 0 because run #5 wrote it. Every firing logged "all-done / reports-present" and exited. This was *known and journaled at kickoff* (KI-R6-1), asserted-around via the pacer, and then the pacer is exactly what failed. Hard rule 5 forbids repairing it mid-run, so it was correctly left alone — but the mitigation was single-point and it was the point that broke (cycle 0; L-037, second observation).
+
+- **A crashed cycle left complete, correct, ungated work sitting in the working tree** — why: cycle 5 died between finishing Q-8 and its persist step; no `.swarm/runs/cycle-005-*.json` was ever written. The work was good — it gated 6/6 when finally checked — but nothing on disk said it existed or that it had never been verified. `cycle.md` step 2's WIP-commit and WRAP_UP step 1's verified-only rule point in different directions for exactly this state (cycle 5).
+
+- **`bin/swarm-playbook.sh` denied again — 9th consecutive occurrence** — why: no allowlist entry under any of the 11 `swarm-*` path forms tried. Directives were staged by direct `Read` of `learnings.md`, so the file was **never validated by the script's parser** this run. Correctly escalated once and not re-derived (KI-R6-2, L-045), but it means this run's playbook handling is unverified by its own tool (cycle 0, denials #34/#35).
+
+- **A conductor-induced redundancy that the builder had to disclose** — why: cycle 2's dispatch mandated both a re-anchor *and* a no-shrink floor, which forced two guards in `test/readme-tags.test.js` to read the same table row. The builder flagged it rather than hiding it. Harmless, but it is not coverage, and the cause was the dispatch, not the builder (KI-R6-3, cycle 2).
 
 ## Pacing honesty
 
-- Governor clamps: **11 of 11 cycles** (ceiling 2 every cycle; weekly 100% / opus 100% used
-  against 43–44% of the week elapsed, heat 2.29–2.32). Full-mode overrides: 0.
-  Promote-rung promotions: **0** — `promote_blocked` was true for the entire run.
-  Applied gear was **1 (crawl) on every single cycle**, with ρ ranging 3.92–9.79.
-  Voluntary idle cycles: **0**.
-- One in-run window reset, at cycle 11: `window_tokens` 96.19M → 6.55M, ρ 9.79 → 3.92.
-  Utilization at that reset was **100%** (the governor's own reading) — the window was
-  fully spent, which is the target, but it was spent at a ceiling of 2 the whole way.
-- **The run's `stop_at` was set equal to `usage_reset_at`** (both 1787276706). This is the
-  exact anti-pattern L-038 names, and the run paid its price: ten consecutive crawl cycles
-  in the emptiest part of a window it was scheduled to sit on the boundary of. The kickoff
-  was allocator-driven, so the boundary came from the hints file, not from a human answer —
-  which is where the fix belongs.
+- Governor clamps: 0 cycles (`weekly_ok: true` throughout; `ceiling: 2` was set by **guest mode**, not by the governor). Full-mode overrides: 0. Promote-rung promotions: 0 — gear never rose above 2, so the promote rung was never reachable.
+- Mode was `guest` with `dial: 0.3` for the entire run, clamping the reachable gear to 1–3; the applied gear sat at **2** every cycle (ρ ≈ 0.51). Under guest, a shared window is never upshifted into, which is the intended behavior and not a fault.
+- Underused windows: **not measurable, and stated as such.** No budget probe ran in cycles 4→5 (the last real probe was `1787252496` ≈ 2026-08-20T18:21Z), and the run then sat idle for ~25h across roughly five window resets. Any utilization figure for that period would be fabricated. What *is* known: `weekly_used_pct: 100` and `opus_used_pct: 100` at the last probe, and the run burned nothing at all during the 25h gap.
 
 ## Config recommendations
 
-- [qa] When a sealed gate FAILS, adjudicate instrument-versus-item before the failure
-  touches the item's `attempts` counter — on this run 7 of 7 sealed-gate FAILs were defects
-  in the conductor's own check and none were defects in the dispatched work, so an
-  unadjudicated FAIL would have charged correct builders and escalated them a routing rung
-  for nothing [apply: prompt all "A gate cell that fails must be proven to fail for the
-  reason it names before its verdict is recorded against the work; publish the failing
-  output and repair the instrument in a separate artifact, never by editing the sealed
-  one"] [confidence: high] [source: 2026-08-20 aphorism-cli]
-- [process] A guard that cites a git pathspec cannot be green on the commit that changes
-  that pathspec — budget the two-commit round trip (commit red, say so in the message, push,
-  re-cite to the CI run that describes it) and never buy green by narrowing the pathspec or
-  relaxing the assertion [confidence: high] [source: 2026-08-20 aphorism-cli]
-- [process] When a run's brief locks out every candidate that clears the value ratchet, go
-  DONE early and escalate the lever ONCE — do not spend the remaining clock re-deriving the
-  same escalation; this run re-derived "no-repeat rotation is the highest-value change and
-  is locked out by the brief" for the THIRD consecutive run, from four independent taste
-  judges, at the cost of three runs' worth of housekeeping cycles [confidence: high]
-  [source: 2026-08-20 aphorism-cli]
-- [process] Before counting a harness denial as a structural allowlist gap, grep the
-  allowlist for the script under every path form — an invocation-form denial (env-var
-  prefix, `bash <script>`, relative path) looks identical at the call site and inflates the
-  operator's ask with entries that already exist (evidence: the #32 → #31 correction)
-  [confidence: high] [source: 2026-08-20 aphorism-cli]
-- [process] Set `stop_at` strictly inside the usage-window boundary in ALLOCATOR-generated
-  hints too, not only in human kickoff answers — this run's hints file set
-  `stop_at == usage_reset_at` and bought eleven consecutive gear-1 cycles [confidence: med]
-  [source: 2026-08-20 aphorism-cli]
+- [process] An improvement run must assert its crash-recovery path is **live and firing**, not merely enabled, at kickoff and again at every 5th cycle — `systemctl is-active` proves a timer is armed, not that it has ever spawned a cycle; check `runs/pacer.log` for an actual spawn inside the last interval, because a run whose watchdog is structurally no-op (L-037) and whose pacer silently stops has no recovery at all and looks perfectly healthy from inside (evidence: cycle 4→5 gap of 25.5h with uncommitted work stranded; KI-R6-1)
+- [process] When a cycle dies after finishing work but before persisting, the salvage decision is not WIP-vs-discard — author the verification gate at salvage time and let the result decide, because complete-but-ungated work is a third state that `cycle.md` step 2 and WRAP_UP step 1 disagree about (evidence: cycle 5, 6/6 PASS on work that would otherwise have entered as an unexamined WIP commit)
+- [docs] A document that RESTATES a machine-checked rule in its own words reintroduces exactly the drift the machine check exists to prevent — quote the rule verbatim, never paraphrase it; the remedy already proven for counts (put them in a table the guard parses) has a direct analogue for rules (evidence: KI-R6-5/Q-10, cycle 5 — the history file's paraphrase selects `3a5d6e3` where the README's rule selects `7e50d6f`)
+- [qa] When a document's selection rule is rewritten, test the NEW rule against the tree that motivated it before shipping — the old rule here was not merely stale but **unsatisfiable in fact**: the only commit that changed the cited paths (`a302f71`/`22fdeac`) never headed a push, so no CI run could ever exist to cite it by, and the rule would have kept pointing at `4b63e91` forever (evidence: cycle 5, cell 5, confirmed against `gh run list`)
 
 ## House-rules proposals
 
-- [docs] A README section that exists to satisfy a guard should say so in one line and keep
-  its provenance apparatus in `docs/` — this run's README grew 6.0 KB → 16.6 KB in a night,
-  and the growth is citation bookkeeping a first-time reader of a 50-aphorism CLI meets
-  before they meet the tool.
-- [review] Prose that restates one number three ways is a guard-satisfaction artifact, not
-  writing; when a regex guard shapes the sentence, fix the guard's anchor rather than
-  padding the prose (README Tag vocabulary: "12 tags appear on 2 or more entries… 0 tags
-  appear exactly once, which is to say 0 tags sit on exactly one entry").
+- [docs] Quote a machine-checked rule verbatim when referring to it from another document; never paraphrase it. If the quote is too long to carry, link to it and state nothing about its content.
 
 ## Applied lessons check
 
-- L-008 (sole committer + legal scratch): **re-observed** — carried in every builder prompt
-  line; zero agent-authored commits across the run (cycles 2, 3, 5, 6, 8, 10).
-- L-016 (pairwise-disjoint fixer scopes): **re-observed** — cycle 6's review-fix split
-  RF-1/RF-2/RF-3 across disjoint files; zero merge conflicts (cycle 6).
-- L-024 (verify with a discriminator): **re-observed** — cycle 9's A4 control and cycle 10's
-  two-arm citation control are both discriminators a degenerate implementation could not
-  produce (cycles 9, 10).
-- L-026 (route core logic to fable): **not-exercised** — gear 1 held `demote: true` /
-  `promote: false` for all eleven cycles and no core-logic build item was dispatched; fable
-  appeared only in judgment seats (cycles 6, 7, 9), which is the fable guard, not this
-  routing recommendation.
-- L-029 (failable AND attributable): **re-observed** — applied in the negative at cycle 1
-  (no HOLE measured → zero tests added) and in the positive at cycle 10 (must-die/must-live
-  arms with `skipped=0` asserted) (cycles 1, 10).
-- L-031 (measure untested surfaces, don't read for them): **re-observed, strongly** — the
-  run's headline result; measurement returned 1-of-7 against an inferred 12-of-14 and
-  produced zero test churn (cycle 1).
-- L-033 (classify HOLE vs BOUNDARY before hardening): **re-observed** — `bin/aphorism.js:72`
-  false arm classified BOUNDARY (unreachable), hardening declined, reasoning recorded
-  (cycle 1).
-- L-034 (brief reviewers to REFUTE): **re-observed** — three real defects found in a green
-  suite at cycle 6; a red main found at cycle 9 (cycles 6, 7, 9).
-- L-038 (stop strictly inside the window boundary): **re-observed by violation** — this
-  run's `stop_at` equalled `usage_reset_at` and it cost eleven consecutive crawl cycles.
-  The lesson is right; the delivery path (allocator hints) does not yet apply it (cycles
-  1–11).
-- L-042 (seal the gate before dispatch, seal must be tracked): **re-observed** — cycle 3's
-  seal committed at `92f04be` before dispatch. Residual, open as KI-8: the sealed baseline
-  is readable by the builder, so the seal proves precedence, not secrecy (cycles 3, 5).
-- L-043 (never bind an assertion to prose matched by regex): **re-observed and sharpened** —
-  RF-1 was exactly this defect (the citation guard was steerable by the prose it read) and
-  the fix moved it to a structural marker. Residual, open as KI-12: the acknowledgement
-  guard is still token co-occurrence and documents itself as "NOT a meaning check"
-  (cycles 5, 6).
-- L-044 (pair every kill with a converse control that must stay GREEN): **re-observed** —
-  cycle 9 A4, cycle 10 ARM2 (cycles 9, 10).
-- L-046 (not shipped until exercised through the outermost layer): **not-exercised** — zero
-  user-visible features shipped by brief, so no domain capability existed to check.
+- L-008: not-exercised — every wave was k=1 and no agent needed scratch space (cycles 1–4).
+- L-016: re-observed, in its k=1 corollary — all items edited the same two or three documents, so pairwise-disjoint scopes were unachievable above k=1; single-builder dispatch ran four clean waves, zero conflicts (cycles 1–4).
+- L-022: **not-exercised, deliberately held out** — it prescribes persisted-UI-state cleanup for components that mount in a browser; this target is a zero-dependency terminal CLI with no browser surface. Staged as applied but kept out of `prompt_lines` at kickoff, and reported here as promised (cycle 0).
+- L-024: re-observed — C4a/C4b are discriminators: they fire on byte-identical inputs that a snapshot check could not distinguish (cycle 4).
+- L-026: not-exercised — no core-logic item existed; the run touched no `src/` file by construction (Q-5 invariant held all run).
+- L-029: re-observed — every guard added in cycles 3 and 4 was shown both failable and attributable, with the removal arm run (cycle 4, C4a/C4b at 3 pass / 4 fail).
+- L-031: re-observed — cycle 1 measured which guards break rather than reading the suite for gaps, and the measurement contradicted the run's own premise (zero broke).
+- L-033: re-observed — C7 was classified as an unfixed column rather than hardened, because closing it needs an anchor outside the document; filed as KI-R6-4/Q-9 instead of producing a check that false-rejects honest output (cycle 4).
+- L-034: re-observed — the cycle-5 gate was written to refute the citation, not confirm it, and went to GitHub's logs rather than the citing document (cycle 5).
+- L-038: **re-observed in the inverse, and it held** — cycle 0 deliberately derived `usage_reset_at` from a real probe instead of setting it equal to `stop_at`, explicitly to avoid run #5's eleven gear-1 cycles. No such episode occurred. (The run's clock failure was of a different kind — see "What thrashed".)
+- L-039: re-observed, 6th time — `bin/swarm-playbook.sh` confirmed denied under all 11 path forms by reading `settings.json` directly, not inferred from a failure shape (cycle 0, KI-R6-2).
+- L-041: re-observed — cycle 4's C7 cell was reported SILENT (a measured negative) rather than allowed to read as coverage; the instrument's inability to see a coordinated falsification was published as an unfixed column (KI-R6-4).
+- L-042: re-observed, 3 times — sealed gates `5ed845eb` (17/17), `855beded` (20/20), and the cycle-5 salvage gate (6/6), each hash-identical across dispatch; and the "read the diff even when green" clause paid off in cycle 5, where the gate passed 6/6 and reading the diff anyway surfaced KI-R6-5.
+- L-043: re-observed, in its unstable-SUBJECT clause, **twice** — cycles 2 and 4 both walked the two-commit round trip knowingly, committing red, saying so in the commit message, and re-citing after the push. Neither was closed by narrowing the pathspec or relaxing an assertion.
+- L-044: re-observed — C6/C5 held green 5/0 as converse controls while C4a/C4b fired, which is what rules out a snapshot check (cycle 4).
+- L-045: re-observed, twice — Q-6 was closed at kickoff by one read rather than re-derived (cycle 0), and Q-2 was closed by discovering its remaining file had never existed on any branch (cycle 4). The converse-reading clause also drove the DONE verdict here.
+- L-046: not-exercised — no domain capability was added; the run shipped zero features by brief.
+- L-047: re-observed in the negative, which is the honest verdict — across cycles 3, 4 and 5 the sealed gates emitted **zero** FAILs, so no instrument-vs-work attribution was ever needed. The lesson's premise (on a mature repo the conductor's check is the likelier defect) was not tested this run.
 
 ## Telemetry (squeeze slice, 2026-08-14)
 
-- Weekly utilization achieved at reset: **100% overall / 100% premium** at 43.6% of the week
-  elapsed (heat 2.29). The account was in sustained overage for the entire run.
-- Allocator: this was an allocator auto-kickoff (`kickoff_source: "allocator"`) under a
-  TRICKLE posture brief. Allowance granted vs burned is not recorded on the target side;
-  the observable is that gear 1 and ceiling 2 bound every cycle, so the run never had the
-  headroom the posture assumed it might.
-- Auto-kickoffs this run: 1 (this one). 3-strike queue drops: none observed.
-- Final-hours floor release: **did not fire** — the run reached DONE ~19.4h before
-  `stop_at`, so there were no final hours to release into.
+- Weekly utilization achieved at reset: **not measured** — the run's last real probe was 2026-08-20T18:21Z (`weekly_used_pct: 100`, `opus_used_pct: 100`), and it then idled ~25h across roughly five resets with no probe. Reporting a figure here would be fabrication.
+- Allocator: allowance granted vs actually burned — granted per `runs/kickoff-hints.json` (consumed and deleted at kickoff, per the guard); burned is **unknown for the idle window**, and ~`window_tokens: 38,488,345` / `$29.89` at the last probe covering cycles 0–4.
+- Auto-kickoffs this run/week: 1 (this run, `kickoff_source: "allocator"`, `run_label: "improvement run #6"`). No 3-strike queue drops observed from inside the run.
+- Final-hours floor release: **did not fire** — the run never reached its final hours as a live session; it crossed `stop_at` while dead.
