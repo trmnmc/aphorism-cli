@@ -20885,3 +20885,75 @@ Six Q-items opened, six closed: Q-1, Q-2, Q-3, Q-4, Q-6, Q-7, Q-8 done and Q-5 h
 commit. Q-9 and Q-10 are open and both are operator rulings, not swarm work. The suite went
 121 → 129, every added test failable and converse-controlled, and no test was weakened at any
 point in the run.
+
+### WRAP_UP — the closing ledger
+
+Executed in order, with what actually happened rather than what the procedure hoped for.
+
+| step | outcome |
+|---|---|
+| 1. commit verified work only | `180e9da` — Q-8, gated 6/6 at salvage time. No unmerged branches exist; nothing was left in flight. |
+| 2a. RETRO | `.swarm/RETRO.md` — every entry cites cycle numbers, including the applied-lessons check for all 17 staged lessons. |
+| 2b. DISTILL | 4 candidates → **L-037, L-042, L-043, L-045** each gained a clause. **0 minted**, cap held at 20, `next_id` unchanged at 48, no overflow drop. Appended **manually**: see the denial note below. |
+| 3. REPORT | `REPORT.md` — 6/6 must-haves, 6 known issues, and an honest hand-off naming what is machine-checked, what is checked-with-a-stated-limit, and what only a human can finish. |
+| 4. tag | `improvement-run-6-2026-08-22`, pushed. (`v0.1-overnight` already exists from the original run; the repo's convention is per-run tags.) |
+| 5. final dashboard | `runs/dashboard.html` re-rendered, 30,614 bytes. See the renderer defect below — it was caught, not shipped. |
+| 6. project screenshot | **skipped** — no `.swarm/URL` and no live HTTP surface; this is a terminal CLI. Best-effort by contract, never a gate. |
+| 7. runfile | `wrap_up_complete = true`, target status `done`, heartbeat cleared, `.bak` written. |
+| 8. disarm watchdog | **FAILED, and reported as failed** — see below. |
+| 9. caffeinate | nothing to kill (`caffeinate_pid: null`; Linux/VPS never spawns one). |
+| 10. wrap-up push + archive | `send wrap-up ok` at 16:16:52Z; `control.json` and `notify.log` archived to `.1787414649`. |
+
+**The watchdog was NOT disarmed.** `systemctl disable --now swarm-watchdog.timer` was attempted
+twice — plain, then under `sudo -n` — and both were refused ("Interactive authentication
+required", then a permission denial). The timer remains `enabled` and `active`. It is
+nevertheless **inert**, and that claim is read out of the script rather than assumed:
+
+```
+swarm-watchdog.sh:270   if [ "$(rf '.wrap_up_complete')" = "true" ]; then
+swarm-watchdog.sh:271       log_decision "run-complete" "wrap_up_complete=true"
+swarm-watchdog.sh:272       exit 0
+```
+
+The runfile now carries `wrap_up_complete: true`, so every future firing logs `run-complete`
+and exits. Worth carrying forward: **KI-R6-1 — the DONE-guard blind spot that cost this run
+its crash recovery all night — is the same guard that makes the un-disarmed timer harmless
+now.** `swarm-pacer.timer` was deliberately LEFT enabled: `swarm-pacer.sh:183` self-disarms on
+the same flag, and disabling it would break future allocator auto-kickoffs. The disarm step
+needs a polkit rule or a sudoers entry, or no VPS run can complete step 8.
+
+**The playbook script was denied for the 10th consecutive time (#36),** and per L-039 that was
+*confirmed* rather than inferred: re-executed under the bare absolute-path form with no env
+prefix and no compound command, denied; then `grep`ed out of `settings.json`, where
+`swarm-playbook.sh` appears under **zero** allowlisted forms while `swarm-budget.sh` and
+`swarm-notify.sh` are both present. Structural, not invocation-shaped. KI-R6-2, human item.
+
+**One defect caught in the conductor's own instrument.** The first cut of the dashboard
+renderer read `.topic` from `.ntfy.json`; the real key is `notify_topic`. It got `undefined`,
+took the falsy branch, and published **"notify off" while notify was ON** — the exact defect
+L-041 records from a prior run, reproduced here in a fresh renderer. It was caught before the
+final render shipped, and the fix distinguishes the three states properly: absent file → a real
+`off`; present-but-unreadable → `UNKNOWN`, never a confident negative. Rendered line:
+`notify on (…0d89) · control idle · run complete`.
+
+### Where this run actually lands
+
+Five cycles, eleven commits, suite 121 → 129, **zero tests weakened at any point**. Six
+must-haves shipped plus Q-7 and Q-8. The run's premise — that the padded README prose was
+load-bearing for the guards — was **contradicted by its own first measurement** (cycle 1: zero
+guards broke), and that contradiction was the most valuable thing it produced.
+
+It ends owing two findings, both filed rather than fixed, and both found by looking harder at
+something that had already passed:
+
+- **KI-R6-5 / Q-10** — the history file *paraphrases* the citation-selection rule instead of
+  quoting it, and its paraphrase selects a different run than the README's rule does on this
+  very tree. Found by reading the diff of a gate that had already returned 6/6.
+- **KI-R6-6** — the pacer produced no cycle for 25.5 hours while the watchdog was already
+  structurally no-op, stranding finished work uncommitted. The mitigation for a known-dead
+  recovery path was single-point, and it was the point that broke.
+
+The taste verdict is unchanged for the third consecutive run and the fourth independent judge:
+**use-twice scores 4/10**, and every candidate that would move it is a user-visible feature the
+allocator brief locks out. That is an operator lever. The swarm has now re-derived it three
+times; it should not be asked to derive it a fourth.
