@@ -21008,3 +21008,239 @@ same cycle, roughly twenty minutes later.
 
 `state.json`, `REPORT.md`, `RETRO.md`, and the playbook's L-037 clause are all corrected.
 Nothing carries the original claim.
+
+---
+
+# improvement run #7 — cycle 0 (KICKOFF)
+
+`2026-08-22T18:31:55Z` · allocator auto-kickoff · guest / dial 0.30 / trickle · stop_at
+`2026-08-23T18:31:47Z` · HEAD at kickoff `bc1513a` · conductor PID 3369606
+
+Brief, verbatim: *"TRICKLE POSTURE: housekeeping only — harden tests, fix playbook items,
+polish docs — no new features. Haiku-priced work types; no new features."*
+
+## Guards
+
+1a — no live run: `runs/current.json` was absent (run #6 archived it to
+`current.json.done-1787422547` at 16:21 today, `wrap_up_complete` true). 1b — waived: this is
+an improvement run on an existing repo, which is the point. 1c — cwd is `/opt/swarm`. 1d —
+`runs/kickoff-hints.json` present with `source: "allocator"` and an idea beginning
+`improve existing target `, so the interactive Q&A is skipped, `pacing` and `stop_at` come
+verbatim from the file, and the file was deleted after consumption.
+
+## STRESS-TEST — verdict RESHAPE, confidence 8
+
+The brief's three verbs were tested against numbers rather than read:
+
+```
+src/ + bin/                     594 lines
+test/                         4,409 lines   (7.4x the program)
+  readme-tags.test.js         2,778 lines   (4.7x the whole program; subject: a doc table)
+  node-support-citation         270 lines
+  readme-matrix-consistency     238 lines
+  --------------------------------------
+  guarding DOCUMENTS          3,286 lines   (74.5% of all test code)
+coverage @ b006098      100.00% line / 100.00% func / 98.44% branch (63 of 64 records)
+                        the single unexecuted branch is classified BOUNDARY, reasoning committed
+```
+
+Lenses 1 and 2 were survived: the operator/auditor reader is real, and run #6 *measured* that
+~95 lines of README prose could move with **zero** guards breaking — which is positive evidence
+that the guards read structure, not wording (L-043). None of that is under attack.
+
+Lenses 3 and 4 landed together. **"Harden tests" has no honest target left on the product.**
+Coverage is at ceiling and the one miss is a boundary, so any new product test would be written
+to a number rather than to a defect — the exact inversion of L-031 (*find untested surfaces by
+MEASURING them*), and the measurement says there are none. Meanwhile the toy version of this
+brief — *add more guards that read the README* — is not a hypothetical to avoid. It is what runs
+#2–#6 built, and KI-R6-3 already records **two guards the conductor's own dispatch induced** to
+read the same table row.
+
+**The reshape:** run #7 inverts the verb. Instead of adding guard surface it measures the guard
+layer's maintenance tax and removes only what a converse control (L-044) proves removable. Three
+already-filed items replace three open-ended headings — no chore is invented.
+
+## Q&A — skipped (allocator hints, guard 1d)
+
+`pacing {mode: guest, dial: 0.30}` and `stop_at 1787509907` taken verbatim. Auth mode:
+subscription (default). Must-haves derived from the idea text plus the brief.
+
+## PRIOR-ART SCOUT — budget deliberately stopped at 3 of 6
+
+Two idea-term `gh search repos` queries (recency- and star-filtered) returned **zero rows**.
+Before reporting that as a finding, a control search (`fortune cookie cli`, no filters) was run
+and returned three rows including `mturac/fortune-cookie-cli` — so `gh` was working and the
+zeroes are real, not a tool failure wearing a finding's clothes. That control is not ceremony;
+reporting a broken tool as a market signal is the precise error class KI-R6-6 was corrected for
+20 minutes before this run started.
+
+Stance **extend**. The product is shipped and frozen by the brief, so external prior art cannot
+change the plan. The load-bearing prior art is this repo's own six-run history, which is on
+disk and was read instead.
+
+## PLAYBOOK — read directly, script NOT re-attempted
+
+`apply_mode: auto`, `next_id: 48`, 20 lessons, 15 carrying `[apply:]` directives.
+`bin/swarm-playbook.sh parse` was **not invoked**. This is deliberate and is L-045 applied to
+itself: run #6 established structurally (denials #34/#35/#36) that the script has no allowlist
+entry under any of the 11 `swarm-*` forms in the live settings. Re-invoking it would add a
+number to a denial counter and produce nothing else. Directives were staged by direct read.
+
+Applied (15 with directives): L-008, L-016, L-022, L-024, L-026, L-029, L-031, L-033, L-034,
+L-038, L-042, L-043, L-044, L-046, L-047.
+**L-022 held OUT of `prompt_lines`** — it instructs persisted-UI-state cleanup for
+browser-mounted components and this target is a zero-dependency terminal CLI with no browser
+surface. To be reported *not-exercised* at WRAP_UP, as in the last three runs.
+Advice-only process lessons explicitly steering this run: L-037 (one-session plan), L-039 (the
+denial was confirmed structurally, never inferred from a failure shape), L-040, L-041 (the
+dashboard renders UNKNOWN rather than a confident negative), L-045 (R-6 closed by one read).
+
+Five of the seven `[apply: prompt qa …]` lines are mutation-craft (L-029 failable +
+attributable, L-031 mutation-measure, L-033 HOLE-vs-BOUNDARY, L-034 refute, L-044 converse
+control). R-1 and R-2 *are* mutation work, so those lines are wired into the **builder** role
+this run, not just qa — the first time this repo has needed them there.
+
+## SPEC — drafted, taste-judged, AMENDED, then locked
+
+The taste judge (fresh subagent, `taste-judge.md` + the candidate spec text only, nothing
+else) returned use-twice **3** / product-not-demo 6 / scope-fits-night 6 / one-memorable-thing 6.
+
+It found a real defect, and the defect was in the deliverable this run is built around: R-1 as
+drafted asserted *"no mutation detected at bc1513a may go undetected at final HEAD"* — a
+universal claim over an unbounded mutation universe — and asked only that the matrix be
+*"published"*. The judge's words: *"a floor nobody can re-run is not a floor"*, and run #8
+would have inherited a report instead of a check.
+
+**R-1 was rewritten before lock**, not footnoted: the set is now generated by a stated rule
+(one falsifying mutation per machine-checked claim — off-by-one for numerics, row-deletion for
+structural rows — plus exactly one identity control), capped at 30, and must ship as a
+rerunnable zero-dependency harness `tools/mutation-matrix.mjs` that is *not* part of `test_cmd`.
+This is the taste gate doing the one job it exists for, and it is recorded because acting on a
+judge is rarer than quoting one.
+
+use-twice 3 is **recorded as dissent for the fourth consecutive run** and again cannot be acted
+on: every candidate that would move it is a new user-visible feature, excluded by the brief.
+The judge scored it *lower* than run #6 (4 → 3) and was right to — run #6 at least repaired a
+README a human reads; every deliverable here is read only by the next SWARM run.
+
+No interactive user exists in an allocator auto-kickoff, so step 4's confirmation could not be
+taken. The brief is the standing authorization; the taste critique is published rather than
+answered.
+
+## Must-haves seeded
+
+| id | what | effort | model |
+|---|---|---|---|
+| R-1 | retire the `>= 121 tests` COUNT floor → rerunnable DETECTION floor | M | sonnet |
+| R-2 | close KI-R6-3 by consolidation **or** by publishing the distinguishing mutation | M | sonnet |
+| R-3 | quote README's selection rule verbatim in the history file (was Q-10) | S | haiku |
+| R-4 | count the citation two-commit tax over repo history; change nothing | S | haiku |
+| R-5 | standing invariants (sha256 corpus + `--help`, zero deps, zero features) | S | sonnet |
+| R-6 | **closed at kickoff by one read** — playbook/settings/pacer are human items | S | — |
+
+**The ratchet, named.** Run #6's Q-5 invariant was *"suite green at >= 121 tests"*. A test-COUNT
+floor can only ever be satisfied by growth, so it makes consolidation a spec violation
+regardless of whether detection is preserved — and it is the specific mechanism that kept
+KI-R6-3 open for two runs. R-1 retires it. **A test-count DROP is explicitly a PASS this run**,
+provided the detection matrix is intact; that sentence is in the spec so no later cycle can
+re-read a shrink as a regression.
+
+**Q-10 unblocked (as R-3).** Its `blocked_reason` said *"Found at WRAP_UP, past stop_at. WRAP_UP
+finishes nothing new"* — a scheduling reason, not a human ruling. Reading the reason rather than
+the status is L-045's read-the-authoritative-source clause applied to this repo's own backlog.
+
+## Budget probe
+
+```
+{"gear":2,"gear_target":2,"ratio":1.35,"mode":"guest","source":"probe","probe_ok":true,
+ "k_cap":2,"promote":false,"demote":true,
+ "burn":{"window_tokens":18664610,"window_cost_usd":15.59,"tokens_per_hour":7109007,
+         "projected_depletion_at":1787487591},
+ "weekly":{"ok":true,"weekly_used_pct":100,"opus_used_pct":100,"week_elapsed_pct":79.48,
+           "weekly_heat":1.26,"opus_heat":1.26,"ceiling":3,"promote_blocked":true}}
+```
+
+gear 2 · ρ 1.35 · 18.66M window tokens · 7.11M tokens/hour · projected depletion
+2026-08-23T12:19Z · **governor clamp: ceiling 3, promote blocked** (weekly 100% used, opus 100%
+used, week 79.5% elapsed). Wave cap 2, demote one rung — R-1/R-2 stay sonnet (build/fix never
+drops below sonnet), R-3/R-4 are already haiku.
+
+`usage_reset_at` set to **1787547599 = 2026-08-24T04:59:59Z**, the WEEKLY reset — not to
+`stop_at` (L-038). The 5-hour rolling window is irrelevant while `weekly_used_pct` is 100; the
+weekly boundary is the only reset that would actually restore capacity, and it lands **10.5
+hours after `stop_at`**.
+
+## THE OPERATIONAL FACT — this run is planned as ONE session
+
+The entire run window sits inside an exhausted weekly limit. KI-R6-6, corrected and committed
+20 minutes before this kickoff, measured what ignoring that costs: between 2026-08-20T18:59Z
+and 2026-08-22T16:04Z the pacer spawned **504** cycles, 503 completed, and **all 503** died in
+~380 ms on `HTTP 429 · You've hit your weekly limit`, before their first turn.
+
+So the plan is: do the work in cycle 1, verify it in cycle 1, and treat any later cycle as a
+bonus rather than as the schedule. This is written in the spec's *Expected shape* rather than
+discovered at wrap-up. Note the standing tension, stated rather than smoothed: this session is
+itself alive inside that same exhausted window, so the limit is evidently not uniform across
+session kinds — but a plan built on that hope is a plan built on an unmeasured claim, and this
+repo has spent two runs learning what those cost.
+
+## Infrastructure
+
+- caffeinate: **not applicable** — Linux VPS, servers do not sleep. `caffeinate_pid` left 0.
+- `swarm-watchdog.timer`: `enabled`. KI-R6-1 stands unchanged — its DONE-guard keys on
+  `<target>/REPORT.md` EXISTING, which is true from cycle 0 on any improvement run, so it
+  no-ops. `swarm-pacer.timer` is `active` and drives cycles directly; recovery does not depend
+  on the watchdog.
+- `watchdog.mode` set to `pacer` (this is a headless `-p` session).
+- Dashboard rendered locally to `runs/dashboard.html` (27,980 bytes) — on the VPS the file
+  write IS the publication. Artifact tool absent in a headless session; skipped silently, not
+  counted as a publish failure.
+- `project-registry.js record` → `{"ok":true,"projects":3}`.
+
+## Step 5 (settings allowlist) — DELIBERATELY NOT ATTEMPTED
+
+`permissions.additionalDirectories` is `[]` and the step-5 write was denied in run #6 (#35).
+This session reaches `/opt/targets` through its own launch flags
+(`--add-dir /opt/targets`, confirmed by reading its own process command line), so the gap costs
+this run nothing. Not re-attempted — L-045.
+
+## Step 11 (headless zero-prompt assert) — NOT RUN, reported as NOT RUN
+
+`claude -p "/swarm status …" --permission-mode acceptEdits --add-dir …` was **denied by the
+harness** (denial #37) — the nested `claude` spawn is not allowlisted in this session's
+permission set. The assert therefore produced no signal in either direction and is recorded as
+**not-run**, never as passed (cycle.md WRAP_UP: *"a rendered 'passed' that wasn't run is worse
+than stopping"*). Its consequence is stated plainly: **it was the probe that would have measured
+whether pacer-spawned sessions can run at all tonight, and that question is now unanswered.**
+The one-session plan above does not depend on the answer; it was already the plan.
+
+## VERIFICATION EVIDENCE — cycle 0 baseline
+
+```
+$ node --test test/*.test.js
+ℹ tests 129   ℹ pass 129   ℹ fail 0   ℹ skipped 0   ℹ duration_ms 4813.556237
+
+$ sha256sum src/corpus.js
+77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e  src/corpus.js
+$ node bin/aphorism.js --help | sha256sum
+d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64  -
+```
+Both R-5 invariants match run #6's final values exactly. Baseline recorded in
+`state.json.baseline_2026_08_22_run7`.
+
+**R-6 closure evidence** — one read, not re-derived:
+```
+$ python3 -c "… json.load(settings.json) … [a for a in allow if 'swarm-' in a]"
+Bash(/opt/swarm/bin/swarm-budget.sh:*)   Bash(/opt/swarm/bin/swarm-notify.sh:*)
+Bash(/Users/truman/Projects/SWARM/bin/swarm-notify.sh:*)
+Bash(bash /opt/swarm/bin/swarm-budget.sh:*)   Bash(bash bin/swarm-budget.sh:*)
+Bash(bash bin/swarm-usage-probe.sh:*)   Bash(bash bin/swarm-weekly-from-allocator.sh:*)
+Bash(bin/swarm-budget.sh:*)   Bash(bin/swarm-notify.sh:*)   Bash(bin/swarm-usage-probe.sh:*)
+Bash(bin/swarm-weekly-from-allocator.sh:*)
+additionalDirectories: []
+```
+Eleven `swarm-*` forms, `swarm-playbook.sh` in none of them. Unchanged from run #6. R-6 → done.
+
+## Cycle 0 status
+
+`cycle 0 | aphorism-cli | BUILD | KICKOFF run #7 → spec reshaped + locked, R-1..R-6 seeded, R-6 closed | cycle 1 immediately`

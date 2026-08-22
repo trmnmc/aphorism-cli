@@ -1,159 +1,224 @@
 # SPEC — aphorism-cli
 
-<!-- REWRITTEN 2026-08-20T14:36Z for IMPROVEMENT RUN #6 (allocator auto-kickoff,
+<!-- REWRITTEN 2026-08-22T18:31Z for IMPROVEMENT RUN #7 (allocator auto-kickoff,
      source=allocator, mode=guest, dial=0.30, posture=trickle,
      brief: "TRICKLE POSTURE: housekeeping only — harden tests, fix playbook items,
      polish docs — no new features. Haiku-priced work types; no new features.").
 
-     SIXTH consecutive run under this exact brief. Runs #1-#5 each closed every
-     must-have they set; their must-haves (I-*, J-*, K-*, M-*, P-*) are preserved in git
-     history, REPORT.md, docs/report-history.md and RETRO.md, and are NOT restated here.
-     The PRODUCT spec (Idea / Product must-haves / Domain rules / Taste notes) is
-     UNCHANGED and carried forward verbatim in substance.
+     SEVENTH consecutive run under this exact brief. Runs #1-#6 each closed every
+     must-have they set; their must-haves (I-*, J-*, K-*, M-*, P-*, Q-*) are preserved in
+     git history, REPORT.md, docs/report-history.md and RETRO.md, and are NOT restated here.
+     The PRODUCT spec (Idea / Domain rules) is UNCHANGED and carried forward verbatim in
+     substance.
 
-     STRESS-TEST VERDICT: RESHAPE (confidence 7). Three of four attack lenses landed.
-     This is the sixth lap; run #5 reached DONE at cycle 11 with ~19.4h of 24 unspent and
-     said so in its own report; all 8 surviving backlog items are BLOCKED on human rulings
-     an agent must not make; and L-045 — a lesson written FROM THIS REPO — says a satisfied
-     spec behind a brief-locked backlog means DONE, not another housekeeping lap.
+     STRESS-TEST VERDICT: RESHAPE (confidence 8). Lenses 3 and 4 landed together and hard.
+     Measured at this kickoff, HEAD bc1513a:
+       src/ + bin/ = 594 lines. test/ = 4,409 lines (7.4x the program).
+       test/readme-tags.test.js alone = 2,778 lines — 4.7x the entire program — and its
+       subject is a documentation table.
+       3,286 of the 4,409 test lines guard DOCUMENTS (readme-tags 2778 +
+       node-support-citation 270 + readme-matrix-consistency 238).
+       Coverage (docs/coverage-baseline.md, measured at b006098): 100.00% line,
+       100.00% func, 98.44% branch — 63 of 64 branch records — and the single unexecuted
+       branch is classified BOUNDARY, with the reasoning committed.
+     So "harden tests" has NO honest target left on the product. Any new product test
+     would be written to a coverage number rather than to a defect (L-031 says find
+     untested surfaces by MEASURING them; the measurement says there are none). And the
+     toy version of this brief — "add more guards that read the README" — is not a
+     hypothetical this run must avoid: it is what runs #2-#6 built, and KI-R6-3 already
+     records TWO guards the conductor itself induced to read the same table row.
 
-     The defence that held is narrow, measured, and it is NOT a manufactured chore: run #5's
-     own RETRO filed two house-rules proposals about README bloat ("this run's README grew
-     6.0 KB -> 16.6 KB in a night, and the growth is citation bookkeeping a first-time
-     reader of a 50-aphorism CLI meets before they meet the tool"; "prose that restates one
-     number three ways is a guard-satisfaction artifact, not writing"). NEITHER was actioned,
-     because the run closed DONE the same cycle it wrote them. Repairing damage SWARM itself
-     caused is not churn — it is precisely what "polish docs" names in the brief.
+     THE RESHAPE: run #7 inverts the verb. Instead of adding guard surface, it MEASURES the
+     guard layer's maintenance tax and removes only what a converse control (L-044) proves
+     removable. Three concretely filed items replace three open-ended headings, and each
+     one already exists as a known issue with a named fix — this run invents no chores.
 
-     And it converts the brief's other unfalsifiable heading into a measurement. The bloated
-     prose is GUARD-SHAPED: it exists in that form because regex guards read it. So moving it
-     does not merely tidy the README — it MEASURES whether each guard is anchored to a
-     structural marker the document owns (L-043) or to the prose itself. A guard that breaks
-     when honest prose is restored has just reported its own defect. That is "harden tests"
-     with a falsifiable acceptance instead of a reading exercise.
+     WHAT THE DEFENCE SAVED, stated so the reshape is not read as a repudiation: the guards
+     are not decoration. Run #6 MEASURED that ~95 lines of README prose could move with
+     ZERO guards breaking, which proves they are anchored to structure rather than wording
+     (L-043). The citation guard catches real doc->code drift and has fired, correctly, on
+     every commit that touched its pathspec. docs/coverage-baseline.md actively prevents a
+     bad threshold decision. None of that is under attack here. What is under attack is
+     MORE of it.
 
-     TASTE JUDGE (fresh subagent, spec text only): use-twice 4 / product-not-demo 8 /
-     scope-fits-night 8 / one-memorable-thing 6. Verdict: "Worth the night as scoped — the
-     work is honest, bounded, and hard-checked — but the load-bearing axis is use-twice:
-     this is the sixth consecutive housekeeping run on a finished 50-entry toy, and the
-     strongest reading of it is that the README stops lying about its own test count, not
-     that anyone reaches for the CLI again."
-     RECORDED AS DISSENT FOR THE THIRD CONSECUTIVE RUN, and the conductor still cannot act
-     on it: every candidate that would move use-twice is a new user-visible feature, excluded
-     by the allocator brief. The brief is the operator's to change, not the swarm's. Note the
-     judge scored this run HIGHER than run #5's (product-not-demo 6 -> 8, scope 9 -> 8,
-     verdict moved from "worth running only if the operator declines to lift the brief" to
-     "worth the night as scoped") — the difference is that this run repairs a real regression
-     instead of inventing a chore. See "Expected shape of this run". -->
+     TASTE JUDGE (fresh subagent, taste-judge.md + this spec text only, nothing else):
+     use-twice 3 / product-not-demo 6 / scope-fits-night 6 / one-memorable-thing 6.
+     Verdict: "Worth the night only because the night is nearly free: the reshape is the most
+     honest reading of the brief available and R-1's ratchet observation is real, but
+     use-twice is load-bearing and this run cannot touch it by construction, so before
+     dispatch bound R-1's mutation set explicitly (size, generation rule, and committed as a
+     rerunnable script) or the one durable idea here evaporates at wrap-up."
+     ACTED ON, not merely recorded: R-1 as drafted asserted a universal claim over an
+     unbounded mutation universe and asked only that the matrix be "published". The judge
+     was right that this made the replacement floor unenforceable by run #8 — a floor nobody
+     can re-run is not a floor. R-1 was rewritten BEFORE lock: the set is generated by a
+     stated rule, capped at 30, carries an identity control, and ships as a rerunnable
+     zero-dep harness. This is the taste gate doing the one job it exists for.
+     use-twice 3 is RECORDED AS DISSENT for the FOURTH consecutive run and again cannot be
+     acted on: every candidate that would move it is a new user-visible feature, excluded by
+     the allocator brief. Note the judge scored this run LOWER on use-twice than run #6 (4 ->
+     3) — honestly so, since run #6 at least repaired a user-facing README and this run's
+     deliverables are entirely inward-facing. The brief is the operator's to change.
+
+     THE OPERATIONAL FACT THAT SHAPES THIS RUN'S PLAN, measured not assumed:
+     runs/allocator.json at 2026-08-22T18:31Z reports weekly_used_pct 100.0, and
+     week_resets_at 1787547599 = 2026-08-24T05:00Z. stop_at for this run is
+     2026-08-23T18:31Z. THE ENTIRE RUN WINDOW SITS INSIDE AN EXHAUSTED WEEKLY LIMIT.
+     KI-R6-6 measured what that costs: between 2026-08-20T18:59Z and 2026-08-22T16:04Z the
+     pacer spawned 504 cycles and 503 of them died in ~380ms on HTTP 429 before their first
+     turn. This run therefore plans for ONE session, not five cycles, and says so in
+     "Expected shape" rather than discovering it at wrap-up. -->
 
 ## Idea
 
 A tiny, zero-dependency Node CLI that prints one random attributed programming aphorism.
-`fortune(6)`, but curated for programmers. 50 entries, 24 authors, 12 tags, 121-test suite,
+`fortune(6)`, but curated for programmers. 50 entries, 24 authors, 12 tags, 129-test suite,
 green on Node 18/20/22/24. Shipped since run #1.
 
-Improvement run #6 changes NOTHING a user of the CLI invokes. It repairs the documentation
-and the guards around it.
+Improvement run #7 changes NOTHING a user of the CLI invokes. It reduces what the repo costs
+to maintain, and publishes the measurement that justifies each reduction.
 
 ## Audience
 
-Two audiences, and run #5 optimized for the wrong one:
-
-- **(a) A first-time reader** of a 50-aphorism CLI's README — wants to know what it prints
-  and which flags exist, and meets ~95 lines of autonomous-build-run journal before they get
-  there.
-- **(b) A future SWARM run or auditor** verifying what earlier runs claimed — genuinely needs
-  every one of those provenance paragraphs, and needs them checkable.
-
-Both are real. The defect is that (b)'s apparatus was written into (a)'s document. Nothing
-below deletes provenance; it moves it to where (b) will look and (a) will not trip over it.
+- **(a) A first-time reader** of the repo — meets a 594-line program guarded by 4,409 lines
+  of test, and has no way to tell which of those tests protect the CLI and which protect the
+  README. Run #6 fixed the README's length; nobody has yet fixed what the test directory
+  says about this project's priorities.
+- **(b) A future SWARM run or auditor** — needs every provenance claim to stay checkable, and
+  is the reason none of this can be deleted casually. Every removal below is gated on a
+  published mutation matrix, not on a judgement that it "looks redundant".
 
 ## The measured problem this run exists to fix
 
-Measured at kickoff, 2026-08-20T14:36Z, against HEAD `3a17cc5`:
+Measured at kickoff, 2026-08-22T18:31Z, against HEAD `bc1513a` (suite 129 / 129 / 0 / 0):
 
-1. **README.md is 16,609 bytes / 309 lines** for a tool whose whole product surface is one
-   command and six flags. It was **6,022 bytes** before run #5 — a 2.76x growth in one night.
-2. **README.md lines 205-299 hold FIVE stacked blockquotes** headed
-   `> **Updated 2026-08-20 (cycle 3)**`, `(cycle 10)`, `(cycle 5)`, `(cycle 6)`, `(cycle 9)` —
-   ~95 lines, **out of chronological order**, each narrating an individual build cycle of an
-   autonomous run. This is a run journal that leaked into a user-facing README.
-3. **The Node-support section contradicts itself.** Its matrix table (README:186-191) reports
-   `121 tests` on all four Node majors. Its closing paragraph (README:306-308) claims the
-   suite prints `# tests 120` and that "The count moved with the suite again (119 -> 120)".
-   Locally measured truth at kickoff: **121 tests, 121 pass, 0 fail, 0 skipped** (full clone).
-   Two claims about one number, 115 lines apart, in one section, disagreeing.
-4. **README:71 and README:93 restate one number three ways** — "12 tags appear on 2 or more
-   entries. On the other side of that count, 0 tags appear exactly once, which is to say 0
-   tags sit on exactly one entry" — diagnosed by run #5's own retro as prose padded to satisfy
-   a regex guard rather than written for a reader.
+1. **KI-R6-3 — two guards, one table row.** `test/readme-tags.test.js` contains the renamed
+   multi/single-entry test AND the structural replacement for the retired co-occurrence
+   guard, and both read the same "Tags on exactly one entry" row. The redundancy was
+   *induced by the conductor's own dispatch* in run #6 cycle 2 (it mandated both a re-anchor
+   and a no-shrink floor); the builder disclosed it rather than hiding it. Filed as low, and
+   left standing for two runs because the ">= 121 tests" floor made shrinking illegal.
+2. **The floor is a ratchet.** Run #6's Q-5 invariant was "suite green at >= 121 tests". A
+   test-COUNT floor can only ever be satisfied by growth; it makes consolidation a spec
+   violation regardless of whether coverage is preserved. It is the mechanism that kept
+   item 1 open. Replacing a count floor with a DETECTION floor is the single highest-value
+   change available inside this brief.
+3. **KI-R6-5 / Q-10 — a rule restated instead of quoted.**
+   `docs/node-support-citation-history.md:210-212` says the section "names the most recent
+   run whose cited commit's `src/`, `bin/`, `test/`, and `.github` content is byte-identical
+   to this tree's". `README.md:191` states the actual rule: "the matrix run for the push
+   that carried the last change to `src/`, `bin/`, `test/`, or the workflow itself". These
+   are different rules, and run #6 measured that on this tree they select DIFFERENT runs.
+   No guard reads the history file's prose, so nothing catches the disagreement. This is
+   L-043's QUOTE-DONT-PARAPHRASE clause, re-observed in the document that clause was
+   written about.
+4. **The two-commit citation ritual is unmeasured.** Any commit touching the cited pathspec
+   turns `test/node-support-citation.test.js` RED by design, and a follow-up commit
+   re-cites it. It has run twice (cycles 2->3 and 4->5 of run #6). Nobody has counted what
+   fraction of this repo's commits pay that tax, or established whether it is inherent to
+   the claim or an artifact of a pathspec that over-claims. It is filed nowhere.
 
 ## Must-haves
 
 <!-- The PLAN gate (cycle.md step 4) holds until every box below is covered by a backlog
      item. Checked off only after conductor verification, never by claim. -->
 
-- [ ] **Q-1 EXTRACT.** The five `Updated 2026-08-20 (cycle N)` blockquotes move **verbatim and
-      byte-complete** out of `README.md` into a dated file under `docs/`, in chronological
-      order, with a one-line README pointer to it. README's Node-support section keeps the
-      LIVE citation and its two standing limits, rewritten as plain prose rather than as a
-      changelog. Acceptance, all four: zero occurrences of that blockquote form in
-      `README.md`; every moved line present byte-identically in `docs/`; `README.md` at least
-      5,000 bytes smaller; suite green with **zero tests weakened**.
-- [ ] **Q-2 THE GUARDS ARE THE EXPERIMENT.** Every guard that breaks under Q-1 is repaired
-      **at its anchor** — never by restoring prose to feed a regex, which is opening a gate by
-      weakening it (hard rule 2). Each break is classified **guard-defect** (bound to prose ->
-      re-anchor to a structural marker the document owns, per L-043) or **real-claim-loss**
-      (the moved text carried a claim the README must keep -> keep the claim). Report BOTH
-      columns, and also name the guards that did NOT break — a guard that survives honest
-      prose is evidence about that guard, and it is the control (L-044).
-- [ ] **Q-3 THE STALE COUNT.** Audit the Node-support section in BOTH directions — doc->code
-      and doc->doc (L-043's enumerate-every-direction clause). Every count claim in it
-      resolves to a measured value. Then add or extend a check so that a count claim in that
-      section **cannot silently disagree with the matrix table it sits under**. The check must
-      be shown failable AND attributable (L-029) and paired with a converse control that must
-      stay green (L-044).
-- [ ] **Q-4 THE PADDED SENTENCE.** Re-anchor the tag-vocabulary guard to the structural marker
-      it should have read (the table), then restore ONE honest sentence at README:71 and
-      remove the restatement at README:93. Price the fix on TRUE inputs against an unfixed
-      baseline column and report both (L-043) — a fix that closes holes while false-rejecting
-      honest sentences is a trade to argue, not a win.
-- [ ] **Q-5 INVARIANTS, every commit.** Suite green at **>= 121 tests**; zero features; zero
-      new dependencies; `src/corpus.js` byte-identical to `3a17cc5`; `--help` output
-      byte-identical. Any commit that cannot hold these is reverted before the cycle commits
+- [ ] **R-1 REPLACE THE COUNT FLOOR WITH A DETECTION FLOOR, AND MAKE THE FLOOR RERUNNABLE.**
+      Run #6's ">= 121 tests" invariant is retired and replaced, in this spec and in
+      `REPORT.md`, by: *no mutation in the BOUNDED SET below that the suite detected at
+      `bc1513a` may go undetected at the final HEAD.*
+      **The set is bounded by a stated generation rule, not by judgement** (taste-judge
+      finding at kickoff — an unbounded "no mutation whatsoever" claim is unfalsifiable and
+      was the draft's real defect): exactly one falsifying mutation per machine-checked
+      claim in the guarded README sections — an off-by-one for each numeric claim, a
+      row-deletion for each structural table row the guards read, plus ONE identity
+      (no-op) mutation as the converse control that must leave the suite GREEN (L-044).
+      The set is enumerated in the harness, capped at 30 mutations, and any claim the rule
+      generates but the harness omits is listed with its reason.
+      **The harness is committed as a rerunnable zero-dependency script**
+      (`tools/mutation-matrix.mjs`, invoked `node tools/mutation-matrix.mjs`), applying each
+      mutation to a scratch copy, running `test_cmd`, recording which named guards fire, and
+      restoring the tree — so run #8 can re-establish the floor in one command instead of
+      re-deriving it from a report. It is NOT part of `test_cmd` and adds zero tests.
+      Acceptance: the harness runs clean from a clean tree at both `bc1513a` and the final
+      HEAD; both matrices are committed; the identity control is GREEN in both; the test
+      COUNT is explicitly permitted to fall, and a count drop with an intact detection
+      matrix is a PASS — this sentence exists so no later cycle can re-read it as a
+      regression.
+- [ ] **R-2 CONSOLIDATE KI-R6-3, OR PROVE IT IS NOT REDUNDANT.** Using R-1's matrix, mutate
+      the "Tags on exactly one entry" row and record which of the two guards fire. If the
+      firing sets are identical, consolidate to one guard and show by converse control
+      (L-044) that every mutation previously caught is still caught and that the surviving
+      guard stays GREEN on the honest tree. If the firing sets DIFFER, the redundancy is not
+      redundancy: keep both, and publish the mutation that distinguishes them — that
+      outcome closes KI-R6-3 just as validly as a deletion does, and is reported as a finding
+      rather than as a failure to act.
+- [ ] **R-3 QUOTE THE RULE (closes KI-R6-5 / Q-10).** `docs/node-support-citation-history.md`
+      quotes `README.md`'s selection rule VERBATIM, attributed to its section, instead of
+      restating it. Any surviving description of the OLD rule stays clearly marked as
+      history. Acceptance, all four: (a) the README's rule sentence appears as an exact
+      substring of the history file; (b) applying the quoted rule to this tree selects
+      `7e50d6f`, the run actually cited, and the derivation is shown; (c) suite green;
+      (d) **the guard budget is capped** — if a machine check is added to hold (a), it is
+      ONE structural file-to-file equality assertion of <= 30 added lines, shown failable
+      AND attributable (L-029) and paired with a converse control (L-044). A fix to a
+      paraphrase must not cost 200 lines of new guard; that would re-commit the exact error
+      this run exists to stop.
+- [ ] **R-4 MEASURE THE CITATION TAX, CHANGE NOTHING.** Count, over every commit in this
+      repo's history, how many touched the cited pathspec (`src/`, `bin/`, `test/`,
+      `.github`) and therefore would have turned the citation guard RED, and how many
+      re-citation commits were actually spent. Publish the number and state plainly whether
+      the ritual is inherent to the claim or an artifact of an over-claiming pathspec.
+      **No change to the pathspec, the assertion, or the citation is in scope.** L-043
+      forbids narrowing a check to buy green, and the distinction between correcting an
+      over-claim and weakening a gate is an operator's ruling, not the swarm's. The
+      deliverable is a number and a recommendation, nothing else.
+- [ ] **R-5 INVARIANTS, every commit.** Zero features; zero new dependencies; `src/corpus.js`
+      sha256 `77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e`;
+      `--help` output sha256 `d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64`;
+      every Domain rule below unchanged. Suite green at every commit, with ONE permitted
+      exception: the citation guard's by-design RED window (README standing limit 2), which
+      must be PREDICTED in the sealed gate before dispatch (L-042) and never explained after
+      the fact. Any commit that cannot hold these is reverted before the cycle commits
       (hard rule 4).
-- [ ] **Q-6 THE PLAYBOOK ITEM, EXACTLY ONCE.** Do **not** re-derive the allowlist escalation.
-      L-045 was written from this repo and says: escalate the locked lever ONCE, do not spend
-      the clock re-deriving it. Already discharged at this kickoff, in one read:
-      `swarm-playbook.sh` carries no entry under ANY of the 11 `swarm-*` allow forms in the
-      live `/opt/swarm/.claude/settings.json`; `parse` was denied this session (#34) and the
-      step-5 settings write was denied (#35); `HANDOFF-allowlist-2026-08-17.md`'s stated ask
-      is unchanged and still correct. **This must-have is closed by that paragraph.** The only
-      remaining work is the ledger line and one report line — no further investigation.
+- [ ] **R-6 THE PLAYBOOK/HARNESS ITEMS, CLOSED AT KICKOFF, EXACTLY ONCE.** Discharged by one
+      read at this kickoff; no further investigation is authorized (L-045):
+      `bin/swarm-playbook.sh` appears under ZERO of the 11 allowlisted `swarm-*` forms in the
+      live `/opt/swarm/.claude/settings.json` (`swarm-budget.sh` and `swarm-notify.sh` are
+      both present), so `parse` and `append` are structurally denied — KI-R6-2, unchanged,
+      human item, `HANDOFF-allowlist-2026-08-17.md`. `permissions.additionalDirectories` is
+      `[]` and the kickoff step-5 write to it was denied in run #6 (#35); the session reaches
+      `/opt/targets` via its launch flags instead, so the gap costs this run nothing and is
+      NOT re-attempted. KI-R6-6 (pacer respawns into a weekly-limit 429 instead of setting
+      limp) is a human item against `bin/swarm-pacer.sh`, which hard rule 5 forbids touching
+      from inside a run. **This must-have is closed by this paragraph** — it owes only a
+      ledger line and a report line.
 
 ## Nice-to-haves
 
-- `README.md` back under ~9,000 bytes without losing a single checkable claim.
-- The extracted provenance file cross-links to `docs/report-history.md` (142 KB) so the two
-  audit trails are reachable from each other.
-- A one-line "what this section is for" opener on any README section that exists primarily to
-  satisfy a guard — run #5's own house-rules proposal, unactioned.
+- `test/readme-tags.test.js` (2,778 lines) gets a table-of-contents header naming what each
+  block guards, so the next run can find the redundancy without a mutation study.
+- A one-line note in `docs/coverage-baseline.md` recording that the count floor was retired
+  in favour of a detection floor, so the two documents cannot disagree about what "green"
+  means.
 
 ## Non-goals
 
 - No new flags, features, output formats, or dependencies. The CLI's behaviour is frozen.
 - No corpus text, author, or tag edits — `src/corpus.js` is byte-identical or the commit is
   reverted.
-- No weakening of any test, guard, assertion, or claim to open a gate. The only honest path to
-  green is making the claim true.
+- No weakening of any test, guard, assertion, or claim to open a gate. Deleting a guard is
+  permitted ONLY under R-2's published mutation matrix; deleting one because it "looks
+  redundant" is the same failure as weakening it.
+- No change to the citation pathspec, its assertion, or the cited run (R-4 is measurement).
 - No edits to SWARM's own `settings.json`, `bin/`, `reference/`, `workflows/` or `templates/`
-  (hard rule 5) — including the allowlist gap this run re-confirmed.
-- No ruling on the 8 blocked backlog items (T-006, T-040, TS-1, TS-2, TS-3, TS-6, J-7, P-7).
-  Every one needs a human decision; an agent inventing one is the failure mode.
+  (hard rule 5) — including both allowlist gaps and the pacer defect this run re-confirmed.
+- No ruling on the human-blocked backlog items carried from earlier runs, or on KI-R6-4
+  (wholesale matrix falsification) — every one needs a human decision.
 
 ## Domain rules
 
-Unchanged from run #1 and restated here only as the invariants Q-5 binds:
+Unchanged from run #1, restated here only as the invariants R-5 binds:
 
 - Exit `0` success, `1` no match, `2` usage error, `3` output could not be delivered.
 - `--author` is a case-insensitive literal substring match on the author field: no
@@ -166,27 +231,32 @@ Unchanged from run #1 and restated here only as the invariants Q-5 binds:
 
 ## Definition of done
 
-Q-1 through Q-6 each verified by the conductor running the check itself, with real command
-output pasted into the journal — never by an agent's claim (hard rule 2). Suite green at
->= 121 on the final HEAD, Actions matrix green on the final HEAD, `README.md` measurably
-smaller with every checkable claim preserved and every count claim measured, and both columns
-of the Q-2 guard classification published in `REPORT.md`.
+R-1 through R-6 each verified by the conductor running the check itself, with real command
+output pasted into the journal — never by an agent's claim (hard rule 2). The R-1 mutation
+matrix published before/after. R-2 closed by consolidation OR by a published distinguishing
+mutation — both are valid closures. R-3's quoted rule present as an exact substring and its
+derivation shown. R-4's number published with a recommendation. R-5's two sha256 invariants
+unmoved on the final HEAD.
 
-**Then stop.** When Q-1..Q-6 close and the only survivors are the 8 human-blocked items, the
-target is DONE — go DONE in that cycle rather than manufacturing a seventh lap (L-045).
+**Then stop.** L-045, written from this repo: when the must-haves close and the only
+survivors are human-blocked items, the target is DONE — go DONE in that cycle rather than
+manufacturing an eighth lap.
 
 ## Expected shape of this run
 
-SHORT, and that is the honest outcome rather than a failure. Q-6 closed at kickoff. Q-1
-through Q-4 are bounded edits with hard acceptance; Q-2's guard cascade is the only genuinely
-unbounded edge, and it is bounded in practice by the number of guards that read README prose
-(`test/readme-tags.test.js`, `test/node-support-citation.test.js`, `test/citations.test.js`).
-Estimate 3-5 cycles against a 24-hour clock at gear 2 / k_cap 2.
+**ONE session, not five cycles** — planned that way from measurement, not discovered at
+wrap-up. `runs/allocator.json` reports `weekly_used_pct: 100.0` with the weekly window
+resetting 2026-08-24T05:00Z, which is 10.5 hours AFTER this run's `stop_at`. KI-R6-6
+measured what a pacer spawn costs inside an exhausted weekly window: 503 of 504 spawned
+cycles died on HTTP 429 in ~380ms before their first turn. So the plan is: do the work in
+cycle 1, verify it in cycle 1, and treat any further cycle as a bonus rather than as the
+schedule. The kickoff's step-11 headless assert is the probe that measures whether spawned
+sessions can run at all tonight, and its result is reported either way.
 
 The escalation, stated ONCE and not to be re-derived (L-045): **the highest-value change
 available to this repo is corpus depth and no-repeat rotation (TS-1/TS-2/TS-3), and it is
-locked out by the allocator brief's "no new features".** Four independent taste judges across
-runs #3-#6 have now named the same thing. This is an operator lever, not a swarm one.
+locked out by the allocator brief's "no new features".** Five independent taste judges
+across runs #3-#7 have now named the same thing. This is an operator lever, not a swarm one.
 
 ## Commands
 
@@ -195,23 +265,24 @@ runs #3-#6 have now named the same thing. This is an operator lever, not a swarm
 
 ## Spec digest
 
-- IMPROVEMENT RUN #6 on a shipped zero-dep Node CLI — repair the README regression run #5
-  caused and measure the guards that shaped it; no new features, no new deps
-- must: the five `Updated 2026-08-20 (cycle N)` run-journal blockquotes (README:205-299, ~95
-  lines, out of order) move verbatim to `docs/`; README >= 5,000 bytes smaller; zero tests
-  weakened (Q-1)
-- must: every guard that breaks is repaired AT ITS ANCHOR, never by restoring prose; each
-  classified guard-defect vs real-claim-loss, both columns reported, survivors named as the
-  control (Q-2)
-- must: Node-support section audited doc->code AND doc->doc; the `tests 120` vs `121` internal
-  contradiction fixed to a measured value; a count claim there can no longer silently disagree
-  with its own matrix table, failable + attributable + converse-controlled (Q-3)
-- must: tag-vocabulary guard re-anchored to the table, one honest sentence restored, fixed-vs-
-  unfixed columns on true inputs reported (Q-4)
-- must: suite green >= 121 every commit, zero features, zero new deps, `src/corpus.js` and
-  `--help` byte-identical (Q-5)
-- must: the playbook allowlist item is CLOSED at kickoff by one read — escalate once, never
-  re-derive (Q-6, L-045)
-- expected shape: 3-5 cycles; early DONE is the honest outcome, not a failure
-- escalation (3rd consecutive run, 4th independent taste judge): corpus depth / no-repeat
-  rotation is the highest-value change and is locked out by the brief — operator lever
+- IMPROVEMENT RUN #7 on a shipped zero-dep Node CLI — reduce the guard layer's maintenance
+  tax and publish the measurement that justifies each reduction; no new features, no new deps
+- must: the ">= 121 tests" count floor is retired and replaced by a DETECTION floor — no
+  mutation in a BOUNDED, rule-generated set (<= 30, one per machine-checked claim, plus an
+  identity control) that was detected at bc1513a may go undetected at the final HEAD; the
+  harness ships as rerunnable `tools/mutation-matrix.mjs`; a test-count DROP is a pass (R-1)
+- must: KI-R6-3's two same-row guards are consolidated under that matrix, OR the
+  distinguishing mutation is published and both are kept — both outcomes close it (R-2)
+- must: docs/node-support-citation-history.md QUOTES README's selection rule verbatim instead
+  of paraphrasing it; any machine check added to hold that is <= 30 lines, failable,
+  attributable and converse-controlled (R-3, closes KI-R6-5/Q-10)
+- must: the citation two-commit tax is COUNTED over repo history and reported with a
+  recommendation; the pathspec, assertion and citation are NOT touched (R-4)
+- must: zero features, zero new deps, src/corpus.js sha256 77a4de5c and --help sha256
+  d759d781 unmoved; green every commit except the predicted citation RED window (R-5)
+- must: the playbook allowlist, additionalDirectories, and pacer-429 items are CLOSED at
+  kickoff by one read — escalate once, never re-derive (R-6, L-045)
+- expected shape: ONE session — the whole run window sits inside an exhausted weekly limit
+  (weekly_used_pct 100.0, resets 10.5h after stop_at); early DONE is the honest outcome
+- escalation (5th independent taste judge): corpus depth / no-repeat rotation is the
+  highest-value change and is locked out by the brief — operator lever
