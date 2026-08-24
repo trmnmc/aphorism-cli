@@ -24535,3 +24535,52 @@ to 0. The gear cap of 2 is what actually bounds the wave, not `k_current`.
 ```json
 {"version":1,"run_label":"improvement run #8","targets":[{"path":"/opt/targets/aphorism-cli","name":"aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":1787663147,"usage_reset_at":1787601600,"stop_at_iso":"2026-08-25T13:05:47.000Z","usage_reset_at_iso":"2026-08-24T20:00:00.000Z","model_policy":"value-routing","auth_mode":"subscription","kickoff_source":"allocator","heartbeat":{"ts":1787611763,"next_wakeup_at":1787613563,"pid":669257,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"probe","gear":2,"gear_target":2,"ratio":0.84,"mode":"guest","k_cap":2,"promote":false,"demote":true,"window_tokens":64621405,"window_cost_usd":40.40868090000001,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":27009251,"projected_depletion_at":1787621367,"last_probe_ts":1787610191,"last_real_probe_ts":1787610191,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":100,"opus_used_pct":100,"week_elapsed_pct":10.35,"weekly_heat":9.66,"opus_heat":9.66,"ceiling":2,"promote_blocked":true,"week_resets_at":1788152399},"probe_note":"cycle 16 probe: probe_ok true. rho 0.84, gear held at 2 (guest clamps 1-3; the weekly governor ceiling of 2 binds, so gear_target 2). k_cap 2 -> effective wave size min(k_current 5, gear cap 2) = 2. demote TRUE, promote blocked. Window 36543626 -> 64621405 tokens (+28.08M, attributed to aphorism-cli for cycle 15), 27.01M tok/h, projected depletion 1787621367 (01:29Z), ~11.5h BEFORE stop_at -- the next 5h boundary lands first, normal mid-window reading. KI-37 ELEVENTH OBSERVATION: weekly_used_pct 100 at week_elapsed_pct 10.35; opus_used_pct pinned at 100 for the eleventh consecutive probe while weekly.ok stays true and the ceiling stays 2."},"watchdog":{"mode":"pacer","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0,"note":"swarm-watchdog.timer is enabled+active but is a MEASURED NO-OP for this run: bin/swarm-watchdog.sh line 279 keys its DONE-guard on REPORT.md existing in every target, and /opt/targets/aphorism-cli/REPORT.md exists from run #7. L-037 clause 2, asserted at kickoff rather than assumed. RECOVERY PATH IS THE PACER: bin/swarm-pacer.sh keys only on wrap_up_complete (line 183) and heartbeat.next_wakeup_at (line 229) \u2014 it does NOT check REPORT.md \u2014 and swarm-pacer.timer is active. Verified by reading both scripts; neither was edited (hard rule 5)."},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":16,"artifact":{"url":"","file":"/opt/swarm/runs/dashboard.html","publish_failures":0},"playbook":{"apply_mode":"auto","source":"direct read of playbook/learnings.md (bin/swarm-playbook.sh structurally unallowlisted \u2014 KI-R6-2, 12th consecutive confirmation, zero denials burned this run)","applied":["L-008","L-016","L-024","L-026","L-029","L-031","L-033","L-034","L-037","L-038","L-042","L-043","L-044","L-046","L-047"],"vetoed":[],"held_out":[{"id":"L-022","why":"persisted UI state in beforeEach \u2014 this target is a terminal CLI with no browser surface; held out for the fourth consecutive run"}],"directives":{"wave_k":null,"routing_recs":["core-logic->fable (L-026)"],"prompt_lines":{"builder":"The conductor is the SOLE committer \u2014 never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. The conductor seals its verification gate by hash before dispatch \u2014 do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work. Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps. Classify each surviving mutant as HOLE (a real gap - harden it) or BOUNDARY (behaviour the spec does not decide - document it) BEFORE writing any test. When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive \u2014 a kill you cannot attribute is not evidence. For every mutation that must kill the suite, author one control that must leave it GREEN \u2014 a check that dies on everything is a snapshot test, not an assertion. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check.","reviewer":"The conductor is the SOLE committer \u2014 never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. Assign each fixer a pairwise-disjoint file set; two fixers must never share a file. The conductor seals its verification gate by hash before dispatch \u2014 do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work.","qa":"Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'. Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns. Classify each surviving mutant as HOLE or BOUNDARY BEFORE writing any test."},"process":["kickoff-refuse-on-exhausted-window (L-038) \u2014 RUN at cycle 0, PASSED: weekly 6.0% at 4.819% elapsed, reset 2026-08-31 well past stop_at","spawner-backoff-to-known-reset (L-037) \u2014 SWARM tool gap, reported not edited (hard rule 5)","wire-through check at each layer boundary for domain-capability items (L-046)","reserve one mid-run cycle for the taste pass before the VALUE_LOOP tail (L-038)"]}},"kickoff_hints":{"mode":"guest","dial":0.3,"brief":"TRICKLE POSTURE: housekeeping only \u2014 harden tests, fix playbook items, polish docs \u2014 no new features. Haiku-priced work types; no new features.","source":"allocator","stop_at":1787663147,"consumed_at":1787577261},"session_shape":"headless -p session spawned by swarm-pacer.sh (auto-kickoff 13:05:48Z). Workflow tool is review-gated headless, so build dispatch is DIRECT Agent calls with disjoint scopes declared in-prompt (L-016); Artifact publish unavailable (local dashboard render IS the publication on the VPS); `claude` is not allowlisted so kickoff step 11 could not run."}
 ```
+
+### POST-COMMIT ADDENDUM — cycle 16, measured at `d270f48`
+
+**commit:** `d270f48` "cycle 16: two tools stop claiming more than they checked [value]" — ONE
+commit this cycle, pushed to `origin/master`. No citation window opened, and this was
+PREDICTABLE IN ADVANCE rather than discovered afterwards: both edited files live under
+`tools/`, and the base-to-working-tree citation guard's pathspec is `src bin test .github`.
+
+**Freshness re-established at the new HEAD, not assumed.** The commit moves HEAD one step past
+the detection record's `measuredCommit`, so the exemption had to be re-derived — and it was,
+by the tool itself, from its own changed-paths list. Note that this was also predictable:
+`VERDICT_RELEVANT` is `README.md`, `docs/`, `src/`, `bin/`, `test/`, `.github/` and
+`tools/mutation-matrix.mjs`, and neither `tools/citation-tax.mjs` nor
+`tools/detection-floor.mjs` is in that set, so this cycle's two edits are verdict-neutral by
+construction. Contrast cycle 14, where RV-5 edited `tools/mutation-matrix.mjs` — inside the
+set — and therefore had to re-measure and land a second commit.
+
+```
+HEAD                : d270f48
+tree clean          : True
+corpus sha256       : 77a4de5c777a3bdb      (SPEC S-8, unmoved)
+--help sha256       : d759d781ddcac780      (SPEC S-8, unmoved)
+test_cmd            : exit 0 tests=128 pass=128 fail=0 skipped=0 -> count-free green = True
+run-all.mjs         : exit 0 (mutation-matrix skipped by default, as designed)
+detection-floor     : exit 0  DETECTION FLOOR HOLDS -- record measured at 1aac952, an ancestor
+                      of HEAD d270f48, exempt under FRESH-BY-CONTENT
+citation-rule-check : exit 0  OK: docs/node-support-citation-history.md quotes README.md
+                      "### Node support" verbatim (257 bytes)
+citation-tax        : exit 0, stderr 0 bytes
+```
+
+**Dashboard self-check, clean for the first time in two cycles:** 17 bars rendered of 17
+expected, cumulative verified 34, `burnup_done_items_without_a_cycle: []`. Cycle 15's slip was
+writing the verified items under an invented field name (`verified_cycle`) that the burn-up
+series does not key on; this cycle wrote `updated_cycle` as well, and the renderer's own check
+— the one instrument in this run with a demonstrated record of disagreeing with the conductor
+and being right — reports no exclusions.
+
+**One thing worth reading twice.** Both items were the same defect in different files, for the
+third cycle running: an instrument publishing a verdict about something it never checked.
+`citation-tax` attributed to CI semantics a floor its own definitions force; `detection-floor`
+printed "every verdict matches" while never comparing the fields its own partition buckets on.
+And both fixes take the same shape as cycle 15's — make the tool say the true, narrower thing
+rather than the confident, wider one. What is new this cycle is where the third instance came
+from: the conductor's OWN tool surface returned a silent false negative (KI-45), and the
+conductor came within one recorded finding of publishing a fabrication charge against a builder
+whose report was accurate in every particular. The run has spent ten cycles establishing that
+one-shot instruments get no scrutiny. This is the first cycle in which the unscrutinised
+instrument was not one the run wrote.
