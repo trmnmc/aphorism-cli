@@ -21244,3 +21244,116 @@ Eleven `swarm-*` forms, `swarm-playbook.sh` in none of them. Unchanged from run 
 ## Cycle 0 status
 
 `cycle 0 | aphorism-cli | BUILD | KICKOFF run #7 → spec reshaped + locked, R-1..R-6 seeded, R-6 closed | cycle 1 immediately`
+
+## cycle 0 (WRAP_UP) | 2026-08-24T05:11:23Z | aphorism-cli | DONE
+
+work: WRAP_UP — routed here by the cycle.md step-1 clock check, not by choice of work.
+`now` 1787548283 vs `stop_at` 1787509907 = **10.7 hours past stop**. No work type was
+admissible and none was picked; WRAP_UP finishes nothing new.
+
+### Why this is the second cycle of a run that has only ever had one
+
+Cycle 0 (KICKOFF) committed `55dfbb8` at ~18:47Z on 2026-08-22 and the session died on the
+weekly usage limit in the same minute. Cycle 1 never started. Between then and now the pacer
+fired faithfully and spawned 381 sessions; every one of them died before its first turn.
+
+FAILURE CLASSIFICATION — exhaustive over `runs/pacer.log` and every `runs/cycle-*.json`
+written since kickoff (mtime >= 1787423515), not a sample:
+
+```
+pacer decisions since kickoff ....... 1159   (388 allocator-refreshed, 382 spawned,
+                                              381 cycle-failed, 5 not-due,
+                                              1 auto-kickoff, 1 auto-kickoff-failed)
+failure records classified .......... 382    (381 parsed + 1 unparseable = THIS session,
+                                              whose result JSON is not yet written)
+carrying HTTP 429 weekly-limit ...... 381 of 381      <- zero other causes
+median session lifetime ............. 415 ms   num_turns: 1   terminal_reason: api_error
+verbatim result ..................... "You've hit your weekly limit · resets 5am (UTC)"
+kickoff session's own death ......... runs/kickoff-1787423508.log, one line:
+                                      "You've hit your weekly limit · resets Aug 24, 5am (UTC)"
+```
+
+This session is spawn #382, started 05:02:07Z — **two minutes after the weekly reset at
+04:59:59Z** — and is the first to reach a turn in 34.2 hours.
+
+The sharp part, recorded because it is the whole finding: **this run's own cycle-0 probe wrote
+`weekly_used_pct: 100` and the exact reset timestamp into the runfile 15 minutes before the
+first of those 381 spawns.** The condition that should have stopped the retry loop was authored
+by the run itself, and the loop never read it. Cumulative over runs #6 and #7: **885 dead
+spawns.** Filed as KI-R7-1 (high).
+
+Also falsified this cycle: cycle 0's own recorded hope that "the limit is evidently not uniform
+across session kinds" because that session was alive inside the exhausted window. It was not
+exempt — it was spending the last of the headroom, and it died 15 minutes later on the same
+limit. The kickoff had flagged the claim as unmeasured; it is now measured, and it was wrong.
+
+### VERIFICATION EVIDENCE — wrap-up baseline (run by the conductor, not claimed by an agent)
+
+```
+$ node --test test/*.test.js
+ℹ tests 129   ℹ pass 129   ℹ fail 0   ℹ cancelled 0   ℹ skipped 0   ℹ todo 0
+ℹ duration_ms 4876.134821
+
+$ sha256sum src/corpus.js
+77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e  src/corpus.js
+$ node bin/aphorism.js --help | sha256sum
+d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64  -
+$ git rev-parse --short HEAD
+55dfbb8
+$ git status --porcelain | wc -l
+0
+```
+
+All three match `state.json.baseline_2026_08_22_run7` exactly. R-5 (the standing invariant)
+therefore PASSES — and the journal records the weakness of that pass rather than smoothing it:
+the run made one commit, and it touched no source. An invariant is easy to hold when nothing
+runs.
+
+### Must-have outcomes
+
+R-6 shipped (closed at cycle 0 by one read). R-5 held, trivially. **R-1, R-2, R-3, R-4 not
+started** — `attempts` unchanged at 0 for all four, annotated in the backlog with why. Nothing
+is blocked on a ruling; all four are blocked only on a session that can take a turn.
+
+### Control channel
+
+`swarm-notify.sh poll` -> `poll ok merged=0`. `runs/control.json`: `pending: []`,
+`applied: []`. No commands received this run. No injections to triage.
+
+### DISTILL — 2 candidates, both merges
+
+Written to `runs/wrapup-candidates.md`. **Only two, deliberately**: a run that delivered one
+cycle and dispatched zero build agents has exactly two things to teach, and both are about why.
+Filling the <= 5 allowance would be invention.
+
+- **L-037** observed 3 -> 4. The fix now has an address, not just a diagnosis: back the
+  spawner's retry cadence off to `runfile.usage_reset_at`.
+- **L-038** observed 2 -> 3. New EXHAUSTED-WINDOW clause: when the kickoff probe reports the
+  limit already fully consumed and its reset lands after the proposed `stop_at`, no stop time
+  is survivable — refuse and requeue, do not reshape. And the counter-intuitive number: at 100%
+  consumed the right planned cycle count is **zero, not one**, because cycle 0 spends the
+  remaining headroom itself. This run predicted ONE session and delivered zero work cycles.
+
+Playbook cap held at 20, `next_id` unchanged at 48, no ID minted, no overflow drop.
+
+APPENDED MANUALLY, and **no denial was burned**: `bin/swarm-playbook.sh` was not invoked.
+`settings.json` was READ at this wrap-up and `swarm-playbook.sh` appears under zero of the
+allowlisted `swarm-*` forms — unchanged from run #6's structural confirmation. That is L-045's
+discipline applied to L-045's own lever: read the authoritative source, do not re-derive a
+known lock by triggering it. KI-R6-2 stands; hard rule 5 forbids repairing it from inside a run.
+
+### Wrap-up steps
+
+RETRO.md written · REPORT.md written (run #6's preserved in git at `1281377`/`ea481bc`) ·
+state.json phase DONE + KI-R7-1 + run7_close block · backlog annotated · tag
+`improvement-run-7-2026-08-24` · dashboard re-rendered locally (on the VPS the file write IS
+the publication; the Artifact tool is absent in a headless session, skipped silently, not
+counted as a publish failure) · caffeinate N/A (Linux VPS, `caffeinate_pid` 0) · wrap-up push
+sent · control channel archived · `wrap_up_complete = true`.
+
+commit: (this cycle's commit — see git log)
+next wakeup: NONE — wrap_up_complete is true; the pacer archives the runfile on its next firing.
+runfile-mirror:
+```json
+{"version": 1, "run_label": "improvement run #7 (aphorism-cli)", "targets": [{"path": "/opt/targets/aphorism-cli", "status": "done", "weight": 1, "name": "aphorism-cli"}], "rotation_cursor": 0, "rotation_schedule": [0], "stop_at": 1787509907, "usage_reset_at": 1787547599, "model_policy": "value-routing", "auth_mode": "subscription", "heartbeat": {"ts": 1787548283, "next_wakeup_at": 1787548283, "pid": 3464832, "limp": false, "degraded_tiers": []}, "pacing": {"mode": "guest", "dial": 0.3}, "budget": {"source": "probe", "gear": 2, "gear_target": 2, "ratio": 1.35, "mode": "guest", "k_cap": 2, "promote": false, "demote": true, "window_tokens": 18664610, "window_cost_usd": 15.594585, "api_cap_usd": null, "api_spend_usd": 0.0, "tokens_per_hour": 7109007, "projected_depletion_at": 1787487591, "last_probe_ts": 1787423515, "last_real_probe_ts": 1787423515, "probe_failures": 0, "weekly": {"ok": true, "weekly_used_pct": 100, "opus_used_pct": 100, "week_elapsed_pct": 79.48, "weekly_heat": 1.26, "opus_heat": 1.26, "ceiling": 3, "promote_blocked": true}}, "watchdog": {"mode": "pacer", "plist_loaded": false, "lockfile": "/opt/swarm/runs/watchdog.lock", "relaunch_attempts": 0}, "caffeinate_pid": 0, "wrap_up_complete": true, "cycles_since_recycle": 0, "artifact": {"file": "/opt/swarm/runs/dashboard.html", "publish_failures": 0}, "playbook": {"mode": "auto", "applied": [], "vetoed": [], "directives": {"wave_k": null, "routing_recs": [], "prompt_lines": {}}, "source": "direct read of playbook/learnings.md \u2014 bin/swarm-playbook.sh is structurally denied (KI-R6-2); NOT re-attempted this run (L-045)"}, "kickoff_hints": {"mode": "guest", "dial": 0.3, "brief": "TRICKLE POSTURE: housekeeping only \u2014 harden tests, fix playbook items, polish docs \u2014 no new features. Haiku-priced work types; no new features.", "source": "allocator", "stop_at": 1787509907, "consumed_at": 1787423515}, "usage_reset_note": "Set to the WEEKLY reset (2026-08-24T05:00Z), not to stop_at (L-038): the 5h rolling window is irrelevant while weekly_used_pct is 100, so the weekly boundary is the only reset that would actually restore capacity. It lands 10.5h AFTER stop_at, which is the honest statement that this run cannot outlast its own limit.", "session_shape": "headless -p session (claude -p /swarm ... --add-dir /opt/targets): Workflow tool is review-gated, so build dispatch is DIRECT Agent calls at k=2 with disjoint scopes declared in-prompt (L-016); Artifact publish unavailable; settings.json unwritable.", "wrap_up_note": "WRAP_UP at 2026-08-24T05:11:23Z via the cycle.md step-1 clock check (now - stop_at = 38376s = 10.7h). Delivered work cycles: 0. Cycle 0 committed 55dfbb8 then died on the weekly limit at 18:47:13Z; the 381 sessions spawned after it each died on HTTP 429 in ~415ms. This session is the 382nd spawn and the first since 2026-08-22T18:47Z to reach a turn - it started at 05:02:07Z, two minutes after the weekly reset. No new work was started: WRAP_UP finishes nothing new, and starting fresh work 10.7h past stop_at would be the conductor overriding the operator's clock. See KI-R7-1."}
+```

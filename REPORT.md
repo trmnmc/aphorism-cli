@@ -1,8 +1,10 @@
 # aphorism-cli — overnight build report
 
-Improvement run #6 repaired the README regression run #5 caused and, more usefully, **measured** the guards that shaped it — turning an unfalsifiable "harden tests / polish docs" brief into one experiment whose result contradicted the run's own premise.
+Improvement run #7 **built nothing**, and that is the report: the run's entire window sat inside an already-exhausted weekly usage limit, so cycle 0 (KICKOFF) committed and then died on that limit, and the 381 sessions spawned after it each lived ~415 ms before the same HTTP 429. The product is untouched and green; the finding is about the scheduler, and it is the second consecutive run lost to the same mechanism.
 
-_No screenshot captured this run — the target is a terminal CLI with no visual surface._
+_No screenshot captured this run — the target is a terminal CLI with no visual surface, and no cycle ran to capture one anyway._
+
+> Run #6's report (the current state of the product, which this run did not change) is preserved in git at commit `1281377` / `ea481bc`. Everything below describes **run #7 only**.
 
 ## Run it
 
@@ -10,92 +12,91 @@ _No screenshot captured this run — the target is a terminal CLI with no visual
 node bin/aphorism.js
 ```
 
-Suite: `node --test test/*.test.js` — **129 tests, 129 pass, 0 fail, 0 skipped** at the final commit `180e9da`.
+Unchanged from run #6. Verified at this wrap-up: suite green **129 / 129**, `src/corpus.js` sha256 `77a4de5c…`, `--help` sha256 `d759d781…` — all three byte-identical to the cycle-0 baseline.
 
 ## Must-haves
 
 | Must-have | Status | Reason / evidence |
 |---|---|---|
-| **Q-1** — the five `Updated 2026-08-20 (cycle N)` run-journal blockquotes move verbatim out of README.md to `docs/`; README ≥ 5000 bytes smaller; zero tests weakened | ✅ shipped | README 16,609 → **11,046 bytes (−5,563)**, verified by `wc -c` at wrap-up. Blockquotes live in `docs/node-support-citation-history.md`. Gate 7/7, cycle 1. **Zero guards broke** — which is the run's headline finding, below. |
-| **Q-2** — every guard that breaks is repaired AT ITS ANCHOR, never by restoring prose; each classified guard-defect vs real-claim-loss, both columns reported, survivors named as the control | ✅ shipped | Vacuously satisfied in the useful direction: zero guards broke under the extraction (cycle 1), so the guard-defect column is empty and every guard is a survivor/control. Its one carried-forward item was closed in cycle 4 by discovering the file it named (`citations.test.js`) **has never existed on any branch** — `git log --all` for that path is empty. |
-| **Q-3** — Node-support section audited doc→code AND doc→doc; the `tests 120` vs `121` self-contradiction fixed to a measured value; a count claim there can no longer silently disagree with its own matrix table, failable + attributable + converse-controlled | ✅ shipped | Gate 20/20, cycle 4. `test/readme-matrix-consistency.test.js` added (5 tests, suite 124 → 129). Cells C4a/C4b, **measured SILENT in cycle 3**, fire on byte-identical inputs after the fix (3 pass / 4 fail each); converse controls C6/C5 stayed green 5/0; C8 proved cross-row agreement does independent work. |
-| **Q-4** — tag-vocabulary guard re-anchored to the table, one honest sentence restored, fixed-vs-unfixed columns on true inputs reported | ✅ shipped | Gate 14/14, cycle 2. Both columns measured and reported: a FALSE prose count fires on both trees; a TRUE prose count is SILENT on the unfixed tree and FIRES on the fixed one. The real cost — an honest TRUE restatement in prose is now refused — is recorded, not buried. |
-| **Q-5** — suite green ≥ 121 at every commit, zero features, zero new deps, `src/corpus.js` and `--help` byte-identical | ✅ shipped | Held at every commit and re-checked at wrap-up: corpus `sha256 77a4de5c…`, `--help` `sha256 d759d781…`, both **unmoved from the kickoff baseline**; no manifest exists, so no dependency can be added. Suite never below 121. See the two RED-BY-DESIGN windows under "Known issues" — both were predicted, walked knowingly, and closed. |
-| **Q-6** — the playbook allowlist item is CLOSED at kickoff by one read; escalate once, never re-derive | ✅ shipped | Closed at cycle 0 by a single structural read of live `settings.json` (L-045). Re-confirmed once at wrap-up, as the fallback path required — see KI-R6-2. |
-| **Q-8** — re-cite the Node-support matrix to a run describing the post-Q-3 tree | ✅ shipped | Gate 6/6, cycle 5, **salvaged from a crashed cycle and gated at salvage time** — details below. |
+| **R-1** — retire the `>= 121 tests` COUNT floor; replace it with a rerunnable DETECTION floor (bounded ≤ 30 rule-generated mutation set + identity control, shipping as `tools/mutation-matrix.mjs`) | ❌ **not started** | No cycle ran. Backlog status `todo`, `attempts: 0`, priority 1. Fully specified and ready to dispatch — the spec work survives for run #8. |
+| **R-2** — close KI-R6-3: consolidate the two guards reading the same "Tags on exactly one entry" row, or publish the distinguishing mutation and keep both | ❌ **not started** | No cycle ran. Backlog `todo`, `attempts: 0`. Third consecutive run this item has been carried. |
+| **R-3** — `docs/node-support-citation-history.md` QUOTES README's selection rule verbatim (closes KI-R6-5 / Q-10) | ❌ **not started** | No cycle ran. Backlog `todo` (as Q-10), `attempts: 0`. One-line fix, unblocked at kickoff by reading the `blocked_reason` rather than the status. |
+| **R-4** — COUNT the citation two-commit tax over repo history; publish the number and a recommendation; touch nothing | ❌ **not started** | No cycle ran. Backlog `todo`, `attempts: 0`. |
+| **R-5** — STANDING INVARIANT: zero features, zero new deps, `src/corpus.js` + `--help` sha256 unmoved, green at every commit | ✅ **held** | Held **trivially and honestly**: one commit was made this run (`55dfbb8`, kickoff state only) and it touched no source. Verified at wrap-up — see evidence below. This is a real pass on a weak test: an invariant is easy to hold when nothing runs. |
+| **R-6** — playbook allowlist / `additionalDirectories` / pacer-429 CLOSED at kickoff by one read; escalate once, never re-derive (L-045) | ✅ **shipped** | Closed at cycle 0 by a single `settings.json` read: `swarm-playbook.sh` appears under **zero** of the 11 allowlisted `swarm-*` forms; `additionalDirectories` is `[]`. Re-read at this wrap-up, same result. **Two denials not burned.** |
 
-Also closed: **Q-7** (cycle 3, gate 17/17) — the first of the two re-citation round trips.
+**1 of 6 must-haves shipped, 1 held trivially, 4 not started.** Nothing is blocked on a ruling; all four are blocked only on a session that can take a turn.
+
+### Verification evidence (wrap-up, run by the conductor)
+
+```
+$ node --test test/*.test.js
+ℹ tests 129   ℹ pass 129   ℹ fail 0   ℹ skipped 0   ℹ duration_ms 4876.13
+
+$ sha256sum src/corpus.js
+77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e  src/corpus.js
+$ node bin/aphorism.js --help | sha256sum
+d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64  -
+$ git status --porcelain | wc -l
+0
+```
+
+All three match `state.json.baseline_2026_08_22_run7` exactly.
 
 ## Decisions log
 
-- **cycle 0**: Re-aimed the brief's three open-ended chore headings onto ONE falsifiable experiment — extract the guard-shaped prose out of README.md and treat every guard that breaks as the finding — because "harden tests" and "polish docs" are unfalsifiable as written and produced churn for five runs.
-- **cycle 0**: Closed Q-6 at kickoff in one read rather than opening it as work (L-045: escalate the locked lever once, never re-derive it).
-- **cycle 0**: Derived `usage_reset_at` from a real probe rather than setting it equal to `stop_at` — run #5's retro showed that defect bought eleven consecutive gear-1 cycles.
-- **cycle 0**: Recorded taste-judge dissent (use-twice: 4/10) for the third consecutive run rather than overriding it. Every candidate that would move it is a new user-visible feature, excluded by the brief. **Operator lever, not a swarm one.**
-- **cycle 1**: Forbade the Q-1 builder from touching `test/`, and treated the resulting pass/fail list as the deliverable — a builder that repairs a failing guard mid-edit destroys the measurement.
-- **cycle 2**: Committed with a citation guard RED, knowingly, filing the re-cite as Q-7 rather than buying green. The guard's subject is a git pathspec covering `test/`, so it cannot be green on the commit that changes it.
-- **cycle 2**: Kept the builder's out-of-scope deletion of a prose allowlist but **rejected its stated rationale** — measured both arms directly; the allowlist was not a live hole, it went dead when the prose readers were retired.
-- **cycle 3**: Cited run `32400996331` @ `4b63e91`, NOT the newer `32401050374` @ `2014bb9` — the newer run was ineligible under the section's own selection rule. Citing it would have satisfied the machine guard while violating the prose rule the guard exists to serve.
-- **cycle 3**: Ratified the builder's departure from the history file's "Cycle N" labelling — for a better reason than it gave (label collision, not the builder's stated uncertainty).
-- **cycle 4**: Committed with both citation guards RED again, **predicted in the sealed gate BEFORE dispatch** rather than explained afterwards; the prediction was then checked and matched exactly.
-- **cycle 4**: Forbade the builder from editing the four matrix rows and made that a gate cell rather than a hope — the rows describe a real past CI run, and "fixing" them to match the local suite would fabricate a result that never ran.
-- **cycle 4**: Reported C7 as an **unfixed column** rather than letting the C4a/C4b win imply coverage it did not buy.
-- **cycle 4**: Closed Q-2 by discovering its remaining work was a file that has never existed — a PLAN-time `files_hint` restated as an observation, twice, with no cycle spending four seconds to `ls` it.
-- **cycle 5**: Salvaged the crashed cycle's uncommitted Q-8 work and committed it as **verified, not WIP** — authored a 6-cell gate at verification time that the (long-dead) builder never saw.
-- **cycle 5**: Verified the cited CI run against **GitHub's API and its four job logs**, not against the document doing the citing.
-- **cycle 5**: Filed the README-vs-history rule disagreement as KI-R6-5/Q-10 and **did not fix it** — WRAP_UP finishes nothing new.
+- **cycle 0**: Re-aimed the brief's "harden tests / polish docs" onto **reducing the guard layer's maintenance tax** — because coverage is already 100% line / 100% func / 98.44% branch (the one miss classified BOUNDARY), while `test/` is 4,409 lines guarding a 594-line program and 3,286 of those guard *documents*. A new product test would have been written to a number, not to a defect.
+- **cycle 0**: Retired run #6's `>= 121 tests` invariant for a detection floor — a test-COUNT floor can only be satisfied by growth, which makes consolidation a spec violation regardless of whether detection is preserved. It is the specific mechanism that kept KI-R6-3 open for two runs.
+- **cycle 0**: Acted on the taste judge's finding **before** lock rather than recording it — R-1's mutation set was bounded by a stated rule, capped at 30, given an identity control, and required to ship as a rerunnable harness. A floor nobody can re-run is not a floor.
+- **cycle 0**: Planned the run as ONE session and said so in the spec, on the measurement that the whole window sat inside an exhausted weekly limit. **This prediction was correct in kind and wrong in degree** — the delivered count was zero work cycles, not one.
+- **cycle 0**: Did NOT re-attempt the `swarm-playbook.sh` allowlist call or the `settings.json` write (L-045).
 
 ## Known issues
 
-- **KI-R6-1** (med, cycle 0): The watchdog DONE-guard keys on `REPORT.md` *existing*, which on an improvement run is true from cycle 0 because run #5 wrote it — so `swarm-watchdog.timer` read "all-done / reports-present" and **no-opped on every firing for the entire run**. Mitigation at kickoff was `swarm-pacer.timer`; that mitigation then failed (see KI-R6-6). Tool bug; hard rule 5 forbids repairing it mid-run. **Human item.**
-- **KI-R6-2** (med, cycle 0): `bin/swarm-playbook.sh` has **no allowlist entry under any path form** in `/opt/swarm/.claude/settings.json`. Confirmed structural at wrap-up per L-039's diagnostic: re-executed under the bare absolute-path form (no env prefix, no compound command), denied, then confirmed by grepping the settings file — `swarm-budget.sh` and `swarm-notify.sh` are both present; this one has never been added. Denial #36, 10th consecutive. Playbook directives were staged by direct `Read`, so **the file was never validated by the script's own parser this run**. **Human item** — see `HANDOFF-allowlist-2026-08-17.md`.
-- **KI-R6-3** (low, cycle 2): Two guards in `test/readme-tags.test.js` read the same table row. **Induced by the conductor's dispatch**, which mandated both a re-anchor and a no-shrink floor; the builder disclosed it rather than hiding it. Harmless but not coverage — a candidate consolidation once the Q-5 floor is not binding.
-- **KI-R6-4** (low, cycle 4): The README Node-support matrix can still be falsified **wholesale**. Gate cell C7 changed all four rows together to a self-consistent falsehood and `test/readme-matrix-consistency.test.js` stayed SILENT (5 pass / 0 fail). Per-row arithmetic and cross-row agreement catch a single bad row, a transcription slip, or a partial edit — **not a lie told consistently**. Closing it needs an anchor outside the document (live network provenance, or a committed machine-readable CI artifact). **Operator's call — Q-9.**
-- **KI-R6-5** (low, cycle 5): `docs/node-support-citation-history.md` **paraphrases** the rewritten citation-selection rule instead of quoting it, and the paraphrase is a *different rule*: it selects "the most recent run whose cited commit's content is byte-identical to this tree", which on this tree selects `3a5d6e3` @ run `32405575919` (35 seconds more recent, and `git diff 7e50d6f..3a5d6e3 -- src bin test .github` is empty) — **not** the `7e50d6f` the README cites. The README's own rule is correct and green; no guard reads the history file's prose, so nothing catches the disagreement. Fix is one line: quote the rule verbatim. **Q-10.**
-- **KI-R6-6** (high, cycle 5, found at wrap-up): The run **overshot `stop_at` by 25.5 hours**, and the cause is a usage wall, not a dead pacer. Between 2026-08-20T18:59:48Z and 2026-08-22T16:04:02Z the pacer fired faithfully every ~5 minutes and **spawned 504 cycles; all 503 that completed died in ~380 ms with HTTP 429 — `You've hit your weekly limit · resets Aug 24, 5am (UTC)` — before their first turn.** Zero other failure causes; the classification is exhaustive, not sampled. This is **L-037's first clause re-observed exactly**: a conductor that dies on a usage-limit error before its first turn is invisible to limp mode (limp needs a session alive enough to run the tier probe), so the *spawner* must set the limp flag itself instead of respawning on the same schedule. `swarm-pacer.sh` does not — it logs `cycle-failed` and retries at the same cadence, burning 504 spawns against a wall while a crashed cycle's finished work sat uncommitted the entire time. The runfile's last probe had already recorded `weekly_used_pct: 100`. **Human item.**
+Carried unchanged from run #6 — no cycle ran to address or re-observe any of them, except KI-R6-6, which this run reproduced at larger scale.
 
-  > **This entry corrects an earlier version of itself.** The first diagnosis, written earlier in this same wrap-up, said "the pacer produced no cycle in that window" and recommended a pacer liveness check. Reading `runs/pacer.log` falsified it in one command. The wrong version was not merely imprecise — it pointed at the wrong fix: **a liveness check would have passed every single time** while the run stayed dead. It is corrected here rather than left standing, because it is the same error class this run spent five cycles hunting in documents (a claim restated confidently from adjacent evidence instead of measured at its source), committed by the conductor about its own harness.
+- **KI-R6-6 (high)**: the spawner respawns into a usage limit on a fixed cadence instead of backing off to the reset time the runfile already carries. **Re-measured this run and worse: 382 sessions spawned, 381 `cycle-failed`, 381 of 381 carrying `You've hit your weekly limit · resets 5am (UTC)`, zero other causes, median lifetime 415 ms at `num_turns: 1`.** Cumulative over runs #6 and #7: **885 dead spawns.** Found cycle 5 (run #6); reproduced across the entirety of run #7. Human item — `bin/` is read-only under hard rule 5.
+- **KI-R6-1 (med)**: the watchdog DONE-guard keys on `REPORT.md` *existing*, which on an improvement run is true from cycle 0, so `swarm-watchdog.timer` no-ops on every firing and the run has no watchdog crash recovery. Found cycle 0. Mitigation (pacer drives cycles directly) was live — and this run demonstrates its limit: **the pacer was alive and firing the whole time; what was dead was every session it started.**
+- **KI-R6-2 (med)**: `bin/swarm-playbook.sh` has no allowlist entry under any of the 11 `swarm-*` forms. Re-confirmed by reading `settings.json` at this wrap-up. Human item — see `HANDOFF-allowlist-2026-08-17.md`.
+- **KI-R6-3 (low)**: two guards in `test/readme-tags.test.js` read the same "Tags on exactly one entry" table row. Found cycle 2 (run #6). R-2 was written to close it; R-2 did not run.
+- **KI-R6-4 (low)**: the README Node-support matrix can still be falsified *wholesale* — a self-consistent lie across all four rows passes every per-row and cross-row check. Found cycle 4 (run #6). Needs an operator ruling (Q-9) on whether an out-of-document anchor is worth its cost.
+- **KI-R6-5 (low)**: `docs/node-support-citation-history.md` paraphrases the citation-selection rule, and the paraphrase selects a *different* commit than the README's rule does. Found cycle 5 (run #6). R-3 was written to close it; R-3 did not run.
 
 ## Night log
 
-- **cycle 0**: KICKOFF. Stress-test verdict RESHAPE (confidence 7); brief re-aimed onto one falsifiable experiment. Q-6 closed by a single read. Watchdog no-op identified and journaled *before* it mattered.
-- **cycle 1**: Q-1 — the run journal leaves the README (−5,563 bytes). Gate 7/7. **Zero guards broke**, so they were anchored to structure, not to the padded prose: the run's premise was half wrong in the useful direction.
-- **cycle 2**: Q-4 — tag counts leave the prose; guards stop punishing honest writing. Gate 14/14. Committed with a citation guard RED by design; Q-7 filed.
-- **cycle 3**: Q-7 — re-cited to the run that is *eligible*, not the one that is newest. Gate 17/17, suite 124/124/0. Green at commit, re-measured rather than assumed.
-- **cycle 4**: Q-3 — the matrix table's own numbers get a guard, and the silence stops. Gate 20/20. C4a/C4b go SILENT → FIRES on byte-identical inputs. C7 measured silent and reported as an unfixed column. Q-2 closed on a file that never existed.
-- **cycle 5**: WRAP_UP, 25.5h late. Crashed-cycle salvage gated 6/6 against GitHub's own job logs; suite 129/129/0/0; KI-R6-5 found while reading the diff of a gate that had already passed; KI-R6-6's own first diagnosis found wrong and corrected against the pacer log (504 spawns, 503 × HTTP 429 weekly limit).
+- **cycle 0** (2026-08-22T18:31:48Z → 18:47:13Z): KICKOFF. Stress-test verdict RESHAPE (confidence 8) re-aimed the brief; prior-art scout ran; taste judge scored use-twice **4** / product-not-demo 8 / scope-fits-night 8 / one-memorable-thing 6; spec locked; backlog seeded R-1…R-6; R-6 closed by one read; baseline recorded (129/129 green, both invariants captured); dashboard rendered; goodnight push sent 18:45:58Z. Committed `55dfbb8`. **Then the session died on the weekly limit** — `runs/kickoff-1787423508.log` contains exactly one line: `You've hit your weekly limit · resets Aug 24, 5am (UTC)`. Logged `auto-kickoff-failed` at 18:47:13Z.
+- **18:47:13Z 2026-08-22 → 04:56:58Z 2026-08-24** (~34.2 hours): the pacer fired faithfully every ~5 minutes and spawned **381** cycles. All 381 died on HTTP 429 before their first turn. No cycle 1 exists.
+- **cycle 0 (wrap-up)** 2026-08-24T05:02:07Z: the 382nd spawn — started **two minutes after the weekly reset** — is the first session in 34 hours to reach a turn. `now` is 10.5 h past `stop_at`, so the step-1 clock check routes it straight to WRAP_UP. It verified the baseline, wrote this report, and stopped.
 
 ## Night control log
 
-_No commands received._
+_No commands received._ (`runs/control.json`: `pending: []`, `applied: []`; poll at wrap-up returned `merged=0`.)
 
 ## Stats
 
 | Stat | Value |
 |---|---|
-| Cycles run | **5** (0–5), against an expected shape of 3–5 |
-| Commits | 11 (baseline `3a17cc5` → `180e9da`), all pushed |
-| Agents dispatched | 5 builders (k=1 every wave) + 1 taste judge + 1 stress-test pass |
-| Models used | sonnet (build/test items), fable (judgment seats — never demoted, per the fable guard) |
-| Notifications sent | 8 `ok` lines in `runs/notify.log` |
-| Pace | mode **guest**, dial 0.3, gear range **2–2** (ρ ≈ 0.51; guest clamps to 1–3 and never upshifts). Window utilization at each in-run reset: **not measured — no probe ran after 2026-08-20T18:21Z**, and the run then idled ~25h across roughly five resets. Voluntary idle cycles: 0 — the 25.5h gap was a **weekly-limit wall**, not idle: 504 spawns, 503 × HTTP 429. |
+| Cycles run | **1** (cycle 0 only — cycle 1 never started) |
+| Commits | 2 (`55dfbb8` kickoff; this wrap-up commit) |
+| Agents dispatched | **1** — the kickoff taste judge. **Zero** builder, reviewer, or QA agents were ever dispatched. |
+| Models used | fable (taste judge). No build/review/QA routing was ever exercised. |
+| Notifications sent | 3 (`auto-kickoff`, `goodnight`, `wrap-up`) |
+| Pace | mode **guest** (dial 0.30), gear range **2–2** (one probe, ρ 1.35), governor clamped: ceiling 3, promote blocked, weekly 100% / opus 100% used at 79.5% week elapsed. Window utilization at the in-run reset: **100% consumed, ~0% of it this run's**. Voluntary idle cycles: **0** — the run was never idle by choice; it was locked out, 381 times. |
 
 ## Honest hand-off
 
-**Machine-checked, and you can trust it:** the suite is 129/129/0/0 at `180e9da` and green in CI on Node 18, 20, 22 and 24. Every guard added this run was shown both *failable* and *attributable* (the mutation was run twice, once with the new test removed), and each was paired with a converse control that must stay green — so none of them is a snapshot hash wearing an assertion's clothes. The README's CI citation is verified against GitHub's API and all four job logs, not against itself. `src/corpus.js` and `--help` are byte-identical to the kickoff baseline; the CLI's behavior did not change at all this run, by design.
+**Machine-checked at this wrap-up:** the suite (129/129 green), both R-5 invariants (`src/corpus.js` and `--help` sha256, byte-identical to baseline), a clean working tree, and the 381-of-381 failure classification — that last one is exhaustive over `runs/pacer.log` and every `runs/cycle-*.json` written since kickoff, not a sample.
 
-**Machine-checked, with a stated limit:** the matrix guard catches a single falsified row, a transcription slip, or a partial edit. It does **not** catch all four rows falsified together consistently — that was measured, not assumed (KI-R6-4), and closing it needs an anchor outside the document. A narrowed hole stated as narrowed is worth more than a closed hole claimed.
+**Not run, and reported as not-run:** the kickoff's headless zero-prompt assert (denied, #37). It produced no signal in either direction — and it was precisely the probe that would have measured whether pacer-spawned sessions could run at all that night. That question stayed unanswered until 34 hours of 429s answered it the expensive way.
 
-**Only a human can finish these:**
-1. **The product question, raised for the third consecutive run by a fourth independent taste judge.** "Would you use this twice?" scores **4/10**. The fix — corpus depth, or no-repeat rotation so 50 canon-only entries stop repeating by roughly the 9th draw — is a user-visible feature and is locked out by the allocator brief in every run so far. Three runs have now re-derived this same conclusion at the cost of three runs' worth of manufactured chores. **This is an operator lever; the swarm cannot pull it.** (Backlog: TS-1, TS-2, TS-3.)
-2. **Q-9 / KI-R6-4** — is a coordinated table-wide falsification worth an out-of-document anchor? Both mechanisms (live network provenance; a committed CI artifact) change what CI is responsible for. Your call, not the swarm's.
-3. **Q-10 / KI-R6-5** — one-line doc fix: make the history file quote the README's selection rule instead of paraphrasing it.
-4. **KI-R6-2** — add `bin/swarm-playbook.sh` to the allowlist. Ten consecutive denials; this run's playbook handling was staged by hand and **never validated by the script's parser**.
-5. **KI-R6-6** — the account hit its **weekly usage limit** (resets Aug 24, 5am UTC) and the pacer respawned into it 504 times over 25.5 hours, ~5 minutes apart, each spawn dying on a 429 before its first turn. The spawner needs to set the limp flag on a usage-shaped launch failure and back off, as L-037 already prescribes; the watchdog could not cover for any of it (KI-R6-1). Needs a human.
-6. **Corpus attribution** (T-006, T-040) and **seven unspecified CLI behaviours** (J-7) remain human rulings, unchanged from prior runs.
+**What only a human can finish:**
 
-**Not run, and reported as not-run:** no full QA pass ran after cycle 1 (`qa.last_full_qa_cycle: 1`); no taste pass ran this run at all (`last_taste_cycle` unset — the cycle-0 taste judge ran at kickoff, before any code moved); no security review was performed; no window-utilization telemetry exists for the 25h idle gap. None of these should be read as passed.
+1. **The scheduler, and it is now the whole story.** Two consecutive runs, 885 spawned sessions, one mechanism: `bin/swarm-pacer.sh` retries on a fixed ~5-minute cadence after a usage-shaped launch failure, and never consults `runfile.usage_reset_at` — a timestamp *this run's own cycle-0 probe wrote into the runfile 15 minutes before the first of its 381 dead spawns*. Two changes, both outside a run's reach under hard rule 5: (a) back the retry cadence off to the known reset, and (b) refuse an auto-kickoff whose entire window sits past an exhausted limit's reset, requeuing the slice instead of reshaping its scope. Recorded as L-037 (observed 4) and L-038 (observed 3).
+2. **The brief, for the fifth consecutive run.** Four independent taste judges have now scored this product's use-twice dimension at **4/10**, and all four named the same cause: corpus depth and no-repeat rotation. Both are locked out by the trickle brief's "no new features". This run never reached the point of being constrained by that — but if run #8 opens with the same brief, it will spend its clock the way runs #2–#6 did. The lever is the brief, not the machinery.
+3. **The two open rulings**, unchanged: Q-9 (is a coordinated table-wide falsification worth an out-of-document anchor?) and the corpus-attribution audit (T-006).
+
+**What run #8 inherits, and it is not nothing:** a locked, stress-tested, taste-corrected spec with six fully-specified items, four of them ready to dispatch on the first cycle, and a baseline captured to the byte. The design work of this run survived; only its execution didn't.
 
 ---
 
-Repo tagged `improvement-run-6-2026-08-22`. Generated by /swarm WRAP_UP at 2026-08-22T16:04Z.
+Repo tagged `improvement-run-7-2026-08-24`. Generated by /swarm WRAP_UP at 2026-08-24T05:10:00Z.
