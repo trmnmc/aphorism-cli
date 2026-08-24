@@ -6,7 +6,7 @@
   "run_started_at": "2026-08-24T13:05:56.000Z",
   "kickoff_source": "allocator",
   "phase": "BUILD",
-  "cycle": 10,
+  "cycle": 11,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "spec_digest": [
@@ -178,6 +178,18 @@
       "cycle": 10,
       "kind": "correction",
       "text": "AN EIGHTH CONSECUTIVE CYCLE OF CONDUCTOR-INSTRUMENT DEFECTS -- four in this cycle, all four caught, none by a gate script, because this cycle again had none (cf. D-R8-23). (1) The very first W-6 measurement ran with the Bash shell's cwd still at /opt/swarm from an earlier cd, so it hashed the WRONG REPO and printed an empty protected-path status that was true of SWARM and meaningless about the target. That is the RV-11 defect class -- cwd inheritance producing a confident claim about the wrong repository -- biting the instrument that was checking for it, in the same cycle, and it is the FALSE-NEGATIVE direction, which discards true findings rather than admitting false ones. Re-taken with explicit `git -C`. (2) test_cmd was run against a HAND-EXPANDED file list that both invented three files which do not exist (aphorism/corpus/tags.test.js) and omitted three that do (args/pipe/select.test.js); node --test did not error on the invented ones, so it silently reported 66 tests where the baseline is 128. Caught only because 66 contradicted a known number. Re-taken as the LITERAL test_cmd through a shell so the glob expands: 128/128/0/0. (3) The manifest check used the pattern `.*lock` and matched `journal-block.md` seven times -- a false positive on the word BLOCK. Re-taken with an anchored alternation of real manifest filenames. (4) The dependency classifier omitted the colon from its specifier shape test, so every `node:` builtin failed the test and was dropped BEFORE counting; it printed '0 specifiers scanned' over 29 real imports -- a vacuous NONE that would have read as proof. Caught because the converse control found 2 planted deps while the subject found 0 to look at, which is incoherent. Re-taken with node:/relative/foreign bucketed separately: 29 = 29 + 0 + 0. THIRTEEN through SIXTEEN distinct root causes across eight cycles, still sharing nothing with each other. The constant is unchanged and now has sixteen instances: one-shot instruments are written once, run once, and reviewed by nobody, while the code they judge gets a builder, a gate and a converse control. But note what caught all four: a number that contradicted a known baseline, a control that disagreed with its own subject, and raw output printed beside its own label. Not care -- structure. Every one of these was caught by the SAME habit D-R8-17 named: print the evidence next to the claim and read whether they agree. That habit is the run's primary RETRO candidate and it is now the only thing standing between this conductor and a false report."
+    },
+    {
+      "id": "D-R8-26",
+      "cycle": 11,
+      "kind": "correction",
+      "text": "BACKLOG ID COLLISION, found at orient and repaired before dispatch. Cycle 10 filed its follow-up item as W-14 -- an id already held by a DONE cycle-5 item -- so backlog.json carried two live entries under one key, and a lookup by id returned whichever came first (the done one). Nothing downstream had consumed the bad id yet, because the item was filed at the end of cycle 10 and this is the first cycle to read it. Renamed to W-15, the collision recorded in the item's own notes, and the whole backlog re-scanned: zero duplicate ids remain across 51 items. The generalisable point is that the id is the ONLY handle the pipeline has on an item -- state.json, the journal, the dashboard and the gate all address items by id -- so a duplicate is not cosmetic; it silently redirects a verdict onto the wrong row. Cheap to detect (one pass over the array) and it was never checked. Cycle 10's own hygiene pass at cycle % 5 == 0 reported 'no duplicates' one cycle before creating this one, which is honest -- the duplicate did not exist yet -- but it means the check ran at the one moment it could not catch this."
+    },
+    {
+      "id": "D-R8-27",
+      "cycle": 11,
+      "kind": "ruling",
+      "text": "A CATEGORICAL NEGATIVE FROM A STATIC SCAN MUST BE BOUNDED BY ITS SEARCH -- ruled at RV-10, and the ruling is broader than the item. guard-inventory printed 'VERDICT: ABSENT. No guard anywhere in test/ (or CI) asserts any floor', a universal claim over all possible code, on the strength of two regexes. It was evadable in one direction: the same working floor guard written '120 < n' rather than 'n > 120' produced NONE/NONE/ABSENT while section E listed that very guard by title, three lines earlier. This run RETIRED count-floor guards on the strength of that verdict, so the sentence was load-bearing. The clause offered two routes (widen the detectors OR bound the sentence) and the builder took both, correctly: widening alone leaves a universal claim no static scan can underwrite at any width, and bounding alone leaves a detector blind to the commoner operand order. What makes the fix structural rather than cosmetic is that section G now prints its probe list by iterating the SAME FLOOR_PROBES table the scan iterates, so the published description of the search cannot drift from the search. The one part still hand-written -- the 'what this would not catch' list -- was disclosed by the builder unprompted and filed as P-5 rather than left implicit. Note the direction of that residual: it makes the tool understate its own blind spots, which is the safe direction for a disclaimer and the unsafe direction for a verdict."
     }
   ],
   "qa": {
@@ -185,13 +197,13 @@
     "last_full_qa_cycle": null,
     "last_taste_cycle": null,
     "last_review_fix_cycle": 9,
-    "last_build_wave_cycle": 10
+    "last_build_wave_cycle": 11
   },
   "counters": {
     "consecutive_no_value": 0,
     "k_current": 5,
-    "wave_streak": 0,
-    "window_tokens_attributed": 23005442
+    "wave_streak": 1,
+    "window_tokens_attributed": 58727139
   },
   "known_issues_file": "known-issues.json",
   "prior_runs": {
@@ -199,9 +211,9 @@
     "note": "runs #1-#7; run #7 delivered ZERO work cycles (usage lockout). Done items archived to backlog-archive-runs1-7.json."
   },
   "last_cycle": {
-    "cycle": 10,
-    "work": "build-wave (headless fallback: 2 sonnet builders, disjoint scopes declared in-prompt; gear-2 cap k=2)",
-    "outcome": "value -- 6 of 6 items verified, 2 blockers among them. The detection floor stopped being a snapshot: CLAIM-GONE 3 rows -> 0, and the deletion experiment the acceptance clause required (which the builder reported it could not complete) was run by the conductor in an isolated clone and yields DETECTION-LOST (3) / VERDICT: FAILURE / exit 1 where the pre-fix tool printed HOLDS / exit 0. Five doctorings on the default no-flag path each turn the run red with pristine-restore converse controls. citation-rule-check no longer blesses a 0-byte quote; citation-tax no longer measures the caller's repo. KI-38/39/41/43 closed. One new defect recorded against a passing item (P-4/KI-44, D-R8-24) and four conductor-instrument slips caught and re-taken (D-R8-25).",
-    "ts": "2026-08-24T18:57:08+00:00"
+    "cycle": 11,
+    "work": "build-wave (headless fallback: 2 direct Agent builders, disjoint scopes declared in-prompt; gear-2 cap k=2 — sonnet + opus)",
+    "outcome": "value -- 2 of 2 items verified, both by conductor-authored checks the builders never saw. W-15: the detection floor stopped reporting STALE and certifies again, and the committed record was proven RUN rather than typed by an INDEPENDENT conductor re-measure agreeing 18/18 rows and on the identity control. RV-10: the count-floor detector's one-directional blind spot is closed in both operand orders plus a named-const form, proven against a floor guard the conductor wrote and proved failable (PASS at 120, FAIL at 900), with the pre-fix tool printing ABSENT on the identical tree; sections A-E byte-identical, converse control still ABSENT. Backlog id collision W-14 found at orient and repaired (D-R8-26). One new item filed from a builder's unprompted disclosure (P-5).",
+    "ts": "2026-08-24T19:24:24+00:00"
   }
 }

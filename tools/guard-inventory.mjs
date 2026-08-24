@@ -22,6 +22,12 @@
 // cross-check the statically-derived test counts against the runner's own
 // count). It writes nothing, so the working tree stays byte-identical.
 //
+// Section G's suite-size-floor verdict is BOUNDED, not categorical: it prints
+// the exact probe table it ran (section F's probes, generated from the same
+// array) and the classes of floor that table structurally cannot see. "ABSENT"
+// here means "not detected by these probes", and says so in those words. See
+// the probe-table comment above auditSuiteFloor().
+//
 // ---------------------------------------------------------------------------
 // INCLUSION RULE (the classifier, stated for the skeptical reader)
 // ---------------------------------------------------------------------------
@@ -413,7 +419,83 @@ function claimLine(a) {
 
 // ---------------------------------------------------------------------------
 // Suite-size floor audit.
+//
+// THE PROBE TABLE IS THE SEARCH SURFACE. Every floor probe below is both RUN
+// (section F) and PRINTED (section G) from this one table, so the tool's
+// statement of "what was searched" cannot drift from what it actually
+// searched. Section G's verdict is bounded by this table by construction: it
+// reports what these probes did and did not find, never a categorical
+// "no floor exists anywhere".
+//
+// Deliberate breadth choices, and why:
+//   - comparisons are matched in BOTH operand orders (`n > 120` and
+//     `120 < n`); an earlier version matched only literal-on-the-right, which
+//     made a genuinely failing floor invisible purely by operand order;
+//   - a bound named by a same-file `const/let/var NAME = <3+-digit literal>`
+//     is resolved and matched too, so `const FLOOR = 120; assert(n > FLOOR)`
+//     is caught;
+//   - directory enumeration is matched by CALLEE ONLY, with the argument
+//     never inspected, so `readdirSync(SUITE_DIR)` counts exactly as much as
+//     `readdirSync('test')` does. An earlier version required the token
+//     "test" to appear inside the call parentheses, which any census that
+//     resolves its own directory evades without trying.
+// The honest limit -- restated in section G's output, not just here -- is
+// that this is a static, textual search: a bound that is computed rather
+// than written, a 1-2 digit bound, or a call reached through a computed
+// property or an alias will not appear.
 // ---------------------------------------------------------------------------
+
+// A suite-size floor needs a bound big enough to be a test count. 3+ digits
+// is the rule constant; see FLOOR_PROBE_LIMITS for what that excludes.
+const FLOOR_MIN_DIGITS = 3;
+const FLOOR_LITERAL_SRC = '\\d{' + FLOOR_MIN_DIGITS + ',}';
+// Comparison operators, longest-first so `>=` is not matched as bare `>`.
+const CMP_SRC = '(?:>=|<=|===|!==|==|!=|>|<)';
+const DIR_ENUM_SRC = '\\b(?:readdirSync|readdir|opendirSync|opendir|globSync|glob)\\s*\\(';
+
+const FLOOR_PROBES = [
+  {
+    id: 'F.i.a', group: 'i', on: 'code',
+    re: new RegExp(CMP_SRC + '\\s*' + FLOOR_LITERAL_SRC + '\\b'),
+    label: 'comparison against a ' + FLOOR_MIN_DIGITS + '+-digit literal, literal on the RIGHT  (`n > 120`)',
+  },
+  {
+    id: 'F.i.b', group: 'i', on: 'code',
+    re: new RegExp('\\b' + FLOOR_LITERAL_SRC + '\\s*' + CMP_SRC),
+    label: 'comparison against a ' + FLOOR_MIN_DIGITS + '+-digit literal, literal on the LEFT   (`120 < n`)',
+  },
+  {
+    id: 'F.i.c', group: 'i', on: 'code', re: null, // resolved per file, below
+    label: 'comparison against a same-file `const/let/var NAME = <' + FLOOR_MIN_DIGITS
+      + '+-digit literal>` bound, either operand order  (`const FLOOR = 120; n > FLOOR`)',
+  },
+  {
+    id: 'F.ii.a', group: 'ii', on: 'code+strings',
+    re: /--test\b/,
+    label: 'spawns the Node test runner: the token `--test` in code or string position',
+  },
+  {
+    id: 'F.ii.b', group: 'ii', on: 'code',
+    re: new RegExp(DIR_ENUM_SRC),
+    label: 'enumerates a directory: a call to readdirSync/readdir/opendirSync/opendir/globSync/glob '
+      + 'with ANY argument -- the argument is never inspected, so a census of `__dirname` or of a '
+      + 'named constant counts exactly as much as a census of the literal path `test`',
+  },
+];
+
+// What the probe table structurally cannot see. Printed verbatim in G so the
+// verdict is bounded by its own search rather than stated categorically.
+const FLOOR_PROBE_LIMITS = [
+  'a bound that is COMPUTED rather than written as a literal (read from a file or env var, '
+    + 'derived by arithmetic, imported from another module);',
+  'a bound of fewer than ' + FLOOR_MIN_DIGITS + ' digits (a floor written `n > 99`);',
+  'a runner spawn or directory census reached through a computed property (`fs[\'readdirSync\'](d)`), '
+    + 'a re-exported alias, or a helper defined in a file this scan does not read;',
+  'anything outside the scanned set (test/, src/, bin/, package.json, .github/) -- notably tools/, '
+    + 'which is excluded on purpose because this report necessarily names the premise itself;',
+  'a floor enforced outside the repository entirely (a branch-protection rule, a required external check).',
+];
+
 function auditSuiteFloor(testFiles) {
   const findings = { occurrences121: [], codeFloors: [], selfSpawns: [], workflowComments: [], workflowCodeHits: [], workflowGlobGate: null };
 
@@ -449,25 +531,60 @@ function auditSuiteFloor(testFiles) {
     });
   }
 
-  // Floor-shaped assertions in test code: any comparison against a 3+ digit
-  // literal (a suite of >100 tests would need one), and any spawn of the
-  // test runner from inside a test (a self-measuring suite-size check would
-  // need `node --test` or a test/ directory census).
+  // Floor-shaped assertions in test code, driven by FLOOR_PROBES above: any
+  // comparison against a test-count-sized bound (a suite of >100 tests would
+  // need one) in EITHER operand order, whether the bound is written inline or
+  // named by a same-file const; and any spawn of the test runner or
+  // enumeration of a directory from inside a test (a self-measuring
+  // suite-size check needs one or the other), with the enumerated path never
+  // inspected.
   for (const f of testFiles) {
     const src = readFileSync(path.join(ROOT, 'test', f), 'utf8');
-    const code = stripSource(src); // comments AND strings stripped
-    code.split('\n').forEach((line, idx) => {
-      if (/(>=|<=|>|<|===|==)\s*\d{3,}\b/.test(line)) {
-        findings.codeFloors.push({ file: 'test/' + f, line: idx + 1, text: src.split('\n')[idx].trim() });
+    const rawLines = src.split('\n');
+    const code = stripSource(src).split('\n');                        // comments AND strings stripped
+    const codeStr = stripSource(src, { keepStrings: true }).split('\n'); // comments stripped, strings kept
+    const pick = (on) => (on === 'code' ? code : codeStr);
+
+    // F.i.c: resolve same-file names bound to a floor-sized literal, so a
+    // comparison written against the NAME is caught as well as one written
+    // against the digits. Whole-file scan (declaration may follow use).
+    const namedBounds = new Map();
+    {
+      const declRe = new RegExp('\\b(?:const|let|var)\\s+([A-Za-z_$][\\w$]*)\\s*=\\s*(' + FLOOR_LITERAL_SRC + ')\\b', 'g');
+      for (const m of stripSource(src).matchAll(declRe)) namedBounds.set(m[1], m[2]);
+    }
+    const namedBoundProbes = [...namedBounds].map(([name, lit]) => ({
+      name, lit,
+      re: new RegExp('(?:' + CMP_SRC + '\\s*\\b' + name + '\\b|\\b' + name + '\\b\\s*' + CMP_SRC + ')'),
+    }));
+
+    for (const probe of FLOOR_PROBES) {
+      const lines = pick(probe.on);
+      const bucket = probe.group === 'i' ? findings.codeFloors : findings.selfSpawns;
+      if (probe.id === 'F.i.c') {
+        lines.forEach((line, idx) => {
+          for (const nb of namedBoundProbes) {
+            if (!nb.re.test(line)) continue;
+            bucket.push({
+              file: 'test/' + f, line: idx + 1, text: rawLines[idx].trim(),
+              probe: probe.id, note: 'via `' + nb.name + '` = ' + nb.lit,
+            });
+            break;
+          }
+        });
+        continue;
       }
-    });
-    const codeWithStrings = stripSource(src, { keepStrings: true });
-    codeWithStrings.split('\n').forEach((line, idx) => {
-      if (/--test\b/.test(line) || /readdirSync\([^)]*test/.test(line)) {
-        findings.selfSpawns.push({ file: 'test/' + f, line: idx + 1, text: src.split('\n')[idx].trim() });
-      }
-    });
+      lines.forEach((line, idx) => {
+        if (!probe.re.test(line)) return;
+        bucket.push({ file: 'test/' + f, line: idx + 1, text: rawLines[idx].trim(), probe: probe.id, note: '' });
+      });
+    }
   }
+  // Stable, de-duplicated ordering: a line matched by two probes is reported
+  // once per probe, but the file:line ordering stays readable.
+  const byPlace = (a, b) => (a.file === b.file ? a.line - b.line : a.file < b.file ? -1 : 1);
+  findings.codeFloors.sort(byPlace);
+  findings.selfSpawns.sort(byPlace);
 
   for (const wf of workflowFiles) {
     const src = readFileSync(path.join(ROOT, wf), 'utf8');
@@ -632,15 +749,20 @@ P('== F. SUITE-SIZE FLOOR AUDIT ==');
 P('');
 P('  Question 1: does any guard assert a floor on the size of the suite itself?');
 P('  A suite-size floor would need either (i) a comparison against a hardcoded');
-P('  test-count literal, (ii) a test that spawns `node --test` / censuses test/');
-P('  and counts, or (iii) a CI step that counts tests. Scan results:');
+P('  test-count bound, (ii) a test that spawns `node --test` / enumerates a');
+P('  directory and counts, or (iii) a CI step that counts tests. The exact');
+P('  probes run for (i) and (ii) are listed with the verdict in G. Results:');
 P('');
-P('  (i) comparisons against 3+-digit literals in test code (comments/strings stripped): '
+const hitLine = (h) => '        ' + h.file + ':' + h.line + '  [' + (h.probe || '?') + ']'
+  + (h.note ? ' ' + h.note : '') + '  ' + h.text;
+P('  (i) comparisons against a ' + FLOOR_MIN_DIGITS + '+-digit bound in test code, EITHER operand order,');
+P('      inline literal or same-file named const (comments/strings stripped): '
   + (audit.codeFloors.length === 0 ? 'NONE' : ''));
-for (const h of audit.codeFloors) P('        ' + h.file + ':' + h.line + '  ' + h.text);
-P('  (ii) tests spawning the test runner or censusing test/: '
+for (const h of audit.codeFloors) P(hitLine(h));
+P('  (ii) tests spawning the test runner or enumerating a directory');
+P('      (callee-only match; the enumerated path is never inspected): '
   + (audit.selfSpawns.length === 0 ? 'NONE' : ''));
-for (const h of audit.selfSpawns) P('        ' + h.file + ':' + h.line + '  ' + h.text);
+for (const h of audit.selfSpawns) P(hitLine(h));
 P('  (iii) workflow code lines pairing a 3+-digit number with "test": '
   + (audit.workflowCodeHits.length === 0 ? 'NONE' : ''));
 for (const h of audit.workflowCodeHits) P('        ' + h.file + ':' + h.line + '  ' + h.text);
@@ -663,32 +785,59 @@ P('');
 
 // -------- Section G: verdict --------
 const floorEvidence = [];
-if (audit.codeFloors.length) floorEvidence.push('3+-digit comparison(s) in test code');
-if (audit.selfSpawns.length) floorEvidence.push('test(s) spawning the runner / censusing test/');
+const probesFired = [...new Set([...audit.codeFloors, ...audit.selfSpawns].map((h) => h.probe).filter(Boolean))].sort();
+if (audit.codeFloors.length) floorEvidence.push(audit.codeFloors.length + ' floor-shaped comparison(s) in test code');
+if (audit.selfSpawns.length) floorEvidence.push(audit.selfSpawns.length + ' test(s) spawning the runner / enumerating a directory');
 if (audit.workflowCodeHits.length) floorEvidence.push('workflow code counting tests');
 if (audit.occurrences121.some((o) => o.where === 'CODE/STRING')) floorEvidence.push('"121" in code/string position');
 
 P('== G. VERDICT ON THE INHERITED ">= 121 TESTS" FLOOR PREMISE ==');
 P('');
 if (floorEvidence.length === 0) {
-  P('  VERDICT: ABSENT. No guard anywhere in test/ (or CI) asserts any floor on');
-  P('  the number of tests in the suite.');
+  P('  VERDICT: ABSENT -- BOUNDED BY THE SEARCH BELOW, not a categorical claim.');
+  P('  None of the probes this tool actually ran found any assertion of a floor on');
+  P('  the number of tests in the suite, in test/, src/, bin/, package.json or');
+  P('  .github/. That is a statement about this search, not about all possible code.');
   P('');
-  P('  Evidence that settles it, all re-derived above:');
+  P('  WHAT WAS SEARCHED (printed from the same probe table that produced F, so');
+  P('  this list cannot drift from what actually ran):');
+  for (const probe of FLOOR_PROBES) {
+    P('    - ' + probe.id + '  [' + (probe.on === 'code' ? 'comments+strings stripped' : 'comments stripped, strings kept') + ']');
+    P('        ' + probe.label);
+  }
+  P('    - F.iii  [.github/workflows/*, comments split off]');
+  P('        a workflow code line pairing a ' + FLOOR_MIN_DIGITS + '+-digit number with the token "test"');
+  P('    - F.Q2  [test/, src/, bin/, package.json, .github/]');
+  P('        every occurrence of the literal "121", code and comment position alike');
+  P('');
+  P('  WHAT THIS SEARCH WOULD NOT CATCH (so the verdict above does not claim it):');
+  for (const lim of FLOOR_PROBE_LIMITS) P('    - ' + lim);
+  P('    Read the verdict as: no floor is DETECTED by the probes listed above. A');
+  P('    floor written specifically to evade a static textual scan would not appear');
+  P('    here, and no static scan can close that gap.');
+  P('');
+  P('  Evidence behind the reading, all re-derived above:');
   P('    - the runner-measured suite currently holds ' + totalDynamic + ' tests across '
     + testFiles.length + ' files (static parse agrees: ' + totalStatic + ');');
-  P('    - zero comparisons against 3+-digit literals exist in test code (F.i);');
-  P('    - no test spawns the test runner or censuses test/ to count tests (F.ii);');
+  P('    - zero comparisons against a ' + FLOOR_MIN_DIGITS + '+-digit bound, in either operand order,');
+  P('      inline or via a same-file named const, exist in test code (F.i);');
+  P('    - no test spawns the test runner or enumerates any directory (F.ii);');
   P('    - "121" occurs in this tree only at the ' + audit.occurrences121.length + ' location(s) listed in F, '
     + (audit.occurrences121.every((o) => o.where === 'COMMENT') ? 'ALL in comment/prose position' : 'see positions above') + ';');
   P('    - CI carries a written refusal to add a count assertion (workflow comment');
   P('      quoted in F) and gates only on the glob matching >= 1 file.');
   P('');
-  P('  There is no ">= 121 tests" floor to retire; none is manufactured here.');
+  P('  No ">= 121 tests" floor is detected in this tree; none is manufactured here.');
 } else {
   P('  VERDICT: PRESENT (or indeterminate). The following floor-shaped evidence was');
   P('  found and must be examined at the cited file:line before treating the floor');
   P('  premise as absent: ' + floorEvidence.join('; ') + '.');
+  if (probesFired.length) {
+    P('  Probe(s) that fired: ' + probesFired.map((id) => {
+      const p = FLOOR_PROBES.find((q) => q.id === id);
+      return id + (p ? ' (' + p.label + ')' : '');
+    }).join('\n                      '));
+  }
   P('  See section F above for exact locations.');
 }
 P('');

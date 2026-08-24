@@ -1,0 +1,75 @@
+== GATE HYGIENE ==
+clone (committed)  guard-inventory.mjs: 3412c524
+worktree (builder) guard-inventory.mjs: 55b0af9a
+installed in clone                    : 55b0af9a
+equal to builder worktree            : true
+PRE-FIX copy retained as gi-PREFIX.mjs: 3412c524
+
+================ PLANTED: LEFT-OPERAND  120 < n ================
+--- PRE-FIX tool (committed at HEAD) --- exit 0
+  A suite-size floor would need either (i) a comparison against a hardcoded
+  test-count literal, (ii) a test that spawns `node --test` / censuses test/
+  (i) comparisons against 3+-digit literals in test code (comments/strings stripped): NONE
+  (ii) tests spawning the test runner or censusing test/: NONE
+== G. VERDICT ON THE INHERITED ">= 121 TESTS" FLOOR PREMISE ==
+  VERDICT: ABSENT. No guard anywhere in test/ (or CI) asserts any floor on
+    - zero comparisons against 3+-digit literals exist in test code (F.i);
+    - no test spawns the test runner or censuses test/ to count tests (F.ii);
+--- POST-FIX tool (builder work) --- exit 0
+  A suite-size floor would need either (i) a comparison against a hardcoded
+  test-count bound, (ii) a test that spawns `node --test` / enumerates a
+  probes run for (i) and (ii) are listed with the verdict in G. Results:
+  (i) comparisons against a 3+-digit bound in test code, EITHER operand order,
+        test/zz-conductor-floor.test.js:15  [F.i.b]  assert.ok(120 < n, 'suite shrank below the floor of 120');
+  (ii) tests spawning the test runner or enumerating a directory
+        test/zz-conductor-floor.test.js:11  [F.ii.b]  for (const f of readdirSync(HERE)) {
+== G. VERDICT ON THE INHERITED ">= 121 TESTS" FLOOR PREMISE ==
+  VERDICT: PRESENT (or indeterminate). The following floor-shaped evidence was
+  Probe(s) that fired: F.i.b (comparison against a 3+-digit literal, literal on the LEFT   (`120 < n`))
+                      F.ii.b (enumerates a directory: a call to readdirSync/readdir/opendirSync/opendir/globSync/glob with ANY argument -- the argument is never inspected, so a census of `__dirname` or of a named constant counts exactly as much as a census of the literal path `test`)
+
+================ PLANTED: RIGHT-OPERAND n > 120 ================
+--- PRE-FIX tool (committed at HEAD) --- exit 0
+  A suite-size floor would need either (i) a comparison against a hardcoded
+  test-count literal, (ii) a test that spawns `node --test` / censuses test/
+  (i) comparisons against 3+-digit literals in test code (comments/strings stripped): 
+        test/zz-conductor-floor.test.js:15  assert.ok(n > 120, 'suite shrank below the floor of 120');
+  (ii) tests spawning the test runner or censusing test/: NONE
+== G. VERDICT ON THE INHERITED ">= 121 TESTS" FLOOR PREMISE ==
+  VERDICT: PRESENT (or indeterminate). The following floor-shaped evidence was
+--- POST-FIX tool (builder work) --- exit 0
+  A suite-size floor would need either (i) a comparison against a hardcoded
+  test-count bound, (ii) a test that spawns `node --test` / enumerates a
+  probes run for (i) and (ii) are listed with the verdict in G. Results:
+  (i) comparisons against a 3+-digit bound in test code, EITHER operand order,
+        test/zz-conductor-floor.test.js:15  [F.i.a]  assert.ok(n > 120, 'suite shrank below the floor of 120');
+  (ii) tests spawning the test runner or enumerating a directory
+        test/zz-conductor-floor.test.js:11  [F.ii.b]  for (const f of readdirSync(HERE)) {
+== G. VERDICT ON THE INHERITED ">= 121 TESTS" FLOOR PREMISE ==
+  VERDICT: PRESENT (or indeterminate). The following floor-shaped evidence was
+  Probe(s) that fired: F.i.a (comparison against a 3+-digit literal, literal on the RIGHT  (`n > 120`))
+                      F.ii.b (enumerates a directory: a call to readdirSync/readdir/opendirSync/opendir/globSync/glob with ANY argument -- the argument is never inspected, so a census of `__dirname` or of a named constant counts exactly as much as a census of the literal path `test`)
+
+================ IS THE PLANTED GUARD REAL? ================
+floor=120  exit=0  PASSES  
+floor=900  exit=1  FAILS  suite shrank below the floor of 900
+
+================ CONVERSE CONTROL (guard removed) ================
+exit 0
+  A suite-size floor would need either (i) a comparison against a hardcoded
+  test-count bound, (ii) a test that spawns `node --test` / enumerates a
+  probes run for (i) and (ii) are listed with the verdict in G. Results:
+  (i) comparisons against a 3+-digit bound in test code, EITHER operand order,
+  (ii) tests spawning the test runner or enumerating a directory
+== G. VERDICT ON THE INHERITED ">= 121 TESTS" FLOOR PREMISE ==
+  VERDICT: ABSENT -- BOUNDED BY THE SEARCH BELOW, not a categorical claim.
+    - F.i.a  [comments+strings stripped]
+    - F.i.b  [comments+strings stripped]
+    - F.i.c  [comments+strings stripped]
+    - F.ii.a  [comments stripped, strings kept]
+    - F.ii.b  [comments+strings stripped]
+    - F.iii  [.github/workflows/*, comments split off]
+      inline or via a same-file named const, exist in test code (F.i);
+
+================ OUTPUT CONTRACT A-E, OLD vs NEW, same tree ================
+sections A-E byte-identical: true | old bytes 31572 | new bytes 31572

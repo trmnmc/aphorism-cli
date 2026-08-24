@@ -1,9 +1,9 @@
 {
   "meta": {
     "tool": "tools/mutation-matrix.mjs",
-    "measuredRev": "94d7dd95efaeed6783dd07347bdda03dab8684da",
-    "measuredCommit": "94d7dd95efaeed6783dd07347bdda03dab8684da",
-    "baselineCommit": "94d7dd95efaeed6783dd07347bdda03dab8684da",
+    "measuredRev": "585683734ea56e08671bfcc9be9310130e511542",
+    "measuredCommit": "585683734ea56e08671bfcc9be9310130e511542",
+    "baselineCommit": "585683734ea56e08671bfcc9be9310130e511542",
     "baselineCommitShort": "20b7ede",
     "node": "v24.19.0",
     "suiteCommand": "node --test --test-reporter=tap <test/*.test.js, glob expanded by readdir>",

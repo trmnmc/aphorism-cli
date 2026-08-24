@@ -1,0 +1,142 @@
+CYCLE 11 — VERIFICATION EVIDENCE, item W-15 (re-measure the detection-floor final record)
+Every command below was run by the CONDUCTOR, not by the builder. Checks authored at verification time.
+
+
+$ node /opt/swarm/runs/gate-c11/w15-gate.mjs     [conductor gate: independent reproduction + doctoring controls]
+== CELL 1: INDEPENDENT REPRODUCTION (the record was RUN, not typed) ==
+repo HEAD                       : 585683734ea56e08671bfcc9be9310130e511542
+committed record measuredCommit : 585683734ea56e08671bfcc9be9310130e511542
+my own run   measuredCommit     : 585683734ea56e08671bfcc9be9310130e511542
+committed rows                  : 18 M01,M02,M03,M04,M05,M06,M07,M08,M09,M10,M11,M12,M13,M14,M15,M16,M17,M18
+my own run rows                 : 18
+rows agreeing id/verdict/tests/fail/skipped: 18 of 18
+identity control  committed     : GREEN tests=128 fail=0 gitDependentGuards.ran=true
+identity control  my own run    : GREEN tests=128 fail=0 gitDependentGuards.ran=true
+
+== CELL 2: DOCTORING CONTROLS (each must fail for its OWN named reason) ==
+[CONVERSE pristine, via the same flags] {"status":0,"line":"VERDICT: DETECTION FLOOR HOLDS at HEAD 585683734ea56e08671bfcc9be9310130e511542"}
+[RV-2 baseline missing M17    ] {"status":1,"line":"FAILURE: baseline record /opt/swarm/runs/gate-c11/doctor/rv2.json does not carry the expected shape -- exactly 18 results with ids M01, M02, M03, M04, M05, M06, M07, M08, M09, M10, M11, M12,"}
+[RV-3 identity GREEN, ran=false] {"status":1,"line":"VERDICT: FAILURE -- the detection floor does NOT hold (or the comparison is untrustworthy)."}
+[RV-4 CAUGHT row with fail=0  ] {"status":1,"line":"VERDICT: FAILURE -- the detection floor does NOT hold (or the comparison is untrustworthy)."}
+--- exit status: 0 ---
+
+
+$ node tools/detection-floor.mjs     [acceptance clause, default no-flag path]
+  M05  test/readme-tags.test.js:85  README tag counts must match corpus
+  M06  test/readme-tags.test.js:102  README must state total unique tags correctly
+  M07  test/readme-tags.test.js:165  README must list all single-entry tags
+  M09  test/readme-tags.test.js:1341  every `| Tag | Count |` table in the real README Tag vocabulary section is a recognised band table (no table may hide under an unrecognised heading shape)
+  M10  test/readme-tags.test.js:1361  every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+  M11  test/readme-tags.test.js:1433  every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+  M12  test/readme-tags.test.js:1598  README must state correct multi-entry and single-entry tag counts
+  M13  test/readme-tags.test.js:1851  README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)
+  M14  test/readme-tags.test.js:2318  README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1)
+  M15  test/readme-tags.test.js:2350  README Attribution table "Rated HIGH risk" count must match the triage doc table (C2)
+  M16  test/readme-tags.test.js:2384  README Attribution section must contain no digit runs outside the counts table (C7)
+  M17  test/readme-tags.test.js:2682  README `--list` format literal matches the shipped binary's actual --list output (T-017)
+  M18  test/readme-tags.test.js:2754  README `--author` matching section must state the correct count of distinct corpus authors (Q-8)
+
+GUARD-CHANGED (1): still detected, but NOT by the baseline's named guard
+  M08  old guard (baseline): test/readme-tags.test.js:434  README Tag vocabulary counts table "Tags on exactly one entry" row matches the corpus (structural replacement for the retired token co-occurrence guard, Q-4)
+       old guard still present at HEAD: NO -- retired/renamed/consolidated
+       now caught by:
+         - test/readme-tags.test.js  README must state correct multi-entry and single-entry tag counts
+
+CLAIM-GONE (0): skipped at HEAD, anchor occurs 0 times -- the claim no longer exists (NOT lost, per ruling W8-R1 above; listed, never folded into the pass)
+
+DETECTION-LOST (0): none
+
+==============================================================================
+VERDICT: DETECTION FLOOR HOLDS at HEAD 585683734ea56e08671bfcc9be9310130e511542
+  every mutation the suite caught at baseline 20b7ede is accounted for:
+  17 same-guard, 1 changed-guard (listed by name above), 0 claim-gone (listed above, ruling W8-R1);
+  0 detection lost; identity control GREEN on both sides; HEAD record fresh.
+--- exit status: 0 ---
+
+
+$ node tools/run-all.mjs     [acceptance clause, tool roll-up]
+  M08  old guard (baseline): test/readme-tags.test.js:434  README Tag vocabulary counts table "Tags on exactly one entry" row matches the corpus (structural replacement for the retired token co-occurrence guard, Q-4)
+       old guard still present at HEAD: NO -- retired/renamed/consolidated
+       now caught by:
+         - test/readme-tags.test.js  README must state correct multi-entry and single-entry tag counts
+
+CLAIM-GONE (0): skipped at HEAD, anchor occurs 0 times -- the claim no longer exists (NOT lost, per ruling W8-R1 above; listed, never folded into the pass)
+
+DETECTION-LOST (0): none
+
+==============================================================================
+VERDICT: DETECTION FLOOR HOLDS at HEAD 585683734ea56e08671bfcc9be9310130e511542
+  every mutation the suite caught at baseline 20b7ede is accounted for:
+  17 same-guard, 1 changed-guard (listed by name above), 0 claim-gone (listed above, ruling W8-R1);
+  0 detection lost; identity control GREEN on both sides; HEAD record fresh.
+
+[run-all] tools/detection-floor.mjs exited 0 (79ms elapsed)
+
+================================================================================
+ROLL-UP
+================================================================================
+  guard-inventory        clean  (exit 0)
+  test-line-delta        clean  (exit 0)
+  mutation-matrix        SKIPPED
+  citation-rule-check    clean  (exit 0)
+  citation-tax           clean  (exit 0)
+  matrix-adjudication    clean  (exit 0)
+  detection-floor        clean  (exit 0)
+
+ROLL-UP: 6/7 ran clean; SKIPPED: mutation-matrix.
+--- exit status: 0 ---
+
+
+$ bash -lc node --test test/*.test.js     [literal test_cmd]
+✔ getListBehaviourSection still fails on a SEPARATOR MISMATCH (not a heading-parse error) under an American-spelled heading (T-027) (0.254801ms)
+✔ README `--list` format literal matches the shipped binary's actual --list output (T-017) (61.109545ms)
+✔ README `--author` matching section must state the correct count of distinct corpus authors (Q-8) (0.836563ms)
+✔ corpus has at least 40 entries (2.844806ms)
+✔ every corpus entry has non-empty text, non-empty author, and an array of tags (3.701288ms)
+✔ filter: author match is case-insensitive (1.38985ms)
+✔ filter: tag match is case-insensitive (0.485466ms)
+✔ filter: author and tag together narrow to the intersection (AND) (0.4618ms)
+✔ filter: undefined/absent options do not filter (0.284548ms)
+✔ pick: same seed over the same candidates always returns the same element (0.616749ms)
+✔ pick: different seeds generally produce different results (0.639703ms)
+✔ pick: undefined seed picks a valid member (random mode) (0.238209ms)
+✔ pick: null seed also triggers random mode and returns a valid member (0.420771ms)
+✔ pick: throws RangeError on empty candidates array (4.025151ms)
+✔ pick: Infinity seed is deterministic and returns a valid member (0.314626ms)
+✔ pick: -Infinity seed is deterministic and returns a valid member (0.279638ms)
+✔ pick: NaN seed still uses the random branch and returns a valid member (0.195537ms)
+✔ pick: finite seed determinism is unchanged by the non-finite-seed fix (0.237628ms)
+✔ pick: every candidate is REACHABLE by an unseeded draw (5.371086ms)
+✔ pick: unseeded draws split the interval EQUALLY across candidates (uniform) (3.310503ms)
+✔ pick: single-element candidates always returns that element regardless of seed (0.485086ms)
+ℹ tests 128
+ℹ suites 0
+ℹ pass 128
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5535.433395
+--- exit status: 0 ---
+
+
+$ bash -lc sha256sum src/corpus.js     [W-6 invariant: corpus sha]
+77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e  src/corpus.js
+--- exit status: 0 ---
+
+
+$ bash -lc node bin/aphorism.js --help | sha256sum     [W-6 invariant: --help sha]
+d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64  -
+--- exit status: 0 ---
+
+
+$ git status --porcelain -- src bin test .github README.md package.json docs     [W-6 invariant: citation pathspec dirty?]
+--- exit status: 0 ---
+
+
+$ git status --porcelain     [builder scope]
+ M .swarm/backlog.json
+ M tools/guard-inventory.mjs
+ M tools/mutation-matrix-final.json
+?? .swarm/runs/cycle-011-verify-RV-10.txt
+--- exit status: 0 ---

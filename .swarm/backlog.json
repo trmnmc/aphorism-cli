@@ -791,7 +791,7 @@
       "packages": [],
       "severity": "high",
       "acceptance": "A CAUGHT verdict must be attributable to a guard that fires BECAUSE the claim became false -- not to a guard that fires because the working tree is dirty. Environmental failures (the base-to-working-tree citation guard, which asserts on any uncommitted src/ edit) must be excluded from the CAUGHT determination or recorded separately. Proof required: M07 must be capable of reporting SILENT when its semantic guards are absent.",
-      "notes": "REPRODUCED both halves. mutation-matrix.mjs:709 is `verdict = run.totals.fail > 0 ? 'CAUGHT' : 'SILENT'`. M07 is the sole 'derivation-source' mutation (edits src/corpus.js, :302-310), and test/node-support-citation.test.js's base-to-working-tree guard ASSERTS (does not skip) on any uncommitted src/ diff whenever the base resolves in a full non-shallow clone -- which the matrix's own scratch clone guarantees, and which the identity control HARD-REQUIRES to run un-skipped. With every semantic guard for M07's claim deleted, the suite still failed exactly 1 test (the citation guard), so the verdict would still read CAUGHT. NUANCE the reviewer understated and the verifier corrected: at real HEAD two genuine semantic guards also fire on M07, so today's CAUGHT is not wholly environmental -- the defect is that the verdict rule cannot DISTINGUISH them, so the row can never go red even after all semantic coverage is gone.",
+      "notes": "REPRODUCED both halves. mutation-matrix.mjs:709 is `verdict = run.totals.fail > 0 ? 'CAUGHT' : 'SILENT'`. M07 is the sole 'derivation-source' mutation (edits src/corpus.js, :302-310), and test/node-support-citation.test.js's base-to-working-tree guard ASSERTS (does not skip) on any uncommitted src/ diff whenever the base resolves in a full non-shallow clone -- which the matrix's own scratch clone guarantees, and which the identity control HARD-REQUIRES to run un-skipped. With every semantic guard for M07's claim deleted, the suite still failed exactly 1 test (the citation guard), so the verdict would still read CAUGHT. NUANCE the reviewer understated and the verifier corrected: at real HEAD two genuine semantic guards also fire on M07, so today's CAUGHT is not wholly environmental -- the defect is that the verdict rule cannot DISTINGUISH them, so the row can never go red even after all semantic coverage is gone. [CYCLE 11 NOTE, planning] RV-5 edits tools/mutation-matrix.mjs, which is inside detection-floor's VERDICT_RELEVANT set. Landing it therefore re-stales tools/mutation-matrix-final.json exactly as cycle 10 did (see W-15). Budget a ~100s re-measure in the SAME cycle that lands RV-5, or the next cycle opens on a STALE instrument again.",
       "found_cycle": 9
     },
     {
@@ -891,7 +891,7 @@
         "S-6"
       ],
       "kind": "fix",
-      "status": "todo",
+      "status": "done",
       "effort": "M",
       "priority": 3,
       "deps": [],
@@ -903,8 +903,9 @@
       "packages": [],
       "severity": "high",
       "acceptance": "The detectors must catch a real suite-size floor written in ordinary forms -- at minimum both operand orders (`n > 120` AND `120 < n`) and a directory census that does not spell 'test' inside the readdirSync call. Or section G must stop printing a categorical negative and state what it actually searched for. Proof: a genuinely working, genuinely failable floor guard must be detected, and the clean tree must still report ABSENT.",
-      "notes": "REPRODUCED including the one-directionality, which is the decisive part. The verifier's evading guard genuinely runs, genuinely passes at the true count, and genuinely FAILS when the floor exceeds the count (raised to 900: 'AssertionError: suite shrank below the floor of 900') -- it is a working floor, not a prop. Written `120 < n` with readdirSync(dir): F.i NONE, F.ii NONE, 'VERDICT: ABSENT. No guard anywhere in test/ (or CI) asserts any floor' -- while section E lists that very guard by title. Written `n > 120`: F.i fires, verdict flips to PRESENT. Converse control holds: on the clean tree ABSENT is currently TRUE. So the published verdict is not wrong today -- but this run RETIRED count-floors on the strength of it, and it is an evadable detector presented as a settled negative. Compounds RV-1: detection-floor's W8-R1 text defers the reworded-claim case to exactly this tool.",
-      "found_cycle": 9
+      "notes": "REPRODUCED including the one-directionality, which is the decisive part. The verifier's evading guard genuinely runs, genuinely passes at the true count, and genuinely FAILS when the floor exceeds the count (raised to 900: 'AssertionError: suite shrank below the floor of 900') -- it is a working floor, not a prop. Written `120 < n` with readdirSync(dir): F.i NONE, F.ii NONE, 'VERDICT: ABSENT. No guard anywhere in test/ (or CI) asserts any floor' -- while section E lists that very guard by title. Written `n > 120`: F.i fires, verdict flips to PRESENT. Converse control holds: on the clean tree ABSENT is currently TRUE. So the published verdict is not wrong today -- but this run RETIRED count-floors on the strength of it, and it is an evadable detector presented as a settled negative. Compounds RV-1: detection-floor's W8-R1 text defers the reworded-claim case to exactly this tool. [CYCLE 11 DONE] Builder took BOTH routes the clause allows: widened the probes (F.i.b literal-on-the-left, F.i.c same-file named const, F.ii.b directory enumeration matched by CALLEE only) and replaced section G's categorical negative with a verdict BOUNDED BY THE SEARCH, printing the probe list from the same FLOOR_PROBES table the scan iterates. Conductor gate planted its OWN failable floor guard (readdirSync(HERE), literal-on-the-left comparison) in an isolated clone carrying the builder's worktree file proven equal by sha: PRE-FIX tool F.i NONE / F.ii NONE / VERDICT ABSENT; POST-FIX same tree F.i.b + F.ii.b fire / VERDICT PRESENT. Guard proven real: PASSES at floor 120, FAILS at 900 with 'suite shrank below the floor of 900'. Converse control with the guard removed: ABSENT, no false positive. Sections A-E byte-identical old vs new (31572 bytes both).",
+      "found_cycle": 9,
+      "updated_cycle": 11
     },
     {
       "id": "RV-11",
@@ -1100,10 +1101,10 @@
       "notes": "REPRODUCED BY THE CONDUCTOR at the cycle-10 gate, in a scratch clone. Replaced the clause \"the matrix run for the push that carried the last change to\" with \"the matrix run for the push carrying the most recent change to\" in BOTH README.md (1 occurrence) and docs/node-support-citation-history.md (2), so the doc still quotes README byte-identically -- only the wording changed, in both files together. Result: exit 1, \"FAIL: docs/node-support-citation-history.md has diverged -- its block (260 byte(s)) is too short or does not name the selection rule's own clause\". Every factual clause in that message is true and the attribution is backwards: the doc did exactly the right thing. RV-9's acceptance clause asked for a rule-identity anchor and got a working one, so this is filed as a new item rather than rounded into a FAIL (same ruling shape as D-R8-7, D-R8-8, D-R8-21). Severity is bounded by direction: this fails LOUD, unlike RV-1 which was the same frozen-literal class failing SILENT. Note the recurrence: the fix for a frozen-literal defect introduced a frozen literal."
     },
     {
-      "id": "W-14",
+      "id": "W-15",
       "title": "Re-measure the final record at the cycle-10 commit so detection-floor is FRESH at HEAD again",
       "kind": "fix",
-      "status": "todo",
+      "status": "done",
       "priority": 1,
       "effort": "S",
       "model": "sonnet",
@@ -1112,7 +1113,31 @@
       ],
       "opened_cycle": 10,
       "acceptance": "node tools/detection-floor.mjs with NO flags exits 0 at HEAD with freshness FRESH, and tools/run-all.mjs reports 7/7 or 6/7-with-mutation-matrix-skipped all clean. The re-measured record must be produced by an actual run of tools/mutation-matrix.mjs --rev <HEAD> --json, not hand-edited, and the identity control must be GREEN on both sides. The RV-2/RV-3/RV-4 doctoring cases must all still turn the run red afterwards.",
-      "notes": "NOT A REGRESSION and NOT a defect in the tool -- it is the tool refusing to certify, correctly. Measured by the conductor immediately after the cycle-10 commit: VERDICT: STALE (exit 3), \"A stale comparison is NOT a pass. No rows were compared.\" Cause: the committed final record measured 94d7dd9, and cycle 10 commit 5d2974a changed tools/mutation-matrix.mjs, which is inside VERDICT_RELEVANT (detection-floor.mjs:172). NOT a fixpoint: VERDICT_RELEVANT covers README.md, docs/, src/, bin/, test/, .github/ and tools/mutation-matrix.mjs ONLY -- the record JSONs are excluded -- so a commit carrying ONLY the re-measured tools/mutation-matrix-final.json leaves the next diff verdict-irrelevant and freshness holds. One commit, verified by reading the constant rather than assuming. Cost ~97s (19 suite runs in a scratch clone)."
+      "notes": "NOT A REGRESSION and NOT a defect in the tool -- it is the tool refusing to certify, correctly. Measured by the conductor immediately after the cycle-10 commit: VERDICT: STALE (exit 3), \"A stale comparison is NOT a pass. No rows were compared.\" Cause: the committed final record measured 94d7dd9, and cycle 10 commit 5d2974a changed tools/mutation-matrix.mjs, which is inside VERDICT_RELEVANT (detection-floor.mjs:172). NOT a fixpoint: VERDICT_RELEVANT covers README.md, docs/, src/, bin/, test/, .github/ and tools/mutation-matrix.mjs ONLY -- the record JSONs are excluded -- so a commit carrying ONLY the re-measured tools/mutation-matrix-final.json leaves the next diff verdict-irrelevant and freshness holds. One commit, verified by reading the constant rather than assuming. Cost ~97s (19 suite runs in a scratch clone). [CYCLE 11 HYGIENE] Filed at cycle 10 as W-14, which COLLIDED with the done cycle-5 item of that id (two live entries shared one key); renamed to W-15 at cycle 11 before dispatch. [CYCLE 11 DONE] Conductor gate: an INDEPENDENT re-run of 'node tools/mutation-matrix.mjs --rev 5856837 --json' by the conductor agrees with the committed record on 18/18 rows by id/verdict/tests/fail/skipped and on the identity control (GREEN, 128 tests, 0 fail, gitDependentGuards.ran true) -- so the record was RUN, not typed. detection-floor default path: freshness FRESH, VERDICT DETECTION FLOOR HOLDS, exit 0. run-all 6/7 clean with mutation-matrix SKIPPED. RV-2/RV-3/RV-4 doctorings each still exit 1 naming their own reason, with a pristine converse control at exit 0 through the identical flag path.",
+      "updated_cycle": 11
+    },
+    {
+      "id": "P-5",
+      "title": "guard-inventory's 'what this search would not catch' list is hand-written prose sitting beside a mechanism-derived list, so only one of the two can drift",
+      "kind": "fix",
+      "status": "todo",
+      "priority": 6,
+      "effort": "S",
+      "deps": [],
+      "attempts": 0,
+      "model": "haiku",
+      "files_hint": [
+        "tools/guard-inventory.mjs"
+      ],
+      "packages": [],
+      "severity": "low",
+      "covers": [
+        "S-6"
+      ],
+      "found_cycle": 11,
+      "opened_cycle": 11,
+      "acceptance": "Either each FLOOR_PROBE_LIMITS entry is tied to the probe it qualifies (so removing or widening a probe forces the limit text to move with it), or section G stops presenting the limits list as if it were derived like the probe list directly above it. Proof: a probe change must be shown to either update the limits automatically or fail loudly, and the clean tree must still report ABSENT.",
+      "notes": "DISCLOSED BY THE BUILDER, unprompted, at cycle 11: 'the limits list (FLOOR_PROBE_LIMITS) is hand-written prose and CAN drift; that is the one part of the new output not derived from the mechanism, and I am flagging it rather than implying otherwise.' Same class as RV-13/RV-14/P-4: a sentence that reads as measured while being authored. Low severity, and note the DIRECTION: drift makes the tool understate its own blind spots, i.e. look more capable than it is. Two further limits the builder named and deliberately did not fix: 1-2 digit bounds are invisible to F.i (lowering FLOOR_MIN_DIGITS to 2 puts 3 hits on the clean tree and destroys the converse control -- a chosen false-negative), and indirect calls (computed property access, aliases, wrappers) evade F.ii.b."
     }
   ]
 }
