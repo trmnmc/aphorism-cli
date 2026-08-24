@@ -825,7 +825,7 @@
       "kind": "fix",
       "status": "todo",
       "effort": "S",
-      "priority": 6,
+      "priority": 2,
       "deps": [],
       "attempts": 0,
       "model": "haiku",
@@ -835,8 +835,9 @@
       "packages": [],
       "severity": "low",
       "acceptance": "The single line a reader quotes must name the commit it actually describes, or say plainly that the record was measured at an ancestor under the FRESH-BY-CONTENT exemption. Verified by running the tool when record and HEAD differ and reading the verdict line.",
-      "notes": "REPRODUCED on a completely undoctored run. detection-floor.mjs:519 interpolates recordedSha(finalRec) into a sentence that calls it HEAD, after the same run printed 'THE FINAL RECORD IS NOT AT HEAD' with both shas. Conductor confirmed the interpolation by reading :517-521. Anyone quoting only the verdict line publishes the wrong measured commit.",
-      "found_cycle": 9
+      "notes": "REPRODUCED on a completely undoctored run. detection-floor.mjs:519 interpolates recordedSha(finalRec) into a sentence that calls it HEAD, after the same run printed 'THE FINAL RECORD IS NOT AT HEAD' with both shas. Conductor confirmed the interpolation by reading :517-521. Anyone quoting only the verdict line publishes the wrong measured commit. [CYCLE 11 OBSERVED IN THE WILD] No longer a reviewer reading: the post-commit default-path run at HEAD d25a83f printed 'VERDICT: DETECTION FLOOR HOLDS at HEAD 5856837' -- naming the RECORD's sha as HEAD while the actual HEAD was d25a83f. Because this run depends on the fresh-by-content exemption (the record is deliberately left measuring an older commit whenever the new commit is verdict-irrelevant), the misprint is the ORDINARY case, not the edge case. Raised p6 -> p2. The fix must not paper over it by re-measuring more often -- the exemption is correct and the sentence is what is wrong.",
+      "found_cycle": 9,
+      "updated_cycle": 11
     },
     {
       "id": "RV-8",
