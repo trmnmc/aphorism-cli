@@ -1098,6 +1098,21 @@
       "opened_cycle": 10,
       "acceptance": "When README's selection-rule clause and the doc's quote are reworded TOGETHER and the doc still quotes README byte-identically, the check must PASS. If the anchor cannot be satisfied, the failure must attribute to the file that actually moved (README), never to the doc that faithfully tracked it. Derive the anchor from README's live section rather than freezing a literal, or make the anchor's staleness a distinct, correctly-attributed diagnostic. Converse controls must be preserved: the RV-9 cases (0-byte, 3-byte, over-floor paraphrase) must all still FAIL.",
       "notes": "REPRODUCED BY THE CONDUCTOR at the cycle-10 gate, in a scratch clone. Replaced the clause \"the matrix run for the push that carried the last change to\" with \"the matrix run for the push carrying the most recent change to\" in BOTH README.md (1 occurrence) and docs/node-support-citation-history.md (2), so the doc still quotes README byte-identically -- only the wording changed, in both files together. Result: exit 1, \"FAIL: docs/node-support-citation-history.md has diverged -- its block (260 byte(s)) is too short or does not name the selection rule's own clause\". Every factual clause in that message is true and the attribution is backwards: the doc did exactly the right thing. RV-9's acceptance clause asked for a rule-identity anchor and got a working one, so this is filed as a new item rather than rounded into a FAIL (same ruling shape as D-R8-7, D-R8-8, D-R8-21). Severity is bounded by direction: this fails LOUD, unlike RV-1 which was the same frozen-literal class failing SILENT. Note the recurrence: the fix for a frozen-literal defect introduced a frozen literal."
+    },
+    {
+      "id": "W-14",
+      "title": "Re-measure the final record at the cycle-10 commit so detection-floor is FRESH at HEAD again",
+      "kind": "fix",
+      "status": "todo",
+      "priority": 1,
+      "effort": "S",
+      "model": "sonnet",
+      "files_hint": [
+        "tools/mutation-matrix-final.json"
+      ],
+      "opened_cycle": 10,
+      "acceptance": "node tools/detection-floor.mjs with NO flags exits 0 at HEAD with freshness FRESH, and tools/run-all.mjs reports 7/7 or 6/7-with-mutation-matrix-skipped all clean. The re-measured record must be produced by an actual run of tools/mutation-matrix.mjs --rev <HEAD> --json, not hand-edited, and the identity control must be GREEN on both sides. The RV-2/RV-3/RV-4 doctoring cases must all still turn the run red afterwards.",
+      "notes": "NOT A REGRESSION and NOT a defect in the tool -- it is the tool refusing to certify, correctly. Measured by the conductor immediately after the cycle-10 commit: VERDICT: STALE (exit 3), \"A stale comparison is NOT a pass. No rows were compared.\" Cause: the committed final record measured 94d7dd9, and cycle 10 commit 5d2974a changed tools/mutation-matrix.mjs, which is inside VERDICT_RELEVANT (detection-floor.mjs:172). NOT a fixpoint: VERDICT_RELEVANT covers README.md, docs/, src/, bin/, test/, .github/ and tools/mutation-matrix.mjs ONLY -- the record JSONs are excluded -- so a commit carrying ONLY the re-measured tools/mutation-matrix-final.json leaves the next diff verdict-irrelevant and freshness holds. One commit, verified by reading the constant rather than assuming. Cost ~97s (19 suite runs in a scratch clone)."
     }
   ]
 }

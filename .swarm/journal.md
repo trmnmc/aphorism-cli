@@ -23317,3 +23317,15 @@ window opened**; 0 tracked manifests/lockfiles, no `node_modules`; 29 `tools/` s
 verifies) -> `wave_streak` 1 -> 2 -> `k_current` = min(5, 5+1) = 5 (already at hard max),
 streak reset to 0. `consecutive_no_value` = 0.
 **Closed:** KI-38, KI-39, KI-41, KI-43. **Opened:** P-4 / KI-44 (low).
+
+**POST-COMMIT, measured not assumed.** Commit 5d2974a changed `tools/mutation-matrix.mjs`,
+which is inside `VERDICT_RELEVANT` (detection-floor.mjs:172), so the committed final record
+-- measured at 94d7dd9 -- is now stale against HEAD. `node tools/detection-floor.mjs` at the
+new HEAD reports `VERDICT: STALE (exit 3)`, *"A stale comparison is NOT a pass. No rows were
+compared."* That is the tool REFUSING TO CERTIFY, which is correct behaviour and the whole
+point of this cycle`s work -- reported here rather than left for a reader to discover. It is
+not a regression and `test_cmd` is green at the commit (hard rule 4 satisfied). Filed as W-14
+at priority 1 for cycle 11. It is NOT a fixpoint: `VERDICT_RELEVANT` is README.md, docs/,
+src/, bin/, test/, .github/ and tools/mutation-matrix.mjs only -- the record JSONs are
+excluded -- so one commit carrying only the re-measured record restores FRESH. Established by
+reading the constant, not by assuming.
