@@ -6,7 +6,7 @@
   "run_started_at": "2026-08-24T13:05:56.000Z",
   "kickoff_source": "allocator",
   "phase": "BUILD",
-  "cycle": 6,
+  "cycle": 7,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "spec_digest": [
@@ -152,8 +152,8 @@
   "counters": {
     "consecutive_no_value": 0,
     "k_current": 5,
-    "wave_streak": 1,
-    "window_tokens_attributed": 13852619
+    "wave_streak": 0,
+    "window_tokens_attributed": 13660922
   },
   "known_issues_file": "known-issues.json",
   "prior_runs": {
@@ -161,9 +161,9 @@
     "note": "runs #1-#7; run #7 delivered ZERO work cycles (usage lockout). Done items archived to backlog-archive-runs1-7.json."
   },
   "last_cycle": {
-    "cycle": 6,
-    "work": "build-wave (2 direct Agent calls, headless fallback: W-14 + P-2, disjoint single-file scopes)",
-    "outcome": "value \u2014 W-14 and P-2 both verified done; 12/12 gate cells pass, but only after 4 of them had to be re-taken in an addendum because the conductor's own gate was wrong (D-R8-17). Clean wave: 0 reverts, 0 failed verifies. W-8's soft block cleared.",
-    "ts": "2026-08-24T16:32:10.000Z"
+    "cycle": 7,
+    "work": "build-wave (1 direct Agent call, headless fallback: W-8 on fable, the sole unblocked must-have)",
+    "outcome": "value -- W-8 verified done, 13/13 gate cells pass. Three of the thirteen had to be re-taken in an addendum: all three failures were the conductor own instrument, none of them the work (D-R8-19). Clean wave: 0 reverts, 0 failed verifies. W-10, the last open must-have, is now unblocked.",
+    "ts": "2026-08-24T17:04:21.000Z"
   }
 }

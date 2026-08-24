@@ -23,7 +23,8 @@
 // a tool's run is mechanical: did the child process exit 0 ("ran clean") or
 // non-zero ("reported a problem"), using each tool's OWN documented exit
 // contract (several of these tools -- citation-rule-check.mjs,
-// matrix-adjudication.mjs -- use a non-zero exit code as their designed way
+// matrix-adjudication.mjs, detection-floor.mjs -- use a non-zero exit code
+// as their designed way
 // of reporting a real finding, e.g. STALE or DIVERGED; relaying that code
 // is not this file forming an opinion, it is this file not hiding the
 // tool's own opinion).
@@ -49,6 +50,15 @@
 //       committed history.
 //   [5] tools/matrix-adjudication.mjs (W-5) adjudicates the README Node
 //       support matrix's 127-vs-129 numbers.
+//   [6] tools/detection-floor.mjs     (W-8) compares the committed W-2
+//       baseline matrix record against the committed final-HEAD record
+//       (tools/mutation-matrix-final.json) row by row and rules on whether
+//       any baseline detection was lost. Its default path only reads the two
+//       committed JSON records plus git metadata -- no suite runs -- so it is
+//       fast and always runs here. Its exit code is its own designed verdict
+//       (0 floor holds; 1 floor broken/untrustworthy; 3 the final record is
+//       stale w.r.t. HEAD); relaying a non-zero here is not this file's
+//       opinion, it is that tool's.
 //
 // ---------------------------------------------------------------------------
 // THE OPT-IN (read this before assuming the default run is the whole story)
@@ -151,6 +161,16 @@ const TOOLS = [
     label: 'tools/matrix-adjudication.mjs  (W-5 -- adjudicates the 127-vs-129 matrix numbers)',
     file: 'tools/matrix-adjudication.mjs',
     cliArgs: [],
+    run: true,
+  },
+  {
+    id: 'detection-floor',
+    label: 'tools/detection-floor.mjs  (W-8 -- no baseline detection lost at final HEAD)',
+    file: 'tools/detection-floor.mjs',
+    cliArgs: [], // deliberately never --remeasure: the default path compares the
+                 // two COMMITTED records (fast, no suite runs). --remeasure is a
+                 // separate, explicit, human-invoked action for proving the
+                 // committed final record reproduces live.
     run: true,
   },
 ];

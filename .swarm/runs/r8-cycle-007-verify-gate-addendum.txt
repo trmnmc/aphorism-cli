@@ -1,0 +1,57 @@
+==============================================================================
+W-8 GATE ADDENDUM -- run #8 cycle 7 -- re-taking C1, C2b, C4
+==============================================================================
+
+--> C1' scope, with conductor gate artifacts partitioned out by name  [fixes D1] PASS
+    builder-scope paths touched   : ['tools/detection-floor.mjs', 'tools/mutation-matrix-final.json', 'tools/run-all.mjs']
+    conductor gate artifacts      : ['.swarm/runs/r8-cycle-007-verify-gate-addendum.txt', '.swarm/runs/r8-cycle-007-verify-gate.txt', '.swarm/runs/r8-gate-c7-addendum.py', '.swarm/runs/r8-gate-c7.py']
+    UNCLASSIFIED (must be empty)  : []
+    converse control -- 5/5 of these must be rejected, 0 accepted: ['src/corpus.js', 'test/readme-tags.test.js', 'README.md', 'tools/mutation-matrix-baseline.json', '.swarm/runs/sneaky-builder-file.mjs']
+      (the last probe is a plausible builder file smuggled under .swarm/;
+       the conductor set is enumerated by name, never by wildcard, so it is
+       rejected too)
+    leftover .scratch* trees      : []
+
+--> C2b' the freshness exemption covers every real verdict input  [fixes D2] PASS
+    files any mutation actually edits (measured from both records): ['README.md', 'src/corpus.js']
+      matched by VERDICT_RELEVANT: ['README.md', 'src/corpus.js']   unmatched: []
+    does tools/mutation-matrix.mjs INVOKE guard-inventory.mjs at runtime?
+      (comments stripped, searching for a call/import, not a substring)
+      invocation found : False
+      guard-inventory mentions surviving in code (not comments): ["generationRule: 'one falsifying mutation per INCLUDED claim of tools/guard-inventory.mjs at the base"]
+      => the 18-row mutation table is hardcoded and transcribed at baseline,
+         so guard-inventory.mjs is correctly NOT a verdict input.
+    guards fire from test/ and the table lives in tools/mutation-matrix.mjs,
+      both inside the pattern.
+    converse control -- these must NOT be verdict-relevant, 0 wrongly matched: ['REPORT.md', '.swarm/journal.md', 'tools/detection-floor.mjs', 'tools/citation-tax.mjs']
+
+--> C4' partition recomputed from firedGuards matches the tool  [fixes D3] PASS
+    PROOF THE OLD RULE COULD NOT WORK: guardTitle is byte-identical between
+      the two records for all 15 shared ids: True
+      -- it is transcribed from the hardcoded table, not measured, so
+         comparing it can never yield GUARD-CHANGED.
+    precondition (every baseline CAUGHT row's own named guard fired at
+      baseline) violations: []
+    
+    detection-floor.mjs exit : 0
+    conductor SAME-GUARD (14): ['M04', 'M05', 'M06', 'M07', 'M09', 'M10', 'M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18']
+    tool      SAME-GUARD (14): ['M04', 'M05', 'M06', 'M07', 'M09', 'M10', 'M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18']   equal=True
+    conductor GUARD-CHANGED(1): ['M08']
+    tool      GUARD-CHANGED(1): ['M08']   equal=True
+    conductor CLAIM-GONE  (3): ['M01', 'M02', 'M03']
+    tool      CLAIM-GONE  (3): ['M01', 'M02', 'M03']   equal=True
+    conductor DETECTION-LOST : []     tool header said 0
+    conductor UNACCOUNTED    : []
+    baseline CAUGHT total 18; buckets sum to 18; complete=True
+    
+    the one GUARD-CHANGED row, measured:
+      M08 baseline named guard : README Tag vocabulary counts table "Tags on exactly one entry" row mat
+          still fires at HEAD  : False
+          fired at HEAD instead: ['README must state correct multi-entry and single-entry tag counts']
+
+==============================================================================
+  PASS C1' scope, with conductor gate artifacts partitioned out by name  [fixes D1]
+  PASS C2b' the freshness exemption covers every real verdict input  [fixes D2]
+  PASS C4' partition recomputed from firedGuards matches the tool  [fixes D3]
+ADDENDUM: 3/3 re-taken cells pass
+==============================================================================

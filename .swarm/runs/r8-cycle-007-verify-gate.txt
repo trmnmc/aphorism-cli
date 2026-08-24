@@ -1,0 +1,125 @@
+==============================================================================
+W-8 VERIFICATION GATE -- run #8 cycle 7
+==============================================================================
+HEAD = d8403a357fa6da9710e486312aaf8700150e260f
+
+--> C1 scope + baseline immutability FAIL
+    touched paths           : ['.swarm/runs/r8-cycle-007-verify-gate.txt', '.swarm/runs/r8-gate-c7.py', 'tools/detection-floor.mjs', 'tools/mutation-matrix-final.json', 'tools/run-all.mjs']
+    outside declared scope  : ['.swarm/runs/r8-cycle-007-verify-gate.txt', '.swarm/runs/r8-gate-c7.py']
+    converse control (these 4 forbidden paths must all be rejected by the
+      classifier; 0 accepted == the classifier is not a rubber stamp): 0 accepted
+    leftover .scratch* trees: []
+    baseline json sha256 on disk : 5ac3c65d65466dea
+    baseline json sha256 at HEAD : 5ac3c65d65466dea  identical=True
+
+--> C2 provenance + machine-comparable shape PASS
+    final meta.measuredCommit : d8403a357fa6da9710e486312aaf8700150e260f
+    repo HEAD                 : d8403a357fa6da9710e486312aaf8700150e260f   equal=True
+    top-level keys baseline   : ['meta', 'identity', 'results', 'skippedClaims']
+    top-level keys final      : ['meta', 'identity', 'results', 'skippedClaims']   identical=True
+    ids unique across results+skippedClaims: True (18 ids)
+    identity control verdict  : baseline=GREEN ({'tests': 129, 'pass': 129, 'fail': 0, 'skipped': 0})  final=GREEN ({'tests': 128, 'pass': 128, 'fail': 0, 'skipped': 0})
+
+--> C2b freshness exemption covers the real verdict-input set FAIL
+    files any mutation edits (measured from both records): ['README.md', 'src/corpus.js']
+    VERDICT_RELEVANT alternation in detection-floor.mjs   : README\.md$|docs\/|src\/|bin\/|test\/|\.github\/|tools\/mutation-matrix\.mjs$
+    every mutation-edited file matched by it              : True
+    instrument re-derives its mutation table from
+      tools/guard-inventory.mjs at runtime                : True
+      (it does not -- the table is hardcoded at line ~196 and transcribed at
+       baseline, so guard-inventory.mjs is correctly NOT a verdict input)
+    guards live under test/ and the table lives in tools/mutation-matrix.mjs,
+    both inside the set -- so the exemption cannot skip a real input.
+
+--> C3 artifact is not fabricated -- conductor re-derived it independently PASS
+    conductor ran: node tools/mutation-matrix.mjs --rev d8403a3 --json   exit=0
+    rows: conductor=15  committed=15
+    verdict differences (id-by-id)      : []
+    guardTitle differences on shared ids: []
+    skippedClaims  conductor=['M01', 'M02', 'M03']
+                   committed=['M01', 'M02', 'M03']   equal=True
+    identity control conductor=GREEN {'tests': 128, 'pass': 128, 'fail': 0, 'skipped': 0}  committed=GREEN {'tests': 128, 'pass': 128, 'fail': 0, 'skipped': 0}  equal=True
+
+--> C4 partition recomputed by the conductor matches the tool, set for set FAIL
+    detection-floor.mjs exit                      : 0
+    conductor SAME-GUARD    : ['M04', 'M05', 'M06', 'M07', 'M08', 'M09', 'M10', 'M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18']
+    tool      SAME-GUARD    : ['M04', 'M05', 'M06', 'M07', 'M09', 'M10', 'M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18']  (header said 14)  equal=False
+    conductor GUARD-CHANGED : []
+    tool      GUARD-CHANGED : ['M08']  (header said 1)  equal=False
+    conductor CLAIM-GONE    : ['M01', 'M02', 'M03']
+    tool      CLAIM-GONE    : ['M01', 'M02', 'M03']  (header said 3)  equal=True
+    conductor DETECTION-LOST: []   tool header said 0
+    conductor UNACCOUNTED   : []
+    baseline CAUGHT total   : 18   buckets sum to 18  (complete=False)
+    parser sanity (each header count == ids actually parsed): True
+
+--> C5 converse control -- flipping M09 CAUGHT->SILENT is caught and named PASS
+    conductor injection: M09 verdict CAUGHT -> SILENT, firedGuards emptied,
+      written to a COPY; the committed artifact was not touched.
+    exit=1 (non-zero required)   names M09 as lost=True
+    relevant output lines:
+      M09  every `| Tag | Count |` table in the real README Tag vocabulary section is a recognised band table (no table may hide under an unrecognised heading shape)
+      - [M09] DETECTION LOST: caught at baseline 20b7ede ("every `| Tag | Count |` table in the real README Tag vocabulary section is a recognised band table (no table may hide under an unrecognised heading shape)") but SILENT at HEAD -- no guard fired
+
+--> C5b converse control -- a baseline row missing from BOTH arrays fails PASS
+    conductor injection: M15 deleted from results AND skippedClaims.
+    exit=1 (non-zero required)   names M15=True
+    relevant output lines:
+    UNACCOUNTED (1): M15
+      - [M15] in the baseline record but in neither results nor skippedClaims at HEAD -- the record shape contract is broken
+
+--> C6 green control -- the same --final path on an UNDOCTORED copy passes PASS
+    exit=0  verdict line: VERDICT: DETECTION FLOOR HOLDS at HEAD d8403a357fa6da9710e486312aaf8700150e260f
+    (C5/C5b would be worthless without this: it proves --final does not
+     simply fail on everything handed to it.)
+
+--> C7 a genuinely stale record is refused, not exempted PASS
+    conductor injection: measuredCommit -> e40736c, whose diff to HEAD touches
+      verdict-relevant paths: ['tools/mutation-matrix.mjs']
+    exit=3 (3 == STALE required)   says STALE=True
+    no partition may be printed on a stale record: SAME-GUARD header present=False
+
+--> C8 registered in run-all.mjs; mutation-matrix still SKIPPED, not dropped PASS
+    exit=0   detection-floor present in output=True   mutation-matrix still
+      explicitly SKIPPED (not silently dropped)=True
+    rollup line: ROLL-UP: 5/6 ran clean; SKIPPED: mutation-matrix.
+
+--> C9 W-6 standing invariant re-measured PASS
+    src/corpus.js sha256 : 77a4de5c777a3bdb  (baseline 77a4de5c...)  unmoved=True
+    --help        sha256 : d759d781ddcac780  (baseline d759d781...)  unmoved=True
+    git status over src bin test .github README.md docs: '' (must be empty)
+    dependency surface (restated, this repo has never had a manifest):
+      manifests/lockfiles tracked : ''
+      manifests/lockfiles on disk : []
+      node_modules present        : False
+      tools/ imports              : 24 total, 0 non-node: builtins []
+      converse control -- classifier rejects 3/3 of ['lodash', './helper.js', '../node_modules/x/index.js']
+
+--> C10 test_cmd green at the gated tree PASS
+    node --test test/*.test.js  exit=0
+    tests=128 pass=128 fail=0 skipped=0
+    (a DROP from the 129 run baseline is a PASS under S-1; HEAD is 128 after
+     W-7's cycle-4 guard consolidation.)
+
+--> C11 ruling W8-R1 is durable -- printed on passing AND failing runs PASS
+    on the PASSING run : {'id': True, 'ruling': True, 'for': True, 'against': True, 'falsifier': True, 'scope': True}
+    on the FAILING run : {'id': True, 'ruling': True, 'for': True, 'against': True, 'falsifier': True, 'scope': True}
+    (the ruling is the part of W-8 no mechanism can produce; a ruling that
+     only prints when the news is good is not a record.)
+
+==============================================================================
+  FAIL C1 scope + baseline immutability
+  PASS C2 provenance + machine-comparable shape
+  FAIL C2b freshness exemption covers the real verdict-input set
+  PASS C3 artifact is not fabricated -- conductor re-derived it independently
+  FAIL C4 partition recomputed by the conductor matches the tool, set for set
+  PASS C5 converse control -- flipping M09 CAUGHT->SILENT is caught and named
+  PASS C5b converse control -- a baseline row missing from BOTH arrays fails
+  PASS C6 green control -- the same --final path on an UNDOCTORED copy passes
+  PASS C7 a genuinely stale record is refused, not exempted
+  PASS C8 registered in run-all.mjs; mutation-matrix still SKIPPED, not dropped
+  PASS C9 W-6 standing invariant re-measured
+  PASS C10 test_cmd green at the gated tree
+  PASS C11 ruling W8-R1 is durable -- printed on passing AND failing runs
+GATE: 10/13 cells pass
+==============================================================================
