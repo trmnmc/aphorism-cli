@@ -1,0 +1,215 @@
+{
+ "archived_at": "2026-08-24T13:05:56.000Z",
+ "by": "improvement run #8 kickoff",
+ "items": [
+  {
+   "id": "Q-1",
+   "title": "Extract the five run-journal blockquotes out of README.md into docs/",
+   "kind": "docs",
+   "priority": 1,
+   "value": "H",
+   "effort": "M",
+   "status": "done",
+   "deps": [],
+   "files_hint": [
+    "README.md",
+    "docs/"
+   ],
+   "acceptance": "README.md contains zero blockquotes headed \"Updated 2026-08-20 (cycle N)\"; every moved line is present byte-identically in a dated file under docs/, in chronological order; README.md is at least 5000 bytes smaller than 16609; the Node-support section still states the live citation and its two standing limits in plain prose",
+   "packages": [],
+   "model": "haiku",
+   "attempts": 1,
+   "notes": "README:205-299, ~95 lines, cycles 3/10/5/6/9 out of chronological order. Run #5's own retro filed this as a house-rules proposal and never actioned it. | DONE cycle 1, sealed gate 7/7 (gate sha256 49b328d3, unchanged pre->post). README 16609 -> 11165 bytes (-5444, -33%); 309 -> 233 lines. All five blockquotes byte-identical in docs/node-support-citation-history.md, reordered 3,10,5,6,9 -> 3,5,6,9,10. Builder scope held exactly: only README.md + the new docs file (git status confirmed)."
+  },
+  {
+   "id": "Q-2",
+   "title": "Classify and repair every guard that breaks under Q-1, at its anchor",
+   "kind": "test",
+   "priority": 1,
+   "value": "H",
+   "effort": "M",
+   "status": "done",
+   "deps": [
+    "Q-1"
+   ],
+   "files_hint": [
+    "test/node-support-citation.test.js",
+    "test/readme-tags.test.js",
+    "test/citations.test.js"
+   ],
+   "acceptance": "every guard that breaks under Q-1 is repaired by re-anchoring it to a structural marker the document owns, never by restoring prose to satisfy it; each break is classified guard-defect or real-claim-loss with both columns reported; guards that did NOT break are named as the control",
+   "packages": [],
+   "model": "haiku",
+   "attempts": 1,
+   "notes": "L-043. The prose is guard-shaped, so moving it MEASURES whether each guard reads structure or prose. A guard that breaks on honest prose has reported its own defect. | CYCLE 1 MEASUREMENT — the headline result is a NEGATIVE, and it is the run's most valuable finding so far: 114 README lines deleted and the whole Node-support section rewritten, and ZERO guards broke (121/121 green). The builder was explicitly forbidden from touching test/ so the measurement could not be contaminated. Liveness then proven for test/node-support-citation.test.js rather than assumed (L-029/L-044): mutating the retirement base 2b003ea -> c9dd7ff made it FAIL loudly with a correct, self-naming assertion; restoring README byte-exactly (sha ebb0d9c4 both sides) returned it to 2 pass / 0 fail. Kill + converse control both observed, attribution pinned by running that file alone. REMAINING: same liveness proof for readme-tags.test.js (folds into Q-4) and citations.test.js. cycle 2: readme-tags.test.js guards now measured live (6 kill arms, 2 converse controls, all attributable). citations.test.js still untreated. | CLOSED cycle 4 — and the remaining work turned out to be a file that does not exist. test/citations.test.js has NEVER existed in this repo, on any branch, in any commit: `git log --all -- test/citations.test.js` is empty, and the add-history of test/* lists seven files, none of them that one. It was a PLAN-time files_hint that was never checked against the tree, and it then travelled forward through two cycles of notes as if it were an observation. The two REAL guard files both had the kill/converse treatment already — node-support-citation.test.js (cycle 1) and readme-tags.test.js (cycle 2, 6 kill arms + 2 converse controls). Recorded as a phantom rather than quietly dropped. Evidence: cycle-004-verify-Q-3.txt section E."
+  },
+  {
+   "id": "Q-3",
+   "title": "Node-support section: fix the tests-120 vs 121 self-contradiction and guard it",
+   "kind": "test",
+   "priority": 1,
+   "value": "H",
+   "effort": "M",
+   "status": "done",
+   "deps": [],
+   "files_hint": [
+    "README.md",
+    "test/node-support-citation.test.js"
+   ],
+   "acceptance": "every count claim in the Node-support section resolves to a measured value; a count claim in that section can no longer silently disagree with the matrix table it sits under; the new check is shown failable AND attributable, and is paired with a converse control that must stay green",
+   "packages": [],
+   "model": "sonnet",
+   "attempts": 0,
+   "notes": "README:186-191 reports 121 tests on all four majors; README:306-308 claims \"# tests 120\" and \"(119 -> 120)\". Measured truth at kickoff: 121 tests / 121 pass / 0 fail / 0 skipped on a full clone. | doc->doc half CLOSED incidentally by Q-1: README:306's 'tests 120' / '(119 -> 120)' is gone, replaced by '# tests <n>' / 'ℹ tests <n>' plus 'The test count moves as the suite grows'. That is the right repair — the durable claim is the TAP-vs-spec-reporter split and the U+2139 marker, and the literal count was the part that rotted. REMAINING: the guard that stops a count claim in that section silently disagreeing with its own matrix table. | CYCLE 3 — the remaining half now has a MEASURED specification instead of a described one. Gate controls C4a/C4b ran the full suite against a deliberately falsified matrix in a scratch worktree: changing the v20 row from '122 pass' to '121 pass' (contradicting its own row) left the suite at 124 pass / 0 fail, and changing it to '999 tests, 998 pass' — absurd, contradicting the other three rows AND the actual suite — ALSO left it at 124 pass / 0 fail. Both arms SILENT. So the section's citation is guarded but the numbers inside it are not, and the hole is wide rather than marginal. Note the shape this dictates: the four rows report a REMOTE CI run's counts, not this checkout's, so the guard cannot simply assert the table against a local `node --test` run — v18/20/22/24 in CI legitimately report 2 skipped where a full clone reports 0. The honest anchor is internal consistency plus provenance (the four rows must agree with each other and with the cited run), not equality with the local suite. Evidence: .swarm/runs/cycle-003-verify-Q-7.txt § C4. | DONE cycle 4, sealed gate 855beded unchanged across dispatch, all cells PASS. New file test/readme-matrix-consistency.test.js (238 insertions, 0 deletions; README.md NOT touched). Suite 124 -> 129, delta = exactly the 5 new tests, 0 skipped. THE RESULT: the two arms cycle 3 measured SILENT now FIRE on identical inputs — C4a (122->121 pass) 3 pass/4 fail, C4b (999 tests) 3 pass/4 fail. Converse controls C6 (true table) and C5 (benign reword) both stay GREEN 5/0. C8 earns the cross-row check its keep: v22 skipped 2->1 keeps its own arithmetic balanced (124=123+0+1) so only cross-row agreement fires — the two checks are not redundant, measured rather than argued. C9/C10 show the optional run-id and commit cross-reference checks are live. RESIDUAL, reported unfixed: C7 — all four rows moved TOGETHER to a self-consistent falsehood (200/198/0/2) is SILENT. Hole narrowed, not closed; see KI-R6-4. Evidence: .swarm/runs/cycle-004-verify-Q-3.txt"
+  },
+  {
+   "id": "Q-4",
+   "title": "Re-anchor the tag-vocabulary guard to the table; restore one honest sentence",
+   "kind": "docs",
+   "priority": 2,
+   "value": "M",
+   "effort": "S",
+   "status": "done",
+   "deps": [],
+   "files_hint": [
+    "README.md",
+    "test/readme-tags.test.js"
+   ],
+   "acceptance": "README:71 states the tag distribution once, in one sentence, and the restatement at README:93 is gone; the guard reads the tag table rather than the prose; fixed-vs-unfixed columns on true inputs are reported",
+   "packages": [],
+   "model": "haiku",
+   "attempts": 1,
+   "notes": "Run #5 retro: \"prose that restates one number three ways is a guard-satisfaction artifact, not writing\". cycle 2: sealed gate 14/14 (gate sha256 06813843, unchanged before and after dispatch). Three Tag-vocabulary counts moved out of prose into a `| Tag vocabulary | Count |` table and read by label via readTagVocabCount. Priced on TRUE inputs, both columns: deleting the section lead-in prose fired 4 guards on the unfixed tree (23eaf9b) and is GREEN on the fixed tree."
+  },
+  {
+   "id": "Q-5",
+   "title": "Hold the invariants at every commit",
+   "kind": "qa",
+   "priority": 1,
+   "value": "H",
+   "effort": "S",
+   "status": "done",
+   "deps": [],
+   "files_hint": [
+    "src/corpus.js",
+    "bin/aphorism.js"
+   ],
+   "acceptance": "at every commit of this run: node --test test/*.test.js reports >= 121 tests and 0 fail; src/corpus.js is byte-identical to 3a17cc5; --help output is byte-identical; no dependency is added",
+   "packages": [],
+   "model": "haiku",
+   "attempts": 0,
+   "notes": "Hard rule 4. Conductor-run, never delegated.",
+   "verified_cycle": 5
+  },
+  {
+   "id": "Q-6",
+   "title": "Playbook allowlist item: escalate once, do not re-derive",
+   "kind": "docs",
+   "priority": 3,
+   "value": "M",
+   "effort": "S",
+   "status": "done",
+   "deps": [],
+   "files_hint": [],
+   "acceptance": "the handoff document's stated ask is confirmed unchanged against the live settings file in ONE read, and the run spends no further cycles on it",
+   "packages": [],
+   "model": "haiku",
+   "attempts": 1,
+   "notes": "CLOSED AT KICKOFF 2026-08-20T14:36Z by direct read of /opt/swarm/.claude/settings.json: swarm-playbook.sh carries no entry under any of the 11 swarm-* allow forms. parse denied this session (denial #34); the step-5 settings write denied (#35). HANDOFF-allowlist-2026-08-17.md's ask is unchanged and still correct. L-045: escalate once, never re-derive."
+  },
+  {
+   "id": "R-1",
+   "title": "Structural reshape of the README acknowledgement guard (the recorded T-024 answer)",
+   "kind": "fix",
+   "status": "dropped",
+   "priority": 14,
+   "effort": "M",
+   "value": "M",
+   "model": "sonnet",
+   "deps": [],
+   "attempts": 0,
+   "filed_cycle": 13,
+   "files_hint": [
+    "test/readme-tags.test.js"
+   ],
+   "packages": [],
+   "acceptance": "The guard formerly named 'README should acknowledge single-entry tag limitation' stops deriving its verdict from marker phrases positioned inside an English sentence, and instead reads a STRUCTURAL marker the document owns. Traceable to a measured survivor: the cycle-13 verifier re-reproduced cells D4a/D4b (acknowledgement stripped, in-section decoy left behind -> guard SILENT) against a green 118/118 baseline, and additionally showed that a sentence DENYING the property outright ('Never worry that a tag might appear on exactly one entry — that cannot happen here.') also passes the guard. Any replacement must be measured against the FOUR-cell regression set recorded in the comment block above the test (C0 silent; D1/D3/E3 must NOT fire on honest READMEs; D4a/D4b must fire) and must not be a fourth regex narrowing — three prior narrowings produced two new false rejections while the silent hole survived.",
+   "notes": "Filed at cycle 13 from the review-fix pass as an UNFIXED REPRODUCED FINDING, per the review-fix contract (nothing silently dropped). Cycle 13 deliberately did NOT fix it: the verifier's recommended action was document_only, and the conductor's disposition was to rename the test to match its body rather than narrow the matcher — the matcher was left byte-identical under a sealed hash, precisely so this reshape stays available as honest future work rather than being half-done. NOTE THE PREMISE SHIFT that makes this lower-value than it looks, measured at cycle 13 from src/corpus.js: the corpus now holds 12 distinct tags and ZERO tags on exactly one entry, so the 'limitation' the guard was built to protect does not currently exist. The guard is retained only because a human ruling on T-040 (corpus retag consequences) could reintroduce single-entry tags. Score it against the two-question ratchet before dispatching — a user notices nothing either way, and it may be more honest to RETIRE the guard than to reshape it. || RUN #4, cycle 1: M-4 names this item explicitly and permits exactly two outcomes - done and conductor-verified, or explicitly DECLINED with a stated reason. Run #3 cycle 14 already scored it against the two-question ratchet and it FAILED question one (a user in a terminal notices nothing either way), and recorded that both dispositions are human-owned: retiring the guard deletes a claim, and a human ruling on T-040 could reintroduce the single-entry tags whose absence is the whole reason it looks vacuous. Carried into run #4 unchanged so the decline, if that is where it lands, is made on this run's own record rather than inherited. || RUN #4 cycle 4: DECLINED — see decline_reason. Not deleted; status `dropped` per cycle.md. | carried into improvement run #6 unchanged; the brief forbids the ruling this needs",
+   "covers": [
+    "M-4",
+    "M-5"
+   ],
+   "declined_cycle": 4,
+   "decline_reason": "DECLINED at run #4 cycle 4, on this run's OWN measurement rather than on run #3 cycle 14's\ninherited ratchet score. M-4 permits exactly two outcomes for this item and this is the second.\n\nTHE MEASUREMENT (run4-cycle-004-r1probe.mjs, 7 PASS / 0 FAIL, arms built by `git archive 60c71d3`,\nnever by copying the live tree): the two cells on R-1's own recorded regression set that represent a\nMISSED violation - D4a and D4b, acknowledgement stripped with an in-section decoy left behind - are\nBOTH CAUGHT BY THE FULL SUITE, which goes RED (116 pass / 2 fail) on each, while the R-1 target guard\nstays SILENT on both, exactly as the cycle-39 note recorded. The cycle-39 measurement isolated that\nguard deliberately via --test-name-pattern so the neighbouring count guards could not mask the verdict;\nthat correctly answers 'is the guard broken' (it is) but not 'is the property unprotected', which is\nwhat R-1's value actually depends on.\n\nTHE CATCH IS ATTRIBUTED, NOT INCIDENTAL (run4-cycle-004-r1attrib.mjs, 4 PASS + its G1 adjudication 4/4):\nskipping exactly two tests - 'README must correctly describe single-entry tag count' and 'README opening\nsentence must state correct multi-entry and single-entry tag counts' - lets BOTH mutations SURVIVE\n(suite returns to green); the removed set was measured to be exactly those two by name, not by count;\nthe R-1 target guard was measured still present in the skipped runs, so G3/G4 are not self-fulfilling;\na non-matching skip pattern removes nothing; and a benign reword of the same sentence leaves the suite\nGREEN, so the red arms are not an instrument that dies on every edit.\n\nWHY THAT IS DECISIVE: those two guards re-derive their expected value from src/corpus.js at run time and\nFAIL CLOSED when the acknowledgement phrase is absent - which is the precise direction in which the\ntarget guard fails OPEN. The property R-1 exists to protect is therefore already protected, twice, by\nguards whose failure mode is a false rejection rather than a silent miss. A reshape would add a third\nguard over an already-covered property, and would require README.md to own a NEW structural marker -\ni.e. editing a shipped document surface in order to satisfy a test.\n\nRATCHET: unchanged and now doubly supported - a user running `aphorism` in a terminal notices nothing\neither way, and the premise is gone (12 distinct tags, 0 on exactly one entry).\n\nRESIDUAL, STATED RATHER THAN PAPERED OVER: the two covering guards are prose regexes bound to a\ncorpus-derived number, NOT the 'structural marker the document owns' that R-1's acceptance asks for, so\nthe coverage is behavioural rather than architectural. And the guard's OTHER recorded defect - the\nD1/D3/E3 FALSE-REJECTION direction, where an honest reword makes it fire - is NOT fixed by this decline.\nIt costs nothing today because the shipped README passes. If a human ruling on T-040 reintroduces\nsingle-entry tags, or if README's phrasing is reworded away from the literal count phrase, re-open this."
+  },
+  {
+   "id": "Q-7",
+   "title": "Re-cite the Node-support CI matrix to a run that describes the post-Q-4 tree",
+   "kind": "fix",
+   "status": "done",
+   "priority": 5,
+   "effort": "S",
+   "attempts": 1,
+   "deps": [],
+   "files_hint": [
+    "README.md"
+   ],
+   "packages": [],
+   "model": "sonnet",
+   "acceptance": "test/node-support-citation.test.js is green on a full clone: the section cites a CI run id whose commit satisfies an empty `git diff <base>..HEAD -- src bin test .github`, and the four-row matrix reports that run's real numbers. Never bought by narrowing the pathspec or relaxing the assertion.",
+   "notes": "Created by cycle 2's commit, which touched test/ and so falsified the citation by its own stated condition (README \"Node support\" standing limit 2; playbook L-043). The replacement CI run cannot exist until after the push, so this is the second half of a knowingly-budgeted two-commit round trip. | DONE cycle 3, sealed gate 5ed845eb unchanged pre->post dispatch, 17 cells. Re-cited to run 32400996331 at commit 4b63e91 — NOT the newest run on the branch (32401050374 at 2014bb9) but the newest eligible one, because the section's own stated rule requires a commit that actually changed src/bin/test/.github and 2014bb9 touched only .swarm/. Suite 124 pass / 0 fail / 0 SKIPPED (a skip here would have been a false green). Anti-cheat cell A4: `git diff 4b63e91..HEAD -- src bin test .github` empty on both committed history and working tree, and A5 pins test/node-support-citation.test.js byte-identical to its 4b63e91 blob (sha b3d9d6f5) — the RED was closed by re-citing, never by touching the guard. The four matrix rows were withheld from the builder and independently re-derived by it from the CI log; they agree with the conductor's pre-dispatch measurement byte-for-byte."
+  },
+  {
+   "id": "Q-8",
+   "title": "Re-cite the Node-support matrix to a run describing the post-Q-3 tree",
+   "kind": "fix",
+   "priority": 1,
+   "value": "H",
+   "effort": "S",
+   "status": "done",
+   "deps": [],
+   "files_hint": [
+    "README.md",
+    "docs/node-support-citation-history.md"
+   ],
+   "acceptance": "the cited run id and base commit describe a tree in which `git diff <base>..HEAD -- src bin test .github` is empty; both citation guards green; the four matrix rows report that run ACTUAL counts, read from the CI log, never inferred from the local suite; the history file gains an append-only entry",
+   "packages": [],
+   "model": "sonnet",
+   "attempts": 0,
+   "notes": "The second half of the known two-commit round trip, identical in shape to Q-7 after cycle 2. Cycle 4 committed with both citation guards RED BY DESIGN: the commit touches test/, which is inside the cited pathspec, and README standing limit 2 says the replacement CI run cannot exist until after the push. NOT to be closed by narrowing the pathspec or relaxing an assertion (L-043). Two things differ from Q-7: (a) the matrix rows must now ALSO be updated, because the suite moved 124 -> 129, and the new guard in test/readme-matrix-consistency.test.js will check the new rows for per-row arithmetic and cross-row agreement; (b) expected CI shape is 129 tests / 127 pass / 0 fail / 2 skipped — the same 2 shallow-clone skips in node-support-citation.test.js; the 5 new matrix tests touch no git and do not skip. Read the counts out of `gh run view --log`; deriving them from the local suite would fabricate a CI result (the D1 trap).",
+   "verified_cycle": 5
+  },
+  {
+   "id": "R-5",
+   "status": "done",
+   "priority": 1,
+   "kind": "fix",
+   "effort": "S",
+   "model": "sonnet",
+   "title": "STANDING INVARIANT: zero features, zero deps, corpus + --help sha256 unmoved, green every commit except the predicted citation RED window",
+   "acceptance": "At the final HEAD: sha256(src/corpus.js) == 77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e; sha256(`node bin/aphorism.js --help`) == d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64; no package.json/lockfile exists; every Domain rule in SPEC.md unchanged. Verified by the conductor at EVERY cycle gate, not once at the end. Any commit that cannot hold these is reverted (hard rule 4).",
+   "files_hint": [],
+   "packages": [],
+   "deps": [],
+   "attempts": 0,
+   "cycle_found": 0,
+   "verified_note": "Held at wrap-up: suite 129/129 green, src/corpus.js sha256 77a4de5c... and --help sha256 d759d781... byte-identical to the cycle-0 baseline, tree clean. Held TRIVIALLY - the run made one commit (55dfbb8, kickoff state only) and touched no source."
+  },
+  {
+   "id": "R-6",
+   "status": "done",
+   "priority": 9,
+   "kind": "docs",
+   "effort": "S",
+   "model": "haiku",
+   "title": "CLOSED AT KICKOFF by one read (L-045): playbook allowlist, additionalDirectories, and the pacer-429 defect are human items",
+   "acceptance": "Closed by the kickoff paragraph, verified structurally at kickoff and NOT to be re-derived: (1) bin/swarm-playbook.sh appears under ZERO of the 11 allowlisted swarm-* forms in the live /opt/swarm/.claude/settings.json (swarm-budget.sh and swarm-notify.sh are both present) — KI-R6-2, unchanged, HANDOFF-allowlist-2026-08-17.md. (2) permissions.additionalDirectories is [] and the kickoff step-5 write was denied in run #6 (#35); this session reaches /opt/targets via its launch flags, so the gap costs this run nothing and was NOT re-attempted. (3) KI-R6-6 (pacer respawns into a weekly-limit 429 rather than setting limp) is a human item against SWARM/bin, which hard rule 5 forbids touching mid-run. Owes a ledger line and a report line only.",
+   "files_hint": [],
+   "packages": [],
+   "deps": [],
+   "attempts": 0,
+   "cycle_found": 0,
+   "verified_cycle": 0
+  }
+ ]
+}

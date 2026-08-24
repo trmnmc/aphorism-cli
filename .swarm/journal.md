@@ -21380,3 +21380,138 @@ runfile-mirror:
 - **caffeinate: N/A** — Linux VPS, `caffeinate_pid` 0. No identity check needed.
 - **Control channel archived**: `control.json` → `control.json.1787548283`,
   `notify.log` → `notify.log.1787548283`. Next run lazy-inits fresh.
+
+---
+
+## cycle 0 — KICKOFF improvement run #8 (allocator auto-kickoff) [spec locked]
+
+**clock** 2026-08-24T13:05:56Z (1787576756) · stop_at 2026-08-25T13:05:47Z (1787663147, +24.0h) ·
+usage_reset_at 2026-08-24T15:00:00Z (next 5h block boundary) · weekly reset 2026-08-31T04:59:59Z.
+
+**budget** gear 3 cruise · ρ 0.12 · mode guest (dial forced 1.00 from the hints' 0.30) ·
+k_cap 3 · promote false · demote false · window 26,571,718 tok / $24.87 · 8,216,624 tok/h ·
+projected depletion 2026-08-24T14:51:50Z · weekly 0% used at 4.819% elapsed · governor
+disengaged (`weekly.ok` false, no clamp applied).
+
+### The capacity check that the last two runs failed — RUN, not assumed
+
+L-038 exhausted-window refusal, executed at kickoff: **weekly_used_pct 6.0 (allocator) / 0
+(ccusage window), week_elapsed_pct 4.819, weekly reset 2026-08-31T04:59:59Z — far past
+stop_at.** Capacity is real and the run OPENS. Recorded because the contrast is the whole
+point: run #7's kickoff probe wrote `weekly_used_pct: 100` into its runfile **15 minutes
+before** the first of 381 spawned sessions died on HTTP 429, and it opened anyway.
+
+### Probe ordering — an L-039 denial that was never reachable
+
+The first probe ran before the runfile existed and returned `thermostat / gear 4`, because
+`bin/swarm-budget.sh:36` defaults `RUNFILE` to `$SWARM_DIR/runs/current.json`. Writing the
+runfile FIRST and re-running the **bare, allowlisted** form returned `guest / gear 3 / dial
+1.00` with no env-var prefix. The env-prefix denial L-039 documents is an artifact of probing
+before the runfile is on disk, not a property of the script.
+
+### Recovery path — asserted at kickoff, and it came back mixed
+
+L-037 clause 2 requires an improvement run to ASSERT its recovery path rather than assume it.
+Done, by reading both scripts (neither edited — hard rule 5):
+
+| | |
+|---|---|
+| `swarm-watchdog.timer` | enabled + active |
+| `bin/swarm-watchdog.sh:279` DONE-guard | `[ -f "$tpath/REPORT.md" ] \|\| ALL_REPORTS=0` |
+| `/opt/targets/aphorism-cli/REPORT.md` | **EXISTS** (written by run #7) |
+| watchdog log 10:36:48Z | `decision=all-done detail=reports-present` |
+| **watchdog recovery for this run** | **NONE — measured no-op, exactly as L-037 predicts** |
+| `bin/swarm-pacer.sh:183, :229` | keys on `wrap_up_complete` and `heartbeat.next_wakeup_at` only — **no REPORT.md check** |
+| `swarm-pacer.timer` | active |
+| **actual recovery path** | **the pacer** — `watchdog.mode` set to `pacer` |
+
+### Step 11 (headless zero-prompt assert) — NOT RUN, and the better signal it would have chased
+
+`claude` appears under no allowlisted form in `.claude/settings.json` (read directly, no
+denial burned — L-045). The assert could not run and is reported as NOT-RUN, never as passed.
+**But the question it exists to answer is already answered tonight:** `runs/pacer.log`
+records `auto-kickoff mode=guest dial=0.30 posture=trickle` at 13:05:48Z, this session is that
+spawn, and it reached a turn. Pacer-spawned sessions can run. Run #7 recorded the same NOT-RUN
+with the question left open; this run has the observation instead of the probe.
+
+### Stress-test — verdict RESHAPE, confidence 8
+
+The attack that landed is lens 3, the toy-version trap, and the brief IS the toy read
+verbatim: *harden tests* on a repo measuring **594 source lines against 4,587 test lines**
+(7.7×), at 100% line / 100% function coverage, where ~3/4 of the test lines guard documents
+rather than code. Runs #2–#6 built exactly that sixth guard layer. L-045 records the sharper
+version: this repo re-derived "no-repeat rotation is the highest-value change and is locked
+out by the brief" for **three consecutive runs**, from four independent taste judges, at the
+cost of three runs of manufactured chores.
+
+The defense that held: run #7 already fought this fight, reshaped the identical brief into
+guard REDUCTION with published measurement, taste-gated it — and then delivered **zero work
+cycles**. So the reshape is not to author a new scope; it is to **adopt run #7's unbuilt
+one**, re-verified item by item (decision D-R8-1).
+
+### The re-verification immediately caught a false premise (D-R8-2)
+
+Run #7's R-1 named a `>= 121 tests` COUNT floor to retire. `grep -rn "121" test/` at HEAD
+finds it in **comments only** (`readme-matrix-consistency.test.js:8,41`, describing a historical
+mutation) — **no such floor exists**. S-1 was reshaped to MEASURE the count-claim inventory
+first and retire only what the inventory shows binds. L-045 and L-031 both applied, both paid,
+at cycle 0.
+
+### Prior-art scout (2 searches, BUILD stance)
+
+Stryker is the canonical JS mutation tool but is **not adoptable here** on three independent
+grounds: it is a large dependency tree against a hard zero-dep constraint; its documented
+runners are Jest/Mocha/Jasmine/Karma with no `node:test` plugin; and decisively, **a source
+mutator cannot mutate documents** — and 3/4 of this suite's lines guard README tables and
+citation lines. S-1's `tools/mutation-matrix.mjs` is a claim-mutator, not a code-mutator.
+
+### Taste judge — and the two must-haves it added
+
+Scores **use-twice 4 · product-not-demo 6 · scope-fits-night 7 · one-memorable-thing 6**.
+The structural catch, which changed the spec rather than being annotated onto it: *"S-1/S-4/S-5
+can all be discharged by publishing a finding, so half the must-haves can land as prose and
+still pass."* → **S-6** now requires every published finding to ship as a rerunnable tool in
+`tools/`. Its verdict condition — that the escalation actually unblock something for run #9 —
+→ **S-7**, the escalation must be written as launch-ready brief text.
+
+The **use-twice 4 is recorded and not argued away**: for the eighth consecutive run the CLI
+gains nothing a user would notice. That is the honest cost of a trickle brief on a finished
+594-line program, and S-7 exists because the answer is to escalate it, not absorb it a fifth
+time.
+
+### Playbook — 15 lessons staged, apply_mode auto
+
+Staged by **direct read** of `playbook/learnings.md`: L-008, L-016, L-024, L-026, L-029,
+L-031, L-033, L-034, L-037, L-038, L-042, L-043, L-044, L-046, L-047. Held out: **L-022**
+(persisted UI state in beforeEach — terminal CLI, no browser surface; fourth consecutive run).
+`bin/swarm-playbook.sh parse` was **not invoked and no denial was burned**: `settings.json`
+was read directly and the script appears under zero allowlisted forms — **12th consecutive
+structural confirmation** (KI-R6-2). Hard rule 5 forbids repairing it from inside a run.
+
+### Baseline pinned
+
+```
+HEAD 20b7ede · node --test test/*.test.js -> tests 129 / pass 129 / fail 0 / skipped 0
+src+bin 594 lines · test/ 4587 lines (largest: readme-tags.test.js 2778)
+src/corpus.js sha256 77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e
+--help    sha256 d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64
+```
+
+Both shas match run #7's recorded values — the tree has not moved since that run's single commit.
+
+### Scaffolding
+
+SPEC.md locked (S-1..S-8) · state.json phase PLAN, 4 decisions · backlog rewritten: 9 blocked
+carried forward unchanged (all human-owned or brief-locked), 4 run-#7 todos marked
+**dropped-as-superseded** each naming its successor must-have (R-1→S-1, R-2→S-2, R-4→S-4,
+Q-10→S-3) rather than deleted, 11 done/dropped archived to `backlog-archive-runs1-7.json` ·
+prior state/backlog copied to `*.pre-run8-1787576756` · `additionalDirectories` set to
+`["/opt/targets/aphorism-cli"]` · project-registry recorded (3 projects) · kickoff-hints
+consumed and deleted · caffeinate N/A (Linux VPS).
+
+commit: (this cycle's commit — see git log)
+next wakeup: cycle 1 runs immediately (KICKOFF step 13), no wakeup needed.
+runfile-mirror:
+```json
+{"version":1,"run_label":"improvement run #8","targets":[{"path":"/opt/targets/aphorism-cli","name":"aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":1787663147,"usage_reset_at":1787583600,"stop_at_iso":"2026-08-25T13:05:47.000Z","usage_reset_at_iso":"2026-08-24T15:00:00.000Z","model_policy":"value-routing","auth_mode":"subscription","kickoff_source":"allocator","heartbeat":{"ts":1787577261,"next_wakeup_at":1787577861,"pid":3627127,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"probe","gear":3,"gear_target":3,"ratio":0.12,"mode":"guest","k_cap":3,"promote":false,"demote":false,"window_tokens":26571718,"window_cost_usd":24.869135,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":8216624,"projected_depletion_at":1787628710,"last_probe_ts":1787577261,"last_real_probe_ts":1787577261,"probe_failures":0,"weekly":{"ok":false,"weekly_used_pct":0,"opus_used_pct":0,"week_elapsed_pct":4.819,"weekly_heat":0,"opus_heat":0,"ceiling":5,"promote_blocked":false,"week_resets_at":1788152399},"probe_note":"First probe of the cycle ran BEFORE the runfile existed and returned thermostat/gear 4. Re-probed after writing the runfile: bin/swarm-budget.sh line 36 defaults RUNFILE to $SWARM_DIR/runs/current.json, so the bare ALLOWLISTED form reads this run pacing with no env prefix. L-039 env-prefix denial is not reachable in this ordering."},"watchdog":{"mode":"pacer","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0,"note":"swarm-watchdog.timer is enabled+active but is a MEASURED NO-OP for this run: bin/swarm-watchdog.sh line 279 keys its DONE-guard on REPORT.md existing in every target, and /opt/targets/aphorism-cli/REPORT.md exists from run #7. L-037 clause 2, asserted at kickoff rather than assumed. RECOVERY PATH IS THE PACER: bin/swarm-pacer.sh keys only on wrap_up_complete (line 183) and heartbeat.next_wakeup_at (line 229) — it does NOT check REPORT.md — and swarm-pacer.timer is active. Verified by reading both scripts; neither was edited (hard rule 5)."},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":0,"artifact":{"url":"","file":"/opt/swarm/runs/dashboard.html","publish_failures":0},"playbook":{"apply_mode":"auto","source":"direct read of playbook/learnings.md (bin/swarm-playbook.sh structurally unallowlisted — KI-R6-2, 12th consecutive confirmation, zero denials burned this run)","applied":["L-008","L-016","L-024","L-026","L-029","L-031","L-033","L-034","L-037","L-038","L-042","L-043","L-044","L-046","L-047"],"vetoed":[],"held_out":[{"id":"L-022","why":"persisted UI state in beforeEach — this target is a terminal CLI with no browser surface; held out for the fourth consecutive run"}],"directives":{"wave_k":null,"routing_recs":["core-logic->fable (L-026)"],"prompt_lines":{"builder":"The conductor is the SOLE committer — never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work. Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps. Classify each surviving mutant as HOLE (a real gap - harden it) or BOUNDARY (behaviour the spec does not decide - document it) BEFORE writing any test. When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence. For every mutation that must kill the suite, author one control that must leave it GREEN — a check that dies on everything is a snapshot test, not an assertion. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check.","reviewer":"The conductor is the SOLE committer — never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. Assign each fixer a pairwise-disjoint file set; two fixers must never share a file. The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work.","qa":"Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'. Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns. Classify each surviving mutant as HOLE or BOUNDARY BEFORE writing any test."},"process":["kickoff-refuse-on-exhausted-window (L-038) — RUN at cycle 0, PASSED: weekly 6.0% at 4.819% elapsed, reset 2026-08-31 well past stop_at","spawner-backoff-to-known-reset (L-037) — SWARM tool gap, reported not edited (hard rule 5)","wire-through check at each layer boundary for domain-capability items (L-046)","reserve one mid-run cycle for the taste pass before the VALUE_LOOP tail (L-038)"]}},"kickoff_hints":{"mode":"guest","dial":0.3,"brief":"TRICKLE POSTURE: housekeeping only — harden tests, fix playbook items, polish docs — no new features. Haiku-priced work types; no new features.","source":"allocator","stop_at":1787663147,"consumed_at":1787577261},"session_shape":"headless -p session spawned by swarm-pacer.sh (auto-kickoff 13:05:48Z). Workflow tool is review-gated headless, so build dispatch is DIRECT Agent calls with disjoint scopes declared in-prompt (L-016); Artifact publish unavailable (local dashboard render IS the publication on the VPS); `claude` is not allowlisted so kickoff step 11 could not run."}
+```
