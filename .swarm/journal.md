@@ -22820,3 +22820,142 @@ dashboard: rendered, ok:true, 8/8 burn-up bars, 14 verified cumulative, 12/12
 placeholders filled. No Artifact publish (headless VPS) — the file write IS the
 publication; not counted as a publish failure.
 next wakeup: 1787591300 (+90s)
+
+
+## cycle 8 | 2026-08-24T17:33:51+00:00 | aphorism-cli | BUILD → QA
+
+work: build-wave [W-10] — again a ONE-item wave, and again honestly so. W-10 was the
+last dispatchable must-have on the board; the only other open item, W-6, is a
+conductor-held standing invariant that is never dispatched to a builder. Effective wave
+size was min(k_current 5, gear cap 2, hard max 5) = 2; the board supplied one.
+dispatch: 1 DIRECT Agent call (Workflow is review-gated in a headless -p session, L-016
+fallback).
+models: W-10 sonnet. Routing recomputed at pick time, not taken from the backlog's
+plan-time `opus`: the table routes M-effort `report` work to sonnet as the default for
+anything unmatched, and gear 2's demote rung drops sonnet→haiku for docs/polish items
+ONLY, which a report is not. So sonnet by the table, unchanged by the gear. Recorded
+because the tempting move was to inflate it — the item's clause is about honesty
+classification, and "anything making a judgment call about honesty stays on fable" was
+weighed and rejected: the honesty judgment here is the CONDUCTOR's at the gate, not the
+writer's. Craft pack ran clean (degraded: none); not a UI item, so no craft.ui splice.
+budget: gear 2 (down one rung from cruise), ratio 0.64, k_cap 2, demote on. 48.8M window
+tokens at 22.1M tok/h, projected depletion ~20:51Z — after the 20:00Z reset, no pressure.
+The gear is set by the weekly governor, not by ρ: ρ 0.64 would read gear 4, but the
+governor lowered the reachable ceiling to 2 and hysteresis moves at most one step.
+control: 0 pending commands, 0 injections. Tree clean at d899fe0 on entry.
+
+**KI-37, second observation, and it cuts against cycle 7's reading.** Cycle 7 recorded
+the budget probe reading weekly_used_pct 0 while runs/allocator.json read 13.0. This
+cycle the same probe reads 37.50 at week_elapsed_pct 7.265 — a 37-point step in one
+cycle — while opus_used_pct stayed pinned at 100 across both. So the weekly counter is
+not stuck at zero; it moves, in one large jump. Whether that jump is real accrual or a
+reporting artifact is still undiffed. KI-37 stays open with a second observation shape
+on the record rather than a narrowed conclusion.
+
+**the gate crashed before it judged anything — sixth consecutive cycle, ninth distinct
+root cause.** cycle-008-gate.mjs cell C5 cloned the target repo and invoked
+`<clone>/tools/test-line-delta.mjs` to prove the tool measures rather than prints a
+constant. That tool is this cycle's own work and is UNTRACKED at verification time;
+`git clone` carries tracked content only, so the clone arrived without it, node died on
+MODULE_NOT_FOUND, and an unguarded JSON.parse took the whole gate down before C5 through
+C13 returned any verdict. Handled as every prior instance was (D-R8-9, D-R8-10, D-R8-15,
+D-R8-17): the defect is named in the instrument's own header as defence 7, the fix copies
+the working-tree tool in and PROVES it arrived — `tool tracked by git? NO (untracked —
+clone cannot carry it)` prints in the evidence — and every tool invocation now parses
+defensively and prints its own stderr instead of dying silently. Recorded as D-R8-20.
+Nine root causes across six cycles, sharing nothing with each other; the constant is not
+a bug class, it is that one-shot instruments are written once, run once and reviewed by
+nobody. This is the run's primary RETRO candidate and it is now nine instances deep.
+
+VERIFICATION EVIDENCE — 13 cells, 12 PASS; full output in
+.swarm/runs/cycle-008-verify-W-10.txt, script committed as
+.swarm/runs/cycle-008-gate.mjs; the C13 split in
+.swarm/runs/cycle-008-verify-W-10-c13-addendum.txt / cycle-008-gate-c13-addendum.mjs.
+
+  W-10 — the run's own scoreboard number, and the escalation written to be launched with
+
+  C3 THE DELTA, RE-DERIVED BY THE CONDUCTOR WITHOUT THE BUILDER'S TOOL
+     (git ls-tree + git show per revision; the tool was not invoked in this cell):
+       baseline 20b7ede: 4587 lines over 7 files
+       HEAD:             4666 lines over 7 files
+       delta:            +79
+       per-file movers:  {"test/readme-tags.test.js":"2778->2857"}
+       commits touching test/ in 20b7ede..HEAD:
+         02f4668 cycle 4: KI-R6-3 closed by consolidation, and one entry point that
+                 re-runs every finding [value]
+       numstat for 02f4668 over test/: 119  40  test/readme-tags.test.js
+     REPORT.md carries 4,587/4587: true; 4,666/4666: true; +79: true; names W-7 and
+     02f4668: true
+  C4 tool --json: baseline 4587 target 4666 delta 79 == conductor's own 79
+  C5 FAILABILITY, by the conductor's OWN perturbations, in directions the builder never
+     tested (the builder tested +1 line and two zero cases):
+       tool tracked by git? NO (untracked — clone cannot carry it)
+       copied working-tree tool into clone: exists=true bytes_match=true
+       perturbation 1 (+46-line file):            delta  125, expected  125 -> MATCH
+       perturbation 2 (also -298-line file):      delta -173, expected -173 -> MATCH
+                                                  [NEGATIVE direction, untested before]
+       removedFiles reported at perturbation 2:   ["test/select.test.js"]
+       control (identity 20b7ede..20b7ede):       delta    0, expected    0 -> MATCH
+                                                  [a check that dies on everything is
+                                                   not an assertion]
+       the run's headline +79 was printed for NONE of the three: true
+  C6 suite, parsed from the reporter format node --test actually emits (U+2139, not TAP):
+       [ℹ tests 128] [ℹ pass 128] [ℹ fail 0] [ℹ skipped 0]   exit=0
+  C7 S-8 invariants: src/corpus.js sha256 77a4de5c… UNMOVED; --help sha256 d759d781…
+     UNMOVED; manifests/lockfiles tracked by git: none; on disk: none; no node_modules;
+     9 tools/*.mjs, 30 imports, 0 non-node:; converse control rejected
+     ["lodash","../src/corpus.js","./helper.mjs"] 3/3
+  C2 citation pathspec byte-clean — status, diff and diff --cached over
+     src bin test .github README.md all EMPTY, so this cycle's commit cannot open a
+     second citation window (S-8 permits one; it was spent in cycle 4)
+  C8 every executable REPORT.md names under tools/ exists on disk: 9/9, missing []
+  C9 tools/run-all.mjs exit 0 with the new tool registered; 7 slot headings seen
+  C10 S-7: exactly 1 blockquote block in the section; covers corpus depth (50), voice
+     concentration (34%, Dijkstra), no-repeat rotation, --tag discoverability; cites
+     TS-1/TS-2/TS-3/TS-6; opens imperative ("Lift…"); fingerprint occurs 1x in the
+     document, so "stated once, never re-derived elsewhere" holds
+  C11 every number the escalation prints was found in .swarm/backlog.json 6/6 — CITED,
+     not manufactured (draw 9; 76.2%; Dijkstra 7 / Perlis 5 / Pike 5; 34%; five pools
+     <= 4; jq)
+  C12 all eight must-haves present, each with a legal status word from
+     [shipped, held, NOT-RUN, blocked] and 141-750 chars of evidence
+  C1 builder write scope stated as a RULE, not a snapshot: every dirty path is REPORT.md,
+     tools/*, or conductor-owned .swarm/*; converse control rejected
+     ["src/corpus.js","test/args.test.js",".github/workflows/test.yml"] 3/3
+  C13 FAIL — and split rather than rounded. See below.
+
+  -> **W-10 done.** W-6 held (C2 + C7).
+
+**C13 failed and W-10 still passes — the third time this run has recorded a defect
+against work that satisfies its clause** (cf. D-R8-7, D-R8-8). C13 bundled two checks and
+returned one verdict. Split in the addendum: the scratch-tree half PASSES (no .scratch
+tree survives). The commit-count half is real — REPORT.md's closing line reads
+"(13 commits, `912a2a4`..`d899fe0`)", and measured,
+`git rev-list --count 912a2a4..d899fe0` = 12 because git's A..B excludes A, while
+`912a2a4^..d899fe0` = 13. 912a2a4 IS run #8's own cycle-0 KICKOFF commit (parent
+20b7ede = run #7's wrap-up and this run's baseline), so the run really made 13 commits:
+the NUMBER is true and the NOTATION beside it selects a different one. A reader who runs
+the printed range gets 12 and concludes the report is off by one. W-10's acceptance
+clause carries no commit-count requirement, and the cycle count WRAP_UP does require
+("0 through 7 complete, cycle 8 in progress") is correct — so this is beyond the clause.
+Filed as P-3 (S, haiku, priority 3) with the exact measurement and a converse control
+proving the comparison also ACCEPTS a correctly-notated claim, because a check that
+cannot pass is not evidence either. Recorded as D-R8-21.
+
+wave autotune: CLEAN wave (0 reverts, 0 failed verifies) -> wave_streak 0 -> 1;
+k_current unchanged at 5 (a second consecutive clean wave would raise it, and 5 is
+already the hard max).
+
+phase: BUILD -> QA. Every dispatchable must-have is now done; W-6 is the conductor-held
+standing invariant that stays open until WRAP_UP by construction. Next gate in cycle.md
+step 4 is one review-fix / QA / TASTE pass before POLISH, and the playbook's own process
+line (L-038) says to reserve a mid-run cycle for the taste pass before the VALUE_LOOP
+tail. The taste agent is a judgment seat and therefore exempt from gear 2's demote rung.
+
+burn attribution: window_tokens 39,503,678 -> 48,848,198 = 9,344,520 credited to cycle
+7's target (same target); counters.window_tokens_attributed now 23,005,442.
+
+runfile-mirror:
+```json
+{"version":1,"run_label":"improvement run #8","targets":[{"path":"/opt/targets/aphorism-cli","name":"aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":1787663147,"usage_reset_at":1787601600,"stop_at_iso":"2026-08-25T13:05:47.000Z","usage_reset_at_iso":"2026-08-24T20:00:00.000Z","model_policy":"value-routing","auth_mode":"subscription","kickoff_source":"allocator","heartbeat":{"ts":1787592831,"next_wakeup_at":1787593731,"pid":84396,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"probe","gear":2,"gear_target":2,"ratio":0.64,"mode":"guest","k_cap":2,"promote":false,"demote":true,"window_tokens":48848198,"window_cost_usd":46.13573500000001,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":22053948,"projected_depletion_at":1787607116,"last_probe_ts":1787592831,"last_real_probe_ts":1787592831,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":37.49531308586427,"opus_used_pct":100,"week_elapsed_pct":7.265,"weekly_heat":5.16,"opus_heat":13.76,"ceiling":2,"promote_blocked":true,"week_resets_at":1788152399},"probe_note":"cycle 8 probe: probe_ok true. gear 2 (DOWN one rung from 3; ratio 0.64 would read gear 4, but the weekly governor lowered the reachable ceiling to 2 and hysteresis moves at most one step), k_cap 2, demote true, no promote. 48.8M window tokens at 22.1M tok/h, projected depletion 1787607116 (~20:51Z), AFTER the 20:00Z window reset — no pressure. KI-37 UPDATE, and it cuts against the cycle-7 reading: weekly_used_pct moved 0 -> 37.50 in one cycle at week_elapsed_pct 7.265, while opus_used_pct stayed pinned at 100. So the weekly counter is not simply stuck at 0 — it moves, in one large step. Whether that step is a real accrual or a reporting artifact is still undiffed; KI-37 stays open and now has a second observation shape on the record."},"watchdog":{"mode":"pacer","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0,"note":"swarm-watchdog.timer is enabled+active but is a MEASURED NO-OP for this run: bin/swarm-watchdog.sh line 279 keys its DONE-guard on REPORT.md existing in every target, and /opt/targets/aphorism-cli/REPORT.md exists from run #7. L-037 clause 2, asserted at kickoff rather than assumed. RECOVERY PATH IS THE PACER: bin/swarm-pacer.sh keys only on wrap_up_complete (line 183) and heartbeat.next_wakeup_at (line 229) — it does NOT check REPORT.md — and swarm-pacer.timer is active. Verified by reading both scripts; neither was edited (hard rule 5)."},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":7,"artifact":{"url":"","file":"/opt/swarm/runs/dashboard.html","publish_failures":0},"playbook":{"apply_mode":"auto","source":"direct read of playbook/learnings.md (bin/swarm-playbook.sh structurally unallowlisted — KI-R6-2, 12th consecutive confirmation, zero denials burned this run)","applied":["L-008","L-016","L-024","L-026","L-029","L-031","L-033","L-034","L-037","L-038","L-042","L-043","L-044","L-046","L-047"],"vetoed":[],"held_out":[{"id":"L-022","why":"persisted UI state in beforeEach — this target is a terminal CLI with no browser surface; held out for the fourth consecutive run"}],"directives":{"wave_k":null,"routing_recs":["core-logic->fable (L-026)"],"prompt_lines":{"builder":"The conductor is the SOLE committer — never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work. Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps. Classify each surviving mutant as HOLE (a real gap - harden it) or BOUNDARY (behaviour the spec does not decide - document it) BEFORE writing any test. When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence. For every mutation that must kill the suite, author one control that must leave it GREEN — a check that dies on everything is a snapshot test, not an assertion. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check.","reviewer":"The conductor is the SOLE committer — never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. Assign each fixer a pairwise-disjoint file set; two fixers must never share a file. The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work.","qa":"Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'. Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns. Classify each surviving mutant as HOLE or BOUNDARY BEFORE writing any test."},"process":["kickoff-refuse-on-exhausted-window (L-038) — RUN at cycle 0, PASSED: weekly 6.0% at 4.819% elapsed, reset 2026-08-31 well past stop_at","spawner-backoff-to-known-reset (L-037) — SWARM tool gap, reported not edited (hard rule 5)","wire-through check at each layer boundary for domain-capability items (L-046)","reserve one mid-run cycle for the taste pass before the VALUE_LOOP tail (L-038)"]}},"kickoff_hints":{"mode":"guest","dial":0.3,"brief":"TRICKLE POSTURE: housekeeping only — harden tests, fix playbook items, polish docs — no new features. Haiku-priced work types; no new features.","source":"allocator","stop_at":1787663147,"consumed_at":1787577261},"session_shape":"headless -p session spawned by swarm-pacer.sh (auto-kickoff 13:05:48Z). Workflow tool is review-gated headless, so build dispatch is DIRECT Agent calls with disjoint scopes declared in-prompt (L-016); Artifact publish unavailable (local dashboard render IS the publication on the VPS); `claude` is not allowlisted so kickoff step 11 could not run."}
+```

@@ -1,0 +1,24 @@
+C13a — no scratch tree survives into the commit
+  scratch entries in target root: []
+  --> C13a: PASS
+
+C13b — the commit-count claim, adjudicated by measurement
+  REPORT.md line: Cycles run this improvement run: **0 through 7 complete** (13 commits, `912a2a4`..`d899fe0`),
+  claimed count: 13
+  git rev-list --count 912a2a4..d899fe0   = 12   (git's A..B EXCLUDES A)
+  git rev-list --count 912a2a4^..d899fe0  = 13   (inclusive of 912a2a4)
+  912a2a4 is: 912a2a4 cycle 0: KICKOFF improvement run #8 — adopt run #7's unbuilt spec, and catch its false premise on the way in [spec locked]
+  its parent: 20b7ede WRAP_UP addendum: the three best-effort steps as they actually went (SWARM push FAILED, screenshot skipped, watchdog deliberately left alone)
+
+  NUMBER true of the run's own commits?   YES  (13 vs 13)
+  NOTATION beside it selects that number? NO  (13 vs 12)
+
+  VERDICT: the count is right and the range notation is wrong by one commit.
+  A reader who runs the printed range gets 12 and concludes the report is off by one.
+  Correct forms: `912a2a4^..d899fe0`, or the prose "912a2a4 through d899fe0".
+  --> C13b: DEFECT CONFIRMED (filed as backlog item P-3, beyond W-10's clause)
+
+  converse control — the same comparison applied to a correctly-notated claim
+  hypothetical claim "(12 commits, 912a2a4..d899fe0)" -> accepted: true
+  hypothetical claim "(13 commits, 912a2a4^..d899fe0)" -> accepted: true
+  --> converse control: GREEN

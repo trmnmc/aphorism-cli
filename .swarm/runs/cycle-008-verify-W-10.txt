@@ -1,0 +1,227 @@
+
+==============================================================================
+C1 — every dirty path is inside W-10 builder scope (REPORT.md, tools/) or conductor-owned (.swarm/)
+==============================================================================
+raw `git status --porcelain`, one line per row, BRACKETED so a column-eating parse is visible:
+  [ M REPORT.md]
+  [ M tools/run-all.mjs]
+  [?? .swarm/runs/cycle-008-gate.mjs]
+  [?? .swarm/runs/cycle-008-verify-W-10.txt]
+  [?? tools/test-line-delta.mjs]
+parsed paths: ["REPORT.md","tools/run-all.mjs",".swarm/runs/cycle-008-gate.mjs",".swarm/runs/cycle-008-verify-W-10.txt","tools/test-line-delta.mjs"]
+out-of-scope paths: []
+converse control — rule must reject ["src/corpus.js","test/args.test.js",".github/workflows/test.yml"]: rejected 3/3
+  --> C1: PASS
+
+==============================================================================
+C2 — no commit this cycle can open a second citation window — pathspec byte-clean
+==============================================================================
+git status --porcelain -- src bin test .github README.md:
+  []
+git diff --stat over the same pathspec:
+  []
+git diff --cached --stat over the same pathspec:
+  []
+S-8 permits ONE citation window this run; it was spent in cycle 4 (02f4668 open, 4980f3a close).
+  --> C2: PASS
+
+==============================================================================
+C3 — REPORT.md's before/after/delta matches the conductor's own independent measurement, attributed to the one commit that produced it
+==============================================================================
+conductor re-derivation (git ls-tree + git show; the builder tool was NOT invoked):
+  baseline 20b7ede: 4587 lines over 7 files
+  HEAD:             4666 lines over 7 files
+  delta:            +79
+  per-file movers:  {"test/readme-tags.test.js":"2778->2857"}
+  commits touching test/ in 20b7ede..HEAD:
+    02f4668 cycle 4: KI-R6-3 closed by consolidation, and one entry point that re-runs every finding [value]
+  numstat for 02f4668 over test/: 119	40	test/readme-tags.test.js
+
+REPORT.md carries 4,587/4587: true; 4,666/4666: true; +79: true; names W-7 and 02f4668: true
+  --> C3: PASS
+
+==============================================================================
+C4 — tools/test-line-delta.mjs reproduces the conductor's independently-derived delta
+==============================================================================
+exit 0
+tool --json: baseline 4587 target 4666 delta 79
+conductor's own number (C3): 79
+touchingCommits: ["02f4668 cycle 4: KI-R6-3 closed by consolidation, and one entry point that re-runs every finding [value]"]
+  --> C4: PASS
+
+==============================================================================
+C5 — the tool is a MEASUREMENT, not a constant — conductor's own perturbations, including a negative direction, plus a green control
+==============================================================================
+clone exit 0 -> /tmp/gate-c8-ZOEkRh/probe
+  tool tracked by git? NO (untracked — clone cannot carry it)
+  copied working-tree tool into clone: exists=true bytes_match=true
+  git rm exit 0 
+  perturbation 1 (+46-line file): tool delta 125, expected 125 -> MATCH
+  perturbation 2 (also -298-line file): tool delta -173, expected -173 -> MATCH   [NEGATIVE direction, untested by the builder]
+  removedFiles reported at perturbation 2: ["test/select.test.js"]
+  control (identity 20b7ede..20b7ede): tool delta 0, expected 0 -> MATCH   [a check that dies on everything is not an assertion]
+  the run's headline +79 was NOT printed for any of the three: true
+  scratch clone removed: true
+  --> C5: PASS
+
+==============================================================================
+C6 — suite green at the working tree (128/128/0/0)
+==============================================================================
+raw summary lines from node --test, verbatim (the reporter emits U+2139, not TAP "#"):
+  [ℹ tests 128]
+  [ℹ pass 128]
+  [ℹ fail 0]
+  [ℹ skipped 0]
+  [ℹ todo 0]
+  [ℹ duration_ms 5157.785392]
+parsed: tests=128 pass=128 fail=0 skipped=0  exit=0
+  --> C6: PASS
+
+==============================================================================
+C7 — S-8 standing invariants hold: both sha unmoved, no manifest, tools/ imports node: builtins only
+==============================================================================
+src/corpus.js sha256 = 77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e
+                 want = 77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e  -> UNMOVED
+--help       sha256 = d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64
+                 want = d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64  -> UNMOVED
+manifests/lockfiles tracked by git: []  (expected: none — manifest-less IS the zero-dep surface)
+manifests/node_modules present on disk: []
+tools/*.mjs scanned: 8 files, 27 import statements, non-node: imports: []
+converse control — classifier must reject ["lodash","../src/corpus.js","./helper.mjs"]: rejected 3/3
+  --> C7: PASS
+
+==============================================================================
+C8 — no finding cites an executable that does not exist (S-6: nothing is prose-only)
+==============================================================================
+executables/artifacts REPORT.md names under tools/ (10):
+  EXISTS  tools/citation-rule-check.mjs
+  EXISTS  tools/citation-tax.mjs
+  EXISTS  tools/detection-floor.mjs
+  EXISTS  tools/guard-inventory.mjs
+  EXISTS  tools/matrix-adjudication.mjs
+  EXISTS  tools/mutation-matrix-baseline.json
+  EXISTS  tools/mutation-matrix-final.json
+  EXISTS  tools/mutation-matrix.mjs
+  EXISTS  tools/run-all.mjs
+  EXISTS  tools/test-line-delta.mjs
+missing: []
+  --> C8: PASS
+
+==============================================================================
+C9 — tools/run-all.mjs exits 0 with the new tool registered as a slot
+==============================================================================
+exit 0
+slot headings seen (7):
+  [[1/7] tools/guard-inventory.mjs  (W-1 -- count-claim guard inventory)]
+  [[2/7] tools/test-line-delta.mjs  (W-10 -- test/ line count, baseline 20b7ede vs HEAD)]
+  [[3/7] tools/mutation-matrix.mjs  (W-2 -- detection floor for W-1's claims)]
+  [[4/7] tools/citation-rule-check.mjs  (W-3 -- citation-history doc quotes README verbatim)]
+  [[5/7] tools/citation-tax.mjs  (W-4 -- the citation two-commit tax over history)]
+  [[6/7] tools/matrix-adjudication.mjs  (W-5 -- adjudicates the 127-vs-129 matrix numbers)]
+  [[7/7] tools/detection-floor.mjs  (W-8 -- no baseline detection lost at final HEAD)]
+mentions test-line-delta: true
+roll-up tail, verbatim:
+  [run-all] tools/detection-floor.mjs exited 0 (74ms elapsed)
+  
+  ================================================================================
+  ROLL-UP
+  ================================================================================
+    guard-inventory        clean  (exit 0)
+    test-line-delta        clean  (exit 0)
+    mutation-matrix        SKIPPED
+    citation-rule-check    clean  (exit 0)
+    citation-tax           clean  (exit 0)
+    matrix-adjudication    clean  (exit 0)
+    detection-floor        clean  (exit 0)
+  
+  ROLL-UP: 6/7 ran clean; SKIPPED: mutation-matrix.
+  --> C9: PASS
+
+==============================================================================
+C10 — S-7: one paragraph, all three changes, cites TS ids, reads as an instruction, stated once
+==============================================================================
+section "## The S-7 escalation" found at offset 11497, 27 lines
+blockquote blocks in the section: 1 (must be exactly 1 — "a single paragraph")
+brief length: 1662 chars, 19 quoted lines
+  YES  corpus depth
+  YES  voice concentration (TS-3)
+  YES  no-repeat rotation
+  YES  --tag discoverability
+  YES  cites TS ids
+  YES  imperative to a builder (not a complaint)
+fingerprint "Lift the corpus-expansion and no-new-CLI-flags non-goals for..." occurs 1x in REPORT.md (must be 1 — "stated once, never re-derived elsewhere")
+
+the brief text, verbatim, as a reader would paste it:
+  > Lift the corpus-expansion and no-new-CLI-flags non-goals for run #9, scoped to exactly
+  > three changes, each already measured and recorded in `.swarm/backlog.json` (items TS-1,
+  > TS-2, TS-3, TS-6) — do not re-measure them, extend or repair them. (1) Grow
+  > `src/corpus.js` past its current 50 canon-only entries: under uniform sampling the median
+  > first exact repeat lands at draw 9 and P(repeat by draw 12) = 76.2% (TS-1), and the corpus
+  > is 34% concentrated in three voices — Dijkstra 7 + Perlis 5 + Pike 5 of 50 (TS-3). Add
+  > entries that diversify author and era rather than deepening the three dominant voices, and
+  > prefer less-anthologized lines over deeper cuts from the same canon. (2) Add no-repeat
+  > rotation within a session: at minimum, never return the immediately-previous pick on
+  > consecutive unseeded draws, so a user running the CLI repeatedly in one sitting does not
+  > hit a near-immediate repeat from a pool where five tag pools already hold <= 4 entries each
+  > — philosophy 3, readability/reliability/language/process 4 each (TS-2). (3) Make the
+  > `--tag` vocabulary discoverable without `jq`: today README and `--help` delegate discovery
+  > to `--list --json | jq -r '.tags[]' | sort -u`, and a retired tag name (e.g. the tag folded
+  > into "debugging") is byte-identical in exit code, stdout and stderr to a tag that never
+  > existed (TS-6) — list the tag vocabulary inline in README and `--help`, and if a listing
+  > flag such as `--tags` is judged in scope, ship it. These three are the only user-visible
+  > changes in scope for run #9; do not reopen guard-layer or measurement work on this repo
+  > unless a fresh measurement shows a regression this run's tools did not catch.
+  --> C10: PASS
+
+==============================================================================
+C11 — every number the S-7 escalation prints is on the backlog record, not manufactured
+==============================================================================
+  FOUND     TS-1 median first repeat at draw 9
+  FOUND     TS-1 P(repeat by 12) = 76.2%
+  FOUND     TS-3 Dijkstra 7 / Perlis 5 / Pike 5
+  FOUND     TS-3 34% of the corpus
+  FOUND     TS-2 five pools <= 4 entries
+  FOUND     TS-6 jq / byte-identical unknown tag
+  (each number the escalation prints is looked up in .swarm/backlog.json; the clause says CITE, not re-derive)
+  --> C11: PASS
+
+==============================================================================
+C12 — all eight must-haves appear, each with a legal status word and real evidence
+==============================================================================
+  S-1  status="shipped" legal=true evidence_chars=699
+  S-2  status="shipped" legal=true evidence_chars=346
+  S-3  status="shipped" legal=true evidence_chars=399
+  S-4  status="shipped" legal=true evidence_chars=535
+  S-5  status="shipped" legal=true evidence_chars=414
+  S-6  status="shipped" legal=true evidence_chars=370
+  S-7  status="shipped" legal=true evidence_chars=141
+  S-8  status="held" legal=true evidence_chars=750
+ids present: ["S-1","S-2","S-3","S-4","S-5","S-6","S-7","S-8"]
+expected:    ["S-1","S-2","S-3","S-4","S-5","S-6","S-7","S-8"]
+legal status vocabulary: ["shipped","held","NOT-RUN","blocked"]
+  --> C12: PASS
+
+==============================================================================
+C13 — no scratch tree left behind; the report's commit count is the real one
+==============================================================================
+scratch dirs in target root: []
+git rev-list --count 912a2a4..d899fe0 = 12
+REPORT.md claims: 13 — raw line: Cycles run this improvement run: **0 through 7 complete** (13 commits, `912a2a4`..`d899fe0`),
+  --> C13: FAIL
+
+##############################################################################
+PASS  C1  every dirty path is inside W-10 builder scope (REPORT.md, tools/) or conductor-owned (.swarm/)
+PASS  C2  no commit this cycle can open a second citation window — pathspec byte-clean
+PASS  C3  REPORT.md's before/after/delta matches the conductor's own independent measurement, attributed to the one commit that produced it
+PASS  C4  tools/test-line-delta.mjs reproduces the conductor's independently-derived delta
+PASS  C5  the tool is a MEASUREMENT, not a constant — conductor's own perturbations, including a negative direction, plus a green control
+PASS  C6  suite green at the working tree (128/128/0/0)
+PASS  C7  S-8 standing invariants hold: both sha unmoved, no manifest, tools/ imports node: builtins only
+PASS  C8  no finding cites an executable that does not exist (S-6: nothing is prose-only)
+PASS  C9  tools/run-all.mjs exits 0 with the new tool registered as a slot
+PASS  C10  S-7: one paragraph, all three changes, cites TS ids, reads as an instruction, stated once
+PASS  C11  every number the S-7 escalation prints is on the backlog record, not manufactured
+PASS  C12  all eight must-haves appear, each with a legal status word and real evidence
+FAIL  C13  no scratch tree left behind; the report's commit count is the real one
+
+GATE: 12/13 cells PASS

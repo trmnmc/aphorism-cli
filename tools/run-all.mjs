@@ -39,18 +39,23 @@
 // ---------------------------------------------------------------------------
 //   [1] tools/guard-inventory.mjs     (W-1) the inventory of count-claim
 //       guards that actually bind at HEAD.
-//   [2] tools/mutation-matrix.mjs     (W-2) the detection floor for [1]'s
+//   [2] tools/test-line-delta.mjs     (W-10) the before/after test/ line
+//       count between the run's baseline commit (20b7ede) and HEAD, with the
+//       delta and the commit(s) responsible. guard-inventory.mjs (above)
+//       only ever measures the checked-out working tree, so it cannot
+//       answer a two-revision question; this is the tool that can.
+//   [3] tools/mutation-matrix.mjs     (W-2) the detection floor for [1]'s
 //       claims. DEFAULT EXCLUDED -- see "THE OPT-IN" below. When excluded,
 //       its slot in the order still prints a labelled heading explaining
 //       that it did not run and exactly how to run it, so the roll-up never
 //       silently omits it.
-//   [3] tools/citation-rule-check.mjs (W-3) checks that the citation-history
+//   [4] tools/citation-rule-check.mjs (W-3) checks that the citation-history
 //       doc quotes README's own selection rule verbatim.
-//   [4] tools/citation-tax.mjs        (W-4) the citation two-commit tax over
+//   [5] tools/citation-tax.mjs        (W-4) the citation two-commit tax over
 //       committed history.
-//   [5] tools/matrix-adjudication.mjs (W-5) adjudicates the README Node
+//   [6] tools/matrix-adjudication.mjs (W-5) adjudicates the README Node
 //       support matrix's 127-vs-129 numbers.
-//   [6] tools/detection-floor.mjs     (W-8) compares the committed W-2
+//   [7] tools/detection-floor.mjs     (W-8) compares the committed W-2
 //       baseline matrix record against the committed final-HEAD record
 //       (tools/mutation-matrix-final.json) row by row and rules on whether
 //       any baseline detection was lost. Its default path only reads the two
@@ -124,6 +129,13 @@ const TOOLS = [
     id: 'guard-inventory',
     label: 'tools/guard-inventory.mjs  (W-1 -- count-claim guard inventory)',
     file: 'tools/guard-inventory.mjs',
+    cliArgs: [],
+    run: true,
+  },
+  {
+    id: 'test-line-delta',
+    label: 'tools/test-line-delta.mjs  (W-10 -- test/ line count, baseline 20b7ede vs HEAD)',
+    file: 'tools/test-line-delta.mjs',
     cliArgs: [],
     run: true,
   },
