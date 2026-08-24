@@ -220,7 +220,9 @@ instead of rounded away.
 
 ---
 
-Cycles run this improvement run: **0 through 7 complete** (13 commits, `912a2a4`..`d899fe0`),
+Cycles run this improvement run: **0 through 7 complete** (13 commits, `912a2a4^..d899fe0`; the
+caret is load-bearing since `912a2a4` is this run's own first commit and two-dot ranges exclude
+their left endpoint),
 **cycle 8 in progress** — this item, W-10, is cycle 8's work and has not yet been committed by
 the conductor at the time this file was written. If the run stops before a further cycle
 runs, this report is the complete and honest record of where it stopped; nothing above assumes

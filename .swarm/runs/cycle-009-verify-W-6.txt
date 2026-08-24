@@ -1,0 +1,91 @@
+CYCLE 9 -- VERIFICATION EVIDENCE -- W-6 (standing invariant, conductor-held)
+Authored at verification time. NO GATE SCRIPT: direct commands only, raw output printed
+beside each verdict. Nine of the previous twelve conductor-instrument defects were parser
+bugs sitting between the conductor and the truth (D-R8-9/10/15/16/17/20); removing the
+parser removes that whole class.
+
+HEAD at verification: ce3c698     tree: clean except the intentional P-3 edit to REPORT.md
+
+-------------------------------------------------------------------------------
+C1  src/corpus.js byte-unmoved      expect sha256 77a4de5c777a3bdb...45d09e   PASS
+-------------------------------------------------------------------------------
+$ sha256sum src/corpus.js src/args.js src/select.js bin/aphorism.js
+77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e  src/corpus.js
+2e690560cfc305c25f2b436ca82ea20272ddc6bf7421620f92f1e8242f38eafb  src/args.js
+dc3e57302f60127eaa04e38baa784512e845e8acf58a140b79a983a782dc236d  src/select.js
+469c7181364e1f76efa423232b865c9ab8825c92359484c8cdfd557dd75d815d  bin/aphorism.js
+
+-------------------------------------------------------------------------------
+C2  --help output byte-unmoved      expect sha256 d759d781ddcac780...f8648dd5e64  PASS
+-------------------------------------------------------------------------------
+$ node bin/aphorism.js --help | sha256sum
+d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64  -
+
+-------------------------------------------------------------------------------
+C3  dependency surface absent                                                PASS
+-------------------------------------------------------------------------------
+$ ls package.json package-lock.json node_modules
+ls: cannot access 'package.json': No such file or directory
+ls: cannot access 'package-lock.json': No such file or directory
+ls: cannot access 'node_modules': No such file or directory
+$ find . -name node_modules -not -path './.git/*'
+(no output -- none anywhere in the tree)
+
+-------------------------------------------------------------------------------
+C4  no EXTERNAL dependency specifier in product code                         PASS
+-------------------------------------------------------------------------------
+DEFECT IN THIS CELL AS FIRST WRITTEN, recorded rather than reinterpreted (D-R8-23):
+the first version grepped for any require()/from and printed the label
+"no output above = zero-dep holds" directly above THREE lines of output. The three hits
+were relative internal requires, so the conclusion was right, but the cell's stated pass
+condition did not match its own output. Re-taken with a real discriminator -- a specifier
+that is neither relative (./ ../) nor node::
+
+$ grep -rnoE "require\(['\"][^'\"]+['\"]\)|from ['\"][^'\"]+['\"]" src/ bin/ \
+    | grep -vE "(\./|\.\./|node:)" | sed 's/^/EXTERNAL-DEP: /'
+[no EXTERNAL-DEP line above = zero external dependency specifiers in product code]
+
+CONVERSE CONTROL -- the same check must FIRE on a planted dependency, or it is not evidence:
+$ printf "const x = require('lodash');\nimport y from 'chalk';\n" > .scratch-c9/planted.js
+$ <same grep over .scratch-c9/>
+EXTERNAL-DEP: .scratch-c9/planted.js:1:require('lodash')
+EXTERNAL-DEP: .scratch-c9/planted.js:2:from 'chalk'
+$ rm -rf .scratch-c9 && ls -d .scratch-c9
+ls: cannot access '.scratch-c9': No such file or directory
+
+-------------------------------------------------------------------------------
+C5  INDEPENDENT SECOND OBSERVABLE: product code unmoved BY DIFF, not by hash  PASS
+-------------------------------------------------------------------------------
+A hash match trusts the anchor value. A diff against the run's own baseline does not.
+$ git diff --stat 20b7ede HEAD -- src/ bin/
+(empty -- zero product-code movement)
+
+$ git diff --name-only 20b7ede HEAD | cut -d/ -f1 | sort | uniq -c | sort -rn
+     53 .swarm
+     10 tools
+      1 test
+      1 docs
+      1 REPORT.md
+      1 README.md
+
+-------------------------------------------------------------------------------
+C6  suite green                                                              PASS
+-------------------------------------------------------------------------------
+$ node --test test/*.test.js   (tail)
+ℹ tests 128
+ℹ suites 0
+ℹ pass 128
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4919.936841
+
+128 against a run baseline of 129 is the recorded, attributed drop from W-7's guard
+consolidation (D-R8-18), and must-have S-1 states outright that a test-count DROP is a PASS.
+Read from the runner's own raw output -- note the cycle-6 gate failed this same cell by
+parsing TAP-style '# pass N' when this reporter emits 'ℹ pass N' (D-R8-17). No parser here.
+
+===============================================================================
+W-6 VERDICT: HOLDS on six cells / five independent observables.
+===============================================================================

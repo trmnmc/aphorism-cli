@@ -1,0 +1,69 @@
+CYCLE 9 -- VERIFICATION EVIDENCE -- P-3 (commit-range notation in REPORT.md)
+Authored at verification time, after the fixer returned. Direct commands, no gate script.
+
+The discriminator that matters: the range is EXTRACTED FROM THE FILE and run, never taken
+from the fixer's own report. A fixer that writes one thing and reports another is exactly
+what this gate exists to catch.
+
+-------------------------------------------------------------------------------
+C1  scope: the fixer touched REPORT.md and nothing else                      PASS
+-------------------------------------------------------------------------------
+$ git status --porcelain
+ M REPORT.md
+?? .scratch-reviewA/          <- a reviewer's scratch, still running at the time; not the fixer's
+$ git diff --stat
+ REPORT.md | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+3 insertions for 1 deletion is one LOGICAL line rewrapped to the file's existing wrap
+style, not scope creep -- confirmed by reading the diff:
+
+$ git diff -- REPORT.md
+-Cycles run this improvement run: **0 through 7 complete** (13 commits, `912a2a4`..`d899fe0`),
++Cycles run this improvement run: **0 through 7 complete** (13 commits, `912a2a4^..d899fe0`; the
++caret is load-bearing since `912a2a4` is this run's own first commit and two-dot ranges exclude
++their left endpoint),
+
+The number 13, both shas, and "**0 through 7 complete**" are unchanged -- all three were
+correct and were out of scope.
+
+-------------------------------------------------------------------------------
+C2  the range EXTRACTED FROM THE FILE measures 13                            PASS
+-------------------------------------------------------------------------------
+$ python3 -c "<extract [0-9a-f]{7}\^?\.\.[0-9a-f]{7} from the line in REPORT.md>"
+line 223 :: Cycles run this improvement run: **0 through 7 complete** (13 commits, `912a2a4^..d899fe0`; the
+EXTRACTED RANGES: ['912a2a4^..d899fe0']
+
+$ git rev-list --count 912a2a4^..d899fe0
+13
+
+-------------------------------------------------------------------------------
+C3  CONVERSE CONTROL: the old notation still measures 12                     PASS
+-------------------------------------------------------------------------------
+$ git rev-list --count 912a2a4..d899fe0
+12
+The check discriminates: it does not report 13 for the notation it was filed against.
+
+-------------------------------------------------------------------------------
+C4  the check does not pass on ANY range
+-------------------------------------------------------------------------------
+DEFECT IN THIS CELL AS FIRST WRITTEN, recorded rather than reinterpreted (D-R8-23).
+The first control offered was `20b7ede..d899fe0`, described as "a range that is neither".
+It printed 13 -- and that was NOT the check passing on anything, because 20b7ede IS
+912a2a4's parent, making the two ranges IDENTICAL by construction:
+
+$ git rev-parse --short 912a2a4^
+20b7ede
+
+That cell could never have discriminated. Re-taken with ranges that genuinely differ:
+
+$ git rev-list --count 912a2a4^..HEAD
+15
+$ git rev-list --count 912a2a4..HEAD
+14
+
+Both differ from 13, so 13 is a property of the specific range written, not of any range.
+
+===============================================================================
+P-3 VERDICT: DONE. Four cells, one of which was re-taken after its own defect was named.
+===============================================================================

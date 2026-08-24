@@ -336,6 +336,54 @@
       "opened_cycle": 6,
       "status": "open",
       "detail": "The cycle-6 budget probe (bin/swarm-budget.sh) emitted weekly.opus_used_pct 100 with opus_heat 15.15 and promote_blocked true, while runs/allocator.json, written from its own probe in the same window, read opus_used_pct 16 at the same week_elapsed_pct 6.599. One of the two is wrong by a factor of six. It cost this cycle nothing because both dispatched items routed to sonnet, but the value-routing table sends build items with effort L and all review-fix reviewers to opus, and backlog items W-8 and W-10 were both carrying model:opus when the probe read 100. A false 100 needlessly starves the opus rung; a false 16 would let a run walk into a real ceiling. Reported, NOT fixed: bin/ is read-only during a run under hard rule 5. Whoever picks this up should diff how bin/swarm-budget.sh derives weekly.opus_used_pct against how the allocator derives its own, on the same ccusage payload."
+    },
+    {
+      "id": "KI-38",
+      "desc": "tools/detection-floor.mjs exempts 3 of 18 floor rows (M01-M03) as CLAIM-GONE without ever running the suite for them, on a premise that is false at HEAD -- the README matrix table and all three of its guards are alive and passing. Deleting those guards in a scratch clone still yields 'DETECTION FLOOR HOLDS ... 0 detection lost', exit 0. The run's headline deliverable is 17% unmeasured and blind to deletion of exactly the guards those rows exist to floor. Backlog RV-1.",
+      "severity": "blocker",
+      "cycle_found": 9,
+      "status": "open",
+      "source": "cycle 9 review-fix pass; adversarially reproduced, see D-R8-22"
+    },
+    {
+      "id": "KI-39",
+      "desc": "tools/detection-floor.mjs does not validate the committed records it rules on. Deleting rows from the baseline shrinks the floor silently (to zero rows, still 'HOLDS'); an identity control recording 7 failing tests is read as GREEN because only the verdict string is consulted (gitDependentGuards appears 0 times in the reader); an internally impossible CAUGHT row with a green suite and no fired guards is bucketed 'still detected'. The tool's own header claim that 'a doctored input MUST turn the run red' is falsified. Backlog RV-2, RV-3, RV-4.",
+      "severity": "high",
+      "cycle_found": 9,
+      "status": "open",
+      "source": "cycle 9 review-fix pass; adversarially reproduced, see D-R8-22"
+    },
+    {
+      "id": "KI-40",
+      "desc": "tools/mutation-matrix.mjs scores CAUGHT on ANY failing test, so M07 -- the sole derivation-source mutation -- trips the base-to-working-tree citation guard on every valid run regardless of its claim, and can never report SILENT. Its floor row is unfalsifiable, and with its semantic guards deleted the floor still reads 'still detected'. Backlog RV-5.",
+      "severity": "high",
+      "cycle_found": 9,
+      "status": "open",
+      "source": "cycle 9 review-fix pass; adversarially reproduced, see D-R8-22"
+    },
+    {
+      "id": "KI-41",
+      "desc": "tools/citation-rule-check.mjs certifies a document that quotes nothing: an empty ```readme-quote body passes as 'quotes README.md verbatim (0 bytes)', exit 0, and a 3-byte body also passes. The doc can revert to pure paraphrase behind a token fence and the tool blesses it -- defeating W-3's entire purpose. Backlog RV-9.",
+      "severity": "blocker",
+      "cycle_found": 9,
+      "status": "open",
+      "source": "cycle 9 review-fix pass; adversarially reproduced, see D-R8-22"
+    },
+    {
+      "id": "KI-42",
+      "desc": "tools/guard-inventory.mjs's count-floor detectors are one-directionally evadable: a real, working, failable suite-size floor written `120 < n` with readdirSync(dir) is invisible, while the same guard written `n > 120` is detected. Section G nonetheless prints the categorical 'No guard anywhere in test/ (or CI) asserts any floor' -- while listing the evading guard by title in section E. This run retired count-floors on that verdict, and detection-floor's W8-R1 text defers its reworded-claim case to this same tool. Backlog RV-10.",
+      "severity": "high",
+      "cycle_found": 9,
+      "status": "open",
+      "source": "cycle 9 review-fix pass; adversarially reproduced, see D-R8-22"
+    },
+    {
+      "id": "KI-43",
+      "desc": "tools/citation-tax.mjs resolves its repo root from the caller's cwd, not its own checkout. Invoked by absolute path from another repository it measures THAT repository and emits a false statement about aphorism-cli ('README.md at HEAD has no \"### Node support\" section') with no disclosure of which repo it read. Same ancestor/stranger-HEAD class as D-R8-8, recurring in a sibling tool; run-all.mjs masks it by passing cwd. Backlog RV-11.",
+      "severity": "high",
+      "cycle_found": 9,
+      "status": "open",
+      "source": "cycle 9 review-fix pass; adversarially reproduced, see D-R8-22"
     }
   ]
 }
