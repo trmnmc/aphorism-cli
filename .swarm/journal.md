@@ -22546,3 +22546,88 @@ only live audience the entire time.
 
 Everything else in the render is sound: 12/12 placeholders filled, 0 leaked into comments,
 8 journal lines, 15 decisions, notify line present, 48,222 bytes.
+
+## cycle 6 | 2026-08-24T16:33:23+00:00 | aphorism-cli | BUILD
+work: build-wave [W-14, P-2] — the two defects the cycle-5 gate found in this run's own
+published tools, on strictly disjoint single-file scopes. Picked over W-8/W-10 because W-8
+was soft-blocked ON W-14 (no structured output for a non-default rev) and W-10 depends on
+W-8; clearing W-14 unblocks the rest of the must-have chain in one move.
+dispatch: 2 DIRECT Agent calls (Workflow is review-gated in a headless -p session, L-016
+fallback; no worktrees, so disjointness was declared in-prompt and verified at the gate)
+models: W-14 sonnet, P-2 sonnet (gear 3, table as-is, no demote/promote). Craft pack ran
+clean (degraded: none); neither item is UI-flagged, so no craft.ui text was passed.
+budget: gear 3 cruise, ratio 0.77, k_cap 3, 25.8M window tokens at 23.5M tok/h.
+control: 0 pending commands, 0 injections.
+
+VERIFICATION EVIDENCE — 12 cells across two scripts, full output in
+.swarm/runs/r8-cycle-006-verify-gate.txt (194 lines) and
+.swarm/runs/r8-cycle-006-verify-gate-addendum.txt (110 lines);
+scripts committed as .swarm/runs/r8-gate-c6.mjs and r8-gate-c6-addendum.mjs.
+
+  W-14 — mutation-matrix.mjs can emit its structured record for a non-default rev
+  C3 zero-arg contract, working tree vs the pre-change HEAD tool, both run and diffed:
+     HEAD  version: exit 0, stdout 8027 bytes, sha 82e0efba321ff5fa
+     WTREE version: exit 0, stdout 8027 bytes, sha 82e0efba321ff5fa
+     --> C3 PASS identical=true exits=0/0
+  C4 --rev e40736c --json:
+     JSON.parse(entire stdout): ok
+     stdout top-level keys  : ["meta","identity","results","skippedClaims"]
+     rows: committed=18 head=15 shared=15
+     ids only in committed baseline (NOT folded into a pass): ["M01","M02","M03"]
+     verdict differences on shared ids                      : []
+     --> C4 PASS sameKeys=true shared=15 exit=0
+  C5 converse control — JSON.parse(zero-arg stdout) -> threw: Unexpected token 'M',
+     "MUTATION M"... is not valid JSON   --> C5 PASS (the flag is not a no-op)
+  C6 [error: --write-baseline regenerates the committed baseline and is only valid for the
+     default baseline rev (20b7ede); drop --rev]  exit 2; with --json added: exit 2
+     --> C6 PASS
+  C7 baseline sha256 5ac3c65d... before == after == now; git diff --exit-code exit 0
+  C2' decl `const baseline = {` L774 at column 0, precedes write branch L791 and emit L804
+
+  P-2 — citation-rule-check.mjs no longer attributes against an ANCESTOR repo's HEAD
+  C8' `git rev-parse --show-toplevel` from the nested non-repo dir -> /opt/targets/aphorism-cli
+     perturbation "Actions run 32742357417" -> "...419", heading intact: true
+     [FAIL: README.md and docs/node-support-citation-history.md disagree, and which one moved
+      could not be determined ...]   asserts "own git HEAD version": false  --> C8' PASS
+  C9' converse control, own-toplevel clone, same perturbation:
+     [FAIL: README.md has diverged -- README.md's "### Node support" section no longer matches
+      its own git HEAD version ... -- README moved.]   --> C9' PASS (fix is narrow, not a
+     blanket degrade to "undetermined")
+  C10 live honest control: [OK: docs/node-support-citation-history.md quotes README.md
+     "### Node support" verbatim (257 bytes).] exit 0
+
+  standing
+  C1  builder scope stated as a RULE over path classes + converse control rejecting
+      src/corpus.js, test/readme-tags.test.js, package.json 3/3; 0 forbidden, 0 scratch trees
+  C11' test_cmd: node --test test/*.test.js -> tests 128 / pass 128 / fail 0 / skipped 0
+  C12' corpus sha256 77a4de5c == baseline; --help sha256 d759d781 == baseline;
+      frozen-pathspec status lines (none); manifests tracked 0, on disk 0; tools/ imports
+      5 node: builtins, 0 others; converse control rejected 3/3
+
+GATE DEFECTS THIS CYCLE (D-R8-17) — the first-pass gate returned 7/12 and all five failures
+were the instrument, not the work. (1) C2 took the FIRST of two legitimate `if (JSON_OUTPUT)`
+occurrences (L624, the P() stream router) and asserted an ordering against it. (2)+(3) C8/C9
+perturbed the '### Node support' HEADING, which the tool matches exactly, so it exited at the
+no-section branch before any attribution ran. (4) C11 parsed TAP `# pass N` from a reporter
+that emits `ℹ pass N`, reading -1/-1 three lines under its own `pass 128 / fail 0` output.
+(5) C12 read package.json, which this repo has never had. Nothing was re-labelled and nothing
+silently re-run: gate-c6.mjs is committed AS IT RAN, and gate-c6-addendum.mjs re-takes the
+four defective cells with each defect named in its own header. Fifth consecutive cycle with a
+defective conductor instrument; eight distinct root causes now, no two alike.
+
+test-count note (D-R8-18): 128 at HEAD vs a 129 baseline. The -1 is W-7's cycle-4 guard
+consolidation, corroborated independently by C4's identity control measuring both revisions
+on untouched clones (20b7ede 129/129/0/0 GREEN, e40736c 128/128/0/0 GREEN). S-1 states a
+test-count DROP is a PASS.
+
+outcomes: W-14 done, P-2 done, W-6 held (standing invariant re-measured, dependency clause
+restated to be checkable at all), W-8 soft-block cleared and re-routed sonnet->fable (its
+open question is a judgment call, not a build). Clean wave: 0 reverts, 0 failed verifies ->
+wave_streak 1, k_current unchanged at 5. consecutive_no_value reset to 0.
+burn attribution: 13852619 window tokens credited to aphorism-cli for cycle 5.
+commit: __COMMIT__
+next wakeup: 1787589293 (+90s)
+runfile-mirror:
+```json
+{"version":1,"run_label":"improvement run #8","targets":[{"path":"/opt/targets/aphorism-cli","name":"aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":1787663147,"usage_reset_at":1787601600,"stop_at_iso":"2026-08-25T13:05:47.000Z","usage_reset_at_iso":"2026-08-24T20:00:00.000Z","model_policy":"value-routing","auth_mode":"subscription","kickoff_source":"allocator","heartbeat":{"ts":1787589203,"next_wakeup_at":1787589293,"pid":4063002,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"probe","gear":3,"gear_target":3,"ratio":0.77,"mode":"guest","k_cap":3,"promote":false,"demote":false,"window_tokens":25842756,"window_cost_usd":24.496047500000003,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":23495348,"projected_depletion_at":1787605673,"last_probe_ts":1787587620,"last_real_probe_ts":1787587620,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":0,"opus_used_pct":100,"week_elapsed_pct":6.599,"weekly_heat":0.0,"opus_heat":15.15,"ceiling":5,"promote_blocked":true,"week_resets_at":1788152399},"probe_note":"cycle 6 probe: probe_ok true. gear 3 CRUISE (ratio 0.77, guest mode clamps 1-3), k_cap 3, no demote, no promote. Burn 25.8M window tokens at 23.5M tok/h, projected depletion 1787605673 (~2026-08-24T20:27Z), ahead of the 20:00Z window reset. NOTE for routing: weekly.opus_used_pct reads 100 (opus_heat 15.15) while the overall weekly is 0% at 6.6% elapsed, so weekly.ok stays true and promote is blocked. This cycle dispatched nothing to opus - both builders ran sonnet per the value-routing table - so the opus reading cost the cycle nothing, but W-8 and W-10 were both carrying model:opus in the backlog and W-8 has been re-routed to fable (a judgment call about whether a SKIPPED claim counts as detection lost, which is a judgment seat, not a build)."},"watchdog":{"mode":"pacer","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0,"note":"swarm-watchdog.timer is enabled+active but is a MEASURED NO-OP for this run: bin/swarm-watchdog.sh line 279 keys its DONE-guard on REPORT.md existing in every target, and /opt/targets/aphorism-cli/REPORT.md exists from run #7. L-037 clause 2, asserted at kickoff rather than assumed. RECOVERY PATH IS THE PACER: bin/swarm-pacer.sh keys only on wrap_up_complete (line 183) and heartbeat.next_wakeup_at (line 229) \u2014 it does NOT check REPORT.md \u2014 and swarm-pacer.timer is active. Verified by reading both scripts; neither was edited (hard rule 5)."},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":5,"artifact":{"file":"/opt/swarm/runs/dashboard.html","publish_failures":0},"playbook":{"apply_mode":"auto","source":"direct read of playbook/learnings.md (bin/swarm-playbook.sh structurally unallowlisted \u2014 KI-R6-2, 12th consecutive confirmation, zero denials burned this run)","applied":["L-008","L-016","L-024","L-026","L-029","L-031","L-033","L-034","L-037","L-038","L-042","L-043","L-044","L-046","L-047"],"vetoed":[],"held_out":[{"id":"L-022","why":"persisted UI state in beforeEach \u2014 this target is a terminal CLI with no browser surface; held out for the fourth consecutive run"}],"directives":{"wave_k":null,"routing_recs":["core-logic->fable (L-026)"],"prompt_lines":{"builder":"The conductor is the SOLE committer \u2014 never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. The conductor seals its verification gate by hash before dispatch \u2014 do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work. Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps. Classify each surviving mutant as HOLE (a real gap - harden it) or BOUNDARY (behaviour the spec does not decide - document it) BEFORE writing any test. When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive \u2014 a kill you cannot attribute is not evidence. For every mutation that must kill the suite, author one control that must leave it GREEN \u2014 a check that dies on everything is a snapshot test, not an assertion. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check.","reviewer":"The conductor is the SOLE committer \u2014 never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. Assign each fixer a pairwise-disjoint file set; two fixers must never share a file. The conductor seals its verification gate by hash before dispatch \u2014 do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work.","qa":"Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'. Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns. Classify each surviving mutant as HOLE or BOUNDARY BEFORE writing any test."},"process":["kickoff-refuse-on-exhausted-window (L-038) \u2014 RUN at cycle 0, PASSED: weekly 6.0% at 4.819% elapsed, reset 2026-08-31 well past stop_at","spawner-backoff-to-known-reset (L-037) \u2014 SWARM tool gap, reported not edited (hard rule 5)","wire-through check at each layer boundary for domain-capability items (L-046)","reserve one mid-run cycle for the taste pass before the VALUE_LOOP tail (L-038)"]}},"kickoff_hints":{"mode":"guest","dial":0.3,"brief":"TRICKLE POSTURE: housekeeping only \u2014 harden tests, fix playbook items, polish docs \u2014 no new features. Haiku-priced work types; no new features.","source":"allocator","stop_at":1787663147,"consumed_at":1787577261},"session_shape":"headless -p session spawned by swarm-pacer.sh (auto-kickoff 13:05:48Z). Workflow tool is review-gated headless, so build dispatch is DIRECT Agent calls with disjoint scopes declared in-prompt (L-016); Artifact publish unavailable (local dashboard render IS the publication on the VPS); `claude` is not allowlisted so kickoff step 11 could not run."}
+```

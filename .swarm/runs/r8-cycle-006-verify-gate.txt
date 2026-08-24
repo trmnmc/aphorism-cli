@@ -1,0 +1,194 @@
+
+==============================================================================
+[C1] Builder write scope is exactly the two dispatched tool files; .swarm/ is conductor-owned
+==============================================================================
+raw `git status --porcelain` lines, bracketed:
+  [ M tools/citation-rule-check.mjs]
+  [ M tools/mutation-matrix.mjs]
+  [?? .swarm/runs/r8-cycle-006-verify-gate.txt]
+parsed paths: ["tools/citation-rule-check.mjs","tools/mutation-matrix.mjs",".swarm/runs/r8-cycle-006-verify-gate.txt"]
+  builder-owned    tools/citation-rule-check.mjs
+  builder-owned    tools/mutation-matrix.mjs
+  conductor-owned  .swarm/runs/r8-cycle-006-verify-gate.txt
+surviving scratch/gate trees in the tree: []
+converse control — rule must reject ["src/corpus.js","test/readme-tags.test.js","package.json"] -> rejected ["src/corpus.js","test/readme-tags.test.js","package.json"]
+--> C1 PASS — 0 forbidden, 0 scratch, converse 3/3
+
+==============================================================================
+[C2] `baseline` is built unconditionally, so --json cannot be a latent ReferenceError
+==============================================================================
+declaration of `baseline` at line 774: const baseline = {
+`if (WRITE_BASELINE)`      at line 791
+`if (JSON_OUTPUT)`         at line 624
+declared at top level (column 0): true; declared BEFORE the WRITE_BASELINE branch: true
+--> C2 FAIL — topLevel=true before=true
+
+==============================================================================
+[C3] Zero-arg run: working-tree tool stdout is byte-identical to the pre-change HEAD tool
+==============================================================================
+usage banner derived from argv[1]? false (false = filenames cannot skew the diff)
+running HEAD-version tool, zero-arg …
+running working-tree tool, zero-arg …
+HEAD  version: exit 0, stdout 8027 bytes, sha 82e0efba321ff5fa
+WTREE version: exit 0, stdout 8027 bytes, sha 82e0efba321ff5fa
+last 6 lines of the working-tree zero-arg stdout:
+  |      claim: README `--author` matching section must state the correct count of distinct corpus authors (Q-8)
+  |      verdict: CAUGHT by 1 guard(s) incl. the targeted guard
+  |        - test/readme-tags.test.js  README `--author` matching section must state the correct count of distinct corpus authors (Q-8)
+  | claims produced by the rule but skipped by the harness: NONE
+  | summary: 18 CAUGHT, 0 SILENT
+  | unattributable mutations (transcribed guard title absent from the measured tree): NONE
+--> C3 PASS — identical=true exits=0/0
+
+==============================================================================
+[C4] --rev HEAD --json emits ONE pure-JSON document on stdout, diffable row-by-row by id
+==============================================================================
+baseline sha256 BEFORE the --rev run: 5ac3c65d65466dea63ec233d262bfccbce68fe63d76e04bfad191ebccd1e6a81
+measuring rev: e40736c (non-default; default baseline rev is 20b7ede)
+exit 0; stdout 21471 bytes; stderr 8342 bytes
+JSON.parse(entire stdout): ok
+stdout top-level keys  : ["meta","identity","results","skippedClaims"]
+committed baseline keys: ["meta","identity","results","skippedClaims"]
+rows: committed=18 head=15 shared=15
+ids only in committed baseline (NOT folded into a pass): ["M01","M02","M03"]
+ids only at HEAD                                       : []
+verdict differences on shared ids                      : []
+identity control — committed: {"id":"M00","inventoryIndex":0,"guard":null,"guardTitle":"(identity control -- no claim, no edit)","editSite":"none","note":"Converse control: zero edits. The suite must stay fully green (129/129 at baseline, 0 fail, 0 skipped) on the untouched scratch clone, or every CAUGHT verdict below is meaningless.","edits":[],"suite":{"tests":129,"pass":129,"fail":0,"skipped":0},"firedGuards":[],"skippedGuards":[],"environmentalSkipWarning":null,"verdict":"GREEN","gitDependentGuards":{"ran":true,"titles":["README Node support citation: cited git diff must be empty (or the check must skip on a missing precondition)","README Node support citation: base-to-working-tree diff must also be empty, so an uncommitted falsification is visible now (or the check must skip on a missing precondition)"],"evidence":"both citation guards reported plain `ok` with no SKIP directive in the identity run, and the run reports 0 skipped overall"}} | head: {"id":"M00","inventoryIndex":0,"guard":null,"guardTitle":"(identity control -- no claim, no edit)","editSite":"none","note":"Converse control: zero edits. The suite must stay fully green (129/129 at baseline, 0 fail, 0 skipped) on the untouched scratch clone, or every CAUGHT verdict below is meaningless.","edits":[],"suite":{"tests":128,"pass":128,"fail":0,"skipped":0},"firedGuards":[],"skippedGuards":[],"environmentalSkipWarning":null,"verdict":"GREEN","gitDependentGuards":{"ran":true,"titles":["README Node support citation: cited git diff must be empty (or the check must skip on a missing precondition)","README Node support citation: base-to-working-tree diff must also be empty, so an uncommitted falsification is visible now (or the check must skip on a missing precondition)"],"evidence":"both citation guards reported plain `ok` with no SKIP directive in the identity run, and the run reports 0 skipped overall"}}
+--> C4 PASS — sameKeys=true shared=15 exit=0
+
+==============================================================================
+[C5] Converse control: the zero-arg run's stdout is NOT parseable as JSON
+==============================================================================
+JSON.parse(zero-arg stdout) -> threw: Unexpected token 'M', "MUTATION M"... is not valid JSON
+first 3 lines of zero-arg stdout, bracketed:
+  [MUTATION MATRIX -- detection floor for the W-1 machine-checked document claims]
+  [measured rev: 20b7ede -> resolved full sha 20b7edec2eb42cae185bdd7934f4bc6cd2899577 (default W-2 baseline; zero-argument contract, comparable to tools/mutation-matrix-baseline.json)   node: v24.19.0]
+  [mutations run: 19 of 19 generated (18 falsifying + 1 identity); skipped: 0]
+first 3 lines of --json stdout, bracketed:
+  [{]
+  [  "meta": {]
+  [    "tool": "tools/mutation-matrix.mjs",]
+--> C5 PASS — shapes differ as required
+
+==============================================================================
+[C6] --rev + --write-baseline still refused, exit 2, for the reason it names
+==============================================================================
+exit code: 2
+stderr, bracketed:
+  [error: --write-baseline regenerates the committed baseline and is only valid for the default baseline rev (20b7ede); drop --rev]
+  [usage: node tools/mutation-matrix.mjs [--rev <rev>] [--write-baseline] [--json]]
+  [  (no args)         measure the W-2 baseline rev 20b7ede]
+  [  --rev <rev>       measure <rev> instead (any rev resolvable in this repo)]
+with --json added: exit 2 (must also be refused)
+baseline sha256 after both refused attempts: 5ac3c65d65466dea63ec233d262bfccbce68fe63d76e04bfad191ebccd1e6a81
+--> C6 PASS — exits=2/2 named=true
+
+==============================================================================
+[C7] tools/mutation-matrix-baseline.json is byte-unmoved by the --rev/--json runs
+==============================================================================
+sha256 before C4 : 5ac3c65d65466dea63ec233d262bfccbce68fe63d76e04bfad191ebccd1e6a81
+sha256 after  C4 : 5ac3c65d65466dea63ec233d262bfccbce68fe63d76e04bfad191ebccd1e6a81
+sha256 now       : 5ac3c65d65466dea63ec233d262bfccbce68fe63d76e04bfad191ebccd1e6a81
+`git diff --exit-code` vs HEAD: exit 0 (no diff)
+--> C7 PASS — unmoved across all runs and vs HEAD
+
+==============================================================================
+[C8] P-2 bug case: nested non-repo dir no longer claims it compared against "its own git HEAD"
+==============================================================================
+has its own .git? false
+`git rev-parse --show-toplevel` from the nested dir -> /opt/targets/aphorism-cli
+resolves to the ANCESTOR repo (the precondition of the bug): true
+exit 1; output:
+  [FAIL: README.md has diverged -- it has no "### Node support" section for docs/node-support-citation-history.md to quote]
+asserts "own git HEAD version": false (must be false)
+takes the undetermined-direction path: false (must be true)
+--> C8 FAIL — ancestor=true claimsOwnHead=false undetermined=false
+
+==============================================================================
+[C9] Converse control: an own-toplevel clone still names the side that moved
+==============================================================================
+clone exit 0
+clone toplevel: /tmp/gate-c6-clone (is its OWN root: true)
+unperturbed clone: exit 0 | OK: docs/node-support-citation-history.md quotes README.md "### Node support" verbatim (257 bytes).
+README-side perturbation in an own-toplevel clone: exit 1
+  [FAIL: README.md has diverged -- it has no "### Node support" section for docs/node-support-citation-history.md to quote]
+names README as the side that moved: true (must be true)
+still uses and names the git anchor: false (must be true)
+degraded to "undetermined": false (must be false)
+--> C9 FAIL — control=0 names=true anchor=false
+
+==============================================================================
+[C10] P-2 honest control: the live unperturbed repo still reports OK
+==============================================================================
+exit 0
+  [OK: docs/node-support-citation-history.md quotes README.md "### Node support" verbatim (257 bytes).]
+--> C10 PASS — exit 0
+
+==============================================================================
+[C11] Full test_cmd green: node --test test/*.test.js
+==============================================================================
+✔ pick: same seed over the same candidates always returns the same element (0.521607ms)
+✔ pick: different seeds generally produce different results (0.316811ms)
+✔ pick: undefined seed picks a valid member (random mode) (0.376506ms)
+✔ pick: null seed also triggers random mode and returns a valid member (0.309056ms)
+✔ pick: throws RangeError on empty candidates array (4.063987ms)
+✔ pick: Infinity seed is deterministic and returns a valid member (1.334383ms)
+✔ pick: -Infinity seed is deterministic and returns a valid member (0.242037ms)
+✔ pick: NaN seed still uses the random branch and returns a valid member (0.127706ms)
+✔ pick: finite seed determinism is unchanged by the non-finite-seed fix (0.394641ms)
+✔ pick: every candidate is REACHABLE by an unseeded draw (3.882417ms)
+✔ pick: unseeded draws split the interval EQUALLY across candidates (uniform) (1.074883ms)
+✔ pick: single-element candidates always returns that element regardless of seed (0.244191ms)
+ℹ tests 128
+ℹ suites 0
+ℹ pass 128
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5046.684789
+
+parsed: pass=-1 fail=-1
+--> C11 FAIL — -1 passing / -1 failing
+
+==============================================================================
+[C12] W-6 standing invariant: corpus + --help byte-frozen, no deps, no src/bin/test movement
+==============================================================================
+corpus sha256 : 77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e  == baseline
+--help sha256 : d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64  == baseline
+frozen-pathspec `git status --porcelain` lines: (none)
+imports under tools/:
+  from 'node:child_process'
+  from 'node:fs'
+  from 'node:path'
+  from 'node:url'
+  from 'node:util'
+non-node: imports (must be none): []
+EXCEPTION: Error: ENOENT: no such file or directory, open '/opt/targets/aphorism-cli/package.json'
+    at readFileSync (node:fs:484:20)
+    at file:///opt/swarm/runs/gate-c6.mjs:372:27
+    at cell (file:///opt/swarm/runs/gate-c6.mjs:42:15)
+    at file:///opt/swarm/runs/gate-c6.mjs:355:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+    at async node:internal/modules/esm/loader:643:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+--> C12 FAIL — threw: ENOENT: no such file or directory, open '/opt/targets/aphorism-cli/package.json'
+
+##############################################################################
+CYCLE 6 GATE SUMMARY
+##############################################################################
+PASS C1   Builder write scope is exactly the two dispatched tool files; .swarm/ is conductor-owned
+FAIL C2   `baseline` is built unconditionally, so --json cannot be a latent ReferenceError
+PASS C3   Zero-arg run: working-tree tool stdout is byte-identical to the pre-change HEAD tool
+PASS C4   --rev HEAD --json emits ONE pure-JSON document on stdout, diffable row-by-row by id
+PASS C5   Converse control: the zero-arg run's stdout is NOT parseable as JSON
+PASS C6   --rev + --write-baseline still refused, exit 2, for the reason it names
+PASS C7   tools/mutation-matrix-baseline.json is byte-unmoved by the --rev/--json runs
+FAIL C8   P-2 bug case: nested non-repo dir no longer claims it compared against "its own git HEAD"
+FAIL C9   Converse control: an own-toplevel clone still names the side that moved
+PASS C10  P-2 honest control: the live unperturbed repo still reports OK
+FAIL C11  Full test_cmd green: node --test test/*.test.js
+FAIL C12  W-6 standing invariant: corpus + --help byte-frozen, no deps, no src/bin/test movement
+
+7/12 cells PASS
+W-14 cells: C2 C3 C4 C5 C6 C7  |  P-2 cells: C8 C9 C10  |  scope C1  |  standing C11 C12

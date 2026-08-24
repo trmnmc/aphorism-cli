@@ -10,6 +10,14 @@
 //     node tools/mutation-matrix.mjs --rev <rev>      # measure any rev resolvable in this repo (W-12)
 //     node tools/mutation-matrix.mjs --write-baseline # also write tools/mutation-matrix-baseline.json
 //                                                     # (default baseline rev only; refuses --rev)
+//     node tools/mutation-matrix.mjs --rev <rev> --json  # print the same structured record (W-14) to
+//                                                     # stdout for a non-default rev, WITHOUT writing
+//                                                     # tools/mutation-matrix-baseline.json. `--json`
+//                                                     # composes with either mode; when given, the human
+//                                                     # report moves to stderr and stdout carries exactly
+//                                                     # one JSON document (the same shape --write-baseline
+//                                                     # writes to disk), so a caller can diff it row-by-row
+//                                                     # against the committed baseline without parsing prose.
 //
 // The ZERO-ARGUMENT invocation is a frozen contract: it measures the W-2
 // baseline commit and must reproduce tools/mutation-matrix-baseline.json
@@ -130,16 +138,20 @@ let CLONE = null;
 function usageError(msg) {
   process.stderr.write(
     'error: ' + msg + '\n' +
-    'usage: node tools/mutation-matrix.mjs [--rev <rev>] [--write-baseline]\n' +
+    'usage: node tools/mutation-matrix.mjs [--rev <rev>] [--write-baseline] [--json]\n' +
     '  (no args)         measure the W-2 baseline rev ' + DEFAULT_REV + '\n' +
     '  --rev <rev>       measure <rev> instead (any rev resolvable in this repo)\n' +
     '  --write-baseline  also write tools/mutation-matrix-baseline.json;\n' +
-    '                    only valid for the default baseline rev (no --rev)\n'
+    '                    only valid for the default baseline rev (no --rev)\n' +
+    '  --json            print the structured record to stdout (human report\n' +
+    '                    moves to stderr); composes with --rev, never writes\n' +
+    '                    tools/mutation-matrix-baseline.json by itself\n'
   );
   process.exit(2);
 }
 
 let WRITE_BASELINE = false;
+let JSON_OUTPUT = false;
 let revArg = null;
 {
   const argRest = process.argv.slice(2);
@@ -147,6 +159,8 @@ let revArg = null;
     const a = argRest[i];
     if (a === '--write-baseline') {
       WRITE_BASELINE = true;
+    } else if (a === '--json') {
+      JSON_OUTPUT = true;
     } else if (a === '--rev') {
       if (i + 1 >= argRest.length) usageError('--rev requires a value');
       revArg = argRest[++i];
@@ -601,8 +615,13 @@ function applyEdits(mutation) {
 // ---------------------------------------------------------------------------
 // main
 // ---------------------------------------------------------------------------
+// --json (W-14) moves the human report to stderr and reserves stdout for
+// exactly one JSON document, so a caller never has to parse prose to get the
+// structured record; the default (no --json) path is untouched -- P() still
+// writes stdout, byte-for-byte as before -- because tools/run-all.mjs spawns
+// this file with no CLI args and depends on that stdout shape.
 const report = [];
-const P = (s = '') => { report.push(s); console.log(s); };
+const P = (s = '') => { report.push(s); if (JSON_OUTPUT) console.error(s); else console.log(s); };
 
 let measuredSha;
 const results = [];
@@ -773,4 +792,15 @@ if (WRITE_BASELINE) {
   writeFileSync(BASELINE_JSON, JSON.stringify(baseline, null, 2) + '\n');
   P('');
   P('baseline written to tools/mutation-matrix-baseline.json');
+}
+
+// W-14: the SAME `baseline` record --write-baseline would persist, printed
+// to stdout instead of committed to disk. This is the only stdout write
+// gated on JSON_OUTPUT; it never touches tools/mutation-matrix-baseline.json
+// itself (that file is only ever written above, inside the WRITE_BASELINE
+// branch, which stays refused whenever --rev is given -- see usageError).
+// A caller diffs this object's `results` array row-by-row (by `id`) against
+// the committed baseline's `results` array.
+if (JSON_OUTPUT) {
+  console.log(JSON.stringify(baseline, null, 2));
 }

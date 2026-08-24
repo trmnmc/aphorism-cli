@@ -18,12 +18,30 @@
 // resolves, and the same extraction succeeds against the HEAD blob -- if any of that isn't
 // true, we do NOT guess a side to blame. We say plainly that direction could not be
 // determined. An honest "don't know" is worth more than a confident wrong attribution.
-import { readFileSync } from 'node:fs';
+import { readFileSync, realpathSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const root = new URL('../', import.meta.url);
 const rootDir = fileURLToPath(root);
+
+// Git walks UP the directory tree looking for a `.git`, so `git show HEAD:<path>` run from a
+// directory that is NOT itself a repo -- but happens to sit nested inside an unrelated one --
+// silently resolves against that ANCESTOR repo's HEAD instead of failing. Before trusting any
+// HEAD blob we confirm the git toplevel git resolves from here really IS this checkout's own
+// root; if it isn't (or git/toplevel resolution fails for any reason), we treat git as
+// unavailable rather than asserting whose HEAD we used.
+function resolvedToplevelIsOwnRoot() {
+  try {
+    const top = execFileSync('git', ['rev-parse', '--show-toplevel'], {
+      cwd: rootDir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+    return realpathSync(top) === realpathSync(rootDir);
+  } catch {
+    return false;
+  }
+}
+const ownToplevel = resolvedToplevelIsOwnRoot();
 const RM = 'README.md', HIST = 'docs/node-support-citation-history.md';
 const FENCE = '```readme-quote\n';
 
@@ -50,6 +68,7 @@ function extractQuote(histText) {
   return histText.slice(open + FENCE.length, close);
 }
 function readHeadBlob(relPath) {
+  if (!ownToplevel) return null; // git anchor here doesn't belong to this checkout -- unknown
   try {
     return execFileSync('git', ['show', `HEAD:${relPath}`], {
       cwd: rootDir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'],

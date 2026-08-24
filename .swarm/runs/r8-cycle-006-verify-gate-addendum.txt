@@ -1,0 +1,110 @@
+
+==============================================================================
+[C2'] W-14 structural: `baseline` is top-level and precedes BOTH the write branch and the emit block
+==============================================================================
+occurrences of `const/let/var baseline =`:
+   L774: const baseline = {
+occurrences of `if (WRITE_BASELINE)`:
+   L791: if (WRITE_BASELINE) {
+occurrences of `if (JSON_OUTPUT)`:
+   L624: const P = (s = '') => { report.push(s); if (JSON_OUTPUT) console.error(s); else console.log(s); };
+   L804: if (JSON_OUTPUT) {
+  ^ TWO legitimate occurrences of `if (JSON_OUTPUT)`: the P() stream router and the
+    stdout emit block. The original cell took the FIRST and asserted ordering on it.
+decl L774 at column 0: true
+decl precedes the WRITE_BASELINE branch (L791): true
+decl precedes the JSON emit block (L804): true
+=> --json cannot be a latent ReferenceError: `baseline` is built on every path.
+--> C2' PASS — decl L774 < write L791 and emit L804
+
+==============================================================================
+[C8'] P-2 bug case (corrected perturbation): nested non-repo dir takes the undetermined path
+==============================================================================
+nested dir has its own .git? false (must be false)
+`git rev-parse --show-toplevel` from it -> /opt/targets/aphorism-cli
+resolves to the ANCESTOR repo (the bug precondition): true
+perturbation: "Actions run 32742357417" -> "Actions run 32742357419" (inside the quoted region)
+heading "### Node support" still intact after perturbation: true  <- the original cell broke this and short-circuited at the no-section branch
+exit 1; output:
+  [FAIL: README.md and docs/node-support-citation-history.md disagree, and which one moved could not be determined (git HEAD comparison unavailable or inconclusive for at least one file) -- its "```readme-quote" block is not a byte-identical substring of README.md's "### Node support" section (no such text anywhere in README.md). Diverging quote:]
+  [The]
+  [reference matrix is [Actions run 32742357417](https://github.com/trmnmc/aphorism-cli/actions/runs/32742357417)]
+hit the no-section short-circuit: false (must be false)
+asserts "own git HEAD version": false (must be false — this is P-2)
+takes the undetermined-direction path: true (must be true)
+--> C8' PASS — ancestor=true reached=true ownHead=false undetermined=true
+
+==============================================================================
+[C9'] P-2 converse control (corrected): an own-toplevel clone STILL names the side that moved
+==============================================================================
+clone exit 0
+clone toplevel: /tmp/gate-c6-clone (IS its own root: true)
+unperturbed clone: exit 0 | OK: docs/node-support-citation-history.md quotes README.md "### Node support" verbatim (257 bytes).
+perturbation: "Actions run 32742357417" -> "Actions run 32742357419"; heading intact: true
+own-toplevel README-side perturbation: exit 1
+  [FAIL: README.md has diverged -- README.md's "### Node support" section no longer matches its own git HEAD version, while docs/node-support-citation-history.md's "```readme-quote" block is unchanged since HEAD -- README moved. its "```readme-quote" block is not a byte-identical substring of README.md's "### Node support" section (no such text anywhere in README.md). Diverging quote:]
+  [The]
+names README as the side that moved : true (must be true)
+still uses and NAMES the git anchor : true (must be true)
+degraded to "undetermined"          : false (must be false)
+=> the P-2 fix is narrow: it suppresses the anchor ONLY when the toplevel is foreign.
+--> C9' PASS — control=0 names=true anchor=true degraded=false
+
+==============================================================================
+[C11'] Full test_cmd green (reporter-format corrected), and the 129 -> 128 count drop reconciled
+==============================================================================
+✔ pick: finite seed determinism is unchanged by the non-finite-seed fix (0.543127ms)
+✔ pick: every candidate is REACHABLE by an unseeded draw (4.509195ms)
+✔ pick: unseeded draws split the interval EQUALLY across candidates (uniform) (2.063941ms)
+✔ pick: single-element candidates always returns that element regardless of seed (0.199655ms)
+ℹ tests 128
+ℹ suites 0
+ℹ pass 128
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4982.26085
+parsed: tests=128 pass=128 fail=0
+run baseline (commit 20b7ede, state.json): 129 tests / 129 pass / 0 fail
+HEAD now: 128 tests / 128 pass / 0 fail  -> delta -1
+The -1 is W-7 (cycle 4): two guards reading the same "Tags on exactly one entry" row
+were consolidated into one, closing KI-R6-3. Corroborated INDEPENDENTLY by the C4
+identity control, which measured the suite on two untouched scratch clones:
+  baseline 20b7ede -> 129 tests / 129 pass / 0 fail / 0 skipped  verdict GREEN
+  HEAD     e40736c -> 128 tests / 128 pass / 0 fail / 0 skipped  verdict GREEN
+Per must-have S-1, a test-count DROP is a PASS, not a regression.
+--> C11' PASS — 128/128 passing, 0 failing; -1 vs baseline, attributed to W-7
+
+==============================================================================
+[C12'] W-6 standing invariant, restated as a rule this repo can actually satisfy
+==============================================================================
+corpus sha256 : 77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e  == baseline
+--help sha256 : d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64  == baseline
+frozen-pathspec status lines: (none)
+manifests/lockfiles tracked in git (excluding .swarm/ run archives): []
+manifests/lockfiles present on disk at the repo root: []
+=> zero-dependency here means MANIFEST-LESS. The original cell read package.json,
+   which has never existed, and reported the invariant violated on an ENOENT.
+imports under tools/:
+   from 'node:child_process'
+   from 'node:fs'
+   from 'node:path'
+   from 'node:url'
+   from 'node:util'
+converse control — must reject ["from 'lodash'","from './helper.js'","from 'node_modules/x'"] -> rejected 3/3
+--> C12' PASS — corpus/help frozen, 0 frozen-path changes, 0 manifests, 0 non-builtin imports
+
+##############################################################################
+CYCLE 6 GATE ADDENDUM SUMMARY
+##############################################################################
+PASS C2'   W-14 structural: `baseline` is top-level and precedes BOTH the write branch and the emit block
+PASS C8'   P-2 bug case (corrected perturbation): nested non-repo dir takes the undetermined path
+PASS C9'   P-2 converse control (corrected): an own-toplevel clone STILL names the side that moved
+PASS C11'  Full test_cmd green (reporter-format corrected), and the 129 -> 128 count drop reconciled
+PASS C12'  W-6 standing invariant, restated as a rule this repo can actually satisfy
+
+5/5 corrected cells PASS
+Combined with the original gate's cells that stood (C1 C3 C4 C5 C6 C7 C10),
+the cycle-6 verdict rests on 12 cells, 4 of which had to be re-taken because
+the conductor's own instrument, not the dispatched work, was wrong.
