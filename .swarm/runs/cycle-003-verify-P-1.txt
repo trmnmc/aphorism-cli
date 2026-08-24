@@ -1,0 +1,65 @@
+CYCLE 3 VERIFICATION EVIDENCE — P-1 (citation-rule-check attribution direction)
+Conductor-authored gate, run at verification time.
+Scripts: .swarm/runs/gate-c3-p1.mjs, gate-c3-p1b.mjs, gate-c3-p1c.mjs
+
+ACCEPTANCE CLAUSE has three directions. All three verified independently:
+
+[C] CONTROL: neither file perturbed (must exit 0)
+    exit: 0
+    OK: docs/node-support-citation-history.md quotes README.md "### Node support"
+        verbatim (257 bytes).
+
+[A] README reworded, doc untouched (must blame README.md)
+    exit: 1
+    FAIL: README.md has diverged -- README.md's "### Node support" section no
+    longer matches its own git HEAD version, while docs/node-support-citation-
+    history.md's "```readme-quote" block is unchanged since HEAD -- README moved.
+    -> CORRECT ATTRIBUTION. This is the defect P-1 was filed to fix; it is fixed.
+
+[B] doc reworded, README untouched (must blame the history doc)
+    exit: 1
+    FAIL: docs/node-support-citation-history.md has diverged -- its
+    "```readme-quote" block is not a byte-identical substring of README.md's
+    "### Node support" section.
+    -> unchanged from prior behaviour, as required.
+
+=== CASES THE BUILDER DID NOT TEST (conductor-added) ===
+
+[E] README reword COMMITTED (HEAD moves; both sides clean vs their HEAD blobs)
+    exit: 1
+    FAIL: README.md and docs/... disagree, and which one moved could not be
+    determined (git HEAD comparison unavailable or inconclusive for at least
+    one file)
+    -> HONEST. The tool loses its direction signal here and says so rather
+       than guessing. This is the right behaviour.
+
+[F] BOTH sides reworded
+    exit: 1
+    FAIL: README.md and docs/... have both changed since git HEAD, and no
+    longer agree
+    -> does not falsely blame a single side.
+
+[D] the fallback the builder reported as "coded but untested":
+    First attempt (clone with .git deleted, nested INSIDE the repo) still
+    produced a confident README-side attribution. Probed rather than accepted:
+      git -C <nested-no-.git> rev-parse --show-toplevel
+        -> /opt/targets/aphorism-cli        (the PARENT repo)
+    So that test was invalid — git walked UP and used the ancestor repo's HEAD.
+    Re-run genuinely OUTSIDE any repo:
+      git rev-parse --show-toplevel
+        -> fatal: not a git repository (or any of the parent directories): .git
+      tool exit: 1
+      FAIL: README.md and docs/... disagree, and which one moved could not be
+      determined (git HEAD comparison unavailable or inconclusive for at least
+      one file)
+    -> THE FALLBACK WORKS. Now exercised, not merely coded.
+
+RESIDUAL FINDING (new item P-2, low severity, NOT a gate failure):
+The tool never checks that the resolved git toplevel is the same directory as
+the files under check. A non-repo checkout nested inside an UNRELATED repo will
+be compared against that ancestor's HEAD while the message states it used "its
+own git HEAD version" — a confidently-stated attribution that could be wrong.
+Same shape as cycle 2's D-R8-7 ruling: acceptance passes, defect found beyond
+the clause, recorded as a new item rather than rounded into a FAIL.
+
+VERDICT: PASS.

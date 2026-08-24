@@ -1,0 +1,53 @@
+CYCLE 3 VERIFICATION EVIDENCE — W-2 (mutation matrix / detection floor)
+Conductor-authored gate, run at verification time. Script: .swarm/runs/gate-c3-w2.mjs
+The builder never saw these checks.
+
+QUESTION THE GATE EXISTS TO ANSWER: is "18 CAUGHT / 0 SILENT" a real attribution
+result, or an artifact of a suite that fails on ANY edit to README?
+
+--- conductor's independent clone at the baseline commit ---
+clone HEAD : 20b7edec2eb42cae185bdd7934f4bc6cd2899577
+is shallow : false
+
+[A] untouched baseline       -> 129 tests, 129 pass, 0 fail, 0 skipped
+    git-dependent guards skipped here? none (they ran for real)
+
+[B] neutral README prose     -> 129 tests, 129 pass, 0 fail
+    failing guards: NONE - suite is discriminating, not blanket-failing
+    ^^^ THE KEY CONTROL. A README edit no guard reads leaves the suite green.
+        Without this, 18/18 CAUGHT would prove nothing about attribution.
+
+[C] M06 Distinct tags 12->13 -> 129 tests, 128 pass, 1 fail
+    failing guards: [ 'README must state total unique tags correctly' ]
+
+[D] M18 24->25 authors       -> 129 tests, 128 pass, 1 fail
+    failing guards: [ "README `--author` matching section must state the correct
+                       count of distinct corpus authors (Q-8)" ]
+
+clone restored clean: true
+
+--- the tool's own run, re-executed by the conductor ---
+summary: 18 CAUGHT, 0 SILENT
+claims produced by the rule but skipped by the harness: NONE
+(M14..M18 each CAUGHT by exactly 1 guard, incl. the targeted guard)
+
+--- independent cross-check of the mutation count ---
+node tools/guard-inventory.mjs:
+  == C. INCLUDED COUNT-CLAIM GUARDS (18) ==
+  Totals: 18 included, 18 borderline, 93 excluded, of 129 tests parsed
+          statically (129 measured by the runner).
+mutation-matrix-baseline.json: results = 18, identity = M00 (verdict GREEN),
+skippedClaims = []  ->  18 + 1 identity = 19 mutations, under the 30 cap,
+exactly one per INCLUDED claim. MATCHES the acceptance clause.
+
+--- SILENT reachability (code, not claim) ---
+tools/mutation-matrix.mjs:596
+  entry.verdict = run.totals.fail > 0 ? 'CAUGHT' : 'SILENT';
+Verdict is derived from real TAP totals, not hardcoded. SILENT is reachable.
+
+--- tree byte-identical after the tool run ---
+git status --porcelain -- src bin test .github README.md package.json  ->  EMPTY
+sha256 src/corpus.js  77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e (unmoved)
+
+VERDICT: PASS. The 0-SILENT result is a measurement, corroborated by an
+independent control ([B]) and two hand-replicated mutations ([C], [D]).

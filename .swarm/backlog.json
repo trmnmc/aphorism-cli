@@ -1,8 +1,8 @@
 {
  "version": 1,
- "updated_at": "2026-08-24T13:58:00.000Z",
+ "updated_at": "2026-08-24T14:30:00.000Z",
  "run_label": "improvement run #8",
- "note": "Cycle 2 build wave: W-1, W-3, W-4 verified done by conductor-authored gates (independent re-derivation, not agent claims). W-6 standing invariant held. New item P-1 from a finding the gate turned up beyond W-3`s clause. W-2 is now unblocked (its only dep W-1 is done).",
+ "note": "Cycle 3 build wave: W-2, W-5, P-1 all verified done by conductor-authored gates run at verification time (independent controls and re-derivation, not agent claims). W-6 standing invariant held before and after the wave. New item P-2 from a finding the P-1 gate turned up beyond its clause. W-7 and W-9 are now unblocked (W-9`s five deps are all done).",
  "items": [
   {
    "id": "W-1",
@@ -35,7 +35,7 @@
     "S-6"
    ],
    "kind": "tool",
-   "status": "todo",
+   "status": "done",
    "effort": "L",
    "priority": 2,
    "deps": [
@@ -50,7 +50,9 @@
    ],
    "packages": [],
    "acceptance": "tools/mutation-matrix.mjs exists, is zero-dependency, is NOT collected by the suite's own file glob, and adds zero tests. It states its generation rule in the file itself and enumerates at most 30 mutations produced by that rule — exactly one falsifying mutation per machine-checked document claim the W-1 inventory found — plus exactly ONE identity (no-op) mutation as converse control. For each mutation it applies the edit to a scratch copy, runs the suite there, records which NAMED guards fired, and leaves the working tree byte-identical. The identity control must leave the suite green; a mutation no guard catches is reported as SILENT, never omitted. Any claim the generation rule produces but the harness skips is listed with its reason. The baseline result against 20b7ede is recorded in tools/mutation-matrix-baseline.json in a machine-comparable shape.",
-   "notes": "Risk: ~30 suite runs. The suite spawns the real binary (cli/pipe tests) and shells out to git (node-support-citation), so the scratch copy must be a real git work tree or those two guards skip/fail for ENVIRONMENTAL reasons rather than because of the mutation — which would corrupt the matrix. Decide and STATE how the scratch copy handles git (clone vs worktree vs accept skips and mark N/A). Baseline at 20b7ede per S-1; HEAD 912a2a4 changed only .swarm/, so src/bin/test should be identical — confirm, do not assume."
+   "notes": "Risk: ~30 suite runs. The suite spawns the real binary (cli/pipe tests) and shells out to git (node-support-citation), so the scratch copy must be a real git work tree or those two guards skip/fail for ENVIRONMENTAL reasons rather than because of the mutation — which would corrupt the matrix. Decide and STATE how the scratch copy handles git (clone vs worktree vs accept skips and mark N/A). Baseline at 20b7ede per S-1; HEAD 912a2a4 changed only .swarm/, so src/bin/test should be identical — confirm, do not assume.",
+   "verified_cycle": 3,
+   "verify_note": "Conductor gate: independent control proved the suite is discriminating (a neutral README edit leaves it GREEN), plus two hand-replicated mutations each firing exactly the named guard. Mutation count 18 == W-1 inventory INCLUDED count 18, +1 identity = 19, under the 30 cap. Evidence: .swarm/runs/cycle-003-verify-W-2.txt"
   },
   {
    "id": "W-3",
@@ -104,7 +106,7 @@
     "S-6"
    ],
    "kind": "measure",
-   "status": "todo",
+   "status": "done",
    "effort": "M",
    "priority": 5,
    "deps": [],
@@ -116,7 +118,9 @@
    ],
    "packages": [],
    "acceptance": "tools/matrix-adjudication.mjs re-derives, offline and from this checkout: (a) the four matrix rows as README states them; (b) how many tests the suite actually contains at HEAD and how many are the citation guard's two environment-conditional cases; (c) whether the cited base commit's src/bin/test/.github content is identical to this tree's, i.e. whether the citation rule still selects the cited run; (d) an explicit verdict — CORRECT-AS-CITED / STALE / UNDECIDABLE-OFFLINE — with the arithmetic that separates a stale current-state claim from a correctly-cited past-CI claim. If and ONLY IF the verdict is STALE is anything in README.md repaired.",
-   "notes": "PREMISE CHECK from PLAN, recorded rather than planned around: S-5's framing is probably WRONG. The README rows report a REMOTE CI run, and CI checks out at depth 1, so the two node-support-citation tests SKIP there: 129/127/0/2. A local full clone runs those same two and they pass: 129/129/0/0. Both numbers are true of different environments; README's own standing limit 1 says exactly this, and readme-matrix-consistency.test.js's header already spells out why a local run cannot honestly be compared to the table. Most likely honest outcome is CORRECT-AS-CITED with a published explanation and ZERO README edits — which S-5 explicitly calls a PASS. The tool must be ABLE to reach STALE, but must not go looking for a repair. Offline anchor: archived CI evidence under .swarm/runs/ (cycle-005-verify-Q-8.txt names run 32405521233). Network/gh availability unverified — the tool must work without them."
+   "notes": "PREMISE CHECK from PLAN, recorded rather than planned around: S-5's framing is probably WRONG. The README rows report a REMOTE CI run, and CI checks out at depth 1, so the two node-support-citation tests SKIP there: 129/127/0/2. A local full clone runs those same two and they pass: 129/129/0/0. Both numbers are true of different environments; README's own standing limit 1 says exactly this, and readme-matrix-consistency.test.js's header already spells out why a local run cannot honestly be compared to the table. Most likely honest outcome is CORRECT-AS-CITED with a published explanation and ZERO README edits — which S-5 explicitly calls a PASS. The tool must be ABLE to reach STALE, but must not go looking for a repair. Offline anchor: archived CI evidence under .swarm/runs/ (cycle-005-verify-Q-8.txt names run 32405521233). Network/gh availability unverified — the tool must work without them.",
+   "verified_cycle": 3,
+   "verify_note": "Conductor reproduced the decisive discriminator independently: a depth-1 clone yields exactly 129/127/0/2, matching all four README rows, with the two skips being exactly the citation guards. Tool proven failable (falsified row -> STALE; committed src/ touch -> STALE). Zero README edits. Evidence: .swarm/runs/cycle-003-verify-W-5.txt"
   },
   {
    "id": "W-6",
@@ -135,7 +139,7 @@
    "files_hint": [],
    "packages": [],
    "acceptance": "At every commit this run makes: src/corpus.js hashes to sha256 77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e; --help output hashes to sha256 d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64; the dependency surface is unchanged and nothing under tools/ imports outside node: builtins; no file under src/ or bin/ changes at all; and the suite is green at every commit EXCEPT a single citation window named as such, IN ADVANCE, in the commit message of the commit that opens it.",
-   "notes": "An invariant, not a unit of work — conductor-held, never dispatched to a builder. Both hashes re-verified against HEAD 912a2a4 by PLAN and they match SPEC exactly, so the baseline is real, not inherited. W-7 is the ONLY item that can open a citation window (only item touching test/); every other item lands in tools/, docs/, or REPORT.md, all outside the cited pathspec. package.json must not be touched and appears in no files_hint. [CYCLE 2 HELD] corpus sha256 77a4de5c... and --help sha256 d759d781... both re-measured and unmoved; git status --porcelain -- src bin test .github README.md package.json is EMPTY (no file inside the cited pathspec touched, so no citation window opened); no package.json exists so the dependency surface is unchanged; grep finds zero non-node: imports under tools/; suite green 129/129/0 skipped at the cycle-2 commit."
+   "notes": "An invariant, not a unit of work — conductor-held, never dispatched to a builder. Both hashes re-verified against HEAD 912a2a4 by PLAN and they match SPEC exactly, so the baseline is real, not inherited. W-7 is the ONLY item that can open a citation window (only item touching test/); every other item lands in tools/, docs/, or REPORT.md, all outside the cited pathspec. package.json must not be touched and appears in no files_hint. [CYCLE 3 HELD] corpus sha256 77a4de5c... and --help sha256 d759d781... both re-measured before AND after the wave, unmoved. git status --porcelain -- src bin test .github README.md package.json EMPTY at both points, so no citation window opened. grep finds zero non-node: imports under tools/. Suite green 129/129/0 skipped at the cycle-3 commit, and test count unchanged at 129 (all three items added zero tests)."
   },
   {
    "id": "W-7",
@@ -516,7 +520,7 @@
     "S-3"
    ],
    "kind": "polish",
-   "status": "todo",
+   "status": "done",
    "effort": "S",
    "priority": 11,
    "deps": [],
@@ -527,7 +531,29 @@
    ],
    "packages": [],
    "acceptance": "When README.md`s citation-selection sentence is reworded while the history doc`s quote block is left untouched, tools/citation-rule-check.mjs`s failure message identifies README.md as the document that moved, rather than reporting that the history doc has diverged. The existing doc-side perturbation must still name the history doc, and the honest-text converse control must still exit 0. Both directions demonstrated by real runs against a scratch copy.",
-   "notes": "Found by the cycle-2 conductor gate, BEYOND the W-3 acceptance clause (which scopes failability to perturbing the QUOTE, and that case attributes correctly). Measured: perturbing README`s sentence -- `the push that carried the last change to` -> `the push that carried the change to` -- while leaving the doc alone still prints `FAIL: docs/node-support-citation-history.md has diverged`. Every factual clause in that message is true (the block is genuinely not a substring of README any more) but the direction of attribution is wrong. The builder`s own Run D showed a README-side message, but only for a MISSING HEADING -- a structurally different failure, not a body divergence. A substring check cannot infer direction from two files alone; closing this likely needs a third anchor (e.g. the committed blob of README at the last green commit) or a message that names the pair without asserting which side moved. Not a gate failure for W-3; a real defect on the record."
+   "notes": "Found by the cycle-2 conductor gate, BEYOND the W-3 acceptance clause (which scopes failability to perturbing the QUOTE, and that case attributes correctly). Measured: perturbing README`s sentence -- `the push that carried the last change to` -> `the push that carried the change to` -- while leaving the doc alone still prints `FAIL: docs/node-support-citation-history.md has diverged`. Every factual clause in that message is true (the block is genuinely not a substring of README any more) but the direction of attribution is wrong. The builder`s own Run D showed a README-side message, but only for a MISSING HEADING -- a structurally different failure, not a body divergence. A substring check cannot infer direction from two files alone; closing this likely needs a third anchor (e.g. the committed blob of README at the last green commit) or a message that names the pair without asserting which side moved. Not a gate failure for W-3; a real defect on the record.",
+   "verified_cycle": 3,
+   "verify_note": "All three acceptance directions verified independently. Conductor additionally exercised the builder-reported-untested fallback (works, outside any repo) and two uncovered cases (committed README reword; both sides moved) - both honest. One residual beyond the clause -> P-2. Evidence: .swarm/runs/cycle-003-verify-P-1.txt"
+  },
+  {
+   "id": "P-2",
+   "title": "citation-rule-check.mjs can compare against an ANCESTOR repo HEAD without noticing",
+   "covers": [
+    "S-3"
+   ],
+   "kind": "fix",
+   "status": "todo",
+   "effort": "S",
+   "priority": 12,
+   "deps": [],
+   "attempts": 0,
+   "model": "sonnet",
+   "files_hint": [
+    "tools/citation-rule-check.mjs"
+   ],
+   "packages": [],
+   "acceptance": "When tools/citation-rule-check.mjs runs in a directory that is NOT itself a git repository but is nested inside an unrelated one, it must not state that it compared a file against \"its own git HEAD version\". Either it verifies that the resolved git toplevel is the directory under check and otherwise takes the undetermined-direction path, or its message stops asserting whose HEAD it used. The three existing directions (README-side, doc-side, honest control) must all still behave as they do today, demonstrated by real runs.",
+   "notes": "Found by the cycle-3 conductor gate, BEYOND the P-1 acceptance clause. Measured: git rev-parse --show-toplevel from a nested checkout with .git deleted returns /opt/targets/aphorism-cli (the PARENT repo), so `git show HEAD:README.md` silently resolves against an ancestor. In the gate the ancestor happened to be the same project, so the attribution looked correct - that coincidence is exactly what makes it worth fixing. Run genuinely outside any repo the fallback DOES fire correctly (verified), so this is narrow: only the nested-inside-unrelated-repo case. Low severity; the failure mode is a confidently-stated attribution that could name the wrong side."
   }
  ]
 }

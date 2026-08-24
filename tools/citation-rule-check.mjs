@@ -3,27 +3,102 @@
 // rule VERBATIM, and quotes it from README's own "### Node support" section.
 // Not a test: deliberately outside test/ and outside the README citation's pathspec.
 //   node tools/citation-rule-check.mjs     exit 0 = byte-identical, exit 1 = diverged
+//
+// Attribution note (why this file shells out to git):
+// A plain substring check of "does HIST's quote appear in README's section" cannot tell
+// you, from the two working-tree files alone, WHICH side moved when it fails -- README
+// could have been reworded, or HIST's quote could have been reworded, and both produce the
+// exact same observable ("not a substring anymore"). Blaming HIST unconditionally (as this
+// file used to) is wrong whenever README is the side that actually changed.
+//
+// To recover direction we use a third anchor: the committed blob of each file at git HEAD.
+// We re-run the same extraction against `git show HEAD:<path>` and compare it to the
+// working-tree extraction. Whichever extracted piece differs from its own HEAD version is
+// the side that moved since the last commit. This only works when `git` is present, HEAD
+// resolves, and the same extraction succeeds against the HEAD blob -- if any of that isn't
+// true, we do NOT guess a side to blame. We say plainly that direction could not be
+// determined. An honest "don't know" is worth more than a confident wrong attribution.
 import { readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+
 const root = new URL('../', import.meta.url);
+const rootDir = fileURLToPath(root);
 const RM = 'README.md', HIST = 'docs/node-support-citation-history.md';
 const FENCE = '```readme-quote\n';
+
 const readme = readFileSync(new URL(RM, root), 'utf8');
 const hist = readFileSync(new URL(HIST, root), 'utf8');
+
 const die = (who, why) => { console.error(`FAIL: ${who} has diverged -- ${why}`); process.exit(1); };
-const open = hist.indexOf(FENCE);
-const close = open < 0 ? -1 : hist.indexOf('\n```', open + FENCE.length);
-if (open < 0 || close < 0) die(HIST, `it carries no "${FENCE.trim()}" block quoting ${RM}`);
-const quote = hist.slice(open + FENCE.length, close);
-const head = readme.indexOf('\n### Node support\n');
-if (head < 0) die(RM, `it has no "### Node support" section for ${HIST} to quote`);
-const after = readme.slice(head + 1);
-const end = after.indexOf('\n### ', 1);
-const section = end < 0 ? after : after.slice(0, end);
+const failPair = (msg) => { console.error(`FAIL: ${msg}`); process.exit(1); };
+
+// Same two extractions the original check performed, factored out so they can be run
+// against both the working tree and a HEAD blob.
+function extractSection(readmeText) {
+  const head = readmeText.indexOf('\n### Node support\n');
+  if (head < 0) return null;
+  const after = readmeText.slice(head + 1);
+  const end = after.indexOf('\n### ', 1);
+  return end < 0 ? after : after.slice(0, end);
+}
+function extractQuote(histText) {
+  const open = histText.indexOf(FENCE);
+  if (open < 0) return null;
+  const close = open < 0 ? -1 : histText.indexOf('\n```', open + FENCE.length);
+  if (close < 0) return null;
+  return histText.slice(open + FENCE.length, close);
+}
+function readHeadBlob(relPath) {
+  try {
+    return execFileSync('git', ['show', `HEAD:${relPath}`], {
+      cwd: rootDir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'],
+    });
+  } catch {
+    return null; // not a git repo, no HEAD, git missing, or path not in HEAD -- all "unknown"
+  }
+}
+
+const quote = extractQuote(hist);
+if (quote === null) die(HIST, `it carries no "${FENCE.trim()}" block quoting ${RM}`);
+
+const section = extractSection(readme);
+if (section === null) die(RM, `it has no "### Node support" section for ${HIST} to quote`);
+
 if (!section.includes(quote)) {
   const where = readme.includes(quote)
     ? `${RM} does contain that text, but outside its "### Node support" section`
     : `no such text anywhere in ${RM}`;
-  die(HIST, `its "${FENCE.trim()}" block is not a byte-identical substring of ${RM}'s ` +
-    `"### Node support" section (${where}). Diverging quote:\n${quote}`);
+  const detail = `its "${FENCE.trim()}" block is not a byte-identical substring of ${RM}'s ` +
+    `"### Node support" section (${where}). Diverging quote:\n${quote}`;
+
+  // Third anchor: compare each side's extraction against its own HEAD blob to see which
+  // side actually moved since the last commit.
+  const readmeHead = readHeadBlob(RM);
+  const histHead = readHeadBlob(HIST);
+  const readmeHeadSection = readmeHead === null ? null : extractSection(readmeHead);
+  const histHeadQuote = histHead === null ? null : extractQuote(histHead);
+
+  const readmeChanged = readmeHeadSection === null ? null : readmeHeadSection !== section;
+  const histChanged = histHeadQuote === null ? null : histHeadQuote !== quote;
+
+  if (readmeChanged !== null && histChanged !== null) {
+    if (readmeChanged && !histChanged) {
+      die(RM, `${RM}'s "### Node support" section no longer matches its own git HEAD version, ` +
+        `while ${HIST}'s "${FENCE.trim()}" block is unchanged since HEAD -- README moved. ${detail}`);
+    }
+    if (histChanged && !readmeChanged) {
+      die(HIST, detail);
+    }
+    if (readmeChanged && histChanged) {
+      failPair(`${RM} and ${HIST} have both changed since git HEAD, and no longer agree -- ${detail}`);
+    }
+    // Neither side changed relative to HEAD yet they still disagree now (e.g. HEAD itself
+    // was already broken). Direction genuinely isn't visible from this anchor.
+  }
+
+  failPair(`${RM} and ${HIST} disagree, and which one moved could not be determined ` +
+    `(git HEAD comparison unavailable or inconclusive for at least one file) -- ${detail}`);
 }
+
 console.log(`OK: ${HIST} quotes ${RM} "### Node support" verbatim (${quote.length} bytes).`);

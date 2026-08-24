@@ -6,7 +6,7 @@
  "run_started_at": "2026-08-24T13:05:56.000Z",
  "kickoff_source": "allocator",
  "phase": "BUILD",
- "cycle": 2,
+ "cycle": 3,
  "run_cmd": "node bin/aphorism.js",
  "test_cmd": "node --test test/*.test.js",
  "spec_digest": [
@@ -70,6 +70,18 @@
    "cycle": 2,
    "kind": "gate",
    "text": "W-3 PASSES its acceptance clause and the conductor still recorded a defect against it. The clause scopes failability to perturbing the QUOTE, and that direction attributes correctly. The conductor also perturbed the README side -- a case the clause does not cover -- and the check still printed `docs/node-support-citation-history.md has diverged`, blaming the document that did not move. Every factual clause in that message is true; only the direction of attribution is wrong. Rounding this into a FAIL would discard verified work over a case the clause never asked for; burying it would be the gate opening itself by silence. Recorded as new item P-1 instead, with the exact perturbation that produces it."
+  },
+  {
+   "id": "D-R8-8",
+   "cycle": 3,
+   "kind": "gate",
+   "text": "P-1 PASSES all three directions of its acceptance clause and the conductor still recorded a defect against it — the same ruling shape as D-R8-7. The tool resolves its third anchor with `git show HEAD:<path>`, and git walks UP the directory tree: from a checkout that is not itself a repo but sits inside one, the anchor silently resolves against the ANCESTOR repo. Measured: `git rev-parse --show-toplevel` from a nested .git-deleted clone returns /opt/targets/aphorism-cli. In the gate the ancestor was the same project, so the attribution looked right — the coincidence is what makes it worth fixing. Run genuinely outside any repo, the fallback fires correctly and honestly, so the builder`s untested path is now exercised and works. Recorded as new item P-2 rather than rounded into a FAIL, because the clause covers three directions and all three pass."
+  },
+  {
+   "id": "D-R8-9",
+   "cycle": 3,
+   "kind": "correction",
+   "text": "The conductor`s own W-5 gate script carried a bug: its README row-parser assumed five pipe-separated columns, but the table has two columns with the counts in prose, so it parsed zero rows and printed `depth-1 == README row? -> NO`. That NO was the gate failing, not W-5. Corrected in a second script (gate-c3-w5b.mjs), which parses all four rows and reports YES. Recorded here rather than silently re-run, because a gate that misreports must be as visible as a build that does — the evidence file names the bug explicitly."
   }
  ],
  "qa": {
@@ -79,8 +91,8 @@
  },
  "counters": {
   "consecutive_no_value": 0,
-  "k_current": 3,
-  "wave_streak": 1,
+  "k_current": 4,
+  "wave_streak": 0,
   "window_tokens_attributed": 0
  },
  "known_issues_file": "known-issues.json",
@@ -89,9 +101,9 @@
   "note": "runs #1-#7; run #7 delivered ZERO work cycles (usage lockout). Done items archived to backlog-archive-runs1-7.json."
  },
  "last_cycle": {
-  "cycle": 2,
-  "work": "build-wave (3 direct Agent calls, headless fallback)",
-  "outcome": "value — W-1, W-3, W-4 all verified done; clean wave, 0 reverts, 0 failed verifies",
-  "ts": "2026-08-24T13:58:00.000Z"
+  "cycle": 3,
+  "work": "build-wave (3 direct Agent calls, headless fallback: W-2, W-5, P-1)",
+  "outcome": "value — all three verified done by conductor-authored gates; clean wave, 0 reverts, 0 failed verifies; new item P-2 from a finding beyond P-1`s clause",
+  "ts": "2026-08-24T14:30:00.000Z"
  }
 }

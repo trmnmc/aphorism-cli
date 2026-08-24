@@ -1,0 +1,50 @@
+CYCLE 3 VERIFICATION EVIDENCE — W-5 (README Node-support matrix adjudication)
+Conductor-authored gate, run at verification time.
+Scripts: .swarm/runs/gate-c3-w5.mjs (part 1), gate-c3-w5b.mjs (part 2)
+
+CLAIM UNDER TEST: 127 and 129 are the SAME suite under two environments, so the
+README table is CORRECT-AS-CITED and needs no repair.
+
+--- [1] README matrix rows, parsed independently by the conductor ---
+    v18.20.8 -> 129/127/0/2
+    v20.20.2 -> 129/127/0/2
+    v22.23.2 -> 129/127/0/2
+    v24.19.0 -> 129/127/0/2
+    row count: 4
+
+--- [2] FULL local clone (developer condition) ---
+    129 tests, 129 pass, 0 fail, 0 skipped
+
+--- [3] DEPTH-1 clone (CI's checkout condition) — THE DISCRIMINATOR ---
+    depth-1 clone is shallow -> true
+    DEPTH-1 result           -> 129 tests, 127 pass, 0 fail, 2 skipped
+    skipped test titles:
+      'README Node support citation: cited git diff must be empty (or the check
+       must skip on a missing precondition)'
+      'README Node support citation: base-to-working-tree diff must also be empty,
+       so an uncommitted falsification is visible now (or the check must skip on
+       a missing precondition)'
+    -> the two skips are exactly the two citation guards, as claimed.
+
+--- [4] every README row == measured depth-1 result -> YES ---
+(Part 1 printed "NO" here; that was a CONDUCTOR BUG — the row regex assumed five
+pipe-separated columns, but the table has two columns with counts in prose. The
+corrected parser in part 2 reports YES. Recorded rather than quietly re-run.)
+
+--- [5] retirement condition ---
+git diff 7e50d6f..HEAD -- src bin test .github  ->  EMPTY
+    -> the citation rule still selects the cited run.
+
+--- [6] the tool's own verdict ---
+    exit code 0  (0=CORRECT-AS-CITED, 1=STALE, 2=UNDECIDABLE, 3=parse fail)
+    == VERDICT: CORRECT-AS-CITED ==
+
+--- [7] FALSIFIABILITY — is the tool capable of reaching STALE? ---
+    row falsified 127->126, tool exit: 1   == VERDICT: STALE ==
+    src/ touched + committed, tool exit: 1 == VERDICT: STALE ==
+    -> the CORRECT-AS-CITED verdict is not a rubber stamp.
+
+--- [8] README.md dirty in working tree? -> NO — untouched ---
+
+VERDICT: PASS. The spec's staleness premise (S-5) is REFUTED by measurement,
+as the cycle-1 planner suspected. Zero README edits, which S-5 calls a PASS.
