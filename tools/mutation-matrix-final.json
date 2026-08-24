@@ -1,9 +1,9 @@
 {
   "meta": {
     "tool": "tools/mutation-matrix.mjs",
-    "measuredRev": "585683734ea56e08671bfcc9be9310130e511542",
-    "measuredCommit": "585683734ea56e08671bfcc9be9310130e511542",
-    "baselineCommit": "585683734ea56e08671bfcc9be9310130e511542",
+    "measuredRev": "1aac952c00d3c1770295db01aa663dd7c3ecf83b",
+    "measuredCommit": "1aac952c00d3c1770295db01aa663dd7c3ecf83b",
+    "baselineCommit": "1aac952c00d3c1770295db01aa663dd7c3ecf83b",
     "baselineCommitShort": "20b7ede",
     "node": "v24.19.0",
     "suiteCommand": "node --test --test-reporter=tap <test/*.test.js, glob expanded by readdir>",
@@ -25,6 +25,8 @@
       "skipped": 0
     },
     "firedGuards": [],
+    "semanticFiredGuardCount": 0,
+    "environmentalFiredGuardCount": 0,
     "skippedGuards": [],
     "environmentalSkipWarning": null,
     "verdict": "GREEN",
@@ -61,17 +63,22 @@
       "firedGuards": [
         {
           "file": "test/readme-matrix-consistency.test.js",
-          "title": "README Node support matrix: table must be present and non-empty"
+          "title": "README Node support matrix: table must be present and non-empty",
+          "environmental": false
         },
         {
           "file": "test/readme-matrix-consistency.test.js",
-          "title": "README Node support matrix: each row's own arithmetic must hold (tests = pass + fail + skipped)"
+          "title": "README Node support matrix: each row's own arithmetic must hold (tests = pass + fail + skipped)",
+          "environmental": false
         },
         {
           "file": "test/readme-matrix-consistency.test.js",
-          "title": "README Node support matrix: all rows must agree with each other"
+          "title": "README Node support matrix: all rows must agree with each other",
+          "environmental": false
         }
       ],
+      "semanticFiredGuardCount": 3,
+      "environmentalFiredGuardCount": 0,
       "skippedGuards": [],
       "environmentalSkipWarning": null,
       "verdict": "CAUGHT",
@@ -101,13 +108,17 @@
       "firedGuards": [
         {
           "file": "test/readme-matrix-consistency.test.js",
-          "title": "README Node support matrix: each row's own arithmetic must hold (tests = pass + fail + skipped)"
+          "title": "README Node support matrix: each row's own arithmetic must hold (tests = pass + fail + skipped)",
+          "environmental": false
         },
         {
           "file": "test/readme-matrix-consistency.test.js",
-          "title": "README Node support matrix: all rows must agree with each other"
+          "title": "README Node support matrix: all rows must agree with each other",
+          "environmental": false
         }
       ],
+      "semanticFiredGuardCount": 2,
+      "environmentalFiredGuardCount": 0,
       "skippedGuards": [],
       "environmentalSkipWarning": null,
       "verdict": "CAUGHT",
@@ -137,9 +148,12 @@
       "firedGuards": [
         {
           "file": "test/readme-matrix-consistency.test.js",
-          "title": "README Node support matrix: all rows must agree with each other"
+          "title": "README Node support matrix: all rows must agree with each other",
+          "environmental": false
         }
       ],
+      "semanticFiredGuardCount": 1,
+      "environmentalFiredGuardCount": 0,
       "skippedGuards": [],
       "environmentalSkipWarning": null,
       "verdict": "CAUGHT",
@@ -169,21 +183,27 @@
       "firedGuards": [
         {
           "file": "test/readme-tags.test.js",
-          "title": "README tags must exist in corpus"
+          "title": "README tags must exist in corpus",
+          "environmental": false
         },
         {
           "file": "test/readme-tags.test.js",
-          "title": "README tag counts must match corpus"
+          "title": "README tag counts must match corpus",
+          "environmental": false
         },
         {
           "file": "test/readme-tags.test.js",
-          "title": "every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band"
+          "title": "every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band",
+          "environmental": false
         },
         {
           "file": "test/readme-tags.test.js",
-          "title": "every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)"
+          "title": "every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)",
+          "environmental": false
         }
       ],
+      "semanticFiredGuardCount": 4,
+      "environmentalFiredGuardCount": 0,
       "skippedGuards": [],
       "environmentalSkipWarning": null,
       "verdict": "CAUGHT",
@@ -213,9 +233,12 @@
       "firedGuards": [
         {
           "file": "test/readme-tags.test.js",
-          "title": "README tag counts must match corpus"
+          "title": "README tag counts must match corpus",
+          "environmental": false
         }
       ],
+      "semanticFiredGuardCount": 1,
+      "environmentalFiredGuardCount": 0,
       "skippedGuards": [],
       "environmentalSkipWarning": null,
       "verdict": "CAUGHT",
@@ -245,9 +268,12 @@
       "firedGuards": [
         {
           "file": "test/readme-tags.test.js",
-          "title": "README must state total unique tags correctly"
+          "title": "README must state total unique tags correctly",
+          "environmental": false
         }
       ],
+      "semanticFiredGuardCount": 1,
+      "environmentalFiredGuardCount": 0,
       "skippedGuards": [],
       "environmentalSkipWarning": null,
       "verdict": "CAUGHT",
@@ -277,21 +303,27 @@
       "firedGuards": [
         {
           "file": "test/node-support-citation.test.js",
-          "title": "README Node support citation: base-to-working-tree diff must also be empty, so an uncommitted falsification is visible now (or the check must skip on a missing precondition)"
+          "title": "README Node support citation: base-to-working-tree diff must also be empty, so an uncommitted falsification is visible now (or the check must skip on a missing precondition)",
+          "environmental": true
         },
         {
           "file": "test/readme-tags.test.js",
-          "title": "README must state total unique tags correctly"
+          "title": "README must state total unique tags correctly",
+          "environmental": false
         },
         {
           "file": "test/readme-tags.test.js",
-          "title": "README must list all single-entry tags"
+          "title": "README must list all single-entry tags",
+          "environmental": false
         },
         {
           "file": "test/readme-tags.test.js",
-          "title": "README must state correct multi-entry and single-entry tag counts"
+          "title": "README must state correct multi-entry and single-entry tag counts",
+          "environmental": false
         }
       ],
+      "semanticFiredGuardCount": 3,
+      "environmentalFiredGuardCount": 1,
       "skippedGuards": [],
       "environmentalSkipWarning": null,
       "verdict": "CAUGHT",
@@ -321,9 +353,12 @@
       "firedGuards": [
         {
           "file": "test/readme-tags.test.js",
-          "title": "README must state correct multi-entry and single-entry tag counts"
+          "title": "README must state correct multi-entry and single-entry tag counts",
+          "environmental": false
         }
       ],
+      "semanticFiredGuardCount": 1,
+      "environmentalFiredGuardCount": 0,
       "skippedGuards": [],
       "environmentalSkipWarning": null,
       "verdict": "CAUGHT",
@@ -353,9 +388,12 @@
       "firedGuards": [
         {
           "file": "test/readme-tags.test.js",
-          "title": "every `| Tag | Count |` table in the real README Tag vocabulary section is a recognised band table (no table may hide under an unrecognised heading shape)"
+          "title": "every `| Tag | Count |` table in the real README Tag vocabulary section is a recognised band table (no table may hide under an unrecognised heading shape)",
+          "environmental": false
         }
       ],
+      "semanticFiredGuardCount": 1,
+      "environmentalFiredGuardCount": 0,
       "skippedGuards": [],
       "environmentalSkipWarning": null,
       "verdict": "CAUGHT",
@@ -390,9 +428,12 @@
       "firedGuards": [
         {
           "file": "test/readme-tags.test.js",
-          "title": "every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band"
+          "title": "every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band",
+          "environmental": false
         }
       ],
+      "semanticFiredGuardCount": 1,
+      "environmentalFiredGuardCount": 0,
       "skippedGuards": [],
       "environmentalSkipWarning": null,
       "verdict": "CAUGHT",
@@ -422,9 +463,12 @@
       "firedGuards": [
         {
           "file": "test/readme-tags.test.js",
-          "title": "every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)"
+          "title": "every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)",
+          "environmental": false
         }
       ],
+      "semanticFiredGuardCount": 1,
+      "environmentalFiredGuardCount": 0,
       "skippedGuards": [],
       "environmentalSkipWarning": null,
       "verdict": "CAUGHT",
@@ -454,9 +498,12 @@
       "firedGuards": [
         {
           "file": "test/readme-tags.test.js",
-          "title": "README must state correct multi-entry and single-entry tag counts"
+          "title": "README must state correct multi-entry and single-entry tag counts",
+          "environmental": false
         }
       ],
+      "semanticFiredGuardCount": 1,
+      "environmentalFiredGuardCount": 0,
       "skippedGuards": [],
       "environmentalSkipWarning": null,
       "verdict": "CAUGHT",
@@ -486,9 +533,12 @@
       "firedGuards": [
         {
           "file": "test/readme-tags.test.js",
-          "title": "README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)"
+          "title": "README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)",
+          "environmental": false
         }
       ],
+      "semanticFiredGuardCount": 1,
+      "environmentalFiredGuardCount": 0,
       "skippedGuards": [],
       "environmentalSkipWarning": null,
       "verdict": "CAUGHT",
@@ -518,9 +568,12 @@
       "firedGuards": [
         {
           "file": "test/readme-tags.test.js",
-          "title": "README Attribution table \"Entries ranked\" count must match corpus.length and the triage doc (C1)"
+          "title": "README Attribution table \"Entries ranked\" count must match corpus.length and the triage doc (C1)",
+          "environmental": false
         }
       ],
+      "semanticFiredGuardCount": 1,
+      "environmentalFiredGuardCount": 0,
       "skippedGuards": [],
       "environmentalSkipWarning": null,
       "verdict": "CAUGHT",
@@ -550,9 +603,12 @@
       "firedGuards": [
         {
           "file": "test/readme-tags.test.js",
-          "title": "README Attribution table \"Rated HIGH risk\" count must match the triage doc table (C2)"
+          "title": "README Attribution table \"Rated HIGH risk\" count must match the triage doc table (C2)",
+          "environmental": false
         }
       ],
+      "semanticFiredGuardCount": 1,
+      "environmentalFiredGuardCount": 0,
       "skippedGuards": [],
       "environmentalSkipWarning": null,
       "verdict": "CAUGHT",
@@ -582,9 +638,12 @@
       "firedGuards": [
         {
           "file": "test/readme-tags.test.js",
-          "title": "README Attribution section must contain no digit runs outside the counts table (C7)"
+          "title": "README Attribution section must contain no digit runs outside the counts table (C7)",
+          "environmental": false
         }
       ],
+      "semanticFiredGuardCount": 1,
+      "environmentalFiredGuardCount": 0,
       "skippedGuards": [],
       "environmentalSkipWarning": null,
       "verdict": "CAUGHT",
@@ -614,9 +673,12 @@
       "firedGuards": [
         {
           "file": "test/readme-tags.test.js",
-          "title": "README `--list` format literal matches the shipped binary's actual --list output (T-017)"
+          "title": "README `--list` format literal matches the shipped binary's actual --list output (T-017)",
+          "environmental": false
         }
       ],
+      "semanticFiredGuardCount": 1,
+      "environmentalFiredGuardCount": 0,
       "skippedGuards": [],
       "environmentalSkipWarning": null,
       "verdict": "CAUGHT",
@@ -646,9 +708,12 @@
       "firedGuards": [
         {
           "file": "test/readme-tags.test.js",
-          "title": "README `--author` matching section must state the correct count of distinct corpus authors (Q-8)"
+          "title": "README `--author` matching section must state the correct count of distinct corpus authors (Q-8)",
+          "environmental": false
         }
       ],
+      "semanticFiredGuardCount": 1,
+      "environmentalFiredGuardCount": 0,
       "skippedGuards": [],
       "environmentalSkipWarning": null,
       "verdict": "CAUGHT",
