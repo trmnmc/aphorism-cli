@@ -100,6 +100,8 @@
 // ============================================================================
 
 import { spawnSync } from 'node:child_process';
+import { realpathSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 const SECTION_HEADING = '### Node support';
 
@@ -261,17 +263,38 @@ function table(headers, rows) {
 // ---------------------------------------------------------------------------
 
 function main() {
-  const top = spawnSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' });
-  if (top.status !== 0) {
-    console.error('citation-tax: not inside a git work tree; nothing to measure.');
+  // RV-11: anchor to THIS FILE's own checkout, never the caller's cwd. Before
+  // this fix, `git rev-parse --show-toplevel` ran with no `cwd` option and so
+  // inherited process.cwd() -- a caller invoking this script by absolute path
+  // from an unrelated repo got that repo's toplevel, and every claim below
+  // (including "no such section") was silently made about the wrong repo.
+  // Same shape as tools/citation-rule-check.mjs's resolvedToplevelIsOwnRoot():
+  // resolve git's toplevel FROM this file's own directory, then require that
+  // toplevel to realpath-equal this file's own directory (not an ancestor
+  // repo it happens to be nested inside) before trusting it as REPO_ROOT.
+  const ownDir = fileURLToPath(new URL('../', import.meta.url));
+  const top = spawnSync('git', ['rev-parse', '--show-toplevel'], { cwd: ownDir, encoding: 'utf8' });
+  let anchored = null;
+  if (!top.error && top.status === 0) {
+    try {
+      if (realpathSync(top.stdout.trim()) === realpathSync(ownDir)) anchored = top.stdout.trim();
+    } catch { /* leave anchored null -- unknown, not asserted */ }
+  }
+  if (anchored === null) {
+    console.error(`citation-tax: repo root .................. could not be confirmed as this ` +
+      `tool's own checkout (${ownDir})`);
+    console.error('citation-tax: refusing to run -- this tool measures its OWN checkout only, and ' +
+      'the git toplevel resolved from it does not match (or git is unavailable); it will not guess ' +
+      'and measure an unrelated repo instead.');
     process.exitCode = 2;
     return;
   }
-  REPO_ROOT = top.stdout.trim();
+  REPO_ROOT = anchored;
 
   const headReadme = fileAt('HEAD', 'README.md');
   const headSection = section(headReadme);
   if (!headSection) {
+    console.error(`citation-tax: repo root .................. ${REPO_ROOT}`);
     console.error(`citation-tax: README.md at HEAD has no "${SECTION_HEADING}" section; ` +
       'the claim this tool measures no longer exists. Nothing to measure.');
     process.exitCode = 2;
@@ -279,6 +302,7 @@ function main() {
   }
   const headCite = citation(headSection);
   if (!headCite) {
+    console.error(`citation-tax: repo root .................. ${REPO_ROOT}`);
     console.error('citation-tax: README §Node support at HEAD names no ' +
       '`git diff <base>..<target> -- <paths>` retirement condition. Nothing to measure.');
     process.exitCode = 2;
@@ -287,6 +311,7 @@ function main() {
 
   const guardPath = findGuardPath(headSection);
   if (!guardPath) {
+    console.error(`citation-tax: repo root .................. ${REPO_ROOT}`);
     console.error('citation-tax: could not identify the citation guard from README §Node support.');
     process.exitCode = 2;
     return;

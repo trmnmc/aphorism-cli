@@ -1,9 +1,9 @@
 {
   "meta": {
     "tool": "tools/mutation-matrix.mjs",
-    "measuredRev": "d8403a357fa6da9710e486312aaf8700150e260f",
-    "measuredCommit": "d8403a357fa6da9710e486312aaf8700150e260f",
-    "baselineCommit": "d8403a357fa6da9710e486312aaf8700150e260f",
+    "measuredRev": "94d7dd95efaeed6783dd07347bdda03dab8684da",
+    "measuredCommit": "94d7dd95efaeed6783dd07347bdda03dab8684da",
+    "baselineCommit": "94d7dd95efaeed6783dd07347bdda03dab8684da",
     "baselineCommitShort": "20b7ede",
     "node": "v24.19.0",
     "suiteCommand": "node --test --test-reporter=tap <test/*.test.js, glob expanded by readdir>",
@@ -38,6 +38,114 @@
     }
   },
   "results": [
+    {
+      "id": "M01",
+      "inventoryIndex": 1,
+      "guard": "test/readme-matrix-consistency.test.js:125",
+      "guardTitle": "README Node support matrix: table must be present and non-empty",
+      "editSite": "document",
+      "note": "Deletes all four parseable matrix rows (whatever their current counts are), so the claim \"the table is present and non-empty\" is false.",
+      "edits": [
+        {
+          "file": "README.md",
+          "find": "| v18.20.8 | 128 tests, 126 pass, 0 fail, 2 skipped |\n| v20.20.2 | 128 tests, 126 pass, 0 fail, 2 skipped |\n| v22.23.2 | 128 tests, 126 pass, 0 fail, 2 skipped |\n| v24.19.0 | 128 tests, 126 pass, 0 fail, 2 skipped |\n",
+          "replace": ""
+        }
+      ],
+      "suite": {
+        "tests": 128,
+        "pass": 125,
+        "fail": 3,
+        "skipped": 0
+      },
+      "firedGuards": [
+        {
+          "file": "test/readme-matrix-consistency.test.js",
+          "title": "README Node support matrix: table must be present and non-empty"
+        },
+        {
+          "file": "test/readme-matrix-consistency.test.js",
+          "title": "README Node support matrix: each row's own arithmetic must hold (tests = pass + fail + skipped)"
+        },
+        {
+          "file": "test/readme-matrix-consistency.test.js",
+          "title": "README Node support matrix: all rows must agree with each other"
+        }
+      ],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "CAUGHT",
+      "guardTitleInMeasuredTree": true,
+      "caughtByTargetGuard": true
+    },
+    {
+      "id": "M02",
+      "inventoryIndex": 2,
+      "guard": "test/readme-matrix-consistency.test.js:140",
+      "guardTitle": "README Node support matrix: each row's own arithmetic must hold (tests = pass + fail + skipped)",
+      "editSite": "document",
+      "note": "Flips the v18.20.8 row's pass count down by 1 (whatever it currently is) so that row's own arithmetic no longer sums to its stated tests count.",
+      "edits": [
+        {
+          "file": "README.md",
+          "find": "| v18.20.8 | 128 tests, 126 pass, 0 fail, 2 skipped |",
+          "replace": "| v18.20.8 | 128 tests, 125 pass, 0 fail, 2 skipped |"
+        }
+      ],
+      "suite": {
+        "tests": 128,
+        "pass": 126,
+        "fail": 2,
+        "skipped": 0
+      },
+      "firedGuards": [
+        {
+          "file": "test/readme-matrix-consistency.test.js",
+          "title": "README Node support matrix: each row's own arithmetic must hold (tests = pass + fail + skipped)"
+        },
+        {
+          "file": "test/readme-matrix-consistency.test.js",
+          "title": "README Node support matrix: all rows must agree with each other"
+        }
+      ],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "CAUGHT",
+      "guardTitleInMeasuredTree": true,
+      "caughtByTargetGuard": true
+    },
+    {
+      "id": "M03",
+      "inventoryIndex": 3,
+      "guard": "test/readme-matrix-consistency.test.js:159",
+      "guardTitle": "README Node support matrix: all rows must agree with each other",
+      "editSite": "document",
+      "note": "Rewrites the v24 row with tests and pass both bumped up by 1 (whatever they currently are) -- internally self-consistent (pass+fail+skipped still sums to tests) so per-row arithmetic stays true, but it now disagrees with the other three rows.",
+      "edits": [
+        {
+          "file": "README.md",
+          "find": "| v24.19.0 | 128 tests, 126 pass, 0 fail, 2 skipped |",
+          "replace": "| v24.19.0 | 129 tests, 127 pass, 0 fail, 2 skipped |"
+        }
+      ],
+      "suite": {
+        "tests": 128,
+        "pass": 127,
+        "fail": 1,
+        "skipped": 0
+      },
+      "firedGuards": [
+        {
+          "file": "test/readme-matrix-consistency.test.js",
+          "title": "README Node support matrix: all rows must agree with each other"
+        }
+      ],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "CAUGHT",
+      "guardTitleInMeasuredTree": true,
+      "caughtByTargetGuard": true
+    },
     {
       "id": "M04",
       "inventoryIndex": 4,
@@ -548,27 +656,5 @@
       "caughtByTargetGuard": true
     }
   ],
-  "skippedClaims": [
-    {
-      "id": "M01",
-      "inventoryIndex": 1,
-      "guard": "test/readme-matrix-consistency.test.js:125",
-      "guardTitle": "README Node support matrix: table must be present and non-empty",
-      "reason": "M01: anchor occurs 0 times (need exactly 1) in README.md"
-    },
-    {
-      "id": "M02",
-      "inventoryIndex": 2,
-      "guard": "test/readme-matrix-consistency.test.js:140",
-      "guardTitle": "README Node support matrix: each row's own arithmetic must hold (tests = pass + fail + skipped)",
-      "reason": "M02: anchor occurs 0 times (need exactly 1) in README.md"
-    },
-    {
-      "id": "M03",
-      "inventoryIndex": 3,
-      "guard": "test/readme-matrix-consistency.test.js:159",
-      "guardTitle": "README Node support matrix: all rows must agree with each other",
-      "reason": "M03: anchor occurs 0 times (need exactly 1) in README.md"
-    }
-  ]
+  "skippedClaims": []
 }

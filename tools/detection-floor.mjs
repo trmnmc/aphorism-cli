@@ -249,6 +249,20 @@ function recordedSha(rec) {
   return rec.meta.measuredCommit || rec.meta.baselineCommit || null;
 }
 
+// RV-2: the sha pin above (BASELINE_FULL_SHA) proves the record CLAIMS to
+// have measured the right commit; it proves nothing about whether the
+// record's `results` array still has the rows that measurement actually
+// produced. meta.measuredCommit/baselineCommit is plain text sitting next
+// to `results` in the same JSON file -- editing one does not touch the
+// other, so a row silently deleted from `results` (or the whole array
+// emptied) leaves the sha pin untouched and passes the check above. The W-2
+// generation rule (tools/mutation-matrix.mjs) is a frozen contract: exactly
+// 18 falsifying mutations (M01..M18, inventory order) plus identity M00 at
+// the baseline rev. Assert that SHAPE -- exact row count, exact id set, no
+// duplicates -- before trusting the row-by-row partition below, or a
+// shrunk baseline silently shrinks the floor this tool claims to hold.
+const EXPECTED_BASELINE_RESULT_IDS = Array.from({ length: 18 }, (_, i) => 'M' + String(i + 1).padStart(2, '0'));
+
 // ---------------------------------------------------------------------------
 // banner + ruling (printed on every run, before any verdict)
 // ---------------------------------------------------------------------------
@@ -268,6 +282,35 @@ const baseline = loadRecord(baselinePath, 'baseline');
     console.log('FAILURE: baseline record ' + baselinePath + ' says it measured ' + sha
       + ' but the acceptance clause pins the baseline at ' + BASELINE_FULL_SHA
       + '. Refusing to compare against the wrong baseline.');
+    process.exit(1);
+  }
+}
+{
+  // RV-2: assert the record's row COUNT and id SET before ruling on
+  // anything below (see EXPECTED_BASELINE_RESULT_IDS above for why the sha
+  // pin alone cannot catch this).
+  const gotIds = Array.isArray(baseline.results) ? baseline.results.map((r) => r && r.id) : null;
+  const expectedSet = new Set(EXPECTED_BASELINE_RESULT_IDS);
+  const gotSet = new Set(gotIds || []);
+  const missing = gotIds ? EXPECTED_BASELINE_RESULT_IDS.filter((id) => !gotSet.has(id)) : EXPECTED_BASELINE_RESULT_IDS;
+  const unexpected = gotIds ? gotIds.filter((id) => !expectedSet.has(id)) : [];
+  const dupes = gotIds ? gotIds.filter((id, i) => gotIds.indexOf(id) !== i) : [];
+  const shapeOk = gotIds !== null
+    && gotIds.length === EXPECTED_BASELINE_RESULT_IDS.length
+    && missing.length === 0
+    && unexpected.length === 0
+    && dupes.length === 0;
+  if (!shapeOk) {
+    console.log('FAILURE: baseline record ' + baselinePath + ' does not carry the expected shape -- '
+      + 'exactly ' + EXPECTED_BASELINE_RESULT_IDS.length + ' results with ids '
+      + EXPECTED_BASELINE_RESULT_IDS.join(', ') + ' (the W-2 generation rule\'s frozen contract).');
+    console.log('  got: ' + (gotIds ? gotIds.length : 0) + ' row(s)'
+      + (gotIds ? ', ids [' + gotIds.join(', ') + ']' : ' (results is not an array)'));
+    if (missing.length) console.log('  MISSING ids: ' + missing.join(', '));
+    if (unexpected.length) console.log('  UNEXPECTED ids: ' + unexpected.join(', '));
+    if (dupes.length) console.log('  DUPLICATE ids: ' + [...new Set(dupes)].join(', '));
+    console.log('  A baseline record whose row count or id set has drifted from the frozen 18-mutation');
+    console.log('  contract cannot be trusted to set the full detection floor -- refusing to compare.');
     process.exit(1);
   }
 }
@@ -383,10 +426,30 @@ console.log('identity control (M00), both sides:');
 for (const [label, rec] of [['baseline ' + BASELINE_FULL_SHA.slice(0, 7), baseline], ['final    ' + recordedSha(finalRec).slice(0, 7), finalRec]]) {
   const idn = rec.identity;
   const s = idn && idn.suite ? idn.suite : {};
+  const gdg = idn && idn.gitDependentGuards ? idn.gitDependentGuards : null;
   console.log('  ' + label + ': ' + (idn ? idn.verdict : '(missing)')
-    + '  (' + s.tests + ' tests, ' + s.pass + ' pass, ' + s.fail + ' fail, ' + s.skipped + ' skipped)');
+    + '  (' + s.tests + ' tests, ' + s.pass + ' pass, ' + s.fail + ' fail, ' + s.skipped + ' skipped'
+    + ', git-dependent guards ran: ' + (gdg ? gdg.ran : '(missing)') + ')');
   if (!idn || idn.verdict !== 'GREEN') {
     fail('M00', label + ' identity control is ' + (idn ? idn.verdict : 'missing') + ', not GREEN -- every CAUGHT verdict on that side is meaningless');
+    continue;
+  }
+  // RV-3: a record's `verdict: 'GREEN'` string is the instrument's OWN
+  // self-report; nothing above cross-checks it against the evidence sitting
+  // right next to it in the same object. A doctored (or buggy) record could
+  // say GREEN while its own suite totals show failures, or while
+  // gitDependentGuards.ran is false (meaning the two git-dependent citation
+  // guards never actually ran, so every other row's CAUGHT/SILENT verdict
+  // on that side is unproven). Recompute the same GREEN condition the
+  // instrument itself uses (tools/mutation-matrix.mjs: fail===0 &&
+  // skipped===0 && gitGuardsRan) FROM the recorded evidence, and refuse to
+  // trust a self-reported GREEN that its own evidence contradicts.
+  const evidenceGreen = s.fail === 0 && s.skipped === 0 && gdg !== null && gdg.ran === true;
+  if (!evidenceGreen) {
+    fail('M00', label + ' identity control claims verdict GREEN but its own recorded evidence contradicts that '
+      + '(suite.fail=' + s.fail + ', suite.skipped=' + s.skipped + ', gitDependentGuards.ran='
+      + (gdg ? gdg.ran : '(missing)') + ') -- refusing to trust a self-reported GREEN that disagrees with the '
+      + 'evidence recorded in the same object; every CAUGHT verdict on that side is meaningless');
   }
 }
 console.log('  (a smaller green total at HEAD is expected and is not a regression here: the');
@@ -445,7 +508,36 @@ for (const row of baseline.results) {
     continue;
   }
   if (atHead.verdict === 'CAUGHT') {
+    // RV-4: `verdict: 'CAUGHT'` and `caughtByTargetGuard` are themselves
+    // just fields in the record -- nothing before this point cross-checks
+    // them against the OTHER evidence carried in the same row. A verdict of
+    // CAUGHT is only possible if the suite actually failed (suite.fail > 0)
+    // and at least one guard actually fired (firedGuards non-empty); if
+    // caughtByTargetGuard is true, the target guard's own title must be
+    // among those fired guards. A row that claims CAUGHT / target-fired
+    // while its own suite/firedGuards evidence says otherwise is internally
+    // impossible and must not be trusted into SAME-GUARD (or GUARD-CHANGED)
+    // silently.
+    const headSuite = atHead.suite || {};
+    const headFired = Array.isArray(atHead.firedGuards) ? atHead.firedGuards : [];
+    if (!(headSuite.fail > 0)) {
+      fail(row.id, 'final record row claims verdict CAUGHT but its own suite.fail is '
+        + headSuite.fail + ' (must be > 0) -- internally inconsistent row, refusing to trust its verdict');
+      continue;
+    }
+    if (headFired.length === 0) {
+      fail(row.id, 'final record row claims verdict CAUGHT but its own firedGuards is empty -- '
+        + 'internally inconsistent row, refusing to trust its verdict');
+      continue;
+    }
     if (atHead.caughtByTargetGuard === true) {
+      const targetFired = headFired.some((g) => g && g.title === row.guardTitle);
+      if (!targetFired) {
+        fail(row.id, 'final record row claims caughtByTargetGuard=true (target guard "' + row.guardTitle
+          + '") but that title does not appear in its own firedGuards list ['
+          + headFired.map((g) => g && g.title).join(' | ') + '] -- internally inconsistent row, refusing to trust its verdict');
+        continue;
+      }
       buckets.sameGuard.push({ id: row.id, guard: row.guard, guardTitle: row.guardTitle });
     } else {
       buckets.guardChanged.push({

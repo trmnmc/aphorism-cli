@@ -81,6 +81,24 @@ function readHeadBlob(relPath) {
 const quote = extractQuote(hist);
 if (quote === null) die(HIST, `it carries no "${FENCE.trim()}" block quoting ${RM}`);
 
+// RV-9: a bare `section.includes(quote)` test treats '' and any short
+// fragment as a valid "quote" -- every string is a substring of every string
+// it is short enough to fit inside, so an empty or near-empty fence body
+// passed vacuously (a 0-byte and a 3-byte body both "verified"). Two floors
+// close that gap, checked on the quote ALONE before it is ever compared
+// against README: a MINIMUM LENGTH (rules out vacuous/near-empty bodies) and
+// a RULE-IDENTITY ANCHOR naming the clause that actually selects the cited
+// run (rules out a fence padded just past the floor with something that
+// isn't the rule). 80 sits comfortably below the real quote's 257 bytes and
+// comfortably above a stray word or sentence fragment.
+const MIN_QUOTE_LEN = 80;
+const RULE_ANCHOR = 'the matrix run for the push that carried the last change to';
+if (quote.length < MIN_QUOTE_LEN || !quote.includes(RULE_ANCHOR)) {
+  die(HIST, `its "${FENCE.trim()}" block (${quote.length} byte(s)) is too short or does not name ` +
+    `the selection rule's own clause ("${RULE_ANCHOR}") to be a real quote rather than a paraphrase ` +
+    `or a vacuous fence. Diverging quote:\n${quote}`);
+}
+
 const section = extractSection(readme);
 if (section === null) die(RM, `it has no "### Node support" section for ${HIST} to quote`);
 

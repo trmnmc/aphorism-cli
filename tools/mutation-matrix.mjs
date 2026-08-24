@@ -193,6 +193,30 @@ const GIT_DEPENDENT_GUARD_TITLES = [
 // once in its file or the harness refuses to run the mutation (recorded in
 // skippedClaims, never silently patched around).
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// DYNAMIC ANCHORS (RV-1 fix). M01-M03 target the README's "### Node
+// support" matrix table, whose NUMBERS are expected to change legitimately
+// over time (a passing suite's own test/pass count moves as tests are
+// added or retired -- exactly what happened between the W-2 baseline and
+// HEAD, 129->128). A frozen literal anchor (the old approach: the exact
+// string "129 tests, 127 pass, 0 fail, 2 skipped") goes stale the moment
+// that number moves, and a stale anchor makes applyEdits throw BEFORE
+// runSuite is reached -- the mutation is silently SKIPPED (anchor occurs 0
+// times), never actually measured, which is precisely the defect this
+// rewrite closes.
+//
+// A `{ file, pattern, transform }` edit anchors on STRUCTURE (the row
+// shape, `| vX.Y.Z | N tests, N pass, N fail, N skipped |`) rather than on
+// specific digits: `pattern` must match the live file content exactly
+// once, and `transform` computes the replacement FROM the captured digits
+// at run time. This is anchored to whatever the table actually says right
+// now, on the tree actually being measured -- baseline or HEAD alike --
+// instead of to a number transcribed once and left to rot.
+function nodeRowPattern(node) {
+  return '\\| ' + node.replace(/\./g, '\\.') + ' \\| (\\d+) tests, (\\d+) pass, (\\d+) fail, (\\d+) skipped \\|';
+}
+const NODE_MATRIX_MAJORS = ['v18.20.8', 'v20.20.2', 'v22.23.2', 'v24.19.0'];
+
 const MUTATIONS = [
   {
     id: 'M00',
@@ -211,14 +235,11 @@ const MUTATIONS = [
     guardTitle: 'README Node support matrix: table must be present and non-empty',
     kind: 'falsify',
     editSite: 'document',
-    note: 'Deletes all four parseable matrix rows, so the claim "the table is present and non-empty" is false.',
+    note: 'Deletes all four parseable matrix rows (whatever their current counts are), so the claim "the table is present and non-empty" is false.',
     edits: [{
       file: 'README.md',
-      find: '| v18.20.8 | 129 tests, 127 pass, 0 fail, 2 skipped |\n'
-          + '| v20.20.2 | 129 tests, 127 pass, 0 fail, 2 skipped |\n'
-          + '| v22.23.2 | 129 tests, 127 pass, 0 fail, 2 skipped |\n'
-          + '| v24.19.0 | 129 tests, 127 pass, 0 fail, 2 skipped |\n',
-      replace: '',
+      pattern: new RegExp(NODE_MATRIX_MAJORS.map(nodeRowPattern).join('\\n') + '\\n'),
+      transform: () => '',
     }],
   },
   {
@@ -228,11 +249,11 @@ const MUTATIONS = [
     guardTitle: "README Node support matrix: each row's own arithmetic must hold (tests = pass + fail + skipped)",
     kind: 'falsify',
     editSite: 'document',
-    note: 'Flips one row\'s pass count (127 -> 126) so that row\'s own arithmetic (126+0+2=128) contradicts its stated 129 tests.',
+    note: 'Flips the v18.20.8 row\'s pass count down by 1 (whatever it currently is) so that row\'s own arithmetic no longer sums to its stated tests count.',
     edits: [{
       file: 'README.md',
-      find: '| v18.20.8 | 129 tests, 127 pass, 0 fail, 2 skipped |',
-      replace: '| v18.20.8 | 129 tests, 126 pass, 0 fail, 2 skipped |',
+      pattern: new RegExp(nodeRowPattern('v18.20.8')),
+      transform: (m) => '| v18.20.8 | ' + m[1] + ' tests, ' + (Number(m[2]) - 1) + ' pass, ' + m[3] + ' fail, ' + m[4] + ' skipped |',
     }],
   },
   {
@@ -242,11 +263,11 @@ const MUTATIONS = [
     guardTitle: 'README Node support matrix: all rows must agree with each other',
     kind: 'falsify',
     editSite: 'document',
-    note: 'Rewrites the v24 row to 130/128/0/2 -- internally self-consistent (128+0+2=130) so per-row arithmetic stays true, but it now disagrees with the other three rows.',
+    note: 'Rewrites the v24 row with tests and pass both bumped up by 1 (whatever they currently are) -- internally self-consistent (pass+fail+skipped still sums to tests) so per-row arithmetic stays true, but it now disagrees with the other three rows.',
     edits: [{
       file: 'README.md',
-      find: '| v24.19.0 | 129 tests, 127 pass, 0 fail, 2 skipped |',
-      replace: '| v24.19.0 | 130 tests, 128 pass, 0 fail, 2 skipped |',
+      pattern: new RegExp(nodeRowPattern('v24.19.0')),
+      transform: (m) => '| v24.19.0 | ' + (Number(m[1]) + 1) + ' tests, ' + (Number(m[2]) + 1) + ' pass, ' + m[3] + ' fail, ' + m[4] + ' skipped |',
     }],
   },
   {
@@ -597,19 +618,65 @@ function resetClone() {
   }
 }
 
+// Count non-overlapping matches of a (possibly non-global) RegExp without
+// mutating the caller's regex object.
+function countPatternMatches(text, pattern) {
+  const flags = pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g';
+  const re = new RegExp(pattern.source, flags);
+  return (text.match(re) || []).length;
+}
+
+// Applies every edit in `mutation.edits` to the scratch clone. Two edit
+// shapes are supported:
+//   { file, find, replace }            literal exact-string anchor (as
+//                                       before: `find` must occur exactly
+//                                       once, verbatim).
+//   { file, pattern, transform }       RegExp-anchored (RV-1): `pattern`
+//                                       must match exactly once; the actual
+//                                       matched text and its replacement
+//                                       (via transform(execMatch)) are
+//                                       resolved AT RUN TIME against
+//                                       whatever the file currently says,
+//                                       so the anchor tracks legitimate
+//                                       content drift (e.g. a passing
+//                                       test/pass count) instead of going
+//                                       stale against a frozen literal.
+// Returns the RESOLVED { file, find, replace } for every edit actually
+// applied (concrete strings even for pattern-based edits), so the caller
+// can record exactly what happened on this run, not a serialized function.
 function applyEdits(mutation) {
+  const resolved = [];
   for (const edit of mutation.edits) {
     const p = path.join(CLONE, edit.file);
     const before = readFileSync(p, 'utf8');
-    const occurrences = before.split(edit.find).length - 1;
-    if (occurrences !== 1) {
-      throw Object.assign(
-        new Error(mutation.id + ': anchor occurs ' + occurrences + ' times (need exactly 1) in ' + edit.file),
-        { skippable: true }
-      );
+    let find;
+    let replace;
+    if (edit.pattern) {
+      const count = countPatternMatches(before, edit.pattern);
+      if (count !== 1) {
+        throw Object.assign(
+          new Error(mutation.id + ': anchor occurs ' + count + ' times (need exactly 1) in ' + edit.file),
+          { skippable: true }
+        );
+      }
+      const m = edit.pattern.exec(before);
+      find = m[0];
+      replace = edit.transform(m);
+    } else {
+      const occurrences = before.split(edit.find).length - 1;
+      if (occurrences !== 1) {
+        throw Object.assign(
+          new Error(mutation.id + ': anchor occurs ' + occurrences + ' times (need exactly 1) in ' + edit.file),
+          { skippable: true }
+        );
+      }
+      find = edit.find;
+      replace = edit.replace;
     }
-    writeFileSync(p, before.replace(edit.find, edit.replace));
+    writeFileSync(p, before.replace(find, replace));
+    resolved.push({ file: edit.file, find, replace });
   }
+  return resolved;
 }
 
 // ---------------------------------------------------------------------------
@@ -654,8 +721,9 @@ try {
 
   for (const m of MUTATIONS) {
     resetClone();
+    let resolvedEdits;
     try {
-      applyEdits(m);
+      resolvedEdits = applyEdits(m);
     } catch (e) {
       if (e.skippable) {
         skippedClaims.push({ id: m.id, inventoryIndex: m.inventoryIndex, guard: m.guard, guardTitle: m.guardTitle, reason: e.message });
@@ -682,7 +750,7 @@ try {
       guardTitle: m.guardTitle,
       editSite: m.editSite,
       note: m.note,
-      edits: m.edits.map((e) => ({ file: e.file, find: e.find, replace: e.replace })),
+      edits: resolvedEdits,
       suite: run.totals,
       firedGuards,
       skippedGuards: run.skipped,
