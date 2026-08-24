@@ -125,10 +125,22 @@ distillation.
 
 ## Applied lessons check
 
-`runfile.playbook.applied` is `[]` — the playbook was staged by direct read of
-`learnings.md` (`swarm-playbook.sh` structurally denied, KI-R6-2), so no lesson was formally
-applied and this section has no roster to report against. The two lessons the run *acted on*
-are recorded anyway, since both were exercised:
+`runfile.playbook.applied` is `[]`, but that field is not the authoritative record — the
+ledger is, and `playbook/applied.log` names **15 lessons staged at cycle 0**: L-008, L-016,
+L-022, L-024, L-026, L-029, L-031, L-033, L-034, L-038, L-042, L-043, L-044, L-046, L-047
+(staged by direct read of `learnings.md`; `swarm-playbook.sh` structurally denied, KI-R6-2).
+
+**Twelve of the fifteen are NOT-EXERCISED, for one reason: zero agents were dispatched.**
+L-008/L-016 (dispatch scoping), L-022 (persisted UI state — held out of `prompt_lines`
+deliberately, as in the last three runs: this target is a terminal CLI with no browser
+surface), L-024/L-029/L-031/L-033/L-034/L-044 (the mutation-craft lines, wired into the
+*builder* role this run because R-1 and R-2 are themselves mutation work), L-026 (routing),
+L-042 (sealed pre-dispatch gate), L-043, L-046, L-047 — none of these can be exercised by a
+run that never reaches a build wave. Reported as not-exercised, never as confirmed.
+
+The three that *were* exercised are below. Note that two of them (L-037, L-045) are
+advice-only `process` lessons that steered the run without appearing in the staged roster —
+which is the honest accounting, since they are what the run actually ran on:
 
 - L-045 (read the authoritative source; escalate a locked lever once, never re-derive):
   **re-observed** (cycle 0 closed R-6 by one `settings.json` read; this WRAP_UP re-read the
