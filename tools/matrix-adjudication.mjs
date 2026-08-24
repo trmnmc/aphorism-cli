@@ -1,11 +1,19 @@
 #!/usr/bin/env node
 // tools/matrix-adjudication.mjs
 //
-// Adjudicates the README "### Node support" matrix's 127-vs-129 numbers by
-// MEASUREMENT, offline, from this checkout alone. It answers the question:
-// "the table says `129 tests, 127 pass, 0 fail, 2 skipped`; a local run says
-// `129 tests, 129 pass, 0 fail, 0 skipped` -- is the table stale, or are both
-// numbers true of different environments?"
+// Adjudicates the README "### Node support" matrix's table-vs-local numbers
+// by MEASUREMENT, offline, from this checkout alone. It answers the
+// question: "the table says `N tests, P pass, 0 fail, S skipped`; a local
+// run says `N' tests, N' pass, 0 fail, 0 skipped` -- is the table stale, or
+// are both numbers true of different environments?" where N, P, S and N' are
+// whatever the README's own rows and a real local run actually state RIGHT
+// NOW -- re-derived below from README.md and a live `node --test` run, never
+// hardcoded in this comment. (The question was first written against a
+// PAST instance of the table, back when it read `129 tests, 127 pass, 0
+// fail, 2 skipped` and a local run read `129 tests, 129 pass, 0 fail, 0
+// skipped`; that pair of numbers describes that one historical cycle, not
+// any claim about the table's current content -- see the "== framing =="
+// line this tool prints, which states the question with today's numbers.)
 //
 // It re-derives, at run time and without hardcoding any count it can compute:
 //
@@ -15,8 +23,16 @@
 //   (b) how many tests the suite actually contains at HEAD (by running
 //       `node --test test/*.test.js` and reading the summary) and how many of
 //       those are the citation guard's environment-conditional cases (by
-//       running the guard file the section itself names, alone, and confirming
-//       statically that every one of its cases routes through a skip);
+//       running the guard file the section itself names, alone, and doing a
+//       best-effort STATIC per-case check of whether each of its top-level
+//       cases routes through a skip -- directly, or through one level of
+//       indirection via a same-file helper function. This is a heuristic
+//       text-level scan, not a real JS parser or control-flow analysis: it
+//       cannot see through more than one level of indirection, and it cannot
+//       confirm a helper's skip call is reached on every path through the
+//       helper, only that the helper's source contains one. Cases it cannot
+//       confirm are reported as NOT confirmed rather than assumed to skip --
+//       see the per-case breakdown this tool prints);
 //   (c) whether the cited base commit's content under the cited pathspec
 //       (src bin test .github) is identical to this tree's -- i.e. whether the
 //       citation's own retirement condition (`git diff <base>..HEAD -- <paths>`
@@ -179,6 +195,166 @@ function listSuiteFiles() {
 }
 
 // ---------------------------------------------------------------------------
+// Per-case static skip-routing analysis over a guard file's source.
+//
+// This is a heuristic text scan, not a real JS parser: it walks the raw
+// source tracking paren/brace depth (skipping over string, template and
+// comment contents so stray `(`/`)`/`{`/`}` inside them do not desync the
+// count) to pull out each top-level `test(...)` call and each top-level
+// `function name(...) { ... }` declaration as a balanced span of text. A
+// case is judged to route through a skip only if:
+//   (1) DIRECT   -- its own body contains `<param>.skip(` for the name its
+//                   callback's own first parameter is bound to, or
+//   (2) HELPER   -- its body calls a same-file top-level helper function by
+//                   name, passing its own callback param as an argument to
+//                   it, and that helper's body (one level down only, not
+//                   recursively) contains some `<x>.skip(` call.
+// Anything else -- including a case whose only route to a skip is more than
+// one helper call deep, or a helper whose skip call sits behind branches
+// this scan does not evaluate -- is reported NONE (or UNRESOLVED, if the
+// span itself could not be extracted because of unbalanced delimiters). The
+// analysis deliberately UNDER-claims: it never reports a case as
+// skip-routed unless it found textual evidence of a matching `.skip(` call
+// reachable in at most one hop from the case body.
+// ---------------------------------------------------------------------------
+
+// Scan forward from `openIndex` (which must point at an opening `(` or `{`)
+// and return the index of its matching close, skipping over string/template
+// literals and comments. Returns -1 if the source ends before the depth
+// returns to zero (unbalanced -- extraction failed).
+function findMatchingDelimiter(source, openIndex) {
+  const open = source[openIndex];
+  const close = open === '(' ? ')' : '}';
+  let depth = 0;
+  let inString = null;
+  let inLineComment = false;
+  let inBlockComment = false;
+  for (let i = openIndex; i < source.length; i++) {
+    const c = source[i];
+    if (inLineComment) {
+      if (c === '\n') inLineComment = false;
+      continue;
+    }
+    if (inBlockComment) {
+      if (c === '*' && source[i + 1] === '/') { inBlockComment = false; i++; }
+      continue;
+    }
+    if (inString) {
+      if (c === '\\') { i++; continue; }
+      if (c === inString) inString = null;
+      continue;
+    }
+    if (c === '/' && source[i + 1] === '/') { inLineComment = true; continue; }
+    if (c === '/' && source[i + 1] === '*') { inBlockComment = true; continue; }
+    if (c === '\'' || c === '"' || c === '`') { inString = c; continue; }
+    if (c === open) depth++;
+    else if (c === close) {
+      depth--;
+      if (depth === 0) return i;
+    }
+  }
+  return -1;
+}
+
+// Extract every top-level `test(` call as { start, body } where `body` is
+// the full `test(...)` source (null if extraction failed -- unbalanced).
+function extractTopLevelTestCalls(source) {
+  const calls = [];
+  const re = /^test\(/gm;
+  let m;
+  while ((m = re.exec(source)) !== null) {
+    const openIdx = m.index + 'test'.length;
+    const closeIdx = findMatchingDelimiter(source, openIdx);
+    calls.push({
+      start: m.index,
+      body: closeIdx === -1 ? null : source.slice(openIdx, closeIdx + 1),
+    });
+  }
+  return calls;
+}
+
+// Extract every top-level `function name(...) { ... }` declaration as a map
+// of name -> { params: [..], body: '<full function text, including braces>' }.
+function extractTopLevelFunctions(source) {
+  const fns = new Map();
+  const re = /^function\s+([A-Za-z_$][A-Za-z0-9_$]*)\s*\(/gm;
+  let m;
+  while ((m = re.exec(source)) !== null) {
+    const name = m[1];
+    const parenOpen = m.index + m[0].length - 1;
+    const parenClose = findMatchingDelimiter(source, parenOpen);
+    if (parenClose === -1) continue;
+    const params = source
+      .slice(parenOpen + 1, parenClose)
+      .split(',')
+      .map((p) => p.trim().split(/[\s=]/)[0])
+      .filter(Boolean);
+    const braceOpen = source.indexOf('{', parenClose);
+    if (braceOpen === -1) continue;
+    const braceClose = findMatchingDelimiter(source, braceOpen);
+    if (braceClose === -1) continue;
+    fns.set(name, {
+      params,
+      body: source.slice(m.index, braceClose + 1),
+    });
+  }
+  return fns;
+}
+
+// The name a test callback's own (single) parameter is bound to, e.g. `t` in
+// `test('x', (t) => {...})` or `test('x', function (t) {...})`. Returns null
+// if the callback takes no parameter (so it cannot itself call `<x>.skip(`).
+// `callBody` is the full `(...)` argument list of the `test(` call, so its
+// own first character is the outer paren wrapping the whole argument list --
+// this pattern is deliberately unanchored so it skips past that (it cannot
+// match there: nothing but the callback's own parameter list looks like
+// `(<ident>) =>` or `(<ident>) {`) and lands on the callback signature.
+function testCallbackParamName(callBody) {
+  const m = callBody.match(/\(\s*([A-Za-z_$][A-Za-z0-9_$]*)?\s*\)\s*(?:=>|\{)/);
+  return m && m[1] ? m[1] : null;
+}
+
+// Judge one extracted test() call. Returns one of:
+//   'UNRESOLVED' -- the call body could not be extracted (unbalanced source)
+//   'DIRECT'     -- the case's own body calls `<param>.skip(`
+//   'HELPER: <name>' -- the case forwards its param into a top-level helper
+//                        whose body contains some `.skip(` call
+//   'NONE'       -- no direct or one-hop-helper skip route found
+function judgeSkipRouting(call, topLevelFns) {
+  if (call.body === null) return { status: 'UNRESOLVED', detail: null };
+  const param = testCallbackParamName(call.body);
+  if (param && new RegExp('\\b' + param + '\\.skip\\(').test(call.body)) {
+    return { status: 'DIRECT', detail: param + '.skip(...) in the case body' };
+  }
+  if (param) {
+    for (const [name, fn] of topLevelFns) {
+      const callsHelperWithParam = new RegExp(
+        '\\b' + name + '\\s*\\(\\s*' + param + '\\b'
+      ).test(call.body);
+      if (!callsHelperWithParam) continue;
+      if (/\.skip\(/.test(fn.body)) {
+        return {
+          status: 'HELPER: ' + name,
+          detail:
+            'calls ' + name + '(' + param + ', ...), whose body contains a `.skip(` call ' +
+            '(one hop only -- not verified to be reached on every path through ' + name + ')',
+        };
+      }
+    }
+  }
+  return { status: 'NONE', detail: param ? 'no `' + param + '.skip(` in the case body, and no same-file helper it calls (with its param forwarded) contains `.skip(`' : 'callback takes no parameter, so it has no way to call `<param>.skip(`' };
+}
+
+function analyzeGuardSkipRouting(guardSource) {
+  const calls = extractTopLevelTestCalls(guardSource);
+  const topLevelFns = extractTopLevelFunctions(guardSource);
+  const cases = calls.map((call) => ({ ...judgeSkipRouting(call, topLevelFns), start: call.start }));
+  const confirmed = cases.filter((c) => c.status === 'DIRECT' || c.status.startsWith('HELPER')).length;
+  const allConfirmed = cases.length > 0 && confirmed === cases.length;
+  return { cases, confirmed, allConfirmed };
+}
+
+// ---------------------------------------------------------------------------
 // Offline corroboration: archived CI evidence under .swarm/runs/ naming the
 // cited run id, with per-major count lines and the run's headSha.
 // ---------------------------------------------------------------------------
@@ -271,21 +447,48 @@ const guard = runNodeTest([guardFile]);
 
 const guardSource = fs.readFileSync(path.join(REPO_ROOT, guardFile), 'utf8');
 const guardRegistrations = (guardSource.match(/^test\(/gm) || []).length;
-const guardHasSkipRouting = /\bt\.skip\(/.test(guardSource);
+const skipAnalysis = analyzeGuardSkipRouting(guardSource);
 
 console.log('== (b) measured suite at HEAD (this checkout, ' + process.version + ', full run of node --test test/*.test.js -- ' + suiteFiles.length + ' files) ==');
 console.log('   whole suite:   ' + local.tests + ' tests, ' + local.pass + ' pass, ' + local.fail + ' fail, ' + local.skipped + ' skipped');
 console.log('   ' + guardFile + ' alone: ' + guard.tests + ' tests, ' + guard.pass + ' pass, ' + guard.fail + ' fail, ' + guard.skipped + ' skipped');
-console.log('   guard file top-level test() registrations: ' + guardRegistrations + '; contains t.skip() routing: ' + guardHasSkipRouting);
+console.log('   guard file top-level test() registrations: ' + guardRegistrations);
+console.log('   per-case skip-routing analysis (heuristic; see the block comment above ' +
+  'analyzeGuardSkipRouting for exactly what this does and does not verify):');
+skipAnalysis.cases.forEach((c, i) => {
+  console.log('     case ' + (i + 1) + ' at byte ' + c.start + ': ' + c.status +
+    (c.detail ? '  (' + c.detail + ')' : ''));
+});
+console.log('   -> ' + skipAnalysis.confirmed + ' of ' + skipAnalysis.cases.length +
+  ' top-level case(s) CONFIRMED to route through a skip' +
+  (skipAnalysis.allConfirmed ? ' (all of them).' : ' -- NOT all of them.'));
 console.log('');
 
 if (guard.tests !== guardRegistrations) {
   fail('guard file registers ' + guardRegistrations + ' top-level test() calls but running it reports ' + guard.tests + ' tests -- cannot identify the environment-conditional cases');
 }
-if (!guardHasSkipRouting) {
-  staleReasons.push('the guard file named by the section (' + guardFile + ') contains no t.skip() routing, so the section\'s claim that its skips "stand down because CI checks out shallow" has no mechanism behind it');
+if (skipAnalysis.cases.length === 0) {
+  staleReasons.push('the guard file named by the section (' + guardFile + ') has no top-level test() cases this scan could find, so the section\'s claim that its skips "stand down because CI checks out shallow" has no mechanism behind it');
+} else if (!skipAnalysis.allConfirmed) {
+  const unconfirmed = skipAnalysis.cases.filter((c) => c.status !== 'DIRECT' && !c.status.startsWith('HELPER'));
+  staleReasons.push(
+    'static per-case analysis of the guard file named by the section (' + guardFile + ') could ' +
+    'NOT confirm that all ' + skipAnalysis.cases.length + ' of its top-level test() cases route ' +
+    'through a skip -- ' + unconfirmed.length + ' case(s) (' +
+    unconfirmed.map((c) => 'byte ' + c.start + ': ' + c.status).join('; ') +
+    ') have no confirmed skip route, so the section\'s "the environment-conditional cases" ' +
+    'framing does not hold for the whole file as-is'
+  );
 }
-const G = guard.tests; // the environment-conditional cases
+// G is exactly the set of cases the per-case scan above could CONFIRM route
+// through a skip -- NOT simply "however many top-level test() calls this file
+// has" (that count is guardRegistrations, printed above, and is a different,
+// weaker fact: presence of `t.skip(` anywhere in the file used to be treated
+// as if it applied to every case in it, which is exactly the bug this
+// analysis replaces). When every case is confirmed the two numbers coincide
+// and the "environment-conditional cases" framing below is earned; when they
+// do not, staleReasons above already says so.
+const G = skipAnalysis.confirmed;
 
 // ---- (c) content identity of the cited base vs this tree ------------------
 
@@ -376,8 +579,20 @@ console.log('');
 
 // ---- (d) reconciliation arithmetic and verdict -----------------------------
 
+console.log('== framing ==');
+console.log('   This run answers, with numbers taken from the README rows parsed above and a live ' +
+  'local run (never hardcoded here): "the table says `' + first.tests + ' tests, ' + first.pass +
+  ' pass, ' + first.fail + ' fail, ' + first.skipped + ' skipped`; a local run says `' + local.tests +
+  ' tests, ' + local.pass + ' pass, ' + local.fail + ' fail, ' + local.skipped +
+  ' skipped` -- is the table stale, or are both numbers true of different environments?"');
+console.log('');
+
 console.log('== (d) reconciliation arithmetic ==');
 const table = first; // all rows verified identical above (or staleReasons already says otherwise)
+const gLabel = skipAnalysis.allConfirmed
+  ? 'the guard\'s ' + G + ' confirmed environment-conditional (skip-routing) case(s)'
+  : 'G (= ' + G + ' case(s) the static scan could CONFIRM skip-route -- NOT all ' +
+    skipAnalysis.cases.length + ' of the guard\'s top-level cases; see the per-case breakdown above)';
 
 const identities = [
   {
@@ -391,12 +606,12 @@ const identities = [
     rhs: table.tests,
   },
   {
-    name: 'skipped_table == G  (the table\'s skips are exactly the guard\'s environment-conditional cases)',
+    name: 'skipped_table == G  (the table\'s skips are exactly ' + gLabel + ')',
     lhs: table.skipped,
     rhs: G,
   },
   {
-    name: 'pass_local == pass_table + G  (a full clone runs the G guard cases that a shallow CI checkout skips)',
+    name: 'pass_local == pass_table + G  (a full clone runs ' + gLabel + ' that a shallow CI checkout skips)',
     lhs: local.pass,
     rhs: table.pass + G,
   },
@@ -421,7 +636,7 @@ for (const id of identities) {
 }
 console.log('');
 console.log('   In words: the table\'s ' + table.pass + ' is ' + table.tests + ' - ' + table.skipped +
-  ' -- the cited CI run checked out at depth 1, so the ' + G + ' guard case(s) in ' + guardFile);
+  ' -- the cited CI run checked out at depth 1, so ' + gLabel + ' in ' + guardFile);
 console.log('   skipped there; this full clone runs them, so a local run reports ' + local.pass + '/' + local.tests +
   ' with ' + local.skipped + ' skipped.');
 console.log('   ' + table.pass + ' (CI, shallow) and ' + local.pass + ' (local, full clone) describe the SAME suite under two environments;');
@@ -446,8 +661,9 @@ console.log('== VERDICT: ' + verdict + ' ==');
 if (verdict === 'CORRECT-AS-CITED') {
   console.log('   The matrix rows report the cited past CI run, the citation\'s own retirement');
   console.log('   condition has not fired (content under ' + pathspec.join(' ') + ' is identical to ' + base + '),');
-  console.log('   and every reconciliation identity holds. The 127-vs-129 difference is exactly the');
-  console.log('   ' + G + ' environment-conditional guard case(s): skipped on CI\'s shallow checkout, run and');
+  console.log('   and every reconciliation identity holds. The ' + table.pass + '-vs-' + local.pass +
+    ' pass-count difference is exactly');
+  console.log('   ' + gLabel + ': skipped on CI\'s shallow checkout, run and');
   console.log('   passing on a full clone. No README repair is warranted.');
 }
 for (const r of staleReasons) console.log('   STALE because: ' + r);

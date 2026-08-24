@@ -26,15 +26,24 @@
 // didn't redirect. (This dispatcher does not have a separate stderr output
 // of its own -- everything it prints, including relayed child stderr, is on
 // its stdout.) It does not parse, restate, summarise or
-// interpret any tool's findings -- the only judgement this file makes about
-// a tool's run is mechanical: did the child process exit 0 ("ran clean") or
-// non-zero ("reported a problem"), using each tool's OWN documented exit
-// contract (several of these tools -- citation-rule-check.mjs,
-// matrix-adjudication.mjs, detection-floor.mjs -- use a non-zero exit code
-// as their designed way
-// of reporting a real finding, e.g. STALE or DIVERGED; relaying that code
-// is not this file forming an opinion, it is this file not hiding the
-// tool's own opinion).
+// interpret any tool's findings -- the judgement this file makes about a
+// tool's run is mechanical, and it is TWO checks, not one:
+//   (1) did the child process exit 0 ("ran clean") or non-zero ("reported a
+//       problem"), using each tool's OWN documented exit contract (several
+//       of these tools -- citation-rule-check.mjs, matrix-adjudication.mjs,
+//       detection-floor.mjs -- use a non-zero exit code as their designed
+//       way of reporting a real finding, e.g. STALE or DIVERGED; relaying
+//       that code is not this file forming an opinion, it is this file not
+//       hiding the tool's own opinion); and
+//   (2) even on exit 0, did the child publish anything at all -- if it wrote
+//       zero bytes to BOTH stdout and stderr, this file marks that tool
+//       SILENT rather than clean, and the run does not exit 0. Silence is
+//       a property of the dispatch, not of any tool's findings: a tool
+//       that ran but produced no bytes did not re-derive anything for a
+//       reader to check, and "clean" is a claim about content this file
+//       never had, so it cannot make that claim on the tool's behalf. This
+//       is still not content judgement -- it does not matter WHAT a tool
+//       published, only THAT it published something.
 //
 // It writes nothing to the working tree. It imports nothing outside
 // node: builtins (child_process, path, url -- grep this file yourself).
@@ -61,7 +70,9 @@
 //   [5] tools/citation-tax.mjs        (W-4) the citation two-commit tax over
 //       committed history.
 //   [6] tools/matrix-adjudication.mjs (W-5) adjudicates the README Node
-//       support matrix's 127-vs-129 numbers.
+//       support matrix's pass/skip numbers (the tool's own header names the
+//       historical 127-vs-129 dispute that motivated it -- this file does
+//       not restate that pair, since README's own numbers have since moved).
 //   [7] tools/detection-floor.mjs     (W-8) compares the committed W-2
 //       baseline matrix record against the committed final-HEAD record
 //       (tools/mutation-matrix-final.json) row by row and rules on whether
@@ -82,7 +93,7 @@
 // else below runs in low single-digit seconds.
 //
 // DEFAULT (`node tools/run-all.mjs`, no flags): the mutation matrix is
-// EXCLUDED. Its slot in the order [2] still prints, and states plainly that
+// EXCLUDED. Its slot in the order [3] still prints, and states plainly that
 // it was skipped, why, and the flag that includes it. The roll-up line at
 // the end marks it SKIPPED, never silently drops it.
 //
@@ -91,7 +102,11 @@
 //
 // Whichever way you invoke this file, the run is honest about what it did
 // and did not run: nothing here is ever silently omitted from the output or
-// from the final roll-up line.
+// from the final roll-up line. That honesty extends to a tool that DID run
+// but published nothing: exit 0 with zero bytes on stdout and zero bytes on
+// stderr is marked SILENT, not clean, and it is not folded into "ran clean"
+// -- a roll-up line cannot claim a tool re-derived its numbers when the
+// tool re-derived nothing this dispatcher could see.
 //
 // ---------------------------------------------------------------------------
 // ZERO DEPENDENCIES
@@ -113,8 +128,8 @@ if (args.includes('--help') || args.includes('-h')) {
     '',
     'Re-runs every measurement executable this run published under tools/, in',
     'a stated order, and prints each one\'s real output under a labelled',
-    'heading, ending with a one-line roll-up of which ran clean and which',
-    'reported a problem.',
+    'heading, ending with a one-line roll-up of which ran clean, which',
+    'reported a problem, and which ran but published nothing (SILENT).',
     '',
     '  --include-mutation-matrix   also run tools/mutation-matrix.mjs (W-2).',
     '                              Excluded by default because it runs the',
@@ -177,7 +192,7 @@ const TOOLS = [
   },
   {
     id: 'matrix-adjudication',
-    label: 'tools/matrix-adjudication.mjs  (W-5 -- adjudicates the 127-vs-129 matrix numbers)',
+    label: 'tools/matrix-adjudication.mjs  (W-5 -- adjudicates the README Node support matrix\'s pass/skip numbers; the tool\'s own header names the historical 127-vs-129 dispute that motivated it)',
     file: 'tools/matrix-adjudication.mjs',
     cliArgs: [],
     run: true,
@@ -242,16 +257,26 @@ for (let i = 0; i < TOOLS.length; i++) {
   }
 
   const exitCode = result.status; // null if killed by signal
+  const publishedNothing = exitCode === 0 &&
+    (!result.stdout || result.stdout.length === 0) &&
+    (!result.stderr || result.stderr.length === 0);
   console.log('');
   if (result.signal) {
     console.log(`[run-all] ${tool.file} was terminated by signal ${result.signal} (${elapsedMs}ms elapsed)`);
     rollup.push({ id: tool.id, status: 'PROBLEM', detail: `signal ${result.signal}` });
   } else {
     console.log(`[run-all] ${tool.file} exited ${exitCode} (${elapsedMs}ms elapsed)`);
+    if (publishedNothing) {
+      console.log(
+        `[run-all] SILENT: zero bytes on both stdout and stderr, despite exit 0. This ` +
+        `dispatcher relays what a tool re-derived; a tool that produced nothing re-derived ` +
+        `nothing, so it is not "clean" -- it is silent, and this run will not exit 0.`
+      );
+    }
     rollup.push({
       id: tool.id,
-      status: exitCode === 0 ? 'CLEAN' : 'PROBLEM',
-      detail: `exit ${exitCode}`,
+      status: exitCode === 0 ? (publishedNothing ? 'SILENT' : 'CLEAN') : 'PROBLEM',
+      detail: publishedNothing ? `exit ${exitCode}, published nothing` : `exit ${exitCode}`,
     });
   }
 }
@@ -266,18 +291,23 @@ console.log('='.repeat(80));
 console.log('ROLL-UP');
 console.log('='.repeat(80));
 for (const r of rollup) {
-  const tag = r.status === 'CLEAN' ? 'clean' : r.status === 'SKIPPED' ? 'SKIPPED' : 'PROBLEM';
+  const tag = r.status === 'CLEAN' ? 'clean'
+    : r.status === 'SKIPPED' ? 'SKIPPED'
+    : r.status === 'SILENT' ? 'SILENT (published nothing)'
+    : 'PROBLEM';
   console.log(`  ${r.id.padEnd(22)} ${tag}${r.detail ? '  (' + r.detail + ')' : ''}`);
 }
 const clean = rollup.filter((r) => r.status === 'CLEAN');
 const problems = rollup.filter((r) => r.status === 'PROBLEM');
+const silent = rollup.filter((r) => r.status === 'SILENT');
 const skipped = rollup.filter((r) => r.status === 'SKIPPED');
 console.log('');
 console.log(
   `ROLL-UP: ${clean.length}/${rollup.length} ran clean` +
   (problems.length ? `; PROBLEM: ${problems.map((r) => r.id).join(', ')}` : '') +
+  (silent.length ? `; SILENT (published nothing): ${silent.map((r) => r.id).join(', ')}` : '') +
   (skipped.length ? `; SKIPPED: ${skipped.map((r) => r.id).join(', ')}` : '') +
   '.'
 );
 
-process.exitCode = problems.length > 0 ? 1 : 0;
+process.exitCode = (problems.length > 0 || silent.length > 0) ? 1 : 0;

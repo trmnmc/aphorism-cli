@@ -1,0 +1,124 @@
+
+[PASS] W6-1 corpus bytes unmoved
+    sha256(src/corpus.js) = 77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e
+    expected                 = 77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e
+
+[PASS] W6-2 --help bytes unmoved
+    sha256(--help stdout) = d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64
+    expected              = d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64
+    exit 0
+
+[PASS] W6-3 no src/ or bin/ movement
+    git diff --stat 8e17216..HEAD -- src bin
+    (empty)
+
+[PASS] W6-4 dependency surface still empty
+    no package.json in the repo root at all -- there is no manifest in which a dependency could be declared
+
+[PASS] W6-5 tools/ import only node: builtins
+    no non-builtin, non-relative import in any tools/*.mjs
+
+[PASS] W6-6 suite green
+    node --test test/*.test.js -> exit 0
+    tests 128 pass 128 fail 0 skipped 0
+
+[PASS] RV17-0 defect reproduces at PREFIX (baseline column)
+    pre-fix run-all, tools/citation-rule-check.mjs intact    -> exit 0, roll-up "  citation-rule-check    clean  (exit 0)"
+    pre-fix run-all, tools/citation-rule-check.mjs 0 bytes   -> exit 0, roll-up "  citation-rule-check    clean  (exit 0)"
+    byte-identical roll-up line AND exit 0 = true
+
+[PASS] RV17-1 fixed dispatcher flags a zero-byte tool
+    fixed run-all, tools/citation-rule-check.mjs 0 bytes -> exit 1, roll-up "null"
+    healthy roll-up line was          "  citation-rule-check    clean  (exit 0)"
+    differs from healthy AND exit != 0 = true
+
+[PASS] RV17-2 converse control: clean tree stays clean
+    unmodified clone, fixed run-all -> exit 0
+    ROLL-UP: 6/7 ran clean; SKIPPED: mutation-matrix.
+    mutation-matrix still SKIPPED (not PROBLEM) = true
+
+[PASS] RV16-1 stated slot == emitted slot
+    live heading emits [3/7] for tools/mutation-matrix.mjs
+    slot numbers stated in the header comment near "mutation-matrix": [3]
+    all stated numbers equal the emitted slot = true
+
+[FAIL] RV24-1 run-all W-5 label agrees with README
+    heading: [6/7] tools/matrix-adjudication.mjs  (W-5 -- adjudicates the README Node support matrix's pass/skip numbers; the tool's own header names the historical 127-vs-129 dispute that motivated it)
+    README row now states: 128 tests, 126 pass, 0 fail, 2 skipped
+    hardcoded pairs in the label: [[127,129]] -> acceptable = false
+
+[REFUTED] RV14-0 defect reproduces at PREFIX (baseline column)
+    pre-fix tool, 3rd case UNCONDITIONAL vs SKIPPING -> section (b) identical = false
+    --- unconditional ---
+    == (b) measured suite at HEAD (this checkout, v24.19.0, full run of node --test test/*.test.js -- 7 files) ==
+       whole suite:   129 tests, 128 pass, 1 fail, 0 skipped
+       test/node-support-citation.test.js alone: 3 tests, 2 pass, 1 fail, 0 skipped
+       guard file top-level test() registrations: 3; contains t.skip() routing: true
+    --- skipping ---
+    == (b) measured suite at HEAD (this checkout, v24.19.0, full run of node --test test/*.test.js -- 7 files) ==
+       whole suite:   129 tests, 127 pass, 1 fail, 1 skipped
+       test/node-support-citation.test.js alone: 3 tests, 1 pass, 1 fail, 1 skipped
+       guard file top-level test() registrations: 3; contains t.skip() routing: true
+
+[PASS] RV14-1 fixed tool distinguishes the two trees
+    fixed tool, 3rd case UNCONDITIONAL vs SKIPPING -> section (b) differs = true
+    --- unconditional ---
+    == (b) measured suite at HEAD (this checkout, v24.19.0, full run of node --test test/*.test.js -- 7 files) ==
+       whole suite:   129 tests, 128 pass, 1 fail, 0 skipped
+       test/node-support-citation.test.js alone: 3 tests, 2 pass, 1 fail, 0 skipped
+       guard file top-level test() registrations: 3
+       per-case skip-routing analysis (heuristic; see the block comment above analyzeGuardSkipRouting for exactly what this does and does not verify):
+         case 1 at byte 9114: DIRECT  (t.skip(...) in the case body)
+         case 2 at byte 10768: DIRECT  (t.skip(...) in the case body)
+         case 3 at byte 13080: NONE  (callback takes no parameter, so it has no way to call `<param>.skip(`)
+       -> 2 of 3 top-level case(s) CONFIRMED to route through a skip -- NOT all of them.
+    --- skipping ---
+    == (b) measured suite at HEAD (this checkout, v24.19.0, full run of node --test test/*.test.js -- 7 files) ==
+       whole suite:   129 tests, 127 pass, 1 fail, 1 skipped
+       test/node-support-citation.test.js alone: 3 tests, 1 pass, 1 fail, 1 skipped
+       guard file top-level test() registrations: 3
+       per-case skip-routing analysis (heuristic; see the block comment above analyzeGuardSkipRouting for exactly what this does and does not verify):
+         case 1 at byte 9114: DIRECT  (t.skip(...) in the case body)
+         case 2 at byte 10768: DIRECT  (t.skip(...) in the case body)
+         case 3 at byte 13080: DIRECT  (t.skip(...) in the case body)
+       -> 3 of 3 top-level case(s) CONFIRMED to route through a skip (all of them).
+
+[PASS] RV14-2 whole-file presence regex is gone
+    source still computes the claim from a single whole-file /t.skip(/ test = false
+
+[PASS] RV14-3 converse control: clean tree still CORRECT-AS-CITED
+    unmodified clone -> exit 0
+    == VERDICT: CORRECT-AS-CITED ==
+
+[FAIL] RV15-1 framing is derived OR named historical
+    shape A (printed framing tracks README): unmoved="126-vs-128" moved="" -> false
+    shape B (no present-tense 127/129 left in the header comment): false
+    lines still stating the numbers without a historical marker:
+      // PAST instance of the table, back when it read `129 tests, 127 pass, 0
+      // fail, 2 skipped` and a local run read `129 tests, 129 pass, 0 fail, 0
+
+[PASS] RV15-2 header does not announce a state this repo lacks
+    README derives 128 tests / 126 pass; suite measures 128.
+    no present-tense contradiction found
+
+==============================================================================
+  PASS     W6-1 corpus bytes unmoved
+  PASS     W6-2 --help bytes unmoved
+  PASS     W6-3 no src/ or bin/ movement
+  PASS     W6-4 dependency surface still empty
+  PASS     W6-5 tools/ import only node: builtins
+  PASS     W6-6 suite green
+  PASS     RV17-0 defect reproduces at PREFIX (baseline column)
+  PASS     RV17-1 fixed dispatcher flags a zero-byte tool
+  PASS     RV17-2 converse control: clean tree stays clean
+  PASS     RV16-1 stated slot == emitted slot
+  FAIL     RV24-1 run-all W-5 label agrees with README
+  REFUTED  RV14-0 defect reproduces at PREFIX (baseline column)
+  PASS     RV14-1 fixed tool distinguishes the two trees
+  PASS     RV14-2 whole-file presence regex is gone
+  PASS     RV14-3 converse control: clean tree still CORRECT-AS-CITED
+  FAIL     RV15-1 framing is derived OR named historical
+  PASS     RV15-2 header does not announce a state this repo lacks
+
+GATE: 14/17 PASS; FAIL: RV24-1 run-all W-5 label agrees with README, RV15-1 framing is derived OR named historical; REFUTED (claim did not reproduce): RV14-0 defect reproduces at PREFIX (baseline column)
+scratch: /tmp/swarm-gate-017-eD5MRV
