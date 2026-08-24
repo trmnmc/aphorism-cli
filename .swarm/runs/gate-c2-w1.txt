@@ -1,0 +1,400 @@
+GUARD INVENTORY -- count-claim guards binding at HEAD
+repo root: /opt/targets/aphorism-cli
+node: v24.19.0   (all numbers below are re-derived from the tree at run time)
+
+== A. TEST-FILE CENSUS (lines and test counts, re-derived) ==
+
+  test/args.test.js                            217 lines    28 test() blocks   runner: 28 tests (28 pass, 0 fail, 0 skipped)   agree
+  test/cli.test.js                             541 lines    29 test() blocks   runner: 29 tests (29 pass, 0 fail, 0 skipped)   agree
+  test/node-support-citation.test.js           270 lines     2 test() blocks   runner: 2 tests (2 pass, 0 fail, 0 skipped)   agree
+  test/pipe.test.js                            245 lines    16 test() blocks   runner: 16 tests (16 pass, 0 fail, 0 skipped)   agree
+  test/readme-matrix-consistency.test.js       238 lines     5 test() blocks   runner: 5 tests (5 pass, 0 fail, 0 skipped)   agree
+  test/readme-tags.test.js                    2778 lines    31 test() blocks   runner: 31 tests (31 pass, 0 fail, 0 skipped)   agree
+  test/select.test.js                          298 lines    18 test() blocks   runner: 18 tests (18 pass, 0 fail, 0 skipped)   agree
+  TOTAL                                       4587 lines   129 test() blocks   runner total: 129 tests
+  (for scale: src/ + bin/ = 594 lines)
+
+== B. INCLUSION RULE ==
+
+  INCLUDED = the test (a) reads a real repo document (README.md / docs/*.md)
+  at test time AND (b) asserts a count-shaped claim about it: a number parsed
+  from the document compared to an expectation, or set containment/equality
+  between a document-claimed collection and a derived one. BORDERLINE items
+  are listed one by one with reasons; EXCLUDED items are listed by title with
+  a reason code. Nothing is silently dropped. (Full rule: header of this file.)
+
+== C. INCLUDED COUNT-CLAIM GUARDS (18) ==
+
+  [1] test/readme-matrix-consistency.test.js:125  (NUMERIC)
+      title: README Node support matrix: table must be present and non-empty
+      claim: section(s): "### Node support"
+      reads: the README "### Node support" section | Node support matrix rows (`| vX.Y.Z | N tests, N pass, N fail, N skipped |`)
+      expected value: INTERNAL / RULE-CONSTANT: document self-consistency and/or existence-uniqueness-hygiene floors (constants 0 only -- invariants, not measurements)
+      evidence: reads README.md via fs.readFileSync; asserts on a .length (cardinality) value; rule-constant comparison(s): 0
+
+  [2] test/readme-matrix-consistency.test.js:140  (NUMERIC)
+      title: README Node support matrix: each row's own arithmetic must hold (tests = pass + fail + skipped)
+      claim: section(s): "### Node support"
+      reads: the README "### Node support" section | Node support matrix rows (`| vX.Y.Z | N tests, N pass, N fail, N skipped |`)
+      expected value: INTERNAL / RULE-CONSTANT: document self-consistency and/or existence-uniqueness-hygiene floors (constants 0 only -- invariants, not measurements)
+      evidence: reads README.md via fs.readFileSync; asserts on a .length (cardinality) value; asserts arithmetic over parsed matrix row fields; rule-constant comparison(s): 0
+
+  [3] test/readme-matrix-consistency.test.js:159  (NUMERIC)
+      title: README Node support matrix: all rows must agree with each other
+      claim: section(s): "### Node support"
+      reads: the README "### Node support" section | Node support matrix rows (`| vX.Y.Z | N tests, N pass, N fail, N skipped |`)
+      expected value: INTERNAL / RULE-CONSTANT: document self-consistency and/or existence-uniqueness-hygiene floors (constants 0 only -- invariants, not measurements)
+      evidence: reads README.md via fs.readFileSync; asserts on a .length (cardinality) value; rule-constant comparison(s): 0
+
+  [4] test/readme-tags.test.js:53  (SET)
+      title: README tags must exist in corpus
+      claim: reads: true per-tag counts derived from src/corpus.js | backtick-quoted tag tokens claimed by the README
+      expected value: DERIVED from src/corpus.js at test time (self-updating, cannot go stale)
+      evidence: reads README.md via fs.readFileSync; asserts set containment (.includes/.has) between doc-claimed and derived collections; expectation derived from src/corpus.js identifiers at test time
+
+  [5] test/readme-tags.test.js:85  (NUMERIC)
+      title: README tag counts must match corpus
+      claim: reads: true per-tag counts derived from src/corpus.js | per-tag count rows (`| `<tag>` | <N> |`) parsed from the README
+      expected value: DERIVED from src/corpus.js at test time (self-updating, cannot go stale)
+      evidence: reads README.md via fs.readFileSync; asserts on a *Count-named quantity; expectation derived from src/corpus.js identifiers at test time
+
+  [6] test/readme-tags.test.js:102  (NUMERIC)
+      title: README must state total unique tags correctly
+      claim: section(s): "## Tag vocabulary"
+      counts-table row(s) read: "Distinct tags"
+      reads: true per-tag counts derived from src/corpus.js | the `| Tag vocabulary | Count |` counts table, located structurally | counts-table well-formedness (one header, no duplicate/unread row labels) | a labelled row of the Tag vocabulary counts table
+      expected value: DERIVED from src/corpus.js at test time (self-updating, cannot go stale)
+      evidence: reads README.md via fs.readFileSync; asserts on a *Count-named quantity; reads a labelled counts-table row as an integer; expectation derived from src/corpus.js identifiers at test time
+
+  [7] test/readme-tags.test.js:165  (SET)
+      title: README must list all single-entry tags
+      claim: reads: true per-tag counts derived from src/corpus.js | backtick-quoted tag tokens claimed by the README
+      expected value: DERIVED from src/corpus.js at test time (self-updating, cannot go stale)
+      evidence: reads README.md via fs.readFileSync; asserts set containment (.includes/.has) between doc-claimed and derived collections; expectation derived from src/corpus.js identifiers at test time
+
+  [8] test/readme-tags.test.js:434  (NUMERIC)
+      title: README Tag vocabulary counts table "Tags on exactly one entry" row matches the corpus (structural replacement for the retired token co-occurrence guard, Q-4)
+      claim: section(s): "## Tag vocabulary"
+      counts-table row(s) read: "Tags on exactly one entry"
+      reads: true per-tag counts derived from src/corpus.js | the `| Tag vocabulary | Count |` counts table, located structurally | counts-table well-formedness (one header, no duplicate/unread row labels) | a labelled row of the Tag vocabulary counts table
+      expected value: DERIVED from src/corpus.js at test time (self-updating, cannot go stale)
+      evidence: reads README.md via fs.readFileSync; asserts on a *Count-named quantity; reads a labelled counts-table row as an integer; expectation derived from src/corpus.js identifiers at test time
+
+  [9] test/readme-tags.test.js:1341  (NUMERIC)
+      title: every `| Tag | Count |` table in the real README Tag vocabulary section is a recognised band table (no table may hide under an unrecognised heading shape)
+      claim: section(s): "## Tag vocabulary"
+      reads: band tables (`#### <heading with N+ / N-M token>` + `| Tag | Count |` rows) | structural census of every `| Tag | Count |` table (heading-independent)
+      expected value: INTERNAL: both sides of every comparison are parsed from the document(s) at test time
+      evidence: reads README.md via fs.readFileSync; asserts on a .length (cardinality) value
+
+  [10] test/readme-tags.test.js:1361  (NUMERIC+SET)
+      title: every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+      claim: section(s): "## Tag vocabulary"
+      reads: true per-tag counts derived from src/corpus.js | band tables (`#### <heading with N+ / N-M token>` + `| Tag | Count |` rows)
+      expected value: DERIVED from src/corpus.js at test time (self-updating, cannot go stale); plus rule-constant floor(s) (0)
+      evidence: reads README.md via fs.readFileSync; asserts on a .length (cardinality) value; asserts set containment (.includes/.has) between doc-claimed and derived collections; expectation derived from src/corpus.js identifiers at test time; rule-constant comparison(s): 0
+
+  [11] test/readme-tags.test.js:1433  (SET)
+      title: every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+      claim: section(s): "## Tag vocabulary"
+      reads: true per-tag counts derived from src/corpus.js | band tables (`#### <heading with N+ / N-M token>` + `| Tag | Count |` rows)
+      expected value: DERIVED from src/corpus.js at test time (self-updating, cannot go stale)
+      evidence: reads README.md via fs.readFileSync; asserts set containment (.includes/.has) between doc-claimed and derived collections; expectation derived from src/corpus.js identifiers at test time
+
+  [12] test/readme-tags.test.js:1598  (NUMERIC)
+      title: README must state correct multi-entry and single-entry tag counts
+      claim: section(s): "## Tag vocabulary"
+      counts-table row(s) read: "Tags on 2 or more entries", "Tags on exactly one entry"
+      reads: true per-tag counts derived from src/corpus.js | the `| Tag vocabulary | Count |` counts table, located structurally | counts-table well-formedness (one header, no duplicate/unread row labels) | a labelled row of the Tag vocabulary counts table
+      expected value: DERIVED from src/corpus.js at test time (self-updating, cannot go stale)
+      evidence: reads README.md via fs.readFileSync; asserts on a *Count-named quantity; reads a labelled counts-table row as an integer; expectation derived from src/corpus.js identifiers at test time
+
+  [13] test/readme-tags.test.js:1851  (NUMERIC)
+      title: README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)
+      claim: section(s): "## Tag vocabulary"
+      reads: digit-hygiene sweep of Tag vocabulary prose (every digit outside table/heading structure)
+      expected value: INTERNAL / RULE-CONSTANT: document self-consistency and/or existence-uniqueness-hygiene floors (constants 0 only -- invariants, not measurements)
+      evidence: reads README.md via fs.readFileSync; asserts on a .length (cardinality) value; digit-hygiene mechanism: asserts ZERO unaccounted digit runs in the section; rule-constant comparison(s): 0
+
+  [14] test/readme-tags.test.js:2318  (NUMERIC)
+      title: README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1)
+      claim: section(s): "## Attribution"
+      counts-table row(s) read: "Entries ranked"
+      reads: the `| Attribution triage | Count |` counts table, located structurally | Attribution counts-table well-formedness | a labelled row of the Attribution counts table | risk rows of the docs/corpus-attribution-triage.md table
+      expected value: DERIVED from src/corpus.js at test time (self-updating, cannot go stale); DERIVED from docs/corpus-attribution-triage.md at test time; plus rule-constant floor(s) (0)
+      evidence: reads README.md via fs.readFileSync; reads docs/corpus-attribution-triage.md; asserts on a .length (cardinality) value; reads a labelled counts-table row as an integer; expectation derived from src/corpus.js identifiers at test time; rule-constant comparison(s): 0
+
+  [15] test/readme-tags.test.js:2350  (NUMERIC)
+      title: README Attribution table "Rated HIGH risk" count must match the triage doc table (C2)
+      claim: section(s): "## Attribution"
+      counts-table row(s) read: "Rated HIGH risk"
+      reads: the `| Attribution triage | Count |` counts table, located structurally | Attribution counts-table well-formedness | a labelled row of the Attribution counts table | risk rows of the docs/corpus-attribution-triage.md table
+      expected value: DERIVED from docs/corpus-attribution-triage.md at test time; plus rule-constant floor(s) (0)
+      evidence: reads README.md via fs.readFileSync; reads docs/corpus-attribution-triage.md; asserts on a .length (cardinality) value; reads a labelled counts-table row as an integer; rule-constant comparison(s): 0
+
+  [16] test/readme-tags.test.js:2384  (NUMERIC)
+      title: README Attribution section must contain no digit runs outside the counts table (C7)
+      claim: section(s): "## Attribution"
+      reads: the `| Attribution triage | Count |` counts table, located structurally | Attribution counts-table well-formedness | digit-hygiene sweep of the Attribution section outside its counts table
+      expected value: INTERNAL: both sides of every comparison are parsed from the document(s) at test time
+      evidence: reads README.md via fs.readFileSync; digit-hygiene mechanism: asserts ZERO unaccounted digit runs in the section
+
+  [17] test/readme-tags.test.js:2682  (NUMERIC)
+      title: README `--list` format literal matches the shipped binary's actual --list output (T-017)
+      claim: section(s): "(structurally located by getListBehaviourSection -- no literal heading marker in that helper)"
+      reads: the `<text>...<author>` --list format literal's separator
+      expected value: DERIVED from src/corpus.js at test time (self-updating, cannot go stale); compared against live bin/aphorism.js output at test time
+      evidence: reads README.md via fs.readFileSync; spawns bin/aphorism.js and reads its output; asserts on a .length (cardinality) value; expectation derived from src/corpus.js identifiers at test time; helper getListBehaviourSection() itself asserts a structural uniqueness count about the document (its `candidates.length` must equal 1)
+
+  [18] test/readme-tags.test.js:2754  (NUMERIC)
+      title: README `--author` matching section must state the correct count of distinct corpus authors (Q-8)
+      claim: section(s): "### `--author` matching"
+      reads digits captured by in-test regex
+      expected value: DERIVED from src/corpus.js at test time (self-updating, cannot go stale)
+      evidence: reads README.md via fs.readFileSync; captures digits from the document with a (\d+) regex; asserts on a *Count-named quantity; expectation derived from src/corpus.js identifiers at test time
+
+== D. BORDERLINE (18) -- listed, with reasoning, not dropped ==
+
+  [B1] test/args.test.js:187  (NON-DOC-LITERAL-FLOOR)
+      title: HELP fits comfortably on one 24-line terminal screen
+      why borderline: count assertion against a stale-able literal (24) whose subject is source data or program output, not a document
+      stale-able literal(s): 24
+      evidence: asserts on a .length (cardinality) value; numeric literal(s) >= 2 in assertion position: 24
+
+  [B2] test/cli.test.js:49  (NON-DOC-LITERAL-FLOOR)
+      title: --list prints every entry in the filtered set
+      why borderline: count assertion against a stale-able literal (40) whose subject is source data or program output, not a document
+      stale-able literal(s): 40
+      evidence: asserts on a .length (cardinality) value; rule-constant comparison(s): 0; numeric literal(s) >= 2 in assertion position: 40
+
+  [B3] test/cli.test.js:323  (NON-DOC-LITERAL-FLOOR)
+      title: --list accepts a valid --seed and IGNORES it: output is byte-identical across seeds
+      why borderline: count assertion against a stale-able literal (40) whose subject is source data or program output, not a document
+      stale-able literal(s): 40
+      evidence: asserts on a .length (cardinality) value; rule-constant comparison(s): 0; numeric literal(s) >= 2 in assertion position: 40
+
+  [B4] test/node-support-citation.test.js:187  (DOC-NON-COUNT)
+      title: README Node support citation: cited git diff must be empty (or the check must skip on a missing precondition)
+      why borderline: subject is not a count (citation freshness via git diff emptiness), but a shared helper it calls asserts a structural uniqueness count about the document: helper parseCitedDiffCommand() itself asserts a structural uniqueness count about the document (its `matches.length` must equal 1)
+      evidence: reads README.md via fs.readFileSync; spawns git (read-only diff/rev-parse); helper parseCitedDiffCommand() itself asserts a structural uniqueness count about the document (its `matches.length` must equal 1)
+
+  [B5] test/node-support-citation.test.js:225  (DOC-NON-COUNT)
+      title: README Node support citation: base-to-working-tree diff must also be empty, so an uncommitted falsification is visible now (or the check must skip on a missing precondition)
+      why borderline: subject is not a count (citation freshness via git diff emptiness), but a shared helper it calls asserts a structural uniqueness count about the document: helper parseCitedDiffCommand() itself asserts a structural uniqueness count about the document (its `matches.length` must equal 1)
+      evidence: reads README.md via fs.readFileSync; spawns git (read-only diff/rev-parse); helper parseCitedDiffCommand() itself asserts a structural uniqueness count about the document (its `matches.length` must equal 1)
+
+  [B6] test/readme-matrix-consistency.test.js:184  (DOC-NON-COUNT)
+      title: README Node support matrix: cited Actions run id must match between the link text and the link URL
+      why borderline: reads numeric/identifier claims from the document (run id / commit hash) and asserts consistency between two renderings -- numeric, but an identifier, not a count
+      evidence: reads README.md via fs.readFileSync; captures digits from the document with a (\d+) regex
+
+  [B7] test/readme-matrix-consistency.test.js:208  (DOC-NON-COUNT)
+      title: README Node support matrix: cited commit must match between the prose and the falsification-condition command
+      why borderline: reads numeric/identifier claims from the document (run id / commit hash) and asserts consistency between two renderings -- numeric, but an identifier, not a count
+      evidence: reads README.md via fs.readFileSync; captures a hex identifier (commit hash) by regex
+
+  [B8] test/readme-tags.test.js:720  (MACHINERY)
+      title: assertTagVocabCountsTableWellFormed fails loud on a DUPLICATED row label, whichever order the rows appear in (Q-4)
+      why borderline: exercises the count-claim extraction machinery on a synthetic in-file fixture; its numeric literals describe the fixture, so they cannot go stale against the repo
+      evidence: asserts on a *Count-named quantity; reads a labelled counts-table row as an integer
+
+  [B9] test/readme-tags.test.js:753  (MACHINERY)
+      title: assertTagVocabCountsTableWellFormed fails loud on a row label no guard in this file reads (Q-4)
+      why borderline: exercises the count-claim extraction machinery on a synthetic in-file fixture; its numeric literals describe the fixture, so they cannot go stale against the repo
+      evidence: asserts on a *Count-named quantity; digit-hygiene mechanism: asserts ZERO unaccounted digit runs in the section
+
+  [B10] test/readme-tags.test.js:779  (MACHINERY)
+      title: parseTagVocabCountsTable returns null when the counts table is missing or malformed, and both readers fail loud on that null (Q-4)
+      why borderline: exercises the count-claim extraction machinery on a synthetic in-file fixture; its numeric literals describe the fixture, so they cannot go stale against the repo
+      evidence: builds a synthetic in-file fixture document; asserts on a *Count-named quantity; reads a labelled counts-table row as an integer
+
+  [B11] test/readme-tags.test.js:837  (MACHINERY)
+      title: readTagVocabCount fails loud when a row value is not a plain integer, or when its row is absent (Q-4)
+      why borderline: exercises the count-claim extraction machinery on a synthetic in-file fixture; its numeric literals describe the fixture, so they cannot go stale against the repo
+      evidence: asserts on a *Count-named quantity; reads a labelled counts-table row as an integer
+
+  [B12] test/readme-tags.test.js:1057  (MACHINERY)
+      title: extractBandTablesFromReadme tolerates a prose sentence between a band heading and its table (T-025), without mis-attaching a table when the real one is missing
+      why borderline: exercises the count-claim extraction machinery on a synthetic in-file fixture; its numeric literals describe the fixture, so they cannot go stale against the repo
+      fixture literal(s) (describe the inline fixture; cannot go stale against the repo): 2
+      evidence: builds a synthetic in-file fixture document; asserts on a .length (cardinality) value; rule-constant comparison(s): 1; numeric literal(s) >= 2 in assertion position: 2
+
+  [B13] test/readme-tags.test.js:1155  (MACHINERY)
+      title: extractBandTablesFromReadme does not let a band-shaped PROSE line steal a real heading's table (T-039)
+      why borderline: exercises the count-claim extraction machinery on a synthetic in-file fixture; its numeric literals describe the fixture, so they cannot go stale against the repo
+      fixture literal(s) (describe the inline fixture; cannot go stale against the repo): 5
+      evidence: builds a synthetic in-file fixture document; asserts on a .length (cardinality) value; rule-constant comparison(s): 1; numeric literal(s) >= 2 in assertion position: 5
+
+  [B14] test/readme-tags.test.js:1193  (MACHINERY)
+      title: extractBandTablesFromReadme does not read a fenced example block as a second, real band table
+      why borderline: exercises the count-claim extraction machinery on a synthetic in-file fixture; its numeric literals describe the fixture, so they cannot go stale against the repo
+      evidence: builds a synthetic in-file fixture document; asserts on a .length (cardinality) value; rule-constant comparison(s): 1
+
+  [B15] test/readme-tags.test.js:1287  (MACHINERY)
+      title: extractBandTablesFromReadme's recognised bands account for every structural `| Tag | Count |` table -- a table under an unrecognised heading shape is a loud mismatch, not a silent miss
+      why borderline: exercises the count-claim extraction machinery on a synthetic in-file fixture; its numeric literals describe the fixture, so they cannot go stale against the repo
+      fixture literal(s) (describe the inline fixture; cannot go stale against the repo): 2
+      evidence: builds a synthetic in-file fixture document; asserts on a .length (cardinality) value; asserts on a *Count-named quantity; rule-constant comparison(s): 1; numeric literal(s) >= 2 in assertion position: 2
+
+  [B16] test/readme-tags.test.js:1522  (MACHINERY)
+      title: extractBandTablesFromReadme derives a band's row count purely from its table, ignoring decoy "N tags" phrases in the heading line (T-024b)
+      why borderline: exercises the count-claim extraction machinery on a synthetic in-file fixture; its numeric literals describe the fixture, so they cannot go stale against the repo
+      fixture literal(s) (describe the inline fixture; cannot go stale against the repo): 5
+      evidence: builds a synthetic in-file fixture document; asserts on a .length (cardinality) value; rule-constant comparison(s): 1; numeric literal(s) >= 2 in assertion position: 5
+
+  [B17] test/readme-tags.test.js:2410  (DOC-NON-COUNT)
+      title: README Layout section paths must exist on disk (C6)
+      why borderline: document claims are checked for on-disk existence (membership); the only count-shaped assertion is a parse-sanity floor (>= 1 parsed item, rule constant), so the subject is existence, not a count
+      evidence: reads README.md via fs.readFileSync; checks on-disk existence (fs.existsSync); asserts on a .length (cardinality) value; rule-constant comparison(s): 0
+
+  [B18] test/select.test.js:9  (NON-DOC-LITERAL-FLOOR)
+      title: corpus has at least 40 entries
+      why borderline: count assertion against a stale-able literal (40) whose subject is source data or program output, not a document
+      stale-able literal(s): 40
+      evidence: asserts on a .length (cardinality) value; expectation derived from src/corpus.js identifiers at test time; numeric literal(s) >= 2 in assertion position: 40
+
+== E. EXCLUDED (93) -- behavioural tests, no document count claim ==
+
+  - test/args.test.js:8  zero args: no error, no filters set
+  - test/args.test.js:19  --author <name> sets author string
+  - test/args.test.js:25  --author=<name> equals form sets author string
+  - test/args.test.js:31  --tag <tag> sets tag string
+  - test/args.test.js:37  --tag=<tag> equals form sets tag string
+  - test/args.test.js:43  combined --author X --tag Y sets both
+  - test/args.test.js:50  --seed <n> parses as a number
+  - test/args.test.js:57  --seed=<n> equals form parses as a number
+  - test/args.test.js:64  --seed <n> accepts a negative number
+  - test/args.test.js:71  --seed=<n> equals form accepts a negative number
+  - test/args.test.js:78  non-numeric --seed is a usage error
+  - test/args.test.js:84  non-numeric --seed= equals form is a usage error
+  - test/args.test.js:90  --list sets list: true
+  - test/args.test.js:96  --json sets json: true
+  - test/args.test.js:102  --help sets help: true
+  - test/args.test.js:108  -h sets help: true
+  - test/args.test.js:114  unknown flag is a usage error
+  - test/args.test.js:120  unknown short flag is a usage error
+  - test/args.test.js:125  --author missing value at end of argv is a usage error
+  - test/args.test.js:131  --tag missing value because next token is another flag is a usage error
+  - test/args.test.js:137  --seed missing value at end of argv is a usage error
+  - test/args.test.js:143  --author= with empty value is a usage error
+  - test/args.test.js:148  a bare positional argument (not a flag) is a usage error
+  - test/args.test.js:153  parseArgs never throws on malformed input
+  - test/args.test.js:169  absent options are undefined/false, never null
+  - test/args.test.js:179  HELP is a non-empty string mentioning every flag name
+  - test/args.test.js:197  --seed Infinity / --seed -Infinity parse to numbers, not a usage error
+  - test/cli.test.js:19  bare invocation prints one attributed aphorism and exits 0
+  - test/cli.test.js:27  --seed is deterministic across separate processes
+  - test/cli.test.js:34  different seeds do not all collapse to one aphorism
+  - test/cli.test.js:40  --json emits a single-line JSON object with text/author/tags
+  - test/cli.test.js:56  --help prints usage to stdout and exits 0
+  - test/cli.test.js:63  no match exits 1 with stderr only and zero bytes on stdout
+  - test/cli.test.js:70  unknown flag is a usage error, exit 2, stdout clean
+  - test/cli.test.js:77  non-numeric seed is a usage error, exit 2
+  - test/cli.test.js:83  author filter is case-insensitive and narrows the list
+  - test/cli.test.js:93  output is pipe-safe — no ANSI escapes when not a TTY
+  - test/cli.test.js:99  --tag matches membership, not substring containment
+  - test/cli.test.js:155  --list prints exactly one line per matching entry, no drops
+  - test/cli.test.js:164  --list preserves corpus order (first and last line match)
+  - test/cli.test.js:179  --json output is exactly one line, never pretty-printed
+  - test/cli.test.js:186  --list --json emits newline-delimited JSON, one object per line, in corpus order
+  - test/cli.test.js:236  --json composes with --seed: the seeded JSON pick is reproducible AND is the same entry as the plain-text pick
+  - test/cli.test.js:264  --json composes with the filter flags: the JSON pick is always a member of the FILTERED set
+  - test/cli.test.js:380  --list --seed abc is a usage error, exit 2, stdout empty, stderr carries the diagnostic
+  - test/cli.test.js:387  --seed abc --list (erroring flag BEFORE --list) is still a usage error, exit 2, stdout empty
+  - test/cli.test.js:394  --list --seed=  (empty seed value) is a usage error, exit 2, stdout empty
+  - test/cli.test.js:401  --list --seed "   " (whitespace-only seed value) is a usage error, exit 2, stdout empty
+  - test/cli.test.js:408  --list --nosuchflag (unknown flag) is a usage error, exit 2, stdout empty — --list does not swallow it
+  - test/cli.test.js:416  --nosuchflag --list (unknown flag BEFORE --list) is still a usage error, exit 2, stdout empty
+  - test/cli.test.js:438  plain single-pick output is TWO lines: text, newline, four-space indent, EM DASH, space, author
+  - test/cli.test.js:459  --seed Infinity and --seed -Infinity (typed as CLI strings) are accepted and deterministic
+  - test/cli.test.js:485  --list with a filter that matches nothing is STILL exit 1, stderr only, stdout empty
+  - test/cli.test.js:536  --tag "" (bare empty-string value) matches nothing: whole-tag equality against the literal "" is not a filter no-op
+  - test/pipe.test.js:56  --list | true: exits quietly, zero stderr, no crash banner
+  - test/pipe.test.js:62  | true (no --list, single aphorism): exits quietly, zero stderr
+  - test/pipe.test.js:68  --list | head -0: exits quietly, zero stderr, no crash banner
+  - test/pipe.test.js:74  --list | /nonexistent-cmd-xyz: no crash banner from the CLI itself
+  - test/pipe.test.js:86  non-EPIPE stdout write failure: reported, not silent, not exit 1, no stack trace
+  - test/pipe.test.js:136  usage error survives a closed stderr reader: still exits 2, not clobbered to 1
+  - test/pipe.test.js:148  no-match exit code survives a closed stderr reader: still exits 1, not misreported
+  - test/pipe.test.js:160  non-EPIPE stderr write failure: not silent, not the earned exit code, no stack trace
+  - test/pipe.test.js:189  control: --list | head -1 stays completely clean
+  - test/pipe.test.js:195  control: --list | head -5 stays completely clean
+  - test/pipe.test.js:201  control: --list | sed 1q stays completely clean
+  - test/pipe.test.js:207  control: --list | grep -q . stays completely clean
+  - test/pipe.test.js:213  control: | wc -l stays completely clean
+  - test/pipe.test.js:219  control: --list --json | head -2 stays completely clean
+  - test/pipe.test.js:225  control: exit 1 / exit 2 stderr messages and codes are unchanged
+  - test/pipe.test.js:237  control: a normal (non-full) stdout target still exits 0 with empty stderr
+  - test/readme-tags.test.js:2561  getListBehaviourSection tolerates a reformatted "--list behaviour" heading with no backticks (T-021)
+  - test/readme-tags.test.js:2579  getListBehaviourSection still fails on a SEPARATOR MISMATCH (not a heading-parse error) when a reformatted heading's literal is mutated (T-021)
+  - test/readme-tags.test.js:2600  getListBehaviourSection reports ambiguity loudly instead of taking the first of two qualifying headings (T-021)
+  - test/readme-tags.test.js:2623  getListBehaviourSection does not let "--list-only" satisfy the standalone `--list` token (T-021)
+  - test/readme-tags.test.js:2641  getListBehaviourSection tolerates the American spelling "behavior" in the heading (T-027)
+  - test/readme-tags.test.js:2662  getListBehaviourSection still fails on a SEPARATOR MISMATCH (not a heading-parse error) under an American-spelled heading (T-027)
+  - test/select.test.js:16  every corpus entry has non-empty text, non-empty author, and an array of tags
+  - test/select.test.js:33  filter: author match is case-insensitive
+  - test/select.test.js:46  filter: tag match is case-insensitive
+  - test/select.test.js:59  filter: author and tag together narrow to the intersection (AND)
+  - test/select.test.js:96  filter: undefined/absent options do not filter
+  - test/select.test.js:104  pick: same seed over the same candidates always returns the same element
+  - test/select.test.js:118  pick: different seeds generally produce different results
+  - test/select.test.js:129  pick: undefined seed picks a valid member (random mode)
+  - test/select.test.js:134  pick: null seed also triggers random mode and returns a valid member
+  - test/select.test.js:139  pick: throws RangeError on empty candidates array
+  - test/select.test.js:144  pick: Infinity seed is deterministic and returns a valid member
+  - test/select.test.js:153  pick: -Infinity seed is deterministic and returns a valid member
+  - test/select.test.js:162  pick: NaN seed still uses the random branch and returns a valid member
+  - test/select.test.js:167  pick: finite seed determinism is unchanged by the non-finite-seed fix
+  - test/select.test.js:250  pick: every candidate is REACHABLE by an unseeded draw
+  - test/select.test.js:273  pick: unseeded draws split the interval EQUALLY across candidates (uniform)
+  - test/select.test.js:293  pick: single-element candidates always returns that element regardless of seed
+
+== F. SUITE-SIZE FLOOR AUDIT ==
+
+  Question 1: does any guard assert a floor on the size of the suite itself?
+  A suite-size floor would need either (i) a comparison against a hardcoded
+  test-count literal, (ii) a test that spawns `node --test` / censuses test/
+  and counts, or (iii) a CI step that counts tests. Scan results:
+
+  (i) comparisons against 3+-digit literals in test code (comments/strings stripped): NONE
+  (ii) tests spawning the test runner or censusing test/: NONE
+  (iii) workflow code lines pairing a 3+-digit number with "test": NONE
+  Note: the workflow DOES gate on the glob matching at least one FILE (a floor
+  of >= 1 test file, not a test-count floor):
+        .github/workflows/test.yml:26  run: ls test/*.test.js
+
+  Question 2: every occurrence of the literal "121" in test/, src/, bin/,
+  package.json and .github/ (tools/ excluded -- this report necessarily
+  names the premise itself):
+        test/readme-matrix-consistency.test.js:8  [COMMENT]  // the gap by hand: it flipped one row's pass count (`122` -> `121`) and
+        test/readme-matrix-consistency.test.js:41  [COMMENT]  //      `121 pass` row no longer sums to `124`; the `999 tests, 998 pass` row
+
+  Workflow comment(s) addressing count assertions:
+        .github/workflows/test.yml:23  # this makes that case loud. Deliberately NOT a count assertion — a floor
+        .github/workflows/test.yml:24  # like "at least 120 tests" is a number that goes stale on the next commit.
+
+== G. VERDICT ON THE INHERITED ">= 121 TESTS" FLOOR PREMISE ==
+
+  VERDICT: ABSENT. No guard anywhere in test/ (or CI) asserts any floor on
+  the number of tests in the suite.
+
+  Evidence that settles it, all re-derived above:
+    - the runner-measured suite currently holds 129 tests across 7 files (static parse agrees: 129);
+    - zero comparisons against 3+-digit literals exist in test code (F.i);
+    - no test spawns the test runner or censuses test/ to count tests (F.ii);
+    - "121" occurs in this tree only at the 2 location(s) listed in F, ALL in comment/prose position;
+    - CI carries a written refusal to add a count assertion (workflow comment
+      quoted in F) and gates only on the glob matching >= 1 file.
+
+  There is no ">= 121 tests" floor to retire; none is manufactured here.
+
+== H. NON-DOCUMENT COUNT FLOORS THAT DO EXIST (for completeness) ==
+
+  These are the only stale-able numeric floors/ceilings the suite carries;
+  none of them is about the suite's own size (each is listed in D above):
+        test/args.test.js:187  literal(s) 24  -- HELP fits comfortably on one 24-line terminal screen
+        test/cli.test.js:49  literal(s) 40  -- --list prints every entry in the filtered set
+        test/cli.test.js:323  literal(s) 40  -- --list accepts a valid --seed and IGNORES it: output is byte-identical across seeds
+        test/select.test.js:9  literal(s) 40  -- corpus has at least 40 entries
+
+Totals: 18 included, 18 borderline, 93 excluded, of 129 tests parsed statically (129 measured by the runner).

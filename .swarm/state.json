@@ -6,7 +6,7 @@
  "run_started_at": "2026-08-24T13:05:56.000Z",
  "kickoff_source": "allocator",
  "phase": "BUILD",
- "cycle": 1,
+ "cycle": 2,
  "run_cmd": "node bin/aphorism.js",
  "test_cmd": "node --test test/*.test.js",
  "spec_digest": [
@@ -64,6 +64,12 @@
    "cycle": 1,
    "kind": "risk",
    "text": "The entire citation-window risk is concentrated in W-7, the only item touching test/ (inside the README citation pathspec). Closing that window needs a new Actions run id, requiring both a successful push and Actions API access — neither confirmed from this environment. W-7 is sequenced last among code-touching items, gated on a confirmed ability to obtain a run id, and must predict the window in its own commit message (S-8). Every other item lands in tools/, docs/ or REPORT.md, outside the pathspec. L-043's pathspec-guard clause applied at PLAN time rather than discovered at merge time."
+  },
+  {
+   "id": "D-R8-7",
+   "cycle": 2,
+   "kind": "gate",
+   "text": "W-3 PASSES its acceptance clause and the conductor still recorded a defect against it. The clause scopes failability to perturbing the QUOTE, and that direction attributes correctly. The conductor also perturbed the README side -- a case the clause does not cover -- and the check still printed `docs/node-support-citation-history.md has diverged`, blaming the document that did not move. Every factual clause in that message is true; only the direction of attribution is wrong. Rounding this into a FAIL would discard verified work over a case the clause never asked for; burying it would be the gate opening itself by silence. Recorded as new item P-1 instead, with the exact perturbation that produces it."
   }
  ],
  "qa": {
@@ -74,7 +80,7 @@
  "counters": {
   "consecutive_no_value": 0,
   "k_current": 3,
-  "wave_streak": 0,
+  "wave_streak": 1,
   "window_tokens_attributed": 0
  },
  "known_issues_file": "known-issues.json",
@@ -83,9 +89,9 @@
   "note": "runs #1-#7; run #7 delivered ZERO work cycles (usage lockout). Done items archived to backlog-archive-runs1-7.json."
  },
  "last_cycle": {
-  "cycle": 1,
-  "work": "PLAN (inline)",
-  "outcome": "value — 10 items, all 8 must-haves covered, plan gate passed",
-  "ts": "2026-08-24T13:25:50.000Z"
+  "cycle": 2,
+  "work": "build-wave (3 direct Agent calls, headless fallback)",
+  "outcome": "value — W-1, W-3, W-4 all verified done; clean wave, 0 reverts, 0 failed verifies",
+  "ts": "2026-08-24T13:58:00.000Z"
  }
 }

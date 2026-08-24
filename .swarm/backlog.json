@@ -1,8 +1,8 @@
 {
  "version": 1,
- "updated_at": "2026-08-24T13:25:37.000Z",
+ "updated_at": "2026-08-24T13:58:00.000Z",
  "run_label": "improvement run #8",
- "note": "Cycle 1 PLAN added 10 items W-1..W-10 covering all eight must-haves S-1..S-8. 9 blocked items carried from earlier runs (human-owned or brief-locked); 4 run-#7 todos remain marked dropped-as-superseded. Models assigned per the value-routing table at plan time and RECOMPUTED at pick time (cycle.md step 4).",
+ "note": "Cycle 2 build wave: W-1, W-3, W-4 verified done by conductor-authored gates (independent re-derivation, not agent claims). W-6 standing invariant held. New item P-1 from a finding the gate turned up beyond W-3`s clause. W-2 is now unblocked (its only dep W-1 is done).",
  "items": [
   {
    "id": "W-1",
@@ -12,7 +12,7 @@
     "S-6"
    ],
    "kind": "measure",
-   "status": "todo",
+   "status": "done",
    "effort": "M",
    "priority": 1,
    "deps": [],
@@ -24,7 +24,8 @@
    ],
    "packages": [],
    "acceptance": "An executable at tools/guard-inventory.mjs re-derives, from the repo at run time (never from hardcoded literals), a table of every guard in test/ whose subject is a numeric or structural COUNT claim about a document: for each one it names the file, the test title, the document claim it reads, where the expected value comes from (derived from src/corpus.js at test time vs. a literal written into the test file), and whether any guard asserts a floor on the SIZE of the suite itself. It also emits the current test-file line count per file and the total. The output must explicitly record the verdict on the inherited '>= 121 tests' floor premise: present or absent, with the evidence that settles it.",
-   "notes": "PLAN confirmed by reading that NO literal suite-size floor exists in test/ — '121' occurs only in two prose comments in readme-matrix-consistency.test.js, and .github/workflows/test.yml carries an explicit written refusal to add a count assertion. So S-1's 'retire the COUNT floor' half likely has nothing to retire and W-2 is net-NEW tooling, not a replacement. The tool must SAY that rather than manufacture a floor to retire. Measured start: 129 tests across 7 files (readme-tags 31, args 28, cli 29, select 18, pipe 16, readme-matrix-consistency 5, node-support-citation 2); test/ 4,587 lines; src+bin 594. tools/ is outside the cited pathspec so creating it cannot falsify the README citation."
+   "notes": "PLAN confirmed by reading that NO literal suite-size floor exists in test/ — '121' occurs only in two prose comments in readme-matrix-consistency.test.js, and .github/workflows/test.yml carries an explicit written refusal to add a count assertion. So S-1's 'retire the COUNT floor' half likely has nothing to retire and W-2 is net-NEW tooling, not a replacement. The tool must SAY that rather than manufacture a floor to retire. Measured start: 129 tests across 7 files (readme-tags 31, args 28, cli 29, select 18, pipe 16, readme-matrix-consistency 5, node-support-citation 2); test/ 4,587 lines; src+bin 594. tools/ is outside the cited pathspec so creating it cannot falsify the README citation. [CYCLE 2 VERIFIED] Conductor gate: tool exits 0, 400 lines of output; tree byte-identical across a run; suite still collects exactly 129 (tool not collected). Floor verdict ABSENT was re-derived INDEPENDENTLY by the conductor (own grep: only 3+-digit literals in assertion position across test/ are the seeds 12345 and 99999; 121 occurs only in two comments in readme-matrix-consistency.test.js). Non-hardcoding proved by DISCRIMINATOR: on a mutated scratch tree with one extra test file the tool moved 4587->4591 lines, 129->131 runner tests, 93->94 excluded, and self-flagged a static-vs-runner DISAGREE rather than smoothing it. Two classifications spot-checked by reading source: readme-tags.test.js:85 genuinely derives via countTagsInCorpus() (DERIVED, correct); select.test.js:9 is a literal 40 about corpus data not a document (BORDERLINE, correct).",
+   "verified_cycle": 2
   },
   {
    "id": "W-2",
@@ -58,7 +59,7 @@
     "S-3"
    ],
    "kind": "docs",
-   "status": "todo",
+   "status": "done",
    "effort": "S",
    "priority": 3,
    "deps": [],
@@ -70,7 +71,8 @@
    ],
    "packages": [],
    "acceptance": "docs/node-support-citation-history.md contains README.md's citation-selection-rule sentence as an EXACT substring, attributed to README's '### Node support' section, in place of the current restatement; any surviving description of a superseded rule is clearly marked as history. The doc shows the derivation of applying the QUOTED rule to this tree and lands on the citation the README actually carries. A machine check of at most 30 added lines lives at tools/citation-rule-check.mjs (NOT a new test file), asserts file-to-file substring equality, is demonstrated failable (red when the quote is perturbed) and attributable (its failure names which document diverged), and is paired with a converse control showing it passes on the honest text.",
-   "notes": "Divergence verified in SHAPE: README says the reference matrix is 'the matrix run for the push that carried the last change to src/, bin/, test/, or the workflow itself'; the history file's Q-8 entry states it as 'the most recent run whose cited commit's ... content is byte-identical to this tree's, without requiring that the cited commit be the one that produced the change.' Those select differently once later pushes exist that did not touch the pathspec. NOT executed against the Actions API — re-derive before acting. CONVENTION CONSTRAINT: the file's header promises the five blockquoted cycle entries are byte-identical to text removed from the README and must NOT be edited; the Q-7 and Q-8 entries are not blockquotes and ARE the editable surface. Putting the check in tools/ rather than test/ is deliberate: a sixth README guard test file is the run's explicit anti-goal, and docs/ + tools/ are outside the cited pathspec so this cannot open a citation window."
+   "notes": "Divergence verified in SHAPE: README says the reference matrix is 'the matrix run for the push that carried the last change to src/, bin/, test/, or the workflow itself'; the history file's Q-8 entry states it as 'the most recent run whose cited commit's ... content is byte-identical to this tree's, without requiring that the cited commit be the one that produced the change.' Those select differently once later pushes exist that did not touch the pathspec. NOT executed against the Actions API — re-derive before acting. CONVENTION CONSTRAINT: the file's header promises the five blockquoted cycle entries are byte-identical to text removed from the README and must NOT be edited; the Q-7 and Q-8 entries are not blockquotes and ARE the editable surface. Putting the check in tools/ rather than test/ is deliberate: a sixth README guard test file is the run's explicit anti-goal, and docs/ + tools/ are outside the cited pathspec so this cannot open a citation window. [CYCLE 2 VERIFIED] Conductor gate: README.md untouched (git diff --stat empty); ZERO blockquote lines added or removed in the history doc, so the header byte-identity promise holds; check is 29 lines (budget 30); exits 0 on the honest tree. Exact-substring re-derived INDEPENDENTLY by the conductor without the builders tool: the ### Node support heading occurs exactly once, the doc carries exactly one ```readme-quote block, 257 bytes, and it is a byte-exact substring of that section. Failability proved with the conductors OWN perturbation (cited SHA 7e50d6f->7e50d6e, different from the builders which-vs-that edit): exit 1. Converse control green, restore green. FINDING BEYOND THE CLAUSE, recorded not buried -> new item P-1.",
+   "verified_cycle": 2
   },
   {
    "id": "W-4",
@@ -80,7 +82,7 @@
     "S-6"
    ],
    "kind": "measure",
-   "status": "todo",
+   "status": "done",
    "effort": "M",
    "priority": 4,
    "deps": [],
@@ -91,7 +93,8 @@
    ],
    "packages": [],
    "acceptance": "tools/citation-tax.mjs walks committed history and derives, without hardcoding the answer: (a) how many commits touched the cited pathspec src/ bin/ test/ .github; (b) of those, how many landed while the citation guard existed and therefore made the README's cited diff non-empty at that commit — knowingly committed RED; (c) how many separate follow-up commits were spent re-citing; (d) the commit gap between each breakage and its repair, so same-commit and later-cycle repairs are distinguishable. It prints the exact derivation per event (breaking SHA, repairing SHA, gap) and ends with a plain recommendation on whether the ritual is intrinsic to a self-falsifying claim or an artifact of an over-claiming pathspec. It changes no pathspec, no assertion, no citation.",
-   "notes": "PLAN's starting measurements, to be RE-DERIVED not trusted: 48 of 255 commits touch the pathspec across all history, but the guard only came into existence at 5f833ab, so 'every commit in history' is the wrong denominator and would inflate the tax. Honest denominator looks like the 6 pathspec-touching commits from 5f833ab forward (5f833ab, c08562b, c9dd7ff, 2b003ea, 4b63e91, 22fdeac→a302f71→7e50d6f), each of which appears to have cost a re-citation commit — i.e. ~100%. The guard also CHANGED SHAPE mid-history (c08562b made it fail loud on ambiguity; 2b003ea added the working-tree comparison), so 'would have turned red' is only well-defined against the guard version live at that commit — decide and state the convention."
+   "notes": "PLAN's starting measurements, to be RE-DERIVED not trusted: 48 of 255 commits touch the pathspec across all history, but the guard only came into existence at 5f833ab, so 'every commit in history' is the wrong denominator and would inflate the tax. Honest denominator looks like the 6 pathspec-touching commits from 5f833ab forward (5f833ab, c08562b, c9dd7ff, 2b003ea, 4b63e91, 22fdeac→a302f71→7e50d6f), each of which appears to have cost a re-citation commit — i.e. ~100%. The guard also CHANGED SHAPE mid-history (c08562b made it fail loud on ambiguity; 2b003ea added the working-tree comparison), so 'would have turned red' is only well-defined against the guard version live at that commit — decide and state the convention. [CYCLE 2 VERIFIED] Conductor gate: tool exits 0, 320 lines, wrote nothing (tree byte-identical across a run, only the conductors own evidence files appeared). No event SHA, tax figure or denominator appears as a literal in the source; no mutating git verb in the source. Denominator RE-DERIVED INDEPENDENTLY by the conductor: git rev-list --first-parent --count 5f833ab~1..HEAD -- src bin test .github = 6, out of 39 first-parent commits in the window - exactly the tools 6 SHAs, including its correction that 7e50d6f touches nothing in the pathspec and that 22fdeac/a302f71 is one event billed once. Event 3 hand-checked end to end: README at c9dd7ff cited base c08562b; git diff c08562b..c9dd7ff -- src bin test .github names .github/workflows/test.yml (non-empty -> RED); repair 6c0c298 re-cited the base to c9dd7ff; gap = 2. Every cell matches.",
+   "verified_cycle": 2
   },
   {
    "id": "W-5",
@@ -132,7 +135,7 @@
    "files_hint": [],
    "packages": [],
    "acceptance": "At every commit this run makes: src/corpus.js hashes to sha256 77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e; --help output hashes to sha256 d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64; the dependency surface is unchanged and nothing under tools/ imports outside node: builtins; no file under src/ or bin/ changes at all; and the suite is green at every commit EXCEPT a single citation window named as such, IN ADVANCE, in the commit message of the commit that opens it.",
-   "notes": "An invariant, not a unit of work — conductor-held, never dispatched to a builder. Both hashes re-verified against HEAD 912a2a4 by PLAN and they match SPEC exactly, so the baseline is real, not inherited. W-7 is the ONLY item that can open a citation window (only item touching test/); every other item lands in tools/, docs/, or REPORT.md, all outside the cited pathspec. package.json must not be touched and appears in no files_hint."
+   "notes": "An invariant, not a unit of work — conductor-held, never dispatched to a builder. Both hashes re-verified against HEAD 912a2a4 by PLAN and they match SPEC exactly, so the baseline is real, not inherited. W-7 is the ONLY item that can open a citation window (only item touching test/); every other item lands in tools/, docs/, or REPORT.md, all outside the cited pathspec. package.json must not be touched and appears in no files_hint. [CYCLE 2 HELD] corpus sha256 77a4de5c... and --help sha256 d759d781... both re-measured and unmoved; git status --porcelain -- src bin test .github README.md package.json is EMPTY (no file inside the cited pathspec touched, so no citation window opened); no package.json exists so the dependency surface is unchanged; grep finds zero non-node: imports under tools/; suite green 129/129/0 skipped at the cycle-2 commit."
   },
   {
    "id": "W-7",
@@ -505,6 +508,26 @@
    "cycle_found": 0,
    "carry_note": "Not started - no cycle ran (KI-R7-1). Fully specified; dispatchable on run #8 cycle 1. attempts unchanged at 0.",
    "note": "superseded at run #8 kickoff by must-have S-4; run #7 delivered zero work cycles so this item was never started. Not deleted — the successor carries its acceptance."
+  },
+  {
+   "id": "P-1",
+   "title": "citation-rule-check.mjs blames the doc even when README is the side that moved",
+   "covers": [
+    "S-3"
+   ],
+   "kind": "polish",
+   "status": "todo",
+   "effort": "S",
+   "priority": 11,
+   "deps": [],
+   "attempts": 0,
+   "model": "sonnet",
+   "files_hint": [
+    "tools/citation-rule-check.mjs"
+   ],
+   "packages": [],
+   "acceptance": "When README.md`s citation-selection sentence is reworded while the history doc`s quote block is left untouched, tools/citation-rule-check.mjs`s failure message identifies README.md as the document that moved, rather than reporting that the history doc has diverged. The existing doc-side perturbation must still name the history doc, and the honest-text converse control must still exit 0. Both directions demonstrated by real runs against a scratch copy.",
+   "notes": "Found by the cycle-2 conductor gate, BEYOND the W-3 acceptance clause (which scopes failability to perturbing the QUOTE, and that case attributes correctly). Measured: perturbing README`s sentence -- `the push that carried the last change to` -> `the push that carried the change to` -- while leaving the doc alone still prints `FAIL: docs/node-support-citation-history.md has diverged`. Every factual clause in that message is true (the block is genuinely not a substring of README any more) but the direction of attribution is wrong. The builder`s own Run D showed a README-side message, but only for a MISSING HEADING -- a structurally different failure, not a body divergence. A substring check cannot infer direction from two files alone; closing this likely needs a third anchor (e.g. the committed blob of README at the last green commit) or a message that names the pair without asserting which side moved. Not a gate failure for W-3; a real defect on the record."
   }
  ]
 }

@@ -21603,3 +21603,223 @@ runfile-mirror:
 ```json
 {"version":1,"run_label":"improvement run #8","targets":[{"path":"/opt/targets/aphorism-cli","name":"aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":1787663147,"usage_reset_at":1787583600,"stop_at_iso":"2026-08-25T13:05:47.000Z","usage_reset_at_iso":"2026-08-24T15:00:00.000Z","model_policy":"value-routing","auth_mode":"subscription","kickoff_source":"allocator","heartbeat":{"ts":1787577950,"next_wakeup_at":1787578040,"pid":3627127,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"probe","gear":3,"gear_target":3,"ratio":0.12,"mode":"guest","k_cap":3,"promote":false,"demote":false,"window_tokens":26571718,"window_cost_usd":24.869135,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":8216624,"projected_depletion_at":1787628710,"last_probe_ts":1787577261,"last_real_probe_ts":1787577261,"probe_failures":0,"weekly":{"ok":false,"weekly_used_pct":0,"opus_used_pct":0,"week_elapsed_pct":4.819,"weekly_heat":0,"opus_heat":0,"ceiling":5,"promote_blocked":false,"week_resets_at":1788152399},"probe_note":"First probe of the cycle ran BEFORE the runfile existed and returned thermostat/gear 4. Re-probed after writing the runfile: bin/swarm-budget.sh line 36 defaults RUNFILE to $SWARM_DIR/runs/current.json, so the bare ALLOWLISTED form reads this run pacing with no env prefix. L-039 env-prefix denial is not reachable in this ordering."},"watchdog":{"mode":"pacer","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0,"note":"swarm-watchdog.timer is enabled+active but is a MEASURED NO-OP for this run: bin/swarm-watchdog.sh line 279 keys its DONE-guard on REPORT.md existing in every target, and /opt/targets/aphorism-cli/REPORT.md exists from run #7. L-037 clause 2, asserted at kickoff rather than assumed. RECOVERY PATH IS THE PACER: bin/swarm-pacer.sh keys only on wrap_up_complete (line 183) and heartbeat.next_wakeup_at (line 229) — it does NOT check REPORT.md — and swarm-pacer.timer is active. Verified by reading both scripts; neither was edited (hard rule 5)."},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":0,"artifact":{"url":"","file":"/opt/swarm/runs/dashboard.html","publish_failures":0},"playbook":{"apply_mode":"auto","source":"direct read of playbook/learnings.md (bin/swarm-playbook.sh structurally unallowlisted — KI-R6-2, 12th consecutive confirmation, zero denials burned this run)","applied":["L-008","L-016","L-024","L-026","L-029","L-031","L-033","L-034","L-037","L-038","L-042","L-043","L-044","L-046","L-047"],"vetoed":[],"held_out":[{"id":"L-022","why":"persisted UI state in beforeEach — this target is a terminal CLI with no browser surface; held out for the fourth consecutive run"}],"directives":{"wave_k":null,"routing_recs":["core-logic->fable (L-026)"],"prompt_lines":{"builder":"The conductor is the SOLE committer — never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work. Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps. Classify each surviving mutant as HOLE (a real gap - harden it) or BOUNDARY (behaviour the spec does not decide - document it) BEFORE writing any test. When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence. For every mutation that must kill the suite, author one control that must leave it GREEN — a check that dies on everything is a snapshot test, not an assertion. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check.","reviewer":"The conductor is the SOLE committer — never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. Assign each fixer a pairwise-disjoint file set; two fixers must never share a file. The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work.","qa":"Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'. Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns. Classify each surviving mutant as HOLE or BOUNDARY BEFORE writing any test."},"process":["kickoff-refuse-on-exhausted-window (L-038) — RUN at cycle 0, PASSED: weekly 6.0% at 4.819% elapsed, reset 2026-08-31 well past stop_at","spawner-backoff-to-known-reset (L-037) — SWARM tool gap, reported not edited (hard rule 5)","wire-through check at each layer boundary for domain-capability items (L-046)","reserve one mid-run cycle for the taste pass before the VALUE_LOOP tail (L-038)"]}},"kickoff_hints":{"mode":"guest","dial":0.3,"brief":"TRICKLE POSTURE: housekeeping only — harden tests, fix playbook items, polish docs — no new features. Haiku-priced work types; no new features.","source":"allocator","stop_at":1787663147,"consumed_at":1787577261},"session_shape":"headless -p session spawned by swarm-pacer.sh (auto-kickoff 13:05:48Z). Workflow tool is review-gated headless, so build dispatch is DIRECT Agent calls with disjoint scopes declared in-prompt (L-016); Artifact publish unavailable (local dashboard render IS the publication on the VPS); `claude` is not allowlisted so kickoff step 11 could not run."}
 ```
+
+---
+
+## cycle 2 — build-wave (W-1, W-3, W-4) → all three verified done [value]
+
+**clock** 2026-08-24T13:58:10Z · stop_at 2026-08-25T13:05:47Z (23.1h remain) ·
+probe_ok true, gear 3 cruise, guest, ρ 0.12, k_cap 3 · window 33,788,240 tokens at
+9,493,916 tok/h, projected depletion 2026-08-25T01:10:26Z · weekly governor now reads
+`ok: true` (it was `false` at kickoff), used 0% at 5.085% elapsed, ceiling 5 —
+`promote` stays false because guest never upshifts past gear 3 ·
+admission: build-wave 2700s against 83,257s of remaining window, fits easily.
+
+**control** `swarm-notify.sh poll` returned nothing; `runs/control.json` has
+`pending: []`, `applied: []`, and no `inject` array. Control idle, nothing to triage.
+
+**work** build-wave, k=3 = min(k_current 3, gear cap 3, hard max 5). Workflow is
+review-gated in a headless `-p` session, so dispatch was **three DIRECT Agent calls**
+with pairwise-disjoint file scopes declared in-prompt (L-016). No branches, no merges —
+the gate below ran against the working tree. Routing recomputed at pick time, gear 3 =
+table as-is: **W-1** fable (`route_class: core`), **W-3** opus, **W-4** opus.
+Craft pack not fetched — `swarm-craft.mjs` output is a UI/review/docs reference pack and
+this wave produced two measurement executables and one prose-derivation doc on a terminal
+CLI with no browser surface.
+
+Post-merge checks from the build-wave contract: **collision-scan and the qa-verify look
+pass were both skipped, deliberately.** Neither applies — no merged file is user-visible
+under the heuristic (nothing here is served to a browser; the wave touched `tools/` and
+`docs/` only), and the target has no classic non-module script surface for
+collision-scan to scan. Recorded as not-run, not as passed.
+
+### VERIFICATION EVIDENCE — W-6 (standing invariant, conductor-held)
+
+```
+77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e  src/corpus.js
+d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64  -   (node bin/aphorism.js --help)
+expect corpus 77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e   MATCH
+expect help   d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64   MATCH
+
+$ git status --porcelain -- src bin test .github README.md package.json
+                                        (empty — nothing inside the cited pathspec moved)
+$ grep -nE "(require|from)\s*\(?['\"]" tools/*.mjs | grep -v "node:"
+NONE — all imports are node: builtins
+$ node --test test/*.test.js
+ℹ tests 129   ℹ pass 129   ℹ fail 0   ℹ skipped 0
+```
+
+No file under `src/` or `bin/` changed at all; no `package.json` exists, so the dependency
+surface is unchanged by construction. **No citation window was opened this cycle** — the
+whole wave landed outside `src/ bin/ test/ .github`. The suite collecting exactly 129 with
+three new files present in `tools/` is also the proof that `tools/` is not collected.
+
+### VERIFICATION EVIDENCE — W-1 (guard inventory)
+
+The gate did **not** accept the tool's own verdict. Two cells were re-derived independently
+and one was a discriminator the tool could not have coded to.
+
+```
+$ node tools/guard-inventory.mjs   -> EXIT 0, 400 lines   (full: .swarm/runs/gate-c2-w1.txt)
+
+CONDUCTOR'S OWN floor check, not the tool's:
+$ grep -nE "assert[a-zA-Z.]*\([^)]*[0-9]{3,}" test/*.test.js
+test/select.test.js:171:    assert.deepStrictEqual(pick(many, 12345), expected);
+test/select.test.js:296:  assert.deepStrictEqual(pick(single, 99999), corpus[0]);
+        -> both are SEEDS, not counts. No count floor.
+$ grep -rn "121" test/ src/ bin/ .github/
+test/readme-matrix-consistency.test.js:8:   // ... (`122` -> `121`) and          [COMMENT]
+test/readme-matrix-consistency.test.js:41:  //  `121 pass` row no longer sums    [COMMENT]
+
+DISCRIMINATOR — is the tool re-deriving or reciting? Mutated scratch tree, +1 test file:
+  TOTAL   4591 lines   130 test() blocks   runner total: 131 tests      (was 4587 / 129)
+  Totals: 18 included, 18 borderline, 94 excluded                       (was 93 excluded)
+  test/zz-gate-probe.test.js  DISAGREE (static 1 vs runner 2) [WARNING: static parse suspect]
+```
+
+The inherited **">= 121 tests" floor premise is ABSENT** — and the conductor established
+that with its own grep before reading the tool's section G. `121` exists only as two lines
+of historical narration in comments. This is now the **third independent route** to the
+same finding (cycle 0's D-R8-2, cycle 1's PLAN via the workflow's written refusal, and
+this grep), so S-1's "retire the COUNT floor" half has nothing to retire and W-2's
+detection floor is **net-new tooling, not a replacement**. The tool says exactly that
+rather than manufacturing a floor.
+
+The discriminator is the cell that matters: every published number moved under mutation,
+so nothing is recited. The tool also **self-reported a DISAGREE** between its static parse
+and the runner on the probe file instead of smoothing the two together — a tool that
+declares its own soft spot is worth more than one that always agrees with itself.
+
+Two classifications spot-checked by reading source: `readme-tags.test.js:85` genuinely
+derives its expectation via `countTagsInCorpus()` (classified DERIVED — correct);
+`select.test.js:9` asserts `corpus.length >= 40`, a stale-able literal about corpus data
+rather than a document (classified BORDERLINE, excluded from the count-claim set —
+correct, and the honest call).
+
+### VERIFICATION EVIDENCE — W-3 (README rule quoted, checked from `tools/`)
+
+```
+$ git diff --stat -- README.md              (empty — README untouched)
+$ git diff -U0 -- docs/node-support-citation-history.md | grep -cE '^[-+]> '
+0                                            (zero blockquote lines touched — header promise holds)
+$ wc -l tools/citation-rule-check.mjs
+29                                           (budget 30)
+
+CONDUCTOR'S OWN substring check, without the builder's tool:
+  "### Node support" occurs in README exactly 1 time
+  doc carries exactly 1 ```readme-quote block, 257 bytes
+  EXACT SUBSTRING OF SECTION: true      EXACT SUBSTRING OF WHOLE README: true
+
+FAILABILITY — conductor's OWN perturbation (cited SHA 7e50d6f -> 7e50d6e in the doc quote;
+the builder used a different edit, so this is not their demonstration re-run):
+  converse control, unperturbed scratch ......... exit 0
+  doc quote perturbed ........................... exit 1  "FAIL: docs/node-support-...
+                                                           has diverged ... Diverging quote:"
+  restore ....................................... exit 0
+```
+
+The doc now carries README's rule as a 257-byte verbatim quote in a fenced
+` ```readme-quote ` block (a fence, not a blockquote — `> ` prefixes would have both broken
+exact-substring identity and collided with the header's byte-identity promise), and derives
+from that quoted rule to run `32405521233` at `7e50d6f`, the citation README actually
+carries. Two superseded wordings survive, explicitly marked as history.
+
+**A defect was found beyond the acceptance clause, and it is recorded rather than
+buried — decision D-R8-7.** Perturbing the *README* side instead (`the push that carried
+the last change to` → `the push that carried the change to`) while leaving the doc alone
+still prints `FAIL: docs/node-support-citation-history.md has diverged` — blaming the
+document that did not move. Every factual clause in that message is true; only the
+direction of attribution is wrong. The acceptance clause scopes failability to perturbing
+*the quote*, and that direction attributes correctly, so this is a **pass with a finding**,
+not a fail: rounding it into a FAIL would discard verified work over a case the clause
+never asked for, and staying quiet would be the gate opening itself by silence. Filed as
+new item **P-1** with the exact perturbation that reproduces it.
+
+### VERIFICATION EVIDENCE — W-4 (citation two-commit tax)
+
+```
+$ node tools/citation-tax.mjs   -> EXIT 0, 320 lines   (full: .swarm/runs/gate-c2-w4.txt)
+   tree byte-identical across the run; the tool wrote nothing
+$ grep -nE "5f833ab|c08562b|c9dd7ff|2b003ea|4b63e91|a302f71|c0337f1|..." tools/citation-tax.mjs
+NONE — no event or repair SHA appears as a literal; no tax figure or denominator either
+$ grep -nE "\"(commit|add|push|checkout|reset|stash|tag|rm|mv)\"" tools/citation-tax.mjs
+NONE — read-only git verbs only
+
+CONDUCTOR'S OWN denominator, derived before reading the tool's:
+$ git rev-list --first-parent --count 5f833ab~1..HEAD -- src bin test .github   ->  6
+$ git rev-list --first-parent --count 5f833ab~1..HEAD                           -> 39
+   the six: a302f71  4b63e91  2b003ea  c9dd7ff  c08562b  5f833ab
+
+EVENT 3 HAND-CHECKED END TO END:
+$ git show c9dd7ff:README.md | grep -oE "git diff [0-9a-f]{7,}\.\.HEAD -- [^`]*"
+git diff c08562b..HEAD -- src bin test .github          (base cited AT that commit)
+$ git diff --name-only c08562b..c9dd7ff -- src bin test .github
+.github/workflows/test.yml                              (non-empty -> RED, confirmed)
+$ git show 6c0c298:README.md | grep -oE "git diff [0-9a-f]{7,}\.\.HEAD"
+git diff c9dd7ff..HEAD                                  (the repair re-cited the base)
+$ git rev-list --first-parent --count c9dd7ff..6c0c298   ->  2      (gap 2, as reported)
+```
+
+**The tax: 6 of 6 = 100%**, on an honest denominator of 6 pathspec-touching commits since
+the guard was born at `5f833ab`, out of 39 first-parent commits in that window. The
+all-history figure 48/252 is printed by the tool only to show why it is wrong — 42 of
+those 48 commits predate the guard and could not have falsified a citation that did not
+exist. My independent `rev-list` landed on the same 6 SHAs, **including the tool's
+correction to PLAN's lead**: `7e50d6f` touches nothing in the pathspec (it is the SHA the
+*push* was tested at, not the SHA that broke anything), and `22fdeac`/`a302f71` is one
+event billed once at the merge, not two.
+
+Gaps 1, 1, 2, 1, 2, 3 — mean 1.67, **zero same-commit repairs**, nothing red at HEAD.
+
+The recommendation is a real judgement and the measurement carries it: **the ritual is
+intrinsic to the self-falsifying claim, not an artifact of an over-claiming pathspec.**
+The gap cannot be zero, because the citation names a CI *run id*, CI runs on push, and a
+push cannot precede the commit — so no commit can ever cite the run that tested it.
+Narrowing the pathspec changes how often you pay, never whether. Realized over-claim is
+**0 files**: every file ever billed is one CI executes or consumes. The one component whose
+breadth exceeds its own prose is `.github` (the pathspec names the directory, the section
+says "the workflow itself") — named for honesty, but it has cost 0 commits, so it is
+latent, not the mechanism. Sharpest secondary finding: **0 of the 6 breaking commits
+touched `src/` or `bin/` at all, and 5 were caused by a test whose own source reads
+`README.md`** — the citation is mostly falsified by the apparatus built to check it. If
+there is a lever it is the **unit** of the claim (per-commit assertion vs per-push
+evidence), not the breadth of the paths. Nothing was changed; the recommendation is the
+deliverable, per S-4.
+
+The tool is also honest about its three limits: whether a commit landed *knowingly* red is
+undecidable from history (a prose keyword scan is printed, clearly labelled NOT A CHECK,
+and used in no verdict or number); git records no push boundaries, so the tax in CI *runs*
+is unknowable; and "repair" is defined structurally, not by author intent.
+
+### Gate outcome
+
+| item | verdict | how it was proved |
+|---|---|---|
+| W-1 | **done** | independent grep + mutation discriminator; every number moved |
+| W-3 | **done, with finding P-1** | independent substring check + own perturbation |
+| W-4 | **done** | independent `rev-list` denominator + one event hand-checked end to end |
+| W-6 | **held** | both hashes unmoved, pathspec untouched, suite green |
+
+**Wave autotune:** CLEAN wave — zero reverts, zero failed verifies →
+`wave_streak` 0 → **1**, `k_current` stays **3** (it takes two clean waves to raise k).
+`consecutive_no_value` stays **0**.
+
+backlog: `{"todo":8,"done":3,"blocked":9,"dropped":4}` — **W-2 is now unblocked** (its only
+dep W-1 is done), and it is the spine item: the bounded rule-generated mutation matrix,
+~30 suite runs, L-effort. New item **P-1** (S, sonnet) from the W-3 finding.
+
+**Next cycle's pick, composed not dispatched:** W-2 alone. It is L-effort, carries the
+run's only real execution risk (the scratch copy must be a real git work tree or the two
+`node-support-citation` guards skip for *environmental* reasons and silently corrupt the
+matrix), and its `files_hint` would collide with nothing — but a 30-suite-run item does not
+want two neighbours competing for the same window. W-5 (`tools/matrix-adjudication.mjs`) is
+the natural second if W-2's scratch strategy resolves cheaply.
+
+commit: (this cycle's commit — see git log)
+next wakeup: 2026-08-24T13:58:10Z (+90s; the pacer fires on its next 5-min tick — this is a
+headless `-p` session, so `watchdog.mode = "pacer"` and `next_wakeup_at` is the whole
+mechanism; no ScheduleWakeup call is made or would survive)
+runfile-mirror:
+```json
+{"version":1,"run_label":"improvement run #8","targets":[{"path":"/opt/targets/aphorism-cli","name":"aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":1787663147,"usage_reset_at":1787583600,"stop_at_iso":"2026-08-25T13:05:47.000Z","usage_reset_at_iso":"2026-08-24T15:00:00.000Z","model_policy":"value-routing","auth_mode":"subscription","kickoff_source":"allocator","heartbeat":{"ts":1787579800,"next_wakeup_at":1787579890,"pid":3631579,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"probe","gear":3,"gear_target":3,"ratio":0.12,"mode":"guest","k_cap":3,"promote":false,"demote":false,"window_tokens":33788240,"window_cost_usd":31.636411,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":9493916,"projected_depletion_at":1787620226,"last_probe_ts":1787578421,"last_real_probe_ts":1787578421,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":0,"opus_used_pct":0,"week_elapsed_pct":5.085,"weekly_heat":0,"opus_heat":0,"ceiling":5,"promote_blocked":false,"week_resets_at":1788152399},"probe_note":"cycle 2 re-probe: probe_ok true, gear 3 cruise (guest clamps 1-3), weekly governor reads ok:true this cycle (was false at kickoff) so the ceiling is evidence-backed rather than disengaged; promote stays false because guest never upshifts past 3."},"watchdog":{"mode":"pacer","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0,"note":"swarm-watchdog.timer is enabled+active but is a MEASURED NO-OP for this run: bin/swarm-watchdog.sh line 279 keys its DONE-guard on REPORT.md existing in every target, and /opt/targets/aphorism-cli/REPORT.md exists from run #7. L-037 clause 2, asserted at kickoff rather than assumed. RECOVERY PATH IS THE PACER: bin/swarm-pacer.sh keys only on wrap_up_complete (line 183) and heartbeat.next_wakeup_at (line 229) — it does NOT check REPORT.md — and swarm-pacer.timer is active. Verified by reading both scripts; neither was edited (hard rule 5)."},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":1,"artifact":{"url":"","file":"/opt/swarm/runs/dashboard.html","publish_failures":0},"playbook":{"apply_mode":"auto","source":"direct read of playbook/learnings.md (bin/swarm-playbook.sh structurally unallowlisted — KI-R6-2, 12th consecutive confirmation, zero denials burned this run)","applied":["L-008","L-016","L-024","L-026","L-029","L-031","L-033","L-034","L-037","L-038","L-042","L-043","L-044","L-046","L-047"],"vetoed":[],"held_out":[{"id":"L-022","why":"persisted UI state in beforeEach — this target is a terminal CLI with no browser surface; held out for the fourth consecutive run"}],"directives":{"wave_k":null,"routing_recs":["core-logic->fable (L-026)"],"prompt_lines":{"builder":"The conductor is the SOLE committer — never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work. Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps. Classify each surviving mutant as HOLE (a real gap - harden it) or BOUNDARY (behaviour the spec does not decide - document it) BEFORE writing any test. When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence. For every mutation that must kill the suite, author one control that must leave it GREEN — a check that dies on everything is a snapshot test, not an assertion. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check.","reviewer":"The conductor is the SOLE committer — never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. Assign each fixer a pairwise-disjoint file set; two fixers must never share a file. The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work.","qa":"Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'. Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns. Classify each surviving mutant as HOLE or BOUNDARY BEFORE writing any test."},"process":["kickoff-refuse-on-exhausted-window (L-038) — RUN at cycle 0, PASSED: weekly 6.0% at 4.819% elapsed, reset 2026-08-31 well past stop_at","spawner-backoff-to-known-reset (L-037) — SWARM tool gap, reported not edited (hard rule 5)","wire-through check at each layer boundary for domain-capability items (L-046)","reserve one mid-run cycle for the taste pass before the VALUE_LOOP tail (L-038)"]}},"kickoff_hints":{"mode":"guest","dial":0.3,"brief":"TRICKLE POSTURE: housekeeping only — harden tests, fix playbook items, polish docs — no new features. Haiku-priced work types; no new features.","source":"allocator","stop_at":1787663147,"consumed_at":1787577261},"session_shape":"headless -p session spawned by swarm-pacer.sh (auto-kickoff 13:05:48Z). Workflow tool is review-gated headless, so build dispatch is DIRECT Agent calls with disjoint scopes declared in-prompt (L-016); Artifact publish unavailable (local dashboard render IS the publication on the VPS); `claude` is not allowlisted so kickoff step 11 could not run."}
+```

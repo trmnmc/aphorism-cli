@@ -1,0 +1,320 @@
+
+==============================================================================
+CITATION TWO-COMMIT TAX  --  derived from committed history, changes nothing
+==============================================================================
+
+This tool wrote nothing. It ran read-only git only. The working tree is
+byte-identical to how it found it.
+
+repo root ............... /opt/targets/aphorism-cli
+HEAD .................... 71792ca  2026-08-24
+section measured ........ "### Node support" in README.md
+guard (parsed from it) .. test/node-support-citation.test.js
+guard born at ........... 5f833ab  2026-08-20  cycle 5: P-6 — mechanize README §Node support's own quoted falsifier
+cited pathspec at HEAD .. src bin test .github   (parsed, not hardcoded)
+cited base at HEAD ...... 7e50d6f
+cited target at HEAD .... HEAD
+
+==============================================================================
+CONVENTION IN FORCE  --  a tax number without one is not a measurement
+==============================================================================
+
+  CONTEMPORANEOUS CORE, COMMITTED HISTORY ONLY.
+
+  Commit X is RED iff, using the base and pathspec that X's OWN README
+  named and only if the guard file existed in X's OWN tree,
+      git diff <base>..X -- <pathspec-at-X>
+  is non-empty. The cited target ref is resolved to X.
+
+  The guard changed shape three times. Only the assertion COMMON to all
+  three shapes is used for the red/green verdict, because neither shape
+  change alters that verdict for an already-committed commit:
+    - the full-clone/unreachable-base rule only turns a SKIP into a FAIL;
+    - the working-tree comparison changes WHEN a breakage is visible, not
+      whether the commit is red once it exists (at commit X, a clean
+      checkout's working tree IS X's tree, so the two comparisons agree).
+  The one genuine divergence -- the ambiguity rule, which fails when the
+  section names more than one cited command -- is reported per commit as a
+  counterfactual instead of being folded into the verdict.
+
+  Timeline is FIRST-PARENT (the mainline as pushed). A merge counts as
+  touching the pathspec when its diff vs its FIRST parent does; the
+  side-branch commit it carried is not billed a second time.
+
+==============================================================================
+STEP 1 -- (a) COMMITS TOUCHING THE CITED PATHSPEC, ALL HISTORY [the WRONG denominator]
+==============================================================================
+
+commits in history (all parents) ................. 256
+commits on the first-parent mainline ............. 252
+  ... of those, touching `src bin test .github` .... 48
+
+cross-checks on the same question, other traversals:
+  git rev-list --count HEAD -- <pathspec> ......... 48   (history-simplified)
+  git rev-list --full-history --count HEAD -- ..... 50   (counts side commits AND their merges)
+
+Naive tax = 48/252 = 19.0% of all mainline commits.
+THIS NUMBER IS WRONG AND IS PRINTED ONLY TO SHOW WHY. It bills every
+commit back to the root against a guard that was not born until 5f833ab.
+42 of those 48 commits predate the guard entirely: no citation could
+have been falsified by them, because there was nothing checking one.
+
+==============================================================================
+STEP 2 -- THE HONEST DENOMINATOR
+==============================================================================
+
+mainline commits from the guard's birth (5f833ab) through HEAD ... 39
+  ... of those, touching the pathspec THEIR OWN README cited ....... 6
+
+That second number is the denominator. Every commit in it landed while a
+guard existed to be falsified by it. Commits before the guard are not in
+scope at any price: they could not have made a cited diff non-empty,
+because no cited diff was being checked.
+
+Excluded by the first-parent choice: 1 side-branch commit(s) that touched
+the pathspec but reached the mainline only through a merge. The merge that
+carried each one IS billed above, so the breakage is counted exactly once:
+  22fdeac  Q-3: guard the Node-support matrix table's own numbe   -> landed via merge a302f71
+
+#  commit   date        guard    cited base  verdict  files touched under the cited pathspec
+-  -------  ----------  -------  ----------  -------  -------------------------------------------------------------
+1  5f833ab  2026-08-20  shape 1  0c2ed40     RED      test/node-support-citation.test.js
+2  c08562b  2026-08-20  shape 2  5f833ab     RED      .github/workflows/test.yml test/node-support-citation.test.js
+3  c9dd7ff  2026-08-20  shape 2  c08562b     RED      .github/workflows/test.yml
+4  2b003ea  2026-08-20  shape 3  c9dd7ff     RED      test/node-support-citation.test.js
+5  4b63e91  2026-08-20  shape 3  2b003ea     RED      test/readme-tags.test.js
+6  a302f71  2026-08-20  shape 3  4b63e91     RED      test/readme-matrix-consistency.test.js
+
+==============================================================================
+STEP 3 -- (b) OF THOSE, HOW MANY MADE THE CITED DIFF NON-EMPTY AT THAT COMMIT
+==============================================================================
+
+pathspec-touching commits in scope ......... 6
+  RED at their own commit .................. 6
+  green at their own commit ................ 0
+  undecidable .............................. 0
+
+==> THE TAX: 6 of 6 = 100.0% of pathspec-touching commits landed RED.
+
+Per-commit derivation of each RED verdict (the exact diff that was non-empty):
+
+  5f833ab  2026-08-20  cycle 5: P-6 — mechanize README §Node support's own quoted falsifier
+    README at this commit cited: git diff 0c2ed40..HEAD -- src bin test .github
+    resolved to:                 git diff 0c2ed40..5f833ab -- src bin test .github
+    that diff named 1 file(s): test/node-support-citation.test.js
+    -> non-empty -> the cited run no longer described this tree -> RED
+
+  c08562b  2026-08-20  cycle 6: review-fix — the guard on the README citation was steerable by the prose it reads
+    README at this commit cited: git diff 5f833ab..HEAD -- src bin test .github
+    resolved to:                 git diff 5f833ab..c08562b -- src bin test .github
+    that diff named 2 file(s): .github/workflows/test.yml test/node-support-citation.test.js
+    -> non-empty -> the cited run no longer described this tree -> RED
+
+  c9dd7ff  2026-08-20  cycle 8: RF-4 — bump deprecated CI actions to @v7; the gate cell that read a prohibition as the violation [verified, CI half pending]
+    README at this commit cited: git diff c08562b..HEAD -- src bin test .github
+    resolved to:                 git diff c08562b..c9dd7ff -- src bin test .github
+    that diff named 1 file(s): .github/workflows/test.yml
+    -> non-empty -> the cited run no longer described this tree -> RED
+
+  2b003ea  2026-08-20  cycle 10: RF-5 — the citation guard can now fire on the commit that breaks it [verified, red by design]
+    README at this commit cited: git diff c9dd7ff..HEAD -- src bin test .github
+    resolved to:                 git diff c9dd7ff..2b003ea -- src bin test .github
+    that diff named 1 file(s): test/node-support-citation.test.js
+    -> non-empty -> the cited run no longer described this tree -> RED
+
+  4b63e91  2026-08-20  cycle 2: Q-4 — the tag counts leave the prose, and the guards stop punishing honest writing [verified 14/14, citation guard RED by design]
+    README at this commit cited: git diff 2b003ea..HEAD -- src bin test .github
+    resolved to:                 git diff 2b003ea..4b63e91 -- src bin test .github
+    that diff named 1 file(s): test/readme-tags.test.js
+    -> non-empty -> the cited run no longer described this tree -> RED
+
+  a302f71  2026-08-20  cycle 4: Q-3 — the matrix table's own numbers get a guard
+    README at this commit cited: git diff 4b63e91..HEAD -- src bin test .github
+    resolved to:                 git diff 4b63e91..a302f71 -- src bin test .github
+    that diff named 1 file(s): test/readme-matrix-consistency.test.js
+    -> non-empty -> the cited run no longer described this tree -> RED
+
+==============================================================================
+STEP 4 -- (c) FOLLOW-UP COMMITS SPENT RE-CITING, AND (d) THE GAP
+==============================================================================
+
+gap = mainline commits from the breaking commit to its repair.
+      gap 0 = the same commit repaired itself; gap 1 = the very next
+      commit; gap n>1 = the section stayed red for n-1 intervening commits.
+
+#  breaking SHA  repairing SHA  gap  base re-cited       repair commit subject
+-  ------------  -------------  ---  ------------------  ----------------------------------------------
+1  5f833ab       c0337f1        1    0c2ed40 -> 5f833ab  cycle 5: re-cite README §Node support to the m
+2  c08562b       e65ec37        1    5f833ab -> c08562b  cycle 6: re-cite README §Node support, and arc
+3  c9dd7ff       6c0c298        2    c08562b -> c9dd7ff  cycle 9: TASTE gate (wears-thin, 0 new ids) an
+4  2b003ea       556c01e        1    c9dd7ff -> 2b003ea  cycle 10 addendum: re-cite Node support to the
+5  4b63e91       83cef40        2    2b003ea -> 4b63e91  cycle 3: Q-7 — the citation is re-cited to the
+6  a302f71       180e9da        3    4b63e91 -> 7e50d6f  cycle 5 (WRAP_UP): Q-8 — the citation is re-ci
+
+breaking commits ................................. 6
+distinct follow-up commits spent repairing ....... 6
+re-citation commits post-guard (base changed) .... 6
+repaired by the SAME commit (gap 0) .............. 0
+repaired by the NEXT commit (gap 1) .............. 3
+repaired a later cycle (gap > 1) ................. 3
+still red at HEAD ................................ 0
+gap: min 1, max 3, mean 1.67
+
+All re-citation commits in scope, whether or not they closed an event:
+commit   date        base moved          subject
+-------  ----------  ------------------  --------------------------------------------
+c0337f1  2026-08-20  0c2ed40 -> 5f833ab  cycle 5: re-cite README §Node support to the
+e65ec37  2026-08-20  5f833ab -> c08562b  cycle 6: re-cite README §Node support, and a
+6c0c298  2026-08-20  c08562b -> c9dd7ff  cycle 9: TASTE gate (wears-thin, 0 new ids)
+556c01e  2026-08-20  c9dd7ff -> 2b003ea  cycle 10 addendum: re-cite Node support to t
+83cef40  2026-08-20  2b003ea -> 4b63e91  cycle 3: Q-7 — the citation is re-cited to t
+180e9da  2026-08-22  4b63e91 -> 7e50d6f  cycle 5 (WRAP_UP): Q-8 — the citation is re-
+
+==============================================================================
+STEP 5 -- THE GUARD'S CHANGING SHAPE, AND WHETHER IT MOVED ANY VERDICT
+==============================================================================
+
+commit   date        shape  what that shape adds
+-------  ----------  -----  -------------------------------------
+5f833ab  2026-08-20  1      shape 1 (original)
+c08562b  2026-08-20  2      shape 2 (+ambiguity/full-clone rules)
+2b003ea  2026-08-20  3      shape 3 (+working-tree comparison)
+
+Commits whose section named != 1 cited command ... 0
+  -> zero. The ambiguity rule, the only shape change that could have moved a
+     verdict, never had an occasion to. The tax number above is therefore
+     IDENTICAL under the contemporaneous and the retroactive conventions;
+     the convention matters for the DENOMINATOR, not for the guard version.
+
+==============================================================================
+STEP 6 -- DOES THE PATHSPEC OVER-CLAIM? (what CI actually executes)
+==============================================================================
+
+CI's test invocation, read from the workflow at HEAD:
+  .github/workflows/test.yml: - run: node --test test/*.test.js
+
+cited component  breaking events it appears in  files billed  files at HEAD that CI does not consume
+---------------  -----------------------------  ------------  --------------------------------------
+src              0                              0             none (3 file(s) present, all consumed)
+bin              0                              0             none (1 file(s) present, all consumed)
+test             5                              5             none (7 file(s) present, all consumed)
+.github          2                              2             none (1 file(s) present, all consumed)
+
+Breaking events whose diff touched src/ or bin/ (the shipped CLI) .... 0
+Breaking events caused by a test whose own subject is README.md ..... 5
+  (that second class is derived by reading each touched test file at the
+   breaking commit and asking whether its source reads README.md -- not by
+   its filename. These are the guard and its siblings: the citation is being
+   falsified by the apparatus that exists to check the citation.)
+
+Distinct files ever touched under the cited pathspec: 12
+  ... of those, files whose content CI does NOT execute or consume: 0
+
+REALIZED over-claim: none. Every file that has ever been touched under the
+cited pathspec is a file CI runs (a src/ or bin/ module the suite imports, a
+test/*.test.js the runner collects, or the workflow that defines the matrix).
+A change to any of them genuinely can move the cited numbers.
+
+LATENT over-claim: the pathspec names DIRECTORIES, so it covers files that
+do not exist yet and could not move the matrix -- e.g. a .github/ISSUE_TEMPLATE
+or a .github/dependabot.yml, or a non-.test.js fixture under test/. Those
+would falsify the citation without changing a single CI number. That over-claim
+is real but has cost this repo exactly 0 commits so far, so it cannot be what
+the measured tax is made of.
+
+==============================================================================
+RECOMMENDATION
+==============================================================================
+
+THE RITUAL IS INTRINSIC TO THE SELF-FALSIFYING CLAIM. It is NOT an artifact
+of an over-claiming pathspec. Four findings force that, in order of weight:
+
+1. THE GAP IS NEVER ZERO, AND CANNOT BE. All 6 repairs took at least one
+   later commit (gaps 1, 1, 2, 1, 2, 3; 0 same-commit repairs). That is arithmetic,
+   not indiscipline: the citation names a CI RUN ID, CI runs on push, and a
+   push cannot precede the commit. A commit cannot cite the run that tested
+   it. Narrowing the pathspec changes how OFTEN you pay; it cannot make the
+   gap zero, so it cannot retire the ritual.
+   Corroborating, derived: the cited base 7e50d6f does NOT itself touch the
+   pathspec; the commit that actually carried the change is a302f71. The
+   citation names the SHA a PUSH was tested at, not the SHA that broke it --
+   which is the per-push unit showing through in the document itself.
+
+2. EVERY BREAKAGE WAS A TRUE FALSIFICATION. 6 of 6, and the realized
+   over-claim is 0: every file ever billed under the cited pathspec is a
+   file CI executes or consumes. Not one of these commits was punished for a
+   change that could not have moved the cited matrix. There is no component
+   to indict on the evidence of what has actually happened.
+
+3. THE ONE COMPONENT WHOSE BREADTH EXCEEDS ITS OWN PROSE IS `.github`, and it
+   has cost nothing. The pathspec names the whole directory while the section
+   describes the trigger as "the workflow itself"; a future
+   .github/ISSUE_TEMPLATE or dependabot.yml would falsify the citation without
+   moving a single CI number. That is a LATENT over-claim, and it is named
+   here for honesty -- but it is not the mechanism of the measured tax,
+   because the directory has only ever contained the workflow.
+
+4. THE TAX IS DOMINATED BY THE APPARATUS, NOT THE PRODUCT. 0 of the 6 breaking
+   commits touched src/ or bin/ at all; 5 were caused by a test file whose
+   own subject is README.md. The citation is mostly being falsified by the
+   machinery built to check the citation. That is self-reference, not
+   over-claim: those tests live under test/, CI counts them, and the section
+   publishes the counts, so their arrival genuinely retires the run. A guard
+   that lives inside the pathspec it guards must falsify itself on arrival.
+
+The section is not over-claiming its PATHS. If anything it under-claims its
+UNIT: the assertion is per-commit while the evidence it cites is per-push.
+That mismatch, not the breadth of the paths, is what makes the ledger read
+like a ritual.
+
+NO ACTION IS PROPOSED AND NONE WAS TAKEN. This item changes nothing: not the
+pathspec, not the assertion, not the citation. The recommendation IS the
+deliverable. If a later item wants a lever, the data points at the UNIT of
+the claim, not at the breadth of the paths.
+
+==============================================================================
+UNDECIDABLE FROM COMMITTED HISTORY ALONE
+==============================================================================
+
+1. KNOWINGLY red vs. discovered-afterwards.  [NOT A CHECK -- PROSE KEYWORD SCAN]
+   The acceptance question asks how many commits "knowingly" landed red.
+   Committed history cannot answer that. The only trace is what the author
+   wrote in the message, and a keyword scan of prose is not evidence -- it is
+   a pointer. It is reported here, clearly labelled, and is used in NO verdict
+   and in NO number above.
+   4 of the 6 breaking commits mention being red in their own message
+   (e.g. "RED by design", "red window"). That is the AUTHOR'S OWN CLAIM at
+   commit time -- stated intent, not proof of it, and a message can be written
+   after the fact as easily as before.
+     5f833ab  cycle 5: P-6 — mechanize README §Node support's own quoted falsifier
+     c08562b  cycle 6: review-fix — the guard on the README citation was steerable
+     2b003ea  cycle 10: RF-5 — the citation guard can now fire on the commit that 
+     4b63e91  cycle 2: Q-4 — the tag counts leave the prose, and the guards stop p
+     c9dd7ff  [no red disclosure in message]  cycle 8: RF-4 — bump deprecated CI actions to @v7;
+     a302f71  [no red disclosure in message]  cycle 4: Q-3 — the matrix table's own numbers get 
+   The ones with no disclosure are the genuinely open cases.
+   WHAT WOULD SETTLE IT: a pre-commit verification transcript for each
+   breaking commit showing the guard was run and observed failing BEFORE the
+   commit was made. Some of those transcripts exist in-tree under the run
+   evidence directories; where they do not, the question stays open.
+
+2. WHICH COMMITS SHARED A PUSH.
+   Git records no push boundaries, so this tool cannot say how many CI runs
+   the tax actually cost -- only how many commits it cost. The distinction
+   matters: several red commits pushed together cost ONE run, not several.
+   WHAT WOULD SETTLE IT: the workflow run list from the GitHub API (each run
+   names its head SHA), or a reflog from the pushing clone. Neither is in
+   committed history.
+
+3. WHETHER A REPAIR WAS *FOR* THE BREAK IT FOLLOWS.
+   "Repair" here is defined structurally -- the first later commit at which
+   the cited diff is empty again -- not by author intent. A commit that
+   re-cited for an unrelated reason and happened to close an open break
+   would be counted the same way. The commit subjects above are shown so a
+   reader can judge that for themselves rather than trusting the label.
+
+==============================================================================
+SUMMARY: honest denominator 6 pathspec-touching commits since the guard was born; 6 landed RED (100.0%);
+         6 separate follow-up commits were spent re-citing; gaps 1, 1, 2, 1, 2, 3 (0 same-commit repairs).
+         The inflated all-history figure 48/252 is NOT the answer.
+==============================================================================

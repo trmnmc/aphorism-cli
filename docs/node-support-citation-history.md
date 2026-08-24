@@ -196,24 +196,64 @@ Node-support matrix table's own numbers"), which added `test/readme-matrix-consi
 — inside the cited pathspec, and the guard on this section went red on a full clone exactly as
 standing limit 2 above predicts. `22fdeac` was merged into the mainline as `a302f71`.
 
-This time the section's own selection rule, applied literally, selected nothing. That rule
-read "the most recent full matrix run against a commit that actually changed `src/`, `bin/`,
-`test/`, or the workflow itself." `22fdeac` is that commit, but neither it nor its merge
-`a302f71` ever got a CI run of its own: GitHub Actions runs once per push, not once per
-commit, and both landed in the same push as `7e50d6f`, whose SHA is what the run actually
-executed against. Applying the old rule literally would have kept citing `4b63e91` forever —
+This time the section's own selection rule, applied literally, selected nothing. That rule —
+**HISTORY: superseded on 2026-08-20 by commit `180e9da`, and reproduced here only as the
+wording that failed; it is not the rule the README states today** — read "the most recent full
+matrix run against a commit that actually changed `src/`, `bin/`, `test/`, or the workflow
+itself." `22fdeac` is that commit, but neither it nor its merge `a302f71` ever got a CI run of
+its own: GitHub Actions runs once per push, not once per commit, and both landed in the same
+push as `7e50d6f`, whose SHA is what the run actually executed against. Applying the old rule literally would have kept citing `4b63e91` forever —
 no later commit that "actually changed" those paths would ever acquire its own run to replace
 it with, because the one that did change them was never the head of a push. The rule was
 satisfiable in principle and unsatisfiable in fact, given how this repo pushes; that is a
 defect in the rule, not a missing run to go find.
 
-The rule is rewritten rather than patched around. The section now names the most recent run
-whose cited commit's `src/`, `bin/`, `test/`, and `.github` content is byte-identical to this
-tree's, without requiring that the cited commit be the one that produced the change. `7e50d6f`
-is that commit — content-identical to `22fdeac`/`a302f71` in the cited paths, and the first
-SHA in that push with a run of its own. This version of the rule cannot fail the same way
-again: some run always eventually carries HEAD's own content in those paths, including HEAD's
-own commit if nothing else does.
+The rule is rewritten rather than patched around. Rather than paraphrase the replacement, this
+entry now QUOTES it, verbatim, from the `### Node support` section of
+[`../README.md`](../README.md) — README is the rule's home, this file only records it. The
+block below is byte-identical to that sentence, README's own line wrapping included, and
+`tools/citation-rule-check.mjs` asserts that byte-identity and exits non-zero if the two drift
+apart.
+
+```readme-quote
+The
+reference matrix is [Actions run 32405521233](https://github.com/trmnmc/aphorism-cli/actions/runs/32405521233)
+at commit `7e50d6f` (2026-08-20), the matrix run for the push that carried the last change to
+`src/`, `bin/`, `test/`, or the workflow itself.
+```
+
+**Deriving the citation from that quoted rule, on this tree** (HEAD `71792ca` at the time of
+writing):
+
+1. *"the last change to `src/`, `bin/`, `test/`, or the workflow itself"* —
+   `git log -1 --format=%h -- src bin test .github` gives `22fdeac` ("Q-3: guard the
+   Node-support matrix table's own numbers"), which reached the mainline as `a302f71`. And
+   `git log --oneline 7e50d6f..HEAD -- src bin test .github` prints nothing: of the 11 commits
+   made since, none has touched those four paths, so `22fdeac` is still the *last* change.
+2. *"the push that carried"* that change — `22fdeac` and `a302f71` both landed in the push
+   headed by `7e50d6f`. Actions runs once per push, not once per commit, so neither of them
+   has a run of its own; the run for that push executed against `7e50d6f`.
+3. *"the matrix run for"* that push — run `32405521233` (`conclusion: success`,
+   `headSha: 7e50d6f...`), the four rows of which are the matrix table in the README.
+
+The quoted rule therefore selects run `32405521233` at commit `7e50d6f` — the citation the
+README actually carries. Steps 1 and 2 are re-derivable from any full clone with the commands
+shown; step 3's run id, conclusion and head SHA are as recorded against the GitHub Actions API
+by commit `180e9da` and were NOT re-queried when this entry was rewritten.
+
+**HISTORY: a third wording, which was never the README's.** Between `180e9da` and this
+rewrite, the paragraph above did not quote the README at all; it paraphrased the new rule as
+"the most recent run whose cited commit's `src/`, `bin/`, `test/`, and `.github` content is
+byte-identical to this tree's, without requiring that the cited commit be the one that produced
+the change." That paraphrase is superseded and is retained only as a record of the defect it
+caused: it selects a *different* run from the sentence it claimed to restate. Every one of the
+11 commits after `7e50d6f` is byte-identical to `7e50d6f` in those four paths, so all of them
+satisfy the paraphrase, and "most recent" then lands on the newest of them that has a run —
+not on `7e50d6f`. `180e9da`'s own commit message filed this as KI-R6-5 / Q-10 and named
+`3a5d6e3` @ run `32405575919` as what the paraphrase selects; that run id came from the
+Actions API and is NOT re-verified here. What IS re-derivable from this clone, and is what the
+defect turns on, is that the paraphrase's candidate set contains 12 commits where the quoted
+rule's contains exactly one.
 
 Run `32405521233` (`conclusion: success`, `headSha: 7e50d6f...`) reported, across all four
 Node majors (v18.20.8, v20.20.2, v22.23.2, v24.19.0): 129 tests, 127 pass, 0 fail, 2 skipped —
