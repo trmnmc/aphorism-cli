@@ -24341,3 +24341,55 @@ runfile-mirror:
 ```json
 {"version":1,"run_label":"improvement run #8","targets":[{"path":"/opt/targets/aphorism-cli","name":"aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":1787663147,"usage_reset_at":1787601600,"stop_at_iso":"2026-08-25T13:05:47.000Z","usage_reset_at_iso":"2026-08-24T20:00:00.000Z","model_policy":"value-routing","auth_mode":"subscription","kickoff_source":"allocator","heartbeat":{"ts":1787609709,"next_wakeup_at":1787612409,"pid":571467,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"probe","gear":2,"gear_target":2,"ratio":0.58,"mode":"guest","k_cap":2,"promote":false,"demote":true,"window_tokens":36543626,"window_cost_usd":24.01560629999999,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":20343338,"projected_depletion_at":1787627841,"last_probe_ts":1787609370,"last_real_probe_ts":1787609370,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":100,"opus_used_pct":100,"week_elapsed_pct":9.993,"weekly_heat":10.01,"opus_heat":10.01,"ceiling":2,"promote_blocked":true,"week_resets_at":1788152399},"probe_note":"cycle 15 probe: probe_ok true. rho 0.58, gear held at 2 (guest clamps 1-3; the weekly governor ceiling of 2 binds, so gear_target 2 -- no hysteresis step needed). k_cap 2 -> effective wave size min(k_current 5, gear cap 2) = 2. demote TRUE, promote blocked. Window 21.25M -> 36.54M tokens (+15.29M, attributed to aphorism-cli), 20.34M tok/h, projected depletion 1787627841 (02:17Z), ~9.9h BEFORE stop_at -- the next 5h boundary lands first, normal mid-window reading. KI-37 TENTH OBSERVATION: weekly_used_pct 100 at week_elapsed_pct 9.993; opus_used_pct pinned at 100 for the tenth consecutive probe while weekly.ok stays true and the ceiling stays 2."},"watchdog":{"mode":"pacer","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0,"note":"swarm-watchdog.timer is enabled+active but is a MEASURED NO-OP for this run: bin/swarm-watchdog.sh line 279 keys its DONE-guard on REPORT.md existing in every target, and /opt/targets/aphorism-cli/REPORT.md exists from run #7. L-037 clause 2, asserted at kickoff rather than assumed. RECOVERY PATH IS THE PACER: bin/swarm-pacer.sh keys only on wrap_up_complete (line 183) and heartbeat.next_wakeup_at (line 229) — it does NOT check REPORT.md — and swarm-pacer.timer is active. Verified by reading both scripts; neither was edited (hard rule 5)."},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":15,"artifact":{"file":"/opt/swarm/runs/dashboard.html","publish_failures":0},"playbook":{"apply_mode":"auto","source":"direct read of playbook/learnings.md (bin/swarm-playbook.sh structurally unallowlisted — KI-R6-2, 12th consecutive confirmation, zero denials burned this run)","applied":["L-008","L-016","L-024","L-026","L-029","L-031","L-033","L-034","L-037","L-038","L-042","L-043","L-044","L-046","L-047"],"vetoed":[],"held_out":[{"id":"L-022","why":"persisted UI state in beforeEach — this target is a terminal CLI with no browser surface; held out for the fourth consecutive run"}],"directives":{"wave_k":null,"routing_recs":["core-logic->fable (L-026)"],"prompt_lines":{"builder":"The conductor is the SOLE committer — never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work. Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps. Classify each surviving mutant as HOLE (a real gap - harden it) or BOUNDARY (behaviour the spec does not decide - document it) BEFORE writing any test. When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence. For every mutation that must kill the suite, author one control that must leave it GREEN — a check that dies on everything is a snapshot test, not an assertion. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check.","reviewer":"The conductor is the SOLE committer — never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. Assign each fixer a pairwise-disjoint file set; two fixers must never share a file. The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work.","qa":"Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'. Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns. Classify each surviving mutant as HOLE or BOUNDARY BEFORE writing any test."},"process":["kickoff-refuse-on-exhausted-window (L-038) — RUN at cycle 0, PASSED: weekly 6.0% at 4.819% elapsed, reset 2026-08-31 well past stop_at","spawner-backoff-to-known-reset (L-037) — SWARM tool gap, reported not edited (hard rule 5)","wire-through check at each layer boundary for domain-capability items (L-046)","reserve one mid-run cycle for the taste pass before the VALUE_LOOP tail (L-038)"]}},"kickoff_hints":{"mode":"guest","dial":0.3,"brief":"TRICKLE POSTURE: housekeeping only — harden tests, fix playbook items, polish docs — no new features. Haiku-priced work types; no new features.","source":"allocator","stop_at":1787663147,"consumed_at":1787577261},"session_shape":"headless -p session spawned by swarm-pacer.sh (auto-kickoff 13:05:48Z). Workflow tool is review-gated headless, so build dispatch is DIRECT Agent calls with disjoint scopes declared in-prompt (L-016); Artifact publish unavailable (local dashboard render IS the publication on the VPS); `claude` is not allowlisted so kickoff step 11 could not run."}
 ```
+
+### POST-COMMIT ADDENDUM — cycle 15, measured at `bbb9128`
+
+**commit:** `bbb9128` "cycle 15: two honesty instruments learn to check the artifact they
+publish [value]" — ONE commit this cycle, pushed to `origin/master`. No citation window
+opened: the commit touches `tools/` and `.swarm/` only, and the base-to-working-tree
+citation guard's pathspec is `src bin test .github`. S-8's "green at every commit" holds
+without needing the one predicted window.
+
+**Freshness was RE-ESTABLISHED at the new HEAD, not assumed.** This matters because the
+cycle-15 commit moves HEAD one step past the record's `measuredCommit`, which is exactly
+the situation RV-6 is about. The tool derived the exemption itself, from its own
+changed-paths list:
+
+```
+  recorded (meta.measuredCommit): 1aac952c00d3c1770295db01aa663dd7c3ecf83b
+  current HEAD:                   bbb9128fccf36d7da01a65cda4e6683c5b11b79e
+However: the recorded commit is an ancestor of HEAD, and git diff 1aac952..bbb9128 touches NONE
+VERDICT: DETECTION FLOOR HOLDS -- ... exempt under FRESH-BY-CONTENT
+EXIT CODE: 0
+```
+
+Note what did NOT need re-measuring: `tools/detection-floor.mjs` and
+`tools/citation-rule-check.mjs` are both outside `VERDICT_RELEVANT` (which is `README.md`,
+`docs/`, `src/`, `bin/`, `test/`, `.github/`, `tools/mutation-matrix.mjs`), so this cycle's
+two edits are verdict-neutral by construction. Contrast cycle 14, where RV-5 edited
+`tools/mutation-matrix.mjs` — inside the set — and therefore had to re-measure and land a
+second commit. The difference was predictable in advance and was one reason these two items
+were picked together.
+
+**Post-commit invariants, re-measured at `bbb9128`:**
+
+```
+tree clean          : true
+corpus sha256       : 77a4de5c777a3bdb      (SPEC S-8, unmoved)
+--help sha256       : d759d781ddcac780      (SPEC S-8, unmoved)
+test_cmd            : tests=128 pass=128 fail=0 skipped=0 -> count-free green = true
+run-all.mjs         : ROLL-UP: 6/7 ran clean; SKIPPED: mutation-matrix. | exit 0
+detection-floor     : DETECTION FLOOR HOLDS, FRESH-BY-CONTENT, exit 0
+citation-rule-check : clean (exit 0)
+```
+
+**One thing worth reading twice.** The two items were dispatched as independent fixes to
+independent files, but they are the same defect wearing different clothes: an instrument
+that publishes a verdict about something it never actually checked. `detection-floor`
+printed `DETECTION FLOOR HOLDS` over a record no code path validated; `citation-rule-check`
+printed `has diverged` about a document that had not moved. Both now state what they
+actually did — one prints `committed-final-record cross-check: <mode>`, the other names the
+file that genuinely moved — and in both cases the fix was to make the tool say the true,
+narrower thing rather than the confident, wider one. That is the same aesthetic S-1 asked
+for at kickoff, arriving from the opposite direction: not "detection survives removal," but
+"a verdict survives being asked how it knows."
