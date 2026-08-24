@@ -6,7 +6,7 @@
   "run_started_at": "2026-08-24T13:05:56.000Z",
   "kickoff_source": "allocator",
   "phase": "BUILD",
-  "cycle": 17,
+  "cycle": 18,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "spec_digest": [
@@ -269,6 +269,12 @@
       "cycle": 17,
       "title": "Three gate non-passes adjudicated as cell defects, each on positive evidence the conductor produced itself",
       "detail": "RV24-1 FAIL: the cell implemented only branch 1 of a two-branch acceptance the conductor itself wrote; the label names the pair as historical, and its cross-reference to the matrix-adjudication header was read and is true. RV15-1 FAIL: the cell keyed on a -vs- string that prints ONLY in the CORRECT-AS-CITED branch while the probe forced STALE, and applied a line-scoped historical-marker regex to a four-line sentence; the conductor re-ran the moved-README probe directly and observed the framing move from 128/126 to 130/128. RV14-0 REFUTED: the cell compared a section-(b) window containing raw test counts that necessarily differ between the two probes, while the CLAIM lines in the captured output are byte-identical, so the defect did reproduce. Standing risk recorded: three self-serving adjudications in one cycle is the shape of a conductor coding to a desired outcome, so each rests on evidence the conductor read or measured, never on a builder claim."
+    },
+    {
+      "id": "D-R8-41",
+      "cycle": 18,
+      "title": "when a sealed gate meets a binding it cannot resolve, re-execute the shipped source rather than stub a value",
+      "detail": "Gate A evaluated the tool meta literal in a sandbox that returned a marked sentinel for any unstubbed identifier, so the RV-8 fix introducing baselineFullSha landed as NOT-RUN, never as a pass. The repair could have been one line — stub baselineFullSha to a chosen value — and that is exactly the shape of a conductor choosing its own verdict. Gate B instead extracts the builder assignment from the shipped file and executes it against the real repository with a git shim matching the tool own helper signature, printing the source expression and the value it produced into the cell evidence. Adopted as the standing method for this class of gate."
     }
   ],
   "qa": {
@@ -276,13 +282,13 @@
     "last_full_qa_cycle": null,
     "last_taste_cycle": null,
     "last_review_fix_cycle": 9,
-    "last_build_wave_cycle": 17
+    "last_build_wave_cycle": 18
   },
   "counters": {
     "consecutive_no_value": 0,
     "k_current": 5,
-    "wave_streak": 1,
-    "window_tokens_attributed": 224832790
+    "wave_streak": 0,
+    "window_tokens_attributed": 242592701
   },
   "known_issues_file": "known-issues.json",
   "prior_runs": {
@@ -290,13 +296,13 @@
     "note": "runs #1-#7; run #7 delivered ZERO work cycles (usage lockout). Done items archived to backlog-archive-runs1-7.json."
   },
   "last_cycle": {
-    "cycle": 16,
-    "work": "build-wave k=2 (RV-13 citation-tax tautology, RV-21 detection-floor guard-identity cross-check)",
+    "cycle": 18,
+    "work": "build-wave k=2 (RV-8 baselineCommit contradiction, P-5 hand-written limits beside a derived list)",
     "outcome": "value",
     "verified_done": [
-      "RV-13",
-      "RV-21"
+      "RV-8",
+      "P-5"
     ],
-    "ts": 1787611763
+    "ts": 1787615547
   }
 }

@@ -1,0 +1,64 @@
+=== cycle-018 gate ===
+PREFIX a15e12b  REPO /opt/targets/aphorism-cli
+
+  PASS    W6-1 corpus bytes unmoved
+          sha256 77a4de5c777a3bdb…  expected 77a4de5c777a3bdb…
+  PASS    W6-2 --help bytes unmoved
+          sha256 d759d781ddcac780…  expected d759d781ddcac780…
+  PASS    W6-3 no cited-pathspec movement
+          git diff --stat vs PREFIX -> (empty)
+          git status --porcelain -> (empty)
+  PASS    W6-4 dependency surface still empty
+          manifests tracked by git: NONE
+          manifests on disk: NONE   node_modules: false
+          tools/ import specifiers: 29 scanned, 0 non-node:
+          converse control (3 planted foreign specifiers): 3/3 rejected
+  PASS    W6-5 suite green (literal test_cmd)
+          exit 0  tests 128  pass 128  fail 0  skipped 0
+  PASS    W6-6 committed baseline record unmoved
+          working tree 5ac3c65d65466dea…
+          at PREFIX    5ac3c65d65466dea…
+  PASS    W6-7 tool dispatcher clean
+          exit 0
+          ROLL-UP: 6/7 ran clean; SKIPPED: mutation-matrix.
+  PASS    SCOPE-1 exactly the two dispatched files
+          tools/ paths changed or added: tools/guard-inventory.mjs, tools/mutation-matrix.mjs
+          expected: tools/guard-inventory.mjs, tools/mutation-matrix.mjs
+  PASS    RV8-0 defect reproduces at PREFIX
+          stub: measuredSha=ffffffff… on the --rev path (baseline short = 20b7ede)
+          baseline* fields holding the MEASURED sha: baselineCommit
+          emitted commit fields: {"measuredRev":"deadbee","measuredCommit":"ffffffffffffffffffffffffffffffffffffffff","baselineCommit":"ffffffffffffffffffffffffffffffffffffffff","baselineCommitShort":"20b7ede"}
+  NOT-RUN RV8-1 no baseline* field holds the measured sha
+          could not resolve: baselineCommit=<<UNSTUBBED:baselineFullSha>>
+          baseline* fields holding the MEASURED sha: NONE
+          baseline* fields disagreeing with each other: NONE
+          emitted commit fields: {"measuredRev":"deadbee","measuredCommit":"ffffffffffffffffffffffffffffffffffffffff","baselineCommitShort":"20b7ede"}
+  NOT-RUN RV8-2 zero-arg path still self-consistent (converse control)
+          could not resolve: baselineCommit
+          commit-naming fields on the zero-arg path: {"measuredRev":"20b7ede","measuredCommit":"20b7edec2eb42cae185bdd7934f4bc6cd2899577","baselineCommitShort":"20b7ede"}
+          fields disagreeing with the baseline sha 20b7ede: NONE
+          key-set delta vs PREFIX (reported, not failed) — dropped: none  added: none
+  PASS    RV8-3 CLI contract intact
+          exit 2 (expected 2)   usage banner present: true
+          first line: error: unknown argument: --not-a-flag
+  PASS    P5-0 drift is invisible at PREFIX
+          probe F.ii.b deleted from FLOOR_PROBES; source shrank 48991 -> 48618 bytes
+          mutated run exit 0 (defect: still 0)
+          limit lines printed clean/mutated: 5/5  identical: true
+          F.ii.b still named in mutated output: false
+  PASS    P5-2 converse control: clean tree unchanged verdict
+          unmutated clone at the working tree: exit 0
+          verdict line present: true
+          probe ids printed: 7/7 (F.i.a F.i.b F.i.c F.ii.a F.ii.b F.iii F.Q2)
+          limit entries declared in source: 3
+  PASS    P5-3 the mutation actually landed
+          FLOOR_PROBES after edit still names F.ii.b: false
+          source shrank 51579 -> 51206 bytes
+  PASS    P5-1 probe change updates limits or fails loudly
+          mutated run exit 1  <- LOUD
+          limit lines clean/mutated: 3/1  changed: true
+          failure output tail:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) |  | Node.js v24.19.0
+
+GATE: 14/16 PASS
+  NOT-RUN RV8-1 no baseline* field holds the measured sha
+  NOT-RUN RV8-2 zero-arg path still self-consistent (converse control)

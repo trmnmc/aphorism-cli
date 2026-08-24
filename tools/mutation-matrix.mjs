@@ -712,12 +712,25 @@ const report = [];
 const P = (s = '') => { report.push(s); if (JSON_OUTPUT) console.error(s); else console.log(s); };
 
 let measuredSha;
+// RV-8: the full sha of the BASELINE commit (DEFAULT_REV), independent of
+// whatever TARGET_REV this run actually measured. On the zero-argument path
+// TARGET_REV === DEFAULT_REV, so this is simply measuredSha -- no extra git
+// call, and the frozen zero-argument contract's emitted record is untouched
+// byte-for-byte. On the --rev path the two commits differ, and this is
+// resolved independently (against ROOT, not the scratch clone -- no clone
+// or checkout needed just to name a commit) so that meta.baselineCommit
+// below actually names the baseline, matching what meta.baselineCommitShort
+// has always named, instead of silently aliasing meta.measuredCommit.
+let baselineFullSha;
 const results = [];
 const skippedClaims = [];
 let identityResult = null;
 
 try {
   measuredSha = setUpClone();
+  baselineFullSha = IS_DEFAULT_REV
+    ? measuredSha
+    : git(ROOT, ['rev-parse', '--verify', '--end-of-options', DEFAULT_REV + '^{commit}']).stdout.trim();
   const titleMap = buildTitleMap(CLONE);
 
   // Cross-check the transcribed inventory against the suite of the MEASURED
@@ -901,7 +914,7 @@ const baseline = {
     tool: 'tools/mutation-matrix.mjs',
     measuredRev: TARGET_REV,
     measuredCommit: measuredSha,
-    baselineCommit: measuredSha,
+    baselineCommit: baselineFullSha,
     baselineCommitShort: DEFAULT_REV,
     node: process.version,
     suiteCommand: 'node --test --test-reporter=tap <test/*.test.js, glob expanded by readdir>',

@@ -483,14 +483,58 @@ const FLOOR_PROBES = [
   },
 ];
 
-// What the probe table structurally cannot see. Printed verbatim in G so the
-// verdict is bounded by its own search rather than stated categorically.
+// What the probe table structurally cannot see. Unlike FLOOR_PROBES (run in F
+// and printed in G from the very same array, so it cannot drift), this list
+// is hand-authored prose -- so each entry is TIED to the probe id(s) it
+// qualifies, and that tie is checked (see the loop below) rather than
+// asserted in a comment. Widening a probe (e.g. FLOOR_MIN_DIGITS) flows
+// through automatically because the text below interpolates the same
+// constant the probe uses; removing or renaming a probe this list still
+// references is not "automatic drift" -- it throws at load time, so a stale
+// tie fails loudly instead of quietly overstating what section G still
+// searches for. Entries that qualify the SCAN'S SCOPE rather than any one
+// probe's mechanism live in SCAN_SCOPE_LIMITS below instead of being forced
+// into a fake tie.
 const FLOOR_PROBE_LIMITS = [
-  'a bound that is COMPUTED rather than written as a literal (read from a file or env var, '
-    + 'derived by arithmetic, imported from another module);',
-  'a bound of fewer than ' + FLOOR_MIN_DIGITS + ' digits (a floor written `n > 99`);',
-  'a runner spawn or directory census reached through a computed property (`fs[\'readdirSync\'](d)`), '
-    + 'a re-exported alias, or a helper defined in a file this scan does not read;',
+  {
+    probeIds: ['F.i.a', 'F.i.b', 'F.i.c'],
+    text: 'a bound that is COMPUTED rather than written as a literal (read from a file or env var, '
+      + 'derived by arithmetic, imported from another module);',
+  },
+  {
+    probeIds: ['F.i.a', 'F.i.b', 'F.i.c'],
+    text: 'a bound of fewer than ' + FLOOR_MIN_DIGITS + ' digits (a floor written `n > 99`);',
+  },
+  {
+    probeIds: ['F.ii.a', 'F.ii.b'],
+    text: 'a runner spawn or directory census reached through a computed property (`fs[\'readdirSync\'](d)`), '
+      + 'a re-exported alias, or a helper defined in a file this scan does not read;',
+  },
+];
+
+// Load-time proof that the tie above still holds: every probeId a limit
+// names must exist in FLOOR_PROBES right now. A probe removed or renamed
+// without moving the limit text that qualifies it fails loudly here instead
+// of section G silently printing a limit for a probe that no longer runs.
+for (const { probeIds, text } of FLOOR_PROBE_LIMITS) {
+  for (const id of probeIds) {
+    if (!FLOOR_PROBES.some((p) => p.id === id)) {
+      throw new Error(
+        'FLOOR_PROBE_LIMITS is stale: it ties the limit "' + text + '" to probe id "' + id
+        + '", but no such probe exists in FLOOR_PROBES anymore. Move this limit onto the probe '
+        + 'that now covers that gap, or delete it -- do not leave it printing against a probe '
+        + 'that no longer runs.'
+      );
+    }
+  }
+}
+
+// Limits that bound the SCAN AS A WHOLE (its file-set, its jurisdiction),
+// not any single probe's matching logic. These are deliberately NOT printed
+// as if mechanism-derived the way FLOOR_PROBE_LIMITS above is: there is no
+// probe id to tie them to, so section G labels and formats them differently
+// rather than implying a tie that does not exist.
+const SCAN_SCOPE_LIMITS = [
   'anything outside the scanned set (test/, src/, bin/, package.json, .github/) -- notably tools/, '
     + 'which is excluded on purpose because this report necessarily names the premise itself;',
   'a floor enforced outside the repository entirely (a branch-protection rule, a required external check).',
@@ -859,7 +903,16 @@ if (floorEvidence.length === 0) {
   P('        every occurrence of the literal "121", code and comment position alike');
   P('');
   P('  WHAT THIS SEARCH WOULD NOT CATCH (so the verdict above does not claim it):');
-  for (const lim of FLOOR_PROBE_LIMITS) P('    - ' + lim);
+  P('  Each line below is TIED to the probe id(s) above it qualifies -- named in');
+  P('  brackets and checked at load time (see FLOOR_PROBE_LIMITS): remove or rename');
+  P('  that probe without moving this text and the tool refuses to run.');
+  for (const lim of FLOOR_PROBE_LIMITS) {
+    P('    - [' + lim.probeIds.join(', ') + '] ' + lim.text);
+  }
+  P('  SCAN-SCOPE LIMITS (bound the search as a whole; no single probe id to tie');
+  P('  them to, so they are not printed as mechanism-derived the way the lines');
+  P('  above are):');
+  for (const lim of SCAN_SCOPE_LIMITS) P('    - ' + lim);
   P('    Read the verdict as: no floor is DETECTED by the probes listed above. A');
   P('    floor written specifically to evade a static textual scan would not appear');
   P('    here, and no static scan can close that gap.');

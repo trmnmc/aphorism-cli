@@ -850,12 +850,12 @@
         "S-6"
       ],
       "kind": "fix",
-      "status": "todo",
+      "status": "done",
       "effort": "S",
       "priority": 6,
       "deps": [],
       "attempts": 0,
-      "model": "haiku",
+      "model": "sonnet",
       "files_hint": [
         "tools/mutation-matrix.mjs"
       ],
@@ -863,7 +863,9 @@
       "severity": "low",
       "acceptance": "meta.baselineCommit must mean the baseline, or be renamed to what it holds. The published records must not carry two adjacent fields naming different commits. Note the consumer fallback at detection-floor.mjs:249 reads measuredCommit || baselineCommit, so the field's meaning is load-bearing, not cosmetic.",
       "notes": "REPRODUCED by direct observation. The final record's meta reads measuredCommit d8403a35..., baselineCommit d8403a35... and baselineCommitShort '20b7ede' -- two adjacent contradictory fields. Source is exact: mutation-matrix.mjs:779-780 writes `baselineCommit: measuredSha` and `baselineCommitShort: DEFAULT_REV` unconditionally, including on the --rev path. The detection-floor.mjs:249 fallback is exercised TODAY for the legitimate baseline record (where both meanings coincide) and is latent for the final record; it is a booby-trapped fallback, not an exploited path, hence low.",
-      "found_cycle": 9
+      "found_cycle": 9,
+      "updated_cycle": 18,
+      "done_cycle": 18
     },
     {
       "id": "RV-9",
@@ -1136,12 +1138,12 @@
       "id": "P-5",
       "title": "guard-inventory's 'what this search would not catch' list is hand-written prose sitting beside a mechanism-derived list, so only one of the two can drift",
       "kind": "fix",
-      "status": "todo",
+      "status": "done",
       "priority": 6,
       "effort": "S",
       "deps": [],
       "attempts": 0,
-      "model": "haiku",
+      "model": "sonnet",
       "files_hint": [
         "tools/guard-inventory.mjs"
       ],
@@ -1153,7 +1155,9 @@
       "found_cycle": 11,
       "opened_cycle": 11,
       "acceptance": "Either each FLOOR_PROBE_LIMITS entry is tied to the probe it qualifies (so removing or widening a probe forces the limit text to move with it), or section G stops presenting the limits list as if it were derived like the probe list directly above it. Proof: a probe change must be shown to either update the limits automatically or fail loudly, and the clean tree must still report ABSENT.",
-      "notes": "DISCLOSED BY THE BUILDER, unprompted, at cycle 11: 'the limits list (FLOOR_PROBE_LIMITS) is hand-written prose and CAN drift; that is the one part of the new output not derived from the mechanism, and I am flagging it rather than implying otherwise.' Same class as RV-13/RV-14/P-4: a sentence that reads as measured while being authored. Low severity, and note the DIRECTION: drift makes the tool understate its own blind spots, i.e. look more capable than it is. Two further limits the builder named and deliberately did not fix: 1-2 digit bounds are invisible to F.i (lowering FLOOR_MIN_DIGITS to 2 puts 3 hits on the clean tree and destroys the converse control -- a chosen false-negative), and indirect calls (computed property access, aliases, wrappers) evade F.ii.b."
+      "notes": "DISCLOSED BY THE BUILDER, unprompted, at cycle 11: 'the limits list (FLOOR_PROBE_LIMITS) is hand-written prose and CAN drift; that is the one part of the new output not derived from the mechanism, and I am flagging it rather than implying otherwise.' Same class as RV-13/RV-14/P-4: a sentence that reads as measured while being authored. Low severity, and note the DIRECTION: drift makes the tool understate its own blind spots, i.e. look more capable than it is. Two further limits the builder named and deliberately did not fix: 1-2 digit bounds are invisible to F.i (lowering FLOOR_MIN_DIGITS to 2 puts 3 hits on the clean tree and destroys the converse control -- a chosen false-negative), and indirect calls (computed property access, aliases, wrappers) evade F.ii.b.",
+      "updated_cycle": 18,
+      "done_cycle": 18
     },
     {
       "id": "RV-19",
@@ -1287,6 +1291,30 @@
       ],
       "title": "run-all.mjs W-5 heading label hardcodes 127-vs-129, a state this repo no longer has",
       "acceptance": "The TOOLS-array label for matrix-adjudication must not announce a count pair contradicting README. Either drop the numbers or name them as the historical question. Substituting a fresh hardcoded pair is the same defect."
+    },
+    {
+      "id": "RV-25",
+      "status": "todo",
+      "kind": "fix",
+      "priority": 9,
+      "effort": "S",
+      "model": "haiku",
+      "attempts": 0,
+      "deps": [],
+      "packages": [],
+      "covers": [
+        "S-6"
+      ],
+      "files_hint": [
+        "tools/mutation-matrix-baseline.json"
+      ],
+      "severity": "low",
+      "found_cycle": 18,
+      "created_cycle": 18,
+      "updated_cycle": 18,
+      "title": "the committed baseline record was written by an older tool, so its meta no longer matches what a zero-arg run emits",
+      "acceptance": "tools/mutation-matrix-baseline.json meta lacks measuredRev and measuredCommit entirely and carries a pre-W-13 scratchStrategy string, while a zero-argument run of the current tool emits all three in their current form. Either regenerate the record — expensive: --write-baseline re-runs the suite once per mutation, ~31 runs, and MOVES a committed artifact — or state in the record or the tool that the committed baseline is a vintage artifact, naming the fields that have since changed. Note the direction: the shape gap is precisely what makes detection-floor.mjs recordedSha fallback measuredCommit || baselineCommit load-bearing rather than decorative.",
+      "notes": "Found TWICE independently at cycle 18, neither time by looking for it: the conductor hit it authoring a gate cell that assumed the committed record and a fresh zero-arg record would agree — they do not, and the cell was redesigned before dispatch — and the RV-8 builder named it unprompted in its DELIBERATELY NOT TOUCHED section. Not a false claim about this repo today: the committed record own baselineCommit is correct, because on the zero-arg path the measured and baseline commits coincide. Priority 9 because regenerating it costs a full matrix run AND moves committed bytes, which the standing invariant W-6 forbids without a named window."
     }
   ]
 }

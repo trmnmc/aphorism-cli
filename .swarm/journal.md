@@ -24738,3 +24738,182 @@ next cycle should run the taste pass rather than mine the remaining RV items.
 ```json
 {"version":1,"run_label":"improvement run #8","targets":[{"path":"/opt/targets/aphorism-cli","name":"aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":1787663147,"usage_reset_at":1787601600,"stop_at_iso":"2026-08-25T13:05:47.000Z","usage_reset_at_iso":"2026-08-24T20:00:00.000Z","model_policy":"value-routing","auth_mode":"subscription","kickoff_source":"allocator","heartbeat":{"ts":1787612617,"next_wakeup_at":1787615317,"pid":763265,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"probe","gear":2,"gear_target":2,"ratio":0.84,"mode":"guest","k_cap":2,"promote":false,"demote":true,"window_tokens":84277151,"window_cost_usd":53.14209899999995,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":27690866,"projected_depletion_at":1787620880,"last_probe_ts":1787612617,"last_real_probe_ts":1787612617,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":100,"opus_used_pct":100,"week_elapsed_pct":10.73,"weekly_heat":9.32,"opus_heat":9.32,"ceiling":2,"promote_blocked":true,"week_resets_at":1788152399},"probe_note":"cycle 17 probe: probe_ok true. rho 0.84, gear held at 2 (guest clamps 1-3; weekly governor ceiling 2 binds, so gear_target 2). k_cap 2 -> effective wave size min(k_current 5, gear cap 2) = 2. demote TRUE (fix items floor at sonnet), promote blocked. Window 64621405 -> 84277151 (+19.66M, attributed to aphorism-cli for cycle 16), 27.69M tok/h, projected depletion 1787620880 (01:21Z), ~11.7h BEFORE stop_at -- the next 5h boundary lands first, normal mid-window reading. KI-37 TWELFTH OBSERVATION: weekly_used_pct 100 at week_elapsed_pct 10.73; opus_used_pct pinned at 100 for the twelfth consecutive probe while weekly.ok stays true and the ceiling stays 2."},"watchdog":{"mode":"pacer","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0,"note":"swarm-watchdog.timer is enabled+active but is a MEASURED NO-OP for this run: bin/swarm-watchdog.sh line 279 keys its DONE-guard on REPORT.md existing in every target, and /opt/targets/aphorism-cli/REPORT.md exists from run #7. L-037 clause 2, asserted at kickoff rather than assumed. RECOVERY PATH IS THE PACER: bin/swarm-pacer.sh keys only on wrap_up_complete (line 183) and heartbeat.next_wakeup_at (line 229) — it does NOT check REPORT.md — and swarm-pacer.timer is active. Verified by reading both scripts; neither was edited (hard rule 5)."},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":17,"artifact":{"url":"","file":"/opt/swarm/runs/dashboard.html","publish_failures":0},"playbook":{"apply_mode":"auto","source":"direct read of playbook/learnings.md (bin/swarm-playbook.sh structurally unallowlisted — KI-R6-2, 12th consecutive confirmation, zero denials burned this run)","applied":["L-008","L-016","L-024","L-026","L-029","L-031","L-033","L-034","L-037","L-038","L-042","L-043","L-044","L-046","L-047"],"vetoed":[],"held_out":[{"id":"L-022","why":"persisted UI state in beforeEach — this target is a terminal CLI with no browser surface; held out for the fourth consecutive run"}],"directives":{"wave_k":null,"routing_recs":["core-logic->fable (L-026)"],"prompt_lines":{"builder":"The conductor is the SOLE committer — never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work. Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps. Classify each surviving mutant as HOLE (a real gap - harden it) or BOUNDARY (behaviour the spec does not decide - document it) BEFORE writing any test. When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence. For every mutation that must kill the suite, author one control that must leave it GREEN — a check that dies on everything is a snapshot test, not an assertion. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check.","reviewer":"The conductor is the SOLE committer — never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. Assign each fixer a pairwise-disjoint file set; two fixers must never share a file. The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work.","qa":"Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'. Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns. Classify each surviving mutant as HOLE or BOUNDARY BEFORE writing any test."},"process":["kickoff-refuse-on-exhausted-window (L-038) — RUN at cycle 0, PASSED: weekly 6.0% at 4.819% elapsed, reset 2026-08-31 well past stop_at","spawner-backoff-to-known-reset (L-037) — SWARM tool gap, reported not edited (hard rule 5)","wire-through check at each layer boundary for domain-capability items (L-046)","reserve one mid-run cycle for the taste pass before the VALUE_LOOP tail (L-038)"]}},"kickoff_hints":{"mode":"guest","dial":0.3,"brief":"TRICKLE POSTURE: housekeeping only — harden tests, fix playbook items, polish docs — no new features. Haiku-priced work types; no new features.","source":"allocator","stop_at":1787663147,"consumed_at":1787577261},"session_shape":"headless -p session spawned by swarm-pacer.sh (auto-kickoff 13:05:48Z). Workflow tool is review-gated headless, so build dispatch is DIRECT Agent calls with disjoint scopes declared in-prompt (L-016); Artifact publish unavailable (local dashboard render IS the publication on the VPS); `claude` is not allowlisted so kickoff step 11 could not run."}
 ```
+
+## cycle 18 — build-wave (RV-8, P-5) — VALUE
+
+**clock** now 1787614258 (2026-08-24T23:30:58Z) · stop_at 1787663147 · 48 889s (~13.6h) remaining.
+**probe** probe_ok true, ρ 0.92, gear **2**. Guest mode clamps 1–3 and the weekly governor
+ceiling of 2 binds independently, so the gear is earned twice over. k_cap 2 → effective
+wave min(k_current 5, gear cap 2) = **2**. demote TRUE (fix items floor at sonnet),
+promote blocked. Window 84 277 151 → 102 037 062 tokens (+17.76M, attributed to cycle 17),
+29.02M tok/h, projected depletion 1787619998 (01:06Z) — ~13.1h BEFORE stop_at, so the next
+5h boundary lands first: an ordinary mid-window reading. KI-37 **thirteenth** observation:
+weekly_used_pct 100 at week_elapsed_pct 11.01, opus_used_pct pinned at 100, weekly.ok still
+true, ceiling still 2.
+**orient** tree clean at a15e12b, no salvage. Control channel: `bin/swarm-notify.sh poll` is
+structurally unallowlisted in this headless session and was DENIED (KI-R6-2, same shape as
+`swarm-playbook.sh`), so `runs/control.json` was read directly instead — `pending []`,
+`applied []`, no `inject` array. One denial burned; the file-sourced read is complete.
+**craft pack** clean, `degraded []`. No item flagged `craft: "ui"` — both files are CLI
+measurement tools with no browser surface, so the post-merge look pass and collision-scan
+are SKIPPED for that reason rather than silently omitted.
+
+### The pick, and the recommendation I did not take
+Cycle 17 closed by recommending the **taste pass** for cycle 18 (`qa.last_taste_cycle` is
+still null after 17 cycles; playbook L-038 carries an explicit process directive to reserve
+a mid-run cycle for it). I took a build wave instead, on the reasoning that RV-8 and P-5
+were the last two priority-6 items, were pairwise-disjoint by file, and fit the gear-2 cap
+of 2 exactly. That reasoning is real but it is not stronger than the recommendation it
+overrode, and the same argument will be available next cycle and the cycle after — which is
+how a run mines instrument polish until the clock runs out. **Cycle 19 runs the taste pass.**
+`workflows/qa-verify.js` exists on disk; Workflow is review-gated in this headless session,
+so it goes out as ONE direct fable Agent call in `mode: "taste"` (L-016 pattern), and a
+`fundamental` verdict is reported into the SPEC S-7 escalation text rather than built —
+the trickle brief locks new features, which makes the taste verdict advisory, not idle.
+
+### Wave
+Both builders went out as DIRECT Agent calls (Workflow review-gated headless, L-016) with
+strictly disjoint single-file scopes declared in-prompt. Verified after return by
+`git status --porcelain`: exactly two modified files, one per builder, zero scratch debris.
+
+| item | file | routed | outcome |
+|---|---|---|---|
+| RV-8 | tools/mutation-matrix.mjs | sonnet | fixed |
+| P-5 | tools/guard-inventory.mjs | sonnet | fixed |
+
+Routing is pick-time: both items are `kind: fix`, so the gear-2 demotion floors them at
+sonnet (haiku is docs/polish only) — the `model: "haiku"` sitting in the backlog from
+plan time was recomputed, not inherited.
+
+### Gate — sealed BEFORE dispatch, seal held, and it was exercised before it was sealed
+`runs/cycle-018-gate.mjs`, **sha256 87aff8ebc093605cf6bf3c8a2ac9a8ad3bd2d23495385ae7de281283b5b786bc**,
+authored and hashed before either Agent call. Re-hashed after both returned: identical.
+Neither builder saw it; both were given acceptance clauses only.
+
+Cycle 17's gate crashed at cell 4 of 17 on a `package.json` this repo has never had, and
+thirteen cells never ran. So this gate was DRY-RUN against the unmodified tree before being
+sealed, and the run is kept as evidence: `runs/cycle-018-gate-predispatch-dryrun.txt`.
+That dry run caught two defects of my own while they were still free to fix:
+
+1. **W6-5 could not parse its own runner output.** It matched the TAP reporter's
+   `# tests N`; node's default reporter prints `ℹ tests 128`. It reported FAIL on a green
+   suite. Repaired to accept either marker — and to report NOT-RUN, never PASS, when no
+   totals line parses at all.
+2. **RV8-2 asserted a premise that was false before the wave started.** It required the
+   zero-arg emitted record to equal the committed `tools/mutation-matrix-baseline.json`
+   meta. They do not match at PREFIX: the committed record predates `measuredRev` and
+   `measuredCommit` and carries a pre-W-13 `scratchStrategy` string. Sealing that cell
+   would have charged a pre-existing artifact vintage to this wave. Redesigned into a
+   converse control — the zero-arg path must stay self-consistent, key-set drift REPORTED
+   not failed — and the finding it surfaced is filed as **RV-25**, not quietly absorbed.
+
+The sealed dry run's profile was **13/16 PASS**, and the three FAILs were exactly
+SCOPE-1 (no builder work existed yet), RV8-1 and P5-1 (the two defects under repair).
+Every cell was shown to fail for the reason it names before any verdict was recorded.
+
+### Gate B — one repair, published in full
+Gate A returned **14/16**, with RV8-1 and RV8-2 **NOT-RUN**: the RV-8 fix introduced a new
+binding, `baselineFullSha`, and gate A's sandbox correctly refused to invent a value for it,
+emitting `<<UNSTUBBED:baselineFullSha>>` instead of a verdict. That is the sentinel working.
+
+The one-line repair — stub `baselineFullSha` to a value of my choosing — is exactly the
+shape of a conductor picking its own verdict. `runs/cycle-018-gate-b.mjs`
+(**sha256 4dcab2931cbb95a040657ecfd1a140b9dcabd492dc1d96b8ae9550654c730eef**) does not stub
+it: it extracts the builder's OWN assignment from the shipped file and EXECUTES that
+expression against the real repository, with a `git` shim matching the tool's own helper
+signature (`tools/mutation-matrix.mjs:535`). The value under test is produced by the code
+being judged. Every binding resolved this way is printed into the cell evidence together
+with the source text that produced it. Full A→B diff: `runs/cycle-018-gate-b.mjs` vs
+`runs/cycle-018-gate.mjs`, both committed by this cycle; the change is one added helper
+block plus the two cells that call it, and nothing else. Recorded as decision **D-R8-41**.
+
+Gate B: **16/16 PASS**.
+
+### VERIFICATION EVIDENCE
+
+```
+GATE B: 16/16 PASS
+  PASS  W6-1 corpus bytes unmoved       sha256 77a4de5c777a3bdb…  (SPEC S-8, unmoved)
+  PASS  W6-2 --help bytes unmoved       sha256 d759d781ddcac780…  (SPEC S-8, unmoved)
+  PASS  W6-3 no cited-pathspec movement git diff --stat vs PREFIX -> (empty)
+  PASS  W6-4 dependency surface empty   0 manifests tracked, 0 on disk, no node_modules,
+                                        29 tools/ specifiers all node:, converse 3/3 rejected
+  PASS  W6-5 suite green                exit 0  tests 128  pass 128  fail 0  skipped 0
+  PASS  W6-6 committed baseline record unmoved   5ac3c65d65466dea… == at PREFIX
+  PASS  W6-7 tool dispatcher clean      exit 0  ROLL-UP: 6/7 ran clean; SKIPPED: mutation-matrix.
+  PASS  SCOPE-1 exactly the two dispatched files
+                tools/guard-inventory.mjs, tools/mutation-matrix.mjs  (no crossover, no debris)
+  PASS  RV8-0 defect reproduces at PREFIX
+                baseline* fields holding the MEASURED sha: baselineCommit
+  PASS  RV8-1 no baseline* field holds the measured sha
+                baselineFullSha := IS_DEFAULT_REV ? measuredSha : git(ROOT, ['rev-parse',
+                  '--verify','--end-of-options', DEFAULT_REV + '^{commit}']).stdout.trim()
+                  ->  20b7edec2eb42cae185bdd7934f4bc6cd2899577
+                emitted: measuredCommit ffffffff…  baselineCommit 20b7edec…  short 20b7ede
+  PASS  RV8-2 zero-arg path still self-consistent (converse control)
+                all four commit fields agree with 20b7ede; key-set delta vs PREFIX: none
+  PASS  RV8-3 CLI contract intact       exit 2, usage banner present
+  PASS  P5-0 drift is invisible at PREFIX
+                F.ii.b deleted from FLOOR_PROBES -> exit 0, limit lines 5/5 IDENTICAL
+  PASS  P5-1 probe change updates limits or fails loudly
+                same deletion at HEAD -> exit 1 <- LOUD, limit lines 3/1 changed
+  PASS  P5-2 converse control            unmutated clone: exit 0, VERDICT: ABSENT, 7/7 probe ids
+  PASS  P5-3 the mutation actually landed FLOOR_PROBES no longer names F.ii.b
+```
+
+Conductor end-to-end run on the real tree — the strongest available evidence for RV-8,
+because it judges a PUBLISHED RECORD rather than a source literal. `--rev HEAD` makes the
+measured commit differ from the baseline, which is the only condition under which the
+contradiction was ever visible:
+
+```
+$ node tools/mutation-matrix.mjs --rev HEAD --json    (18 results, identity control GREEN)
+  "measuredRev":         "HEAD",
+  "measuredCommit":      "a15e12bc957d713187c89bef1e903478977bb7b3",
+  "baselineCommit":      "20b7edec2eb42cae185bdd7934f4bc6cd2899577",
+  "baselineCommitShort": "20b7ede",
+$ git rev-parse --verify --end-of-options "20b7ede^{commit}"   (conductor, independent)
+  20b7edec2eb42cae185bdd7934f4bc6cd2899577
+```
+
+Full artifacts, all fingerprinted by this cycle's commit: `runs/cycle-018-gate-output.txt`
+(gate A, 14/16), `runs/cycle-018-gate-b-output.txt` (gate B, 16/16),
+`runs/cycle-018-gate-predispatch-dryrun.txt` (the pre-seal dry run, 13/16),
+`runs/cycle-018-rv8-endtoend.json` + `.log`.
+
+### What is NOT verified
+- The end-to-end run above measured **HEAD**, not the working tree, for the SUITE side of
+  the matrix — mutation-matrix clones and checks out the named rev, so the 18 mutation
+  results reflect committed code. The `meta` block it published is the working-tree tool's
+  output, which is the part RV-8 is about. The mutation results themselves are not evidence
+  about this wave either way.
+- P-5's tie catches a probe being **removed or renamed**. It does not catch a probe being
+  **widened** in matching logic, a **new** probe added with no limit entry, or a dead-alias
+  decoy id. The builder named all three unprompted; they are recorded here rather than
+  filed, because each would be a new instrument rather than a fix to this one.
+- `SCAN_SCOPE_LIMITS` (the two jurisdiction-level entries P-5 moved out of the probe-tied
+  list) carries no mechanical tie at all — by construction, since no single probe qualifies
+  them. They are as hand-authored as all five entries used to be; what changed is that
+  section G no longer prints them in the register that implies derivation.
+
+### Filed this cycle
+**RV-25** (todo, priority 9) — the committed `tools/mutation-matrix-baseline.json` was
+written by an older tool: its meta lacks `measuredRev`/`measuredCommit` and carries a
+pre-W-13 `scratchStrategy`. Found twice independently and neither time by looking for it —
+by the conductor authoring a gate cell on a false premise, and by the RV-8 builder's
+DELIBERATELY NOT TOUCHED section. Priority 9 because regenerating it costs a full matrix
+run AND moves committed bytes, which W-6 forbids without a named window.
+
+Also observed, not filed: `firedGuardsKey()` in `tools/detection-floor.mjs` joins guard
+file+title with a literal NUL byte, which makes `grep` treat that file as binary. Not a
+defect and no user would notice — it fails the step-4 ratchet, so it stays an observation.
+
+### Wave autotune
+Clean wave — zero reverts, zero failed verifies → `wave_streak` 1 → 2, which trips the +1
+rung; `k_current` is already at the hard max 5, so it holds at 5 and the streak resets to 0.
+Effective wave size stays gear-capped at 2 either way. `consecutive_no_value` → 0.
+
+**runfile-mirror:**
+```json
+{"version":1,"run_label":"improvement run #8","targets":[{"path":"/opt/targets/aphorism-cli","name":"aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":1787663147,"usage_reset_at":1787601600,"stop_at_iso":"2026-08-25T13:05:47.000Z","usage_reset_at_iso":"2026-08-24T20:00:00.000Z","model_policy":"value-routing","auth_mode":"subscription","kickoff_source":"allocator","heartbeat":{"ts":1787615653,"next_wakeup_at":1787615743,"pid":831853,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"probe","gear":2,"gear_target":2,"ratio":0.92,"mode":"guest","k_cap":2,"promote":false,"demote":true,"window_tokens":102037062,"window_cost_usd":63.42798899999997,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":29018219,"projected_depletion_at":1787619998,"last_probe_ts":1787614280,"last_real_probe_ts":1787614280,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":100,"opus_used_pct":100,"week_elapsed_pct":11.01,"weekly_heat":9.08,"opus_heat":9.08,"ceiling":2,"promote_blocked":true,"week_resets_at":1788152399},"probe_note":"cycle 18 probe: probe_ok true. rho 0.92, gear 2 (guest clamps 1-3; weekly governor ceiling 2 binds independently). k_cap 2 -> effective wave min(k_current 5, gear cap 2) = 2. demote TRUE, promote blocked. Window 84277151 -> 102037062 (+17759911, attributed to aphorism-cli for cycle 17), 29.02M tok/h, projected depletion 1787619998 (01:06Z) ~13.1h BEFORE stop_at -- the next 5h boundary lands first, ordinary mid-window reading. KI-37 THIRTEENTH OBSERVATION: weekly_used_pct 100 at week_elapsed_pct 11.01, opus_used_pct pinned at 100 for the thirteenth consecutive probe, weekly.ok still true, ceiling still 2."},"watchdog":{"mode":"pacer","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0,"note":"swarm-watchdog.timer is enabled+active but is a MEASURED NO-OP for this run: bin/swarm-watchdog.sh line 279 keys its DONE-guard on REPORT.md existing in every target, and /opt/targets/aphorism-cli/REPORT.md exists from run #7. L-037 clause 2, asserted at kickoff rather than assumed. RECOVERY PATH IS THE PACER: bin/swarm-pacer.sh keys only on wrap_up_complete (line 183) and heartbeat.next_wakeup_at (line 229) — it does NOT check REPORT.md — and swarm-pacer.timer is active. Verified by reading both scripts; neither was edited (hard rule 5)."},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":18,"artifact":{"url":"","file":"/opt/swarm/runs/dashboard.html","publish_failures":0},"playbook":{"apply_mode":"auto","source":"direct read of playbook/learnings.md (bin/swarm-playbook.sh structurally unallowlisted — KI-R6-2, 12th consecutive confirmation, zero denials burned this run)","applied":["L-008","L-016","L-024","L-026","L-029","L-031","L-033","L-034","L-037","L-038","L-042","L-043","L-044","L-046","L-047"],"vetoed":[],"held_out":[{"id":"L-022","why":"persisted UI state in beforeEach — this target is a terminal CLI with no browser surface; held out for the fourth consecutive run"}],"directives":{"wave_k":null,"routing_recs":["core-logic->fable (L-026)"],"prompt_lines":{"builder":"The conductor is the SOLE committer — never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work. Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps. Classify each surviving mutant as HOLE (a real gap - harden it) or BOUNDARY (behaviour the spec does not decide - document it) BEFORE writing any test. When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive — a kill you cannot attribute is not evidence. For every mutation that must kill the suite, author one control that must leave it GREEN — a check that dies on everything is a snapshot test, not an assertion. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check.","reviewer":"The conductor is the SOLE committer — never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. Assign each fixer a pairwise-disjoint file set; two fixers must never share a file. The conductor seals its verification gate by hash before dispatch — do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work.","qa":"Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'. Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns. Classify each surviving mutant as HOLE or BOUNDARY BEFORE writing any test."},"process":["kickoff-refuse-on-exhausted-window (L-038) — RUN at cycle 0, PASSED: weekly 6.0% at 4.819% elapsed, reset 2026-08-31 well past stop_at","spawner-backoff-to-known-reset (L-037) — SWARM tool gap, reported not edited (hard rule 5)","wire-through check at each layer boundary for domain-capability items (L-046)","reserve one mid-run cycle for the taste pass before the VALUE_LOOP tail (L-038)"]}},"kickoff_hints":{"mode":"guest","dial":0.3,"brief":"TRICKLE POSTURE: housekeeping only — harden tests, fix playbook items, polish docs — no new features. Haiku-priced work types; no new features.","source":"allocator","stop_at":1787663147,"consumed_at":1787577261},"session_shape":"headless -p session spawned by swarm-pacer.sh (auto-kickoff 13:05:48Z). Workflow tool is review-gated headless, so build dispatch is DIRECT Agent calls with disjoint scopes declared in-prompt (L-016); Artifact publish unavailable (local dashboard render IS the publication on the VPS); `claude` is not allowlisted so kickoff step 11 could not run."}
+```
