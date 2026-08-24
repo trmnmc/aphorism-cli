@@ -1,0 +1,96 @@
+VERIFICATION EVIDENCE — run #8, cycle 16, item RV-21 (tools/detection-floor.mjs)
+Gate sealed BEFORE dispatch: /opt/swarm/runs/run8-cycle-016-gate-seal.md
+  sha256 bfc438c1f998695f89653b44e83a4c20ed36c6d6c3c4022343f6bdfdb4ad7fe8, sealed at 1787610394
+
+C6 — WHICH BRANCH, recorded before anything was run.
+Branch (1): the comparison was EXTENDED. `crossCheckAgainstLive` now compares, in addition to
+`verdict`, the two fields the partition actually buckets a CAUGHT row on —
+`caughtByTargetGuard` and `firedGuards` — driven off a single `GUARD_IDENTITY_CHECKS` table
+whose `.map(c => c.field)` is also the source of the printed summary line, so the published
+description of the comparison cannot drift from the comparison. That is the structural
+property D-R8-24 and D-R8-35 said the previous two fixes failed to reach.
+
+THE EXPENSIVE VERIFICATION IS THE CONDUCTOR'S (D-R8-34). The builder was told in-prompt not to
+run `--remeasure`; it complied, verified against extracted source text in a harness, and said
+plainly that this "is real evidence but not a substitute for an actual --remeasure run". All
+four cells below are real `--remeasure` runs the conductor made, ONE AT A TIME (~98s each; at
+cycle 15 four concurrent runs starved each other to ~4 minutes per mutation).
+
+THE FIXTURE. Row M08 in the committed tools/mutation-matrix-final.json, doctored in a scratch
+clone so the verdict the live run will produce is UNCHANGED and only the guard story is
+fabricated:
+  BEFORE  verdict = 'CAUGHT'   suite.fail = 1   caughtByTargetGuard = None
+          firedGuards = [{"file":"test/readme-tags.test.js",
+                          "title":"README must state correct multi-entry and single-entry tag counts"}]
+  AFTER   verdict = 'CAUGHT'   suite.fail = 1   caughtByTargetGuard = True
+          firedGuards = [{"file":"test/readme-tags.test.js:434","title":<row.guardTitle>}]
+  RV-4 row-internal-consistency, checked by hand against the doctored row:
+    suite.fail > 0                                 -> True
+    firedGuards non-empty                          -> True
+    caughtByTargetGuard true => target title fired  -> True
+So the fabrication is self-consistent and survives every check that already existed.
+
+TOOL IDENTITY PROVEN BY HASH at each swap (D-R8-20: a clone carries tracked content only, and
+the fix is uncommitted):
+  1163f5f8f2ae993a  committed HEAD  = PRE-fix   (what the fresh clone carried)
+  64224ac3bab1a00f  target worktree = POST-fix  (copied in for C8/C9/C10)
+
+------------------------------------------------------------------------------
+C7 — the hole is REAL: pre-fix tool, doctored record
+------------------------------------------------------------------------------
+  C7 PRE-FIX exit code = 0   elapsed 99s
+  [--remeasure] reproduction cross-check (FRESH-BY-CONTENT ancestor) vs committed
+    tools/mutation-matrix-final.json: every verdict matches the live run
+  VERDICT: DETECTION FLOOR HOLDS at HEAD b96cbaa5cc4aa3c60b99c35ed0451215533ec9ab
+The pre-fix tool publishes HOLDS and exits 0 over a record whose M08 guard-identity story it
+never checked. Reproduced against the REAL committed tool, not a harness.
+
+------------------------------------------------------------------------------
+C8 — the same doctored record, POST-fix: caught, and named
+------------------------------------------------------------------------------
+  C8 POST-FIX exit code = 1   elapsed 98s
+  [--remeasure] reproduction cross-check (FRESH-BY-CONTENT ancestor) vs committed
+    tools/mutation-matrix-final.json: 2 MISMATCH(ES) -- reported as failures below
+  VERDICT: FAILURE -- the detection floor does NOT hold (or the comparison is untrustworthy).
+    - [M08] committed final record and the live remeasure agree on verdict (CAUGHT) but
+      disagree on caughtByTargetGuard: committed=true live=null -- the guard-identity story
+      does not reproduce
+    - [M08] committed final record and the live remeasure agree on verdict (CAUGHT) but
+      disagree on firedGuards: committed=[README Tag vocabulary counts table "Tags on exactly
+      one entry" row matches the corpus ...] live=[README must state correct multi-entry and
+      single-entry tag counts] -- the guard-identity story does not reproduce
+Identical record, identical invocation, identical live run: exit 0 -> exit 1. The
+discriminator is the fix and nothing else.
+
+------------------------------------------------------------------------------
+C9 — converse control 1 (named by the clause): M04 bucket swap still caught
+------------------------------------------------------------------------------
+Cycle 15's fabrication reconstructed exactly — row M04 (genuine verdict CAUGHT) removed from
+`results` and appended to `skippedClaims`:
+  fixture check: results=17 skippedClaims=['M04']
+  C9 M04-BUCKET-SWAP exit code = 1   elapsed 98s
+  [--remeasure] reproduction cross-check ...: 1 MISMATCH(ES) -- reported as failures below
+    - [M04] committed final record says SKIPPED but the live remeasure says CAUGHT -- the
+      committed artifact does not reproduce
+EXACTLY one mismatch, with the pre-existing message text unchanged: the new guard-identity
+checks do not pile on when the verdict already disagrees, and the `skippedClaims` loop was not
+weakened.
+
+------------------------------------------------------------------------------
+C10 — converse control 2 (named by the clause): the genuine record still passes
+------------------------------------------------------------------------------
+  C10 GENUINE-RECORD exit code = 0   elapsed 99s
+  [--remeasure] reproduction cross-check (FRESH-BY-CONTENT ancestor) vs committed
+    tools/mutation-matrix-final.json: every verdict AND guard-identity field compared
+    (caughtByTargetGuard, firedGuards) matches the live run -- see the RV-21 comment above
+    crossCheckAgainstLive for what this does not cover
+  VERDICT: DETECTION FLOOR HOLDS at HEAD b96cbaa5cc4aa3c60b99c35ed0451215533ec9ab
+The new checks do not fire on a true match, and the summary line NAMES the fields it compared,
+printed from the same table the comparison iterates.
+
+WHAT THIS FIX DOES NOT COVER, stated by the tool itself and not claimed as immunity:
+`guardTitleInMeasuredTree`, `suite.*`, `skippedGuards`, `environmentalFiredGuardCount`, and
+the descriptive `note`/`edits`/`editSite`. A fabrication confined to those still reproduces
+undetected. Filed as RV-22 rather than left implicit.
+
+VERDICT: RV-21 PASS (C6, C7, C8, C9, C10 — four real --remeasure runs, run sequentially).

@@ -1,0 +1,111 @@
+VERIFICATION EVIDENCE — run #8, cycle 16, item RV-13 (tools/citation-tax.mjs)
+Gate sealed BEFORE dispatch: /opt/swarm/runs/run8-cycle-016-gate-seal.md
+  sha256 bfc438c1f998695f89653b44e83a4c20ed36c6d6c3c4022343f6bdfdb4ad7fe8, sealed at 1787610394
+Builder took branch (b) of the acceptance clause: relabel the finding as the definitional
+identity it is, and drop the causal attribution to CI/push semantics.
+
+CONDUCTOR-INSTRUMENT DEFECT #1 OF THIS CYCLE, recorded before the verdicts it affects.
+The seal's cells C3 and C4 carry the branch letters (a)/(b) SWAPPED relative to the
+acceptance clause they cite: C3 is labelled "branch (a)" but describes the RELABEL case,
+which the clause calls (b), and C4 the reverse. The cell CONTENT is unambiguous, so content
+governs: C3 (relabel) applies, C4 (make gap 0 reachable) is N/A. Recorded, not quietly
+amended — the seal is committed as it was sealed.
+
+------------------------------------------------------------------------------
+C1 — the previously-unreachable branch text is GONE. RE-TAKEN; see defect #2 below.
+------------------------------------------------------------------------------
+The FIRST attempt used a direct `grep` through the Bash tool, which returned no output. That
+verdict is WITHDRAWN as untrustworthy (defect #2). Re-taken by reading the bytes in-process,
+WITH A POSITIVE CONTROL against the committed pre-fix file — a reader that finds nothing
+everywhere is not evidence:
+
+  working tree (post-fix)          committed HEAD (pre-fix)
+  'two-commit shape is convention here'  = 0        1
+  'allGapPositive'                       = 0        2
+  'not indiscipline'                     = 0        1
+  'names a CI RUN ID'                    = 0        1
+  'NO GAP TO CHARACTERIZE YET'           = 1        —
+  'DEFINITIONAL in this tool'            = 1        —
+
+The same reader finds all four needles in the pre-fix file and none in the post-fix file, so
+the removal is real and the reader is not vacuous.
+
+------------------------------------------------------------------------------
+C2 — the tautology is no longer published as a measured causal finding
+------------------------------------------------------------------------------
+Run from cwd /opt/swarm by ABSOLUTE PATH (D-R8-25 #1). The tool self-anchors:
+  repo root ............... /opt/targets/aphorism-cli
+
+  1. THE GAP IS NEVER ZERO HERE (gaps 1, 1, 2, 1, 2, 3, 1 across 7 repair(s);
+     0 same-commit repairs counted, 0 of the 7 gap values above are 0).
+     That floor is DEFINITIONAL in this tool's own model, not a discovery about CI or
+     push semantics (this tool reads neither): each commit gets exactly one verdict --
+     7 RED, 0 green, 0 undecidable of 7 in scope -- so a repair search
+     that only accepts a green verdict can never select the breaking commit itself,
+     whose own verdict is RED by the very definition of `breaks` above. Confirmed live,
+     not merely asserted: 0 of the 7 breaking commits carry a green verdict
+     at their own SHA. Narrowing the pathspec changes how OFTEN you pay; nothing
+     computed here bears on whether the floor itself can reach zero.
+
+RESIDUAL, recorded rather than buried: the "Corroborating, derived" paragraph immediately
+below still says the citation "names the SHA a PUSH was tested at". That paragraph is DERIVED
+(it names the specific cited base it measured, 02f4668) rather than entailed, so it is outside
+the clause's target — but it is the same vocabulary the clause asked to be dropped from the
+floor claim, and it is noted here so a later reader does not have to rediscover the
+distinction.
+
+------------------------------------------------------------------------------
+C3 — the relabel is DERIVED, not a frozen sentence. RE-TAKEN.
+------------------------------------------------------------------------------
+FIRST ATTEMPT COULD NEVER HAVE DISCRIMINATED, and is recorded as such (the D-R8-23 #2 shape:
+a control that is identical to its subject by construction). It truncated a scratch clone to
+94d7dd9 ("cycle 9") expecting a smaller commit population. But all seven breaking commits are
+dated 2026-08-20 or 2026-08-24 and every one of them PREDATES 94d7dd9 — the run-#8 commits it
+removed (cycles 10-15) touch tools/ and .swarm/ only, which are outside the citation pathspec
+`src bin test .github`. It therefore perturbed a dimension the measurement provably ignores
+and returned numbers identical to HEAD's. That identity was MY fixture failing, not the tool
+passing, and reading it as a pass would have been the false-negative direction.
+
+RE-TAKEN against three genuinely different repository states. The fixed tool was copied into
+each clone and its arrival PROVEN by hash (D-R8-20: a clone cannot carry an uncommitted file):
+  e1814955ff373c89  target working tree
+  e1814955ff373c89  clone copy
+
+  state A — HEAD (b96cbaa):
+    "gaps 1, 1, 2, 1, 2, 3, 1 across 7 repair(s)" / "7 RED, 0 green, 0 undecidable of 7"
+    cited base 02f4668
+  state B — clone truncated to a302f71 (drops the 7th breaking commit):
+    "gaps 1, 1, 2, 1, 2 across 5 repair(s)"      / "6 RED, 0 green, 0 undecidable of 6"
+    cited base 4b63e91
+  state C — clone truncated to 5f833ab (one break, no repair yet):
+    "1. NO GAP TO CHARACTERIZE YET. 1 breaking commit(s), 0 repaired (1 still red at HEAD).
+        This tool cannot say whether the two-commit shape holds here because no repair
+        has landed to measure. That is an open question, not a zero."
+    repo root ............... /opt/swarm/runs/c16-disc   (anchoring resolved to the CLONE)
+
+Three repository states, three different printed sentences from one template. The identity is
+computed, not frozen.
+
+STATE C ALSO CORRECTS THE ITEM'S OWN PREMISE. RV-13 called the else-branch "UNREACHABLE DEAD
+CODE" unconditionally. It was reachable whenever `gaps.length === 0` — an ordinary state, any
+repo whose newest breaking commit is HEAD — and there it printed the nonsense "0 of 0 repairs
+landed in the breaking commit itself, so the two-commit shape is convention here": a
+conclusion drawn from an ABSENCE of data. The builder found this unprompted and said so. The
+conductor reproduced it independently as state C above. So the item was right that a defect
+was there and wrong about what it was.
+
+------------------------------------------------------------------------------
+C5 — converse control: the tool still does its real job
+------------------------------------------------------------------------------
+  HEAD-run exit code = 0
+  stderr bytes = 0
+  '1  5f833ab  2026-08-20  shape 1  0c2ed40     RED      test/node-support-citation.test.js'
+  '2  c08562b  2026-08-20  shape 2  5f833ab     RED      .github/workflows/test.yml test/node-support-citation.test.js'
+  '3  c9dd7ff  2026-08-20  shape 2  c08562b     RED      .github/workflows/test.yml'
+  '4  2b003ea  2026-08-20  shape 3  c9dd7ff     RED      test/node-support-citation.test.js'
+  '5  4b63e91  2026-08-20  shape 3  2b003ea     RED      test/readme-tags.test.js'
+  '6  a302f71  2026-08-20  shape 3  4b63e91     RED      test/readme-matrix-consistency.test.js'
+  '7  02f4668  2026-08-24  shape 3  7e50d6f     RED      test/readme-tags.test.js'
+Seven real rows, exit 0, empty stderr. The relabel did not empty the report.
+
+VERDICT: RV-13 PASS (C1 re-taken, C2, C3 re-taken, C5; C4 N/A — branch not taken).

@@ -682,20 +682,40 @@ function main() {
   // -- recommendation -------------------------------------------------------
   head('RECOMMENDATION');
   say();
-  const allGapPositive = gaps.length > 0 && gaps.every((g) => g >= 1);
   say('THE RITUAL IS INTRINSIC TO THE SELF-FALSIFYING CLAIM. It is NOT an artifact');
   say('of an over-claiming pathspec. Four findings force that, in order of weight:');
   say();
-  if (allGapPositive) {
-    say(`1. THE GAP IS NEVER ZERO, AND CANNOT BE. All ${repaired.length} repairs took at least one`);
-    say(`   later commit (gaps ${gaps.join(', ')}; ${selfRepairs} same-commit repairs). That is arithmetic,`);
-    say('   not indiscipline: the citation names a CI RUN ID, CI runs on push, and a');
-    say('   push cannot precede the commit. A commit cannot cite the run that tested');
-    say('   it. Narrowing the pathspec changes how OFTEN you pay; it cannot make the');
-    say('   gap zero, so it cannot retire the ritual.');
+  // RV-13: gap 0 ("the same commit repaired itself") is not something this
+  // tool could ever OBSERVE as false -- it is excluded by this tool's own
+  // data structures. `verdict` is assigned exactly once per commit (RED xor
+  // green xor undecidable; see STEP 2's loop), `breaks` is defined as the
+  // subset with verdict RED, and the repair search a few lines above accepts
+  // only verdict green starting at the breaking commit's own index. A commit
+  // that is RED cannot, by that same single assignment, also be the green
+  // commit that repairs it. So `gaps.every(g => g >= 1)` whenever any repair
+  // exists -- not because this repository showed discipline, and not because
+  // of CI/push timing (this tool checks neither), but because the sets RED
+  // and green are disjoint by construction. The two live numbers below prove
+  // that disjointness for THIS run rather than asserting it: they are 0 for
+  // any input, by the same construction, which is the point.
+  const redAndGreenOverlap = breaks.filter((b) => stateOf.get(b.sha).verdict === 'green').length;
+  const gapZeroCount = gaps.filter((g) => g === 0).length;
+  if (gaps.length === 0) {
+    say(`1. NO GAP TO CHARACTERIZE YET. ${breaks.length} breaking commit(s), 0 repaired ` +
+      `(${events.length} still red at HEAD).`);
+    say('   This tool cannot say whether the two-commit shape holds here because no repair');
+    say('   has landed to measure. That is an open question, not a zero.');
   } else {
-    say(`1. ${selfRepairs} of ${repaired.length} repairs landed in the breaking commit itself, so the`);
-    say('   two-commit shape is convention here, not a consequence of the claim.');
+    say(`1. THE GAP IS NEVER ZERO HERE (gaps ${gaps.join(', ')} across ${repaired.length} repair(s);`);
+    say(`   ${selfRepairs} same-commit repairs counted, ${gapZeroCount} of the ${gaps.length} gap values above are 0).`);
+    say('   That floor is DEFINITIONAL in this tool\'s own model, not a discovery about CI or');
+    say('   push semantics (this tool reads neither): each commit gets exactly one verdict --');
+    say(`   ${breaks.length} RED, ${denom.length - breaks.length - undecidable.length} green, ${undecidable.length} undecidable of ${denom.length} in scope -- so a repair search`);
+    say('   that only accepts a green verdict can never select the breaking commit itself,');
+    say('   whose own verdict is RED by the very definition of `breaks` above. Confirmed live,');
+    say(`   not merely asserted: ${redAndGreenOverlap} of the ${breaks.length} breaking commits carry a green verdict`);
+    say('   at their own SHA. Narrowing the pathspec changes how OFTEN you pay; nothing');
+    say('   computed here bears on whether the floor itself can reach zero.');
   }
   say(`   Corroborating, derived: the cited base ${headCite.base} ${baseTouches ? 'DOES' : 'does NOT'} itself touch the`);
   say(`   pathspec; the commit that actually carried the change is ${carrier ? short(carrier) : '(none)'}. The`);

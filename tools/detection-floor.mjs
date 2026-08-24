@@ -72,9 +72,12 @@
 //
 // --remeasure sidesteps the question entirely: the HEAD side is re-derived
 // live at the current HEAD, and the committed final record (when present and
-// at the same commit) is cross-checked verdict-for-verdict against the live
-// run -- a mismatch is a FAILURE (exit 1), because it means the committed
-// artifact does not reproduce.
+// at the same commit) is cross-checked against the live run -- verdict,
+// PLUS (RV-21) the guard-identity fields the partition below buckets a
+// CAUGHT row on (caughtByTargetGuard, firedGuards; see the comment above
+// crossCheckAgainstLive for exactly what is and is not covered) -- a
+// mismatch in any of those is a FAILURE (exit 1), because it means the
+// committed artifact does not reproduce.
 //
 // ---------------------------------------------------------------------------
 // THE BUCKETS (every baseline mutation lands in exactly one; ids printed)
@@ -243,6 +246,47 @@ function classifyFreshness(recorded, head) {
     : { status: 'STALE', changed, relevant };
 }
 
+// RV-21: `verdict` alone proves REPRODUCTION of the pass/fail call, not of
+// GUARD IDENTITY. The row-by-row partition below (see "the row-by-row
+// partition") does not stop at a CAUGHT row's `verdict` -- it reads
+// `caughtByTargetGuard` and the titles inside `firedGuards` to decide
+// SAME-GUARD vs GUARD-CHANGED, and prints GUARD-CHANGED's "now caught by"
+// list straight from `firedGuards`. Before this fix, a committed row that
+// kept the live verdict but FABRICATED its guard story -- e.g. claimed
+// SAME-GUARD (caughtByTargetGuard: true) where the live run says
+// GUARD-CHANGED, or invented/omitted an entry in firedGuards -- reproduced
+// cleanly through the verdict-only check that used to live here. Compare
+// those same two bucket-deciding fields too, table-driven so the field list
+// in the printed summary below can never drift from the list actually
+// compared.
+//
+// NOT covered by this (say so, do not claim immunity): `guardTitleInMeasuredTree`
+// (display text inside GUARD-CHANGED -- "old guard still present: yes/no" --
+// not a field the partition uses to CHOOSE a bucket), `suite.*`,
+// `skippedGuards`, `environmentalFiredGuardCount`, `note`/`edits`/`editSite`.
+// A fabrication confined to those fields still reproduces through this
+// check undetected.
+function firedGuardsKey(list) {
+  return (Array.isArray(list) ? list : [])
+    .map((g) => (g && g.file || '') + ' ' + (g && g.title || ''))
+    .sort()
+    .join('');
+}
+
+const GUARD_IDENTITY_CHECKS = [
+  {
+    field: 'caughtByTargetGuard',
+    same: (row, l) => row.caughtByTargetGuard === l.caughtByTargetGuard,
+    describe: (row, l) => 'caughtByTargetGuard: committed=' + row.caughtByTargetGuard + ' live=' + l.caughtByTargetGuard,
+  },
+  {
+    field: 'firedGuards',
+    same: (row, l) => firedGuardsKey(row.firedGuards) === firedGuardsKey(l.firedGuards),
+    describe: (row, l) => 'firedGuards: committed=[' + (row.firedGuards || []).map((g) => g && g.title).join(' | ')
+      + '] live=[' + (l.firedGuards || []).map((g) => g && g.title).join(' | ') + ']',
+  },
+];
+
 // Row-for-row reproduction cross-check of a committed record against a
 // live-derived one. Pre-existing logic (previously inlined, exact-sha-match
 // only); now shared so the FRESH-BY-CONTENT ancestor case (RV-6) gets the
@@ -259,6 +303,17 @@ function crossCheckAgainstLive(committed, live, modeLabel) {
       mismatches++;
       fail(row.id, 'committed final record says ' + row.verdict + ' but the live remeasure says '
         + (l ? l.verdict : (liveSkip.has(row.id) ? 'SKIPPED' : 'ABSENT')) + ' -- the committed artifact does not reproduce');
+      continue;
+    }
+    // RV-21: same verdict is not the same guard story -- compare the fields
+    // the partition actually buckets a CAUGHT row on (see block comment
+    // above GUARD_IDENTITY_CHECKS for what this does and does not cover).
+    for (const check of GUARD_IDENTITY_CHECKS) {
+      if (!check.same(row, l)) {
+        mismatches++;
+        fail(row.id, 'committed final record and the live remeasure agree on verdict (' + row.verdict
+          + ') but disagree on ' + check.describe(row, l) + ' -- the guard-identity story does not reproduce');
+      }
     }
   }
   for (const s of committed.skippedClaims) {
@@ -269,7 +324,10 @@ function crossCheckAgainstLive(committed, live, modeLabel) {
     }
   }
   console.log('[--remeasure] reproduction cross-check (' + modeLabel + ') vs committed ' + path.relative(ROOT, finalPath) + ': '
-    + (mismatches === 0 ? 'every verdict matches the live run' : mismatches + ' MISMATCH(ES) -- reported as failures below'));
+    + (mismatches === 0
+      ? 'every verdict AND guard-identity field compared (' + GUARD_IDENTITY_CHECKS.map((c) => c.field).join(', ')
+        + ') matches the live run -- see the RV-21 comment above crossCheckAgainstLive for what this does not cover'
+      : mismatches + ' MISMATCH(ES) -- reported as failures below'));
   return mismatches;
 }
 

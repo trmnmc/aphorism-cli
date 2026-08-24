@@ -24407,3 +24407,131 @@ intent, and here it did the opposite — it checked a real invariant (every done
 attributable to a cycle), disagreed with the conductor, and was right. The fix at cycle 6
 turned it from a decoration into a check, and this is the first time that check has
 caught something.
+
+## cycle 16 — 2026-08-24T22:23:11Z → 22:49Z — BUILD wave (RV-13, RV-21)
+
+**clock** now 1787610191 at open, stop_at 1787663147 — 14.7h remaining, no admission pressure.
+**probe** probe_ok true, rho 0.84, gear HELD at 2 (guest clamps 1-3; the weekly governor
+ceiling of 2 binds, so gear_target is 2 and no hysteresis step was needed). k_cap 2 ->
+effective wave size min(k_current 5, gear cap 2) = 2. demote TRUE, promote blocked. Window
+36.54M -> 64.62M tokens (+28.08M, attributed to cycle 15's target aphorism-cli), 27.01M tok/h,
+projected depletion 01:29Z — the next 5h boundary lands first, an ordinary mid-window reading.
+**KI-37, ELEVENTH OBSERVATION** weekly_used_pct 100 at week_elapsed_pct 10.35, opus_used_pct
+pinned at 100 for the eleventh consecutive probe, while weekly.ok stays true and the ceiling
+stays 2. Unchanged, still unexplained, still not blocking.
+**orient** tree clean at b96cbaa, no salvage needed. control.json: pending [] and no `inject`
+array — nothing to process, nothing to triage. Craft pack read: `degraded: []`, no lines
+journalled (the items are CLI tool internals, so craft.ui was not applicable).
+**gate sealed BEFORE dispatch** /opt/swarm/runs/run8-cycle-016-gate-seal.md,
+sha256 `bfc438c1f998695f89653b44e83a4c20ed36c6d6c3c4022343f6bdfdb4ad7fe8`, sealed 1787610394,
+16 cells, written WITHOUT a gate script on the D-R8-23/D-R8-25 finding that nine of this run's
+instrument defects were parsers sitting between the conductor and the truth.
+**dispatch** two DIRECT Agent calls (Workflow is review-gated headless — L-016), sonnet each
+(gear 2 demotes, but build/fix never drops below sonnet), pairwise-disjoint single-file scopes:
+RV-13 -> tools/citation-tax.mjs, RV-21 -> tools/detection-floor.mjs. The RV-21 prompt carried
+D-R8-34's ruling explicitly: `--remeasure` is the CONDUCTOR'S run, do not attempt it. The
+builder complied and said plainly that its harness evidence "is not a substitute for an actual
+--remeasure run" — which is exactly the honesty the ruling was written to buy.
+
+### VERIFICATION EVIDENCE — RV-13 (full file `.swarm/runs/run8-cycle-016-verify-RV-13.txt`)
+
+Branch (b): relabel the tautology, drop the causal attribution. C1 re-taken in-process with a
+positive control; C2, C5 pass; C3 re-taken against three genuinely different repository states:
+
+```
+state A  HEAD          "gaps 1, 1, 2, 1, 2, 3, 1 across 7 repair(s)"  "7 RED ... of 7"  base 02f4668
+state B  a302f71       "gaps 1, 1, 2, 1, 2 across 5 repair(s)"        "6 RED ... of 6"  base 4b63e91
+state C  5f833ab       "1. NO GAP TO CHARACTERIZE YET. 1 breaking commit(s), 0 repaired"
+HEAD-run exit code = 0   stderr bytes = 0   7 real per-commit rows printed
+```
+
+Three states, three sentences, one template — the identity is computed, not frozen.
+
+### VERIFICATION EVIDENCE — RV-21 (full file `.swarm/runs/run8-cycle-016-verify-RV-21.txt`)
+
+Branch (1): the comparison was extended to `caughtByTargetGuard` and `firedGuards`, table-driven
+so the printed field list cannot drift from the fields compared. Four real `--remeasure` runs,
+ONE AT A TIME (~98s each), against an M08 row doctored to keep its live verdict and fabricate
+only its guard story (RV-4 row-internal-consistency verified by hand: suite.fail>0 True,
+firedGuards non-empty True, target title fired True):
+
+```
+C7  PRE-fix  + doctored record -> exit 0   "every verdict matches the live run" / FLOOR HOLDS
+C8  POST-fix + doctored record -> exit 1   2 MISMATCH(ES), both named [M08]:
+      caughtByTargetGuard: committed=true live=null -- the guard-identity story does not reproduce
+      firedGuards: committed=[README Tag vocabulary counts table ...] live=[README must state ...]
+C9  POST-fix + M04 bucket swap -> exit 1   EXACTLY 1 mismatch, pre-existing message unchanged
+C10 POST-fix + genuine record  -> exit 0   "every verdict AND guard-identity field compared
+                                            (caughtByTargetGuard, firedGuards) matches the live run"
+tool identity proven by hash at each swap: 1163f5f8f2ae993a PRE-fix / 64224ac3bab1a00f POST-fix
+```
+
+Identical record, identical invocation, identical live run: exit 0 -> exit 1. The fix is the
+only discriminator.
+
+### S-8 invariants + scope (W-6 HELD)
+
+```
+C11 corpus sha256   77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e  equal True
+C12 --help sha256   d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64  equal True
+C13 git status --porcelain -- src bin test .github README.md package.json : 0 lines
+      -> no citation window opened this cycle
+C14 node --test test/*.test.js (literal, shell-expanded) exit 0
+      tests=128 pass=128 fail=0 skipped=0 cancelled=0 -> count-free green True
+      128 reported as an OBSERVATION, never compared to baseline 129 (D-R8-28, S-1)
+C15 modified: [.swarm/state.json](conductor) [tools/citation-tax.mjs] [tools/detection-floor.mjs]
+      subset of builder scope True; converse control rejects src/corpus.js, package.json,
+      test/readme-tags.test.js -> all False as required
+C16 no ".scratch" path survives, no untracked entries
+      29 specifiers under tools/ = node:29 + relative:0 + foreign:0
+      converse control plants lodash + chalk -> both classified foreign (scan is not vacuous)
+```
+
+### TWO CONDUCTOR-INSTRUMENT DEFECTS — the tenth consecutive cycle (D-R8-36, D-R8-37)
+
+**Eighteenth root cause.** The seal's C3/C4 branch letters are swapped relative to the
+acceptance clause's (a)/(b). Content governed, so the right cells ran; recorded, not amended.
+Worse, in the same cell: the FIRST C3 discriminator could never have discriminated. It
+truncated a clone to a run-#8 cycle-9 commit expecting a smaller population, but all seven
+breaking commits predate it — the commits removed touch `tools/` and `.swarm/` only, outside
+the pathspec — so it perturbed a dimension the measurement provably ignores and returned
+numbers identical to HEAD's. Same shape as D-R8-23 #2.
+
+**Nineteenth root cause, and the first this run has found in the conductor's ENVIRONMENT
+rather than in something the run authored.** A direct `grep` through the Bash tool returned a
+silent FALSE NEGATIVE: `grep -n GUARD_IDENTITY_CHECKS tools/detection-floor.mjs` and `grep -c`
+both returned nothing, while reading the bytes in-process counts 4 and `grep` via python3
+subprocess returns exit 0 / stdout `4`. The honest reading of that empty result was that the
+RV-21 builder had quoted code that does not exist — a fabrication finding against an accurate
+report. Reading the actual diff before recording it is all that stopped it. Cell C1's ABSENT
+verdict rested on the same mechanism and was WITHDRAWN and re-taken in-process with a positive
+control. Filed KI-45, reported not patched (hard rule 5). Standing mitigation, now a rule: a
+gate's textual searches read bytes in-process and carry a positive control — a reader that
+finds nothing everywhere is not evidence.
+
+### Premise correction (D-R8-38)
+
+RV-13's own premise was partly false and the builder said so unprompted: the else-branch was
+NOT unconditionally unreachable — `gaps.length === 0` reaches it, an ordinary state — and there
+it printed a conclusion drawn from an absence of data. Conductor reproduced this independently
+as state C above. The item was right that a defect was there and wrong about what it was; that
+is a third outcome, distinct from PASS and FAIL, and L-045 has now paid three times this run.
+
+### Backlog
+
+RV-13, RV-21 -> done (`updated_cycle` 16, the field the burn-up series keys on — the cycle-15
+slip is not repeated). Two new items, both from UNPROMPTED builder disclosures, which is now
+this run's most reliable source of real findings: **RV-22** (the extended cross-check still
+ignores five row fields) and **RV-23** (citation-tax's STEP 4 legend still defines a value
+RV-13 proved unreachable). Backlog 57 items, zero duplicate ids (D-R8-26 check re-run);
+decisions record checked for duplicate ids too (D-R8-31) before appending three.
+
+**Wave autotune:** clean wave — zero reverts, zero failed verifies — so `wave_streak` 1 -> 2,
+which tips `k_current` to `min(5, 5+1)` = 5 (already at the hard max) and resets the streak
+to 0. The gear cap of 2 is what actually bounds the wave, not `k_current`.
+
+**runfile-mirror:**
+
+```json
+{"version":1,"run_label":"improvement run #8","targets":[{"path":"/opt/targets/aphorism-cli","name":"aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":1787663147,"usage_reset_at":1787601600,"stop_at_iso":"2026-08-25T13:05:47.000Z","usage_reset_at_iso":"2026-08-24T20:00:00.000Z","model_policy":"value-routing","auth_mode":"subscription","kickoff_source":"allocator","heartbeat":{"ts":1787611763,"next_wakeup_at":1787613563,"pid":669257,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"probe","gear":2,"gear_target":2,"ratio":0.84,"mode":"guest","k_cap":2,"promote":false,"demote":true,"window_tokens":64621405,"window_cost_usd":40.40868090000001,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":27009251,"projected_depletion_at":1787621367,"last_probe_ts":1787610191,"last_real_probe_ts":1787610191,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":100,"opus_used_pct":100,"week_elapsed_pct":10.35,"weekly_heat":9.66,"opus_heat":9.66,"ceiling":2,"promote_blocked":true,"week_resets_at":1788152399},"probe_note":"cycle 16 probe: probe_ok true. rho 0.84, gear held at 2 (guest clamps 1-3; the weekly governor ceiling of 2 binds, so gear_target 2). k_cap 2 -> effective wave size min(k_current 5, gear cap 2) = 2. demote TRUE, promote blocked. Window 36543626 -> 64621405 tokens (+28.08M, attributed to aphorism-cli for cycle 15), 27.01M tok/h, projected depletion 1787621367 (01:29Z), ~11.5h BEFORE stop_at -- the next 5h boundary lands first, normal mid-window reading. KI-37 ELEVENTH OBSERVATION: weekly_used_pct 100 at week_elapsed_pct 10.35; opus_used_pct pinned at 100 for the eleventh consecutive probe while weekly.ok stays true and the ceiling stays 2."},"watchdog":{"mode":"pacer","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0,"note":"swarm-watchdog.timer is enabled+active but is a MEASURED NO-OP for this run: bin/swarm-watchdog.sh line 279 keys its DONE-guard on REPORT.md existing in every target, and /opt/targets/aphorism-cli/REPORT.md exists from run #7. L-037 clause 2, asserted at kickoff rather than assumed. RECOVERY PATH IS THE PACER: bin/swarm-pacer.sh keys only on wrap_up_complete (line 183) and heartbeat.next_wakeup_at (line 229) \u2014 it does NOT check REPORT.md \u2014 and swarm-pacer.timer is active. Verified by reading both scripts; neither was edited (hard rule 5)."},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":16,"artifact":{"url":"","file":"/opt/swarm/runs/dashboard.html","publish_failures":0},"playbook":{"apply_mode":"auto","source":"direct read of playbook/learnings.md (bin/swarm-playbook.sh structurally unallowlisted \u2014 KI-R6-2, 12th consecutive confirmation, zero denials burned this run)","applied":["L-008","L-016","L-024","L-026","L-029","L-031","L-033","L-034","L-037","L-038","L-042","L-043","L-044","L-046","L-047"],"vetoed":[],"held_out":[{"id":"L-022","why":"persisted UI state in beforeEach \u2014 this target is a terminal CLI with no browser surface; held out for the fourth consecutive run"}],"directives":{"wave_k":null,"routing_recs":["core-logic->fable (L-026)"],"prompt_lines":{"builder":"The conductor is the SOLE committer \u2014 never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. The conductor seals its verification gate by hash before dispatch \u2014 do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work. Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps. Classify each surviving mutant as HOLE (a real gap - harden it) or BOUNDARY (behaviour the spec does not decide - document it) BEFORE writing any test. When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive \u2014 a kill you cannot attribute is not evidence. For every mutation that must kill the suite, author one control that must leave it GREEN \u2014 a check that dies on everything is a snapshot test, not an assertion. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check.","reviewer":"The conductor is the SOLE committer \u2014 never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. Assign each fixer a pairwise-disjoint file set; two fixers must never share a file. The conductor seals its verification gate by hash before dispatch \u2014 do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work.","qa":"Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'. Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns. Classify each surviving mutant as HOLE or BOUNDARY BEFORE writing any test."},"process":["kickoff-refuse-on-exhausted-window (L-038) \u2014 RUN at cycle 0, PASSED: weekly 6.0% at 4.819% elapsed, reset 2026-08-31 well past stop_at","spawner-backoff-to-known-reset (L-037) \u2014 SWARM tool gap, reported not edited (hard rule 5)","wire-through check at each layer boundary for domain-capability items (L-046)","reserve one mid-run cycle for the taste pass before the VALUE_LOOP tail (L-038)"]}},"kickoff_hints":{"mode":"guest","dial":0.3,"brief":"TRICKLE POSTURE: housekeeping only \u2014 harden tests, fix playbook items, polish docs \u2014 no new features. Haiku-priced work types; no new features.","source":"allocator","stop_at":1787663147,"consumed_at":1787577261},"session_shape":"headless -p session spawned by swarm-pacer.sh (auto-kickoff 13:05:48Z). Workflow tool is review-gated headless, so build dispatch is DIRECT Agent calls with disjoint scopes declared in-prompt (L-016); Artifact publish unavailable (local dashboard render IS the publication on the VPS); `claude` is not allowlisted so kickoff step 11 could not run."}
+```
