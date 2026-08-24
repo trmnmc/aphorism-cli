@@ -24393,3 +24393,17 @@ file that genuinely moved — and in both cases the fix was to make the tool say
 narrower thing rather than the confident, wider one. That is the same aesthetic S-1 asked
 for at kickoff, arriving from the opposite direction: not "detection survives removal," but
 "a verdict survives being asked how it knows."
+
+**Bookkeeping slip, caught by the dashboard renderer's self-check.** The step-7 backlog
+write recorded the two verified items with a field name the conductor INVENTED
+(`verified_cycle`) rather than the one this backlog has used for 30 prior done items
+(`updated_cycle`). The renderer keys the burn-up series on `updated_cycle`, so it reported
+`burnup_done_items_without_a_cycle: ["RV-6","P-4"]` and drew a series whose cumulative
+count (30) silently excluded this cycle's work. Corrected: both items now carry
+`updated_cycle: 15`, the re-render reads 32 verified with an empty exclusion list, and
+`verified_cycle` is kept alongside as the gate record. Worth recording for one reason:
+this is the SAME instrument that KI-36 caught validating itself against its own hardcoded
+intent, and here it did the opposite — it checked a real invariant (every done item is
+attributable to a cycle), disagreed with the conductor, and was right. The fix at cycle 6
+turned it from a decoration into a check, and this is the first time that check has
+caught something.
