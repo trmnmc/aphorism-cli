@@ -1,0 +1,121 @@
+P-4 VERIFICATION EVIDENCE -- cycle 15, improvement run #8, aphorism-cli
+Gate: /opt/swarm/runs/cycle-015-gate.md
+sha256 bac33e4e1db7914237a476e5ac26e2e622702a8e1ad5f4221b5c656d3341c453
+sealed 2026-08-24T21:52:13Z at HEAD 053720c, BEFORE either builder was dispatched.
+Neither builder received the file, its path or its hash.
+
+ITEM: "citation-rule-check's RULE_ANCHOR is a frozen literal, so a CONSISTENT reword of
+README + doc fails and blames the doc that did not diverge." (KI-44)
+
+THE FIXTURE: the selection-rule clause
+    "the matrix run for the push that carried the last change to"
+reworded to
+    "the matrix run for the push carrying the most recent change to"
+in BOTH README.md (1 occurrence) and docs/node-support-citation-history.md (2), so the doc
+still quotes README byte-identically -- only the wording moved, in both files together.
+The fixture builder ASSERTS that byte-identity before the tool is ever run, because if it
+were not true the cell would be measuring something else:
+
+  fence body length: 260 bytes
+  fence body IS a byte-identical substring of README "### Node support": true
+  fence body contains the OLD clause literal: false
+  README section contains the OLD clause literal: false
+
+================================================================================
+D1 -- PRE-FIX (clone at 053720c), consistent reword
+      PREDICTION: exit 1, blaming the doc -- which the fixture just proved did not diverge
+================================================================================
+FAIL: docs/node-support-citation-history.md has diverged -- its "```readme-quote" block (260 byte(s)) is too short or does not name the selection rule's own clause ("the matrix run for the push that carried the last change to") to be a real quote rather than a paraphrase or a vacuous fence. Diverging quote:
+EXIT CODE: 1
+
+================================================================================
+D2 -- POST-FIX, same fixture   (must now PASS)
+================================================================================
+OK: docs/node-support-citation-history.md quotes README.md "### Node support" verbatim (260 bytes).
+EXIT CODE: 0
+
+================================================================================
+D3 -- CONVERSE CONTROLS. All four must still FAIL, or the fix simply deleted the anchor.
+      Case 4 is the discriminator: >=80 bytes AND a byte-identical substring of README's
+      section, so it passes the length floor AND the substring test. ONLY a working
+      rule-identity anchor can reject it.
+================================================================================
+# D3 converse control: empty
+fence body length: 0 bytes
+fence body IS a byte-identical substring of README "### Node support": true
+FAIL: docs/node-support-citation-history.md has diverged -- its "```readme-quote" block (0 byte(s)) is shorter than the 80-byte floor, so it cannot be a real quote rather than a vacuous or near-empty fence. Diverging quote:
+EXIT CODE: 1
+# D3 converse control: tiny
+fence body length: 3 bytes
+fence body IS a byte-identical substring of README "### Node support": true
+FAIL: docs/node-support-citation-history.md has diverged -- its "```readme-quote" block (3 byte(s)) is shorter than the 80-byte floor, so it cannot be a real quote rather than a vacuous or near-empty fence. Diverging quote:
+EXIT CODE: 1
+# D3 converse control: paraphrase
+fence body length: 164 bytes
+fence body IS a byte-identical substring of README "### Node support": false
+FAIL: docs/node-support-citation-history.md has diverged -- its "```readme-quote" block is not a byte-identical substring of README.md's "### Node support" section (no such text anywhere in README.md). Diverging quote:
+EXIT CODE: 1
+# D3 converse control: table
+fence body length: 135 bytes
+fence body IS a byte-identical substring of README "### Node support": true
+FAIL: docs/node-support-citation-history.md has diverged -- its "```readme-quote" block (135 byte(s)) is a byte-identical substring of README.md's "### Node support" section, but does not contain the selection rule's own clause -- as currently worded in README.md, that clause is "the matrix run for the push that carried the last change to" -- so it quotes some other part of the section rather than the rule. Diverging quote:
+EXIT CODE: 1
+
+================================================================================
+D4 -- unmodified live tree, POST-FIX
+================================================================================
+OK: docs/node-support-citation-history.md quotes README.md "### Node support" verbatim (257 bytes).
+EXIT CODE: 0
+
+================================================================================
+D5 -- ATTRIBUTION DIRECTION: README reworded ALONE, doc untouched.
+      Must blame README. This is the direction D-R8-7 first found wrong in this repo.
+================================================================================
+FAIL: README.md has diverged -- README.md's "### Node support" section no longer matches its own git HEAD version, while docs/node-support-citation-history.md's "```readme-quote" block is unchanged since HEAD -- README moved. its "```readme-quote" block is not a byte-identical substring of README.md's "### Node support" section (no such text anywhere in README.md). Diverging quote:
+EXIT CODE: 1
+
+================================================================================
+D6 -- BUILDER SCOPE, stated as a RULE not a snapshot (D-R8-15), with a converse control
+================================================================================
+  [ M .swarm/journal.md]  path=".swarm/journal.md"  ->  allowed (conductor-owned .swarm/)
+  [ M tools/citation-rule-check.mjs]  path="tools/citation-rule-check.mjs"  ->  allowed (dispatched builder scope)
+  [ M tools/detection-floor.mjs]  path="tools/detection-floor.mjs"  ->  allowed (dispatched builder scope)
+  [?? .swarm/runs/run8-cycle-015-verify-RV-6.txt]  path=".swarm/runs/run8-cycle-015-verify-RV-6.txt"  ->  allowed (conductor-owned .swarm/)
+  violations: 0
+  "test/planted.test.js"  ->  FORBIDDEN (outside every allowed scope)
+  "README.md"  ->  FORBIDDEN (outside every allowed scope)
+  ".scratch-probe"  ->  FORBIDDEN (scratch tree survived)
+  "src/corpus.js"  ->  FORBIDDEN (outside every allowed scope)
+  "package.json"  ->  FORBIDDEN (outside every allowed scope)
+SUBJECT VIOLATIONS: 0
+
+================================================================================
+S-8 STANDING INVARIANTS
+================================================================================
+src/corpus.js sha256 : 77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e
+  expected prefix 77a4de5c -> true
+--help sha256        : d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64
+  expected prefix d759d781 -> true
+  empty (no movement) -> true
+  tools/: 29 specifiers = 29 node: + 0 relative + 0 FOREIGN
+  src/: 0 specifiers = 0 node: + 0 relative + 0 FOREIGN
+  bin/: 3 specifiers = 0 node: + 3 relative + 0 FOREIGN
+      caught FOREIGN: planted.mjs -> lodash
+      caught FOREIGN: planted.mjs -> chalk
+COUNT-FREE green condition (tests>0 && pass==tests && fail==0 && skipped==0): true
+observed total is REPORTED (128), never compared against a baseline literal.
+
+VERDICT: PASS, on the acceptance clause's FIRST branch. The anchor is now DERIVED from
+README's live section instead of frozen, so a consistent reword carries the anchor with it.
+
+WHAT THIS DOES NOT PROVE:
+  1. The derivation keys on a structural marker README currently owns (a backtick-quoted
+     commit hash followed by a parenthesised date and a comma). If README's citation
+     TEMPLATE itself changes shape, the derivation returns null and the tool falls back to
+     a distinct, README-attributed diagnostic -- the clause's permitted second branch, but
+     a fallback nonetheless. The frozen literal was replaced by a frozen STRUCTURE, which
+     is weaker than a literal but not free.
+  2. Only the reproduction case, the four converse controls and the README-alone direction
+     were exercised. Reword shapes that disturb the surrounding backticks were not.
+  3. No test/ file exercises this tool (it lives outside test/ by design), so a green suite
+     says nothing about it. The evidence above is what stands in for coverage.

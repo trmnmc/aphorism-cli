@@ -218,6 +218,61 @@ function git(args) {
 const failures = []; // {id or '(record)', reason}
 function fail(id, reason) { failures.push({ id, reason }); }
 
+// ---------------------------------------------------------------------------
+// RV-6: shared freshness classification.
+//
+// Before this fix, this file computed "is `recorded` an ancestor of `head`
+// with a verdict-neutral diff?" inline, ONLY in the default (no-flag) path,
+// and used it purely to decide whether to TRUST the committed record without
+// checking a single verdict in it. --remeasure never asked this question at
+// all: its reproduction cross-check fired only on an exact sha match, so the
+// one case FRESH-BY-CONTENT exists for -- a record at an ancestor whose
+// verdict-relevant tree is byte-identical to HEAD -- was the one case no
+// code path ever validated. Factoring the classification out lets
+// --remeasure ask the same question and, when the answer is
+// FRESH-BY-CONTENT, actually cross-check the committed record against the
+// live run instead of declining.
+function classifyFreshness(recorded, head) {
+  if (recorded === head) return { status: 'FRESH', changed: [], relevant: [] };
+  const isAncestor = spawnSync('git', ['merge-base', '--is-ancestor', recorded, head], { cwd: ROOT });
+  if (isAncestor.status !== 0) return { status: 'NOT-ANCESTOR', changed: null, relevant: null };
+  const changed = git(['diff', '--name-only', recorded, head]).split('\n').filter(Boolean);
+  const relevant = changed.filter((f) => VERDICT_RELEVANT.test(f));
+  return relevant.length === 0
+    ? { status: 'FRESH-BY-CONTENT', changed, relevant }
+    : { status: 'STALE', changed, relevant };
+}
+
+// Row-for-row reproduction cross-check of a committed record against a
+// live-derived one. Pre-existing logic (previously inlined, exact-sha-match
+// only); now shared so the FRESH-BY-CONTENT ancestor case (RV-6) gets the
+// identical, already-proven comparison rather than a weaker one. A mismatch
+// is pushed onto the module-level `failures` array, same as every other
+// check in this file -- this is an assertion, not a report.
+function crossCheckAgainstLive(committed, live, modeLabel) {
+  const liveById = new Map(live.results.map((r) => [r.id, r]));
+  const liveSkip = new Set(live.skippedClaims.map((s) => s.id));
+  let mismatches = 0;
+  for (const row of committed.results) {
+    const l = liveById.get(row.id);
+    if (!l || l.verdict !== row.verdict) {
+      mismatches++;
+      fail(row.id, 'committed final record says ' + row.verdict + ' but the live remeasure says '
+        + (l ? l.verdict : (liveSkip.has(row.id) ? 'SKIPPED' : 'ABSENT')) + ' -- the committed artifact does not reproduce');
+    }
+  }
+  for (const s of committed.skippedClaims) {
+    if (!liveSkip.has(s.id)) {
+      mismatches++;
+      fail(s.id, 'committed final record says SKIPPED but the live remeasure says '
+        + (liveById.get(s.id) ? liveById.get(s.id).verdict : 'ABSENT') + ' -- the committed artifact does not reproduce');
+    }
+  }
+  console.log('[--remeasure] reproduction cross-check (' + modeLabel + ') vs committed ' + path.relative(ROOT, finalPath) + ': '
+    + (mismatches === 0 ? 'every verdict matches the live run' : mismatches + ' MISMATCH(ES) -- reported as failures below'));
+  return mismatches;
+}
+
 function loadRecord(p, label) {
   let raw;
   try {
@@ -322,6 +377,7 @@ const baseline = loadRecord(baselinePath, 'baseline');
 const headSha = git(['rev-parse', 'HEAD']).trim();
 let finalRec;
 let freshness; // 'FRESH' | 'FRESH-BY-CONTENT' | 'LIVE'
+let crossCheckMode = null; // set under --remeasure only (RV-6); see final verdict block
 
 if (REMEASURE) {
   console.log('[--remeasure] re-deriving the HEAD side live: node tools/mutation-matrix.mjs --rev ' + headSha + ' --json');
@@ -340,34 +396,35 @@ if (REMEASURE) {
   freshness = 'LIVE';
 
   // Cross-check the committed final record against the live run. A committed
-  // record at the same commit whose verdicts differ from a live re-run does
-  // not reproduce -- that is a failure, not a footnote.
+  // record whose verdicts differ from a live re-run does not reproduce --
+  // that is a failure, not a footnote. RV-6: this used to fire ONLY on an
+  // exact sha match; a committed record at an ancestor commit whose
+  // verdict-relevant tree is byte-identical to HEAD (FRESH-BY-CONTENT, same
+  // test used by the default path's freshness exemption) is just as
+  // reproducible against this same live run, so it gets the same check
+  // instead of being waved through unchecked.
+  crossCheckMode = 'not performed: no committed final record found at ' + finalPath;
   if (existsSync(finalPath)) {
     const committed = loadRecord(finalPath, 'committed-final');
-    if (recordedSha(committed) !== headSha) {
-      console.log('[--remeasure] NOTE: the committed final record measured ' + recordedSha(committed)
-        + ', not the current HEAD ' + headSha + '; the live run replaces it for this comparison and no reproduction cross-check is possible.');
+    const committedSha = recordedSha(committed);
+    if (committedSha === headSha) {
+      crossCheckAgainstLive(committed, finalRec, 'exact HEAD match');
+      crossCheckMode = 'exact HEAD match';
     } else {
-      const liveById = new Map(finalRec.results.map((r) => [r.id, r]));
-      const liveSkip = new Set(finalRec.skippedClaims.map((s) => s.id));
-      let mismatches = 0;
-      for (const row of committed.results) {
-        const live = liveById.get(row.id);
-        if (!live || live.verdict !== row.verdict) {
-          mismatches++;
-          fail(row.id, 'committed final record says ' + row.verdict + ' but the live remeasure says '
-            + (live ? live.verdict : (liveSkip.has(row.id) ? 'SKIPPED' : 'ABSENT')) + ' -- the committed artifact does not reproduce');
-        }
+      const fr = classifyFreshness(committedSha, headSha);
+      if (fr.status === 'FRESH-BY-CONTENT') {
+        console.log('[--remeasure] committed final record measured ' + committedSha + ', not exactly HEAD ' + headSha
+          + ' -- but it is an ancestor and git diff ' + committedSha.slice(0, 7) + '..' + headSha.slice(0, 7)
+          + ' touches NONE of the verdict-relevant paths (FRESH-BY-CONTENT, RV-6). Changed paths (all verdict-neutral):');
+        for (const f of fr.changed) console.log('    - ' + f);
+        crossCheckAgainstLive(committed, finalRec, 'FRESH-BY-CONTENT ancestor');
+        crossCheckMode = 'FRESH-BY-CONTENT ancestor (' + committedSha.slice(0, 7) + ')';
+      } else {
+        console.log('[--remeasure] NOTE: the committed final record measured ' + committedSha
+          + ', not the current HEAD ' + headSha + ', and is NOT FRESH-BY-CONTENT (' + fr.status
+          + '); the live run replaces it for this comparison and no reproduction cross-check is possible.');
+        crossCheckMode = 'not performed: committed record is ' + fr.status + ' relative to HEAD';
       }
-      for (const s of committed.skippedClaims) {
-        if (!liveSkip.has(s.id)) {
-          mismatches++;
-          fail(s.id, 'committed final record says SKIPPED but the live remeasure says '
-            + (liveById.get(s.id) ? liveById.get(s.id).verdict : 'ABSENT') + ' -- the committed artifact does not reproduce');
-        }
-      }
-      console.log('[--remeasure] reproduction cross-check vs committed ' + path.relative(ROOT, finalPath) + ': '
-        + (mismatches === 0 ? 'every verdict matches the live run' : mismatches + ' MISMATCH(ES) -- reported as failures below'));
     }
   }
 } else {
@@ -387,12 +444,8 @@ if (REMEASURE) {
     console.log('  recorded (meta.measuredCommit): ' + recorded);
     console.log('  current HEAD:                   ' + headSha);
     console.log('!'.repeat(78));
-    const isAncestor = spawnSync('git', ['merge-base', '--is-ancestor', recorded, headSha], { cwd: ROOT });
-    const changed = isAncestor.status === 0
-      ? git(['diff', '--name-only', recorded, headSha]).split('\n').filter(Boolean)
-      : null;
-    const relevant = changed === null ? null : changed.filter((f) => VERDICT_RELEVANT.test(f));
-    if (changed !== null && relevant.length === 0) {
+    const fr = classifyFreshness(recorded, headSha);
+    if (fr.status === 'FRESH-BY-CONTENT') {
       freshness = 'FRESH-BY-CONTENT';
       console.log('However: the recorded commit is an ancestor of HEAD, and git diff '
         + recorded.slice(0, 7) + '..' + headSha.slice(0, 7) + ' touches NONE of the paths any');
@@ -400,13 +453,15 @@ if (REMEASURE) {
       console.log('tools/mutation-matrix.mjs). Every input to every verdict is byte-identical');
       console.log('between the two commits, so the record is FRESH-BY-CONTENT. Changed paths');
       console.log('(all verdict-neutral):');
-      for (const f of changed) console.log('  - ' + f);
-      console.log('If you doubt this exemption, run: node tools/detection-floor.mjs --remeasure');
+      for (const f of fr.changed) console.log('  - ' + f);
+      console.log('RV-6: this is a content-equivalence argument, NOT a live cross-check -- no row\'s');
+      console.log('claim below was reproduced by actually running the suite on this fast, no-flag path.');
+      console.log('If you doubt this exemption, or want that live proof, run: node tools/detection-floor.mjs --remeasure');
     } else {
-      console.log('STALE. ' + (changed === null
+      console.log('STALE. ' + (fr.status === 'NOT-ANCESTOR'
         ? 'The recorded commit is not an ancestor of HEAD, so no content-equivalence argument is even possible.'
         : 'The diff from the recorded commit to HEAD touches verdict-relevant paths:'));
-      if (relevant) for (const f of relevant) console.log('  - ' + f);
+      if (fr.relevant) for (const f of fr.relevant) console.log('  - ' + f);
       console.log('A stale comparison is NOT a pass. No rows were compared. To fix, re-measure at');
       console.log('the current HEAD and regenerate the artifact:');
       console.log('  node tools/mutation-matrix.mjs --rev ' + headSha + ' --json > tools/mutation-matrix-final.json');
@@ -626,6 +681,14 @@ if (failures.length === 0) {
     + buckets.claimGone.length + ' claim-gone (listed above, ruling W8-R1);');
   console.log('  0 detection lost; identity control GREEN on both sides; HEAD record '
     + (freshness === 'LIVE' ? 'derived live' : freshness.toLowerCase()) + '.');
+  if (freshness === 'LIVE') {
+    // RV-6: say plainly whether the committed artifact was itself validated
+    // by this run, and how -- silence here would read as a pass on the
+    // committed file when in fact only the live run (this record) was ever
+    // proven; a reader relying on the checked-in tools/mutation-matrix-final.json
+    // needs to know which of those two things just happened.
+    console.log('  committed-final-record cross-check: ' + crossCheckMode + '.');
+  }
   process.exit(0);
 } else {
   console.log('VERDICT: FAILURE -- the detection floor does NOT hold (or the comparison is untrustworthy).');

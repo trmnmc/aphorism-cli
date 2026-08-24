@@ -396,10 +396,12 @@
     {
       "id": "KI-44",
       "severity": "low",
-      "status": "open",
+      "status": "closed",
       "opened_cycle": 10,
       "title": "citation-rule-check's rule-identity anchor is a frozen literal and misattributes a consistent reword",
-      "desc": "See backlog P-4. Reworded README's rule clause and the doc's quote together, keeping the doc a byte-identical quote of README; the check exits 1 and reports \"docs/node-support-citation-history.md has diverged\" -- blaming the document that faithfully tracked README. Fails loud, not silent, which bounds the severity. Same frozen-literal class as the RV-1 defect this cycle fixed, reintroduced by RV-1's sibling fix."
+      "desc": "See backlog P-4. Reworded README's rule clause and the doc's quote together, keeping the doc a byte-identical quote of README; the check exits 1 and reports \"docs/node-support-citation-history.md has diverged\" -- blaming the document that faithfully tracked README. Fails loud, not silent, which bounds the severity. Same frozen-literal class as the RV-1 defect this cycle fixed, reintroduced by RV-1's sibling fix.",
+      "closed_cycle": 15,
+      "resolution": "CLOSED at cycle 15 by P-4. The frozen RULE_ANCHOR literal is replaced by extractRuleAnchor(), which derives the clause from README's live \"### Node support\" section. Conductor-verified (not builder-reported): D1 reproduced the misattribution pre-fix -- exit 1 blaming the doc, on a fixture that PROVED the doc was a byte-identical substring of README; D2 the same fixture exits 0 post-fix; D3 all four converse controls still FAIL, including a 135-byte genuine substring of README that is not the rule, so the anchor still does real work rather than having been deleted to make D2 pass; D5 README-reworded-alone correctly blames README.md. RESIDUAL, recorded not hidden: a frozen LITERAL was replaced by a frozen STRUCTURE (a backticked commit hash followed by a parenthesised date and a comma -- README's own citation template). If that template changes shape the derivation returns null and the tool falls back to a distinct README-attributed diagnostic: the acceptance clause's permitted second branch, but a fallback nonetheless. The class D-R8-24 named is raised one level, not escaped. Evidence: .swarm/runs/run8-cycle-015-verify-P-4.txt"
     }
   ]
 }

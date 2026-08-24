@@ -1,0 +1,94 @@
+RV-6 VERIFICATION EVIDENCE -- cycle 15, improvement run #8, aphorism-cli
+Gate: /opt/swarm/runs/cycle-015-gate.md
+sha256 bac33e4e1db7914237a476e5ac26e2e622702a8e1ad5f4221b5c656d3341c453
+sealed 2026-08-24T21:52:13Z at HEAD 053720c, BEFORE either builder was dispatched.
+Neither builder received the file, its path or its hash.
+
+ITEM: "At HEAD the committed final record is validated by no code path: the default path
+trusts it, --remeasure declines to check it."
+
+THE FIXTURE (conductor-built, independent of the builder's own M17 fixture):
+a copy of the committed tools/mutation-matrix-final.json with exactly ONE edit -- row M04
+(verdict CAUGHT, caughtByTargetGuard true, guard "README tags must exist in corpus")
+REMOVED from results and appended to skippedClaims as
+    {"id":"M04","reason":"M04: anchor occurs 0 times (need exactly 1) in README.md"}
+meta untouched, so the record still claims the same measured commit.
+
+Why this shape: it survives EVERY validity check the tool already carries (RV-2 baseline
+shape, RV-3 identity-evidence, RV-4 row-internal consistency) while still fabricating a
+substantive claim -- a mutation the suite really catches at HEAD is laundered into "the
+claim no longer exists", which ruling W8-R1 counts as NOT-lost. That is precisely the
+unvalidated-artifact hole RV-6 names.
+
+================================================================================
+C1a -- PRE-FIX (clone at 053720c), DEFAULT no-flag path, doctored record
+       PREDICTION: exit 0, M04 bucketed CLAIM-GONE, headline DETECTION FLOOR HOLDS
+================================================================================
+CLAIM-GONE (1): skipped at HEAD, anchor occurs 0 times -- the claim no longer exists (NOT lost, per ruling W8-R1 above; listed, never folded into the pass)
+  M04  README tags must exist in corpus
+       instrument reason: M04: anchor occurs 0 times (need exactly 1) in README.md
+DETECTION-LOST (0): none
+VERDICT: DETECTION FLOOR HOLDS -- record measured at 1aac952c00d3c1770295db01aa663dd7c3ecf83b, an ancestor of current HEAD 053720c89085b1f7d616fcb95b927779b376a134, exempt under FRESH-BY-CONTENT (see freshness note above).
+EXIT CODE: 0
+
+================================================================================
+C1b -- PRE-FIX (clone at 053720c), --remeasure, doctored record
+       PREDICTION: exit 0, cross-check declines, fabrication never examined
+================================================================================
+[--remeasure] re-deriving the HEAD side live: node tools/mutation-matrix.mjs --rev 053720c89085b1f7d616fcb95b927779b376a134 --json
+[--remeasure] this runs the full suite ~19 times in a scratch clone; expect minutes, progress on stderr.
+[--remeasure] NOTE: the committed final record measured 1aac952c00d3c1770295db01aa663dd7c3ecf83b, not the current HEAD 053720c89085b1f7d616fcb95b927779b376a134; the live run replaces it for this comparison and no reproduction cross-check is possible.
+CLAIM-GONE (0): skipped at HEAD, anchor occurs 0 times -- the claim no longer exists (NOT lost, per ruling W8-R1 above; listed, never folded into the pass)
+DETECTION-LOST (0): none
+VERDICT: DETECTION FLOOR HOLDS at HEAD 053720c89085b1f7d616fcb95b927779b376a134
+EXIT CODE: 0
+
+================================================================================
+C2 -- POST-FIX, --remeasure, doctored record   (must now CATCH)
+      PREDICTION: exit 1, naming M04 as not reproducing
+================================================================================
+[--remeasure] re-deriving the HEAD side live: node tools/mutation-matrix.mjs --rev 053720c89085b1f7d616fcb95b927779b376a134 --json
+[--remeasure] this runs the full suite ~19 times in a scratch clone; expect minutes, progress on stderr.
+[--remeasure] committed final record measured 1aac952c00d3c1770295db01aa663dd7c3ecf83b, not exactly HEAD 053720c89085b1f7d616fcb95b927779b376a134 -- but it is an ancestor and git diff 1aac952..053720c touches NONE of the verdict-relevant paths (FRESH-BY-CONTENT, RV-6). Changed paths (all verdict-neutral):
+[--remeasure] reproduction cross-check (FRESH-BY-CONTENT ancestor) vs committed ../c15-doctored-final.json: 1 MISMATCH(ES) -- reported as failures below
+VERDICT: FAILURE -- the detection floor does NOT hold (or the comparison is untrustworthy).
+  - [M04] committed final record says SKIPPED but the live remeasure says CAUGHT -- the committed artifact does not reproduce
+EXIT CODE: 1
+
+================================================================================
+C3 -- CONVERSE CONTROL: POST-FIX, --remeasure, GENUINE committed record
+      Same invocation as C2. A check that fires on everything is not a check.
+      PREDICTION: exit 0, DETECTION FLOOR HOLDS
+================================================================================
+[--remeasure] reproduction cross-check (FRESH-BY-CONTENT ancestor) vs committed tools/mutation-matrix-final.json: every verdict matches the live run
+VERDICT: DETECTION FLOOR HOLDS at HEAD 053720c89085b1f7d616fcb95b927779b376a134
+  committed-final-record cross-check: FRESH-BY-CONTENT ancestor (1aac952).
+EXIT CODE: 0
+
+================================================================================
+C4 -- default no-flag path (the invocation run-all.mjs uses), POST-FIX, live tree
+================================================================================
+RV-6: this is a content-equivalence argument, NOT a live cross-check -- no row's
+VERDICT: DETECTION FLOOR HOLDS -- record measured at 1aac952c00d3c1770295db01aa663dd7c3ecf83b, an ancestor of current HEAD 053720c89085b1f7d616fcb95b927779b376a134, exempt under FRESH-BY-CONTENT (see freshness note above).
+  0 detection lost; identity control GREEN on both sides; HEAD record fresh-by-content.
+EXIT CODE: 0
+
+VERDICT: PASS, on the acceptance clause's SECOND branch. --remeasure now performs its
+reproduction cross-check when the committed record is an ancestor whose verdict-relevant
+tree is byte-identical to HEAD (FRESH-BY-CONTENT), using the identical comparison that was
+previously reachable only on an exact sha match -- the case that needed it least.
+
+WHAT THIS DOES NOT PROVE (stated here so it cannot be quietly dropped):
+  1. The cross-check compares the top-level "verdict" field only. A GUARD-IDENTITY
+     fabrication -- same verdict, but a fabricated firedGuards / caughtByTargetGuard story
+     -- is not compared against the live run. That class was unguarded before this change
+     and remains unguarded after it. Disclosed unprompted by the builder; filed as RV-21.
+  2. The default no-flag path still trusts FRESH-BY-CONTENT without a live check. That is
+     deliberate (run-all.mjs depends on it being fast), and the fix makes the path SAY so
+     rather than letting silence read as validation -- but a reader who runs only the fast
+     path has an argument from content-equivalence, not a reproduction.
+  3. C1a/C1b are the CONDUCTOR's reproduction of the pre-fix hole. The builder never
+     witnessed its own fix reject a fabricated record end-to-end -- all three of its
+     remeasure runs died before reaching a verdict, which it reported rather than papered
+     over. The builder's claim and the conductor's evidence are NOT rolled together: every
+     verdict above rests on the conductor's runs.

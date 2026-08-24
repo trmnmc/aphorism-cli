@@ -18,6 +18,24 @@
 // resolves, and the same extraction succeeds against the HEAD blob -- if any of that isn't
 // true, we do NOT guess a side to blame. We say plainly that direction could not be
 // determined. An honest "don't know" is worth more than a confident wrong attribution.
+//
+// Second attribution fix (the RULE_ANCHOR used to be a frozen literal copy of the selection
+// rule's wording): a CONSISTENT reword of that clause -- same new words landing in BOTH
+// README and HIST, so HIST still quotes README byte-identically -- used to fail anyway,
+// because the frozen literal itself wasn't reworded and so no longer appeared in either
+// file, and the failure blamed HIST unconditionally even though HIST did exactly the right
+// thing. That was the same frozen-literal defect one layer up. The fix below derives the
+// anchor from README's own LIVE section instead of hardcoding its wording (see
+// extractRuleAnchor), so a consistent reword updates the anchor along with it. The one case
+// that still can't be a plain "does not contain the live anchor" -> blame-HIST verdict is
+// when HIST's fence IS a byte-identical substring of README's current section (nothing to
+// attribute-by-git-HEAD -- both sides currently agree on those bytes) but that substring
+// still isn't the rule (e.g. it's the results table): that is unambiguously HIST quoting the
+// wrong part of a README it otherwise agrees is current, so it is blamed directly. Every
+// other divergence -- including "only README's live section changed, HIST's fence is stale
+// and no longer even contains README's new wording" -- runs through the same git-HEAD
+// attribution machinery as any other substring mismatch, so README gets blamed when README
+// is the side that actually moved.
 import { readFileSync, realpathSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -78,31 +96,77 @@ function readHeadBlob(relPath) {
   }
 }
 
+// README renders the commit its cited matrix ran against as a backtick-quoted hash
+// immediately followed by a parenthesized YYYY-MM-DD date and a comma -- e.g.
+// "`02f4668` (2026-08-24),". That template is DATA, regenerated fresh every cycle by
+// whoever re-cites a run; it is not prose anyone rewords for style, unlike the rule clause
+// itself. The selection rule's own clause always sits immediately after that citation and
+// runs up to the next backtick-quoted token (the opening backtick of the `src/`/`bin/`/
+// `test/` pathspec that closes the clause). Whatever words currently occupy that span ARE
+// the rule, however they're phrased on this run -- so this reads the anchor out of README
+// structurally instead of freezing a copy of its current wording. Returns null (never a
+// guess) when README's section doesn't carry exactly one such citation to anchor against --
+// zero is a section that lost its citation shape, more than one is ambiguous, and picking
+// one by position would silently anchor against the wrong citation.
+const CITATION_PATTERN = /`[0-9a-fA-F]{6,40}`\s*\(\d{4}-\d{2}-\d{2}\),\s*/g;
+function extractRuleAnchor(sectionText) {
+  const citations = [...sectionText.matchAll(CITATION_PATTERN)];
+  if (citations.length !== 1) return null;
+  const after = sectionText.slice(citations[0].index + citations[0][0].length);
+  const nextTick = after.indexOf('`');
+  if (nextTick < 0) return null;
+  const anchor = after.slice(0, nextTick).trim();
+  return anchor.length > 0 ? anchor : null;
+}
+
 const quote = extractQuote(hist);
 if (quote === null) die(HIST, `it carries no "${FENCE.trim()}" block quoting ${RM}`);
 
 // RV-9: a bare `section.includes(quote)` test treats '' and any short
 // fragment as a valid "quote" -- every string is a substring of every string
 // it is short enough to fit inside, so an empty or near-empty fence body
-// passed vacuously (a 0-byte and a 3-byte body both "verified"). Two floors
-// close that gap, checked on the quote ALONE before it is ever compared
-// against README: a MINIMUM LENGTH (rules out vacuous/near-empty bodies) and
-// a RULE-IDENTITY ANCHOR naming the clause that actually selects the cited
-// run (rules out a fence padded just past the floor with something that
-// isn't the rule). 80 sits comfortably below the real quote's 257 bytes and
-// comfortably above a stray word or sentence fragment.
+// passed vacuously (a 0-byte and a 3-byte body both "verified"). 80 sits
+// comfortably below the real quote's 257 bytes and comfortably above a stray
+// word or sentence fragment.
 const MIN_QUOTE_LEN = 80;
-const RULE_ANCHOR = 'the matrix run for the push that carried the last change to';
-if (quote.length < MIN_QUOTE_LEN || !quote.includes(RULE_ANCHOR)) {
-  die(HIST, `its "${FENCE.trim()}" block (${quote.length} byte(s)) is too short or does not name ` +
-    `the selection rule's own clause ("${RULE_ANCHOR}") to be a real quote rather than a paraphrase ` +
-    `or a vacuous fence. Diverging quote:\n${quote}`);
+if (quote.length < MIN_QUOTE_LEN) {
+  die(HIST, `its "${FENCE.trim()}" block (${quote.length} byte(s)) is shorter than the ` +
+    `${MIN_QUOTE_LEN}-byte floor, so it cannot be a real quote rather than a vacuous or ` +
+    `near-empty fence. Diverging quote:\n${quote}`);
 }
 
 const section = extractSection(readme);
 if (section === null) die(RM, `it has no "### Node support" section for ${HIST} to quote`);
 
-if (!section.includes(quote)) {
+const ruleAnchor = extractRuleAnchor(section);
+if (ruleAnchor === null) {
+  die(RM, `its "### Node support" section does not name exactly one backtick-quoted commit ` +
+    `hash followed by a parenthesized date (e.g. "\`02f4668\` (2026-08-24),") -- that citation ` +
+    `is the structural marker this check anchors the selection rule's own clause against, and ` +
+    `without it there is nothing to hold ${HIST}'s quote to.`);
+}
+
+// A RULE-IDENTITY ANCHOR closes the gap a bare length floor leaves open: a fence padded just
+// past 80 bytes with something that isn't the rule (e.g. the results table) would otherwise
+// pass. `ruleAnchor` is derived live from README above, so a CONSISTENT reword of the rule
+// clause -- same new wording landing in both README and HIST -- moves the anchor right along
+// with it instead of leaving a stale literal behind.
+const hasAnchor = quote.includes(ruleAnchor);
+const isSubstring = section.includes(quote);
+
+if (isSubstring && !hasAnchor) {
+  // Nothing to attribute by git HEAD here: HIST's fence is a byte-identical fragment of
+  // README's CURRENT section, so both sides already agree on those exact bytes -- README
+  // has not "moved" relative to this content. It just isn't the rule (e.g. it's the results
+  // table). That is unambiguously HIST quoting the wrong part of a README it otherwise
+  // agrees is current.
+  die(HIST, `its "${FENCE.trim()}" block (${quote.length} byte(s)) is a byte-identical substring ` +
+    `of ${RM}'s "### Node support" section, but does not contain the selection rule's own ` +
+    `clause -- as currently worded in ${RM}, that clause is "${ruleAnchor}" -- so it quotes some ` +
+    `other part of the section rather than the rule. Diverging quote:\n${quote}`);
+}
+
+if (!isSubstring) {
   const where = readme.includes(quote)
     ? `${RM} does contain that text, but outside its "### Node support" section`
     : `no such text anywhere in ${RM}`;
