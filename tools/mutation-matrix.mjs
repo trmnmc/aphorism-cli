@@ -186,6 +186,27 @@ const GIT_DEPENDENT_GUARD_TITLES = [
   'README Node support citation: base-to-working-tree diff must also be empty, so an uncommitted falsification is visible now (or the check must skip on a missing precondition)',
 ];
 
+// RV-5: neither git-dependent guard evaluates any of the 18 W-1 claims this
+// harness falsifies -- both check whether a diff against the README's cited
+// Node-support base commit is empty, which is a question about tree
+// dirtiness, not about tags, counts or any other claim under test. In
+// particular the base-to-working-tree guard (the second title above) diffs
+// the cited base against the WORKING TREE over the pathspec `src bin test
+// .github` (test/node-support-citation.test.js), so it fires on ANY
+// uncommitted edit under those paths -- including M07's src/corpus.js edit
+// -- regardless of whether M07's actual claim ("README must list all
+// single-entry tags") is checked by anything at all. A fire from either
+// title is therefore ENVIRONMENTAL: a side effect of where a mutation's edit
+// landed, not evidence the suite detected the falsified claim, and must not
+// by itself make a mutation CAUGHT. No mutation in MUTATIONS below names
+// either title as its OWN target guard, so excluding them from the
+// CAUGHT/SILENT determination never costs a mutation its rightful
+// attribution -- it only stops them from manufacturing one that isn't
+// theirs.
+function isEnvironmentalGuardTitle(title) {
+  return GIT_DEPENDENT_GUARD_TITLES.includes(title);
+}
+
 // ---------------------------------------------------------------------------
 // THE MUTATIONS -- output of the generation rule above, one per W-1
 // INCLUDED claim, in inventory order. `edits` are exact-string
@@ -742,7 +763,19 @@ try {
     const run = runSuite(CLONE);
     process.stderr.write('tests=' + run.totals.tests + ' fail=' + run.totals.fail + ' skipped=' + run.totals.skipped + '\n');
 
-    const firedGuards = run.failed.map((title) => ({ file: titleMap.get(title) || null, title }));
+    // RV-5: each fired guard now carries its own `environmental` marker (a
+    // structural field on the record, not a comment) so a reader of either
+    // the printed report or the JSON can tell, per fired guard, whether it
+    // fired because the CLAIM went false (semantic) or merely because the
+    // scratch tree became dirty under a git-dependent guard's watched paths
+    // (environmental) -- see isEnvironmentalGuardTitle above.
+    const firedGuards = run.failed.map((title) => ({
+      file: titleMap.get(title) || null,
+      title,
+      environmental: isEnvironmentalGuardTitle(title),
+    }));
+    const semanticFiredGuards = firedGuards.filter((g) => !g.environmental);
+    const environmentalFiredGuards = firedGuards.filter((g) => g.environmental);
     const entry = {
       id: m.id,
       inventoryIndex: m.inventoryIndex,
@@ -753,6 +786,8 @@ try {
       edits: resolvedEdits,
       suite: run.totals,
       firedGuards,
+      semanticFiredGuardCount: semanticFiredGuards.length,
+      environmentalFiredGuardCount: environmentalFiredGuards.length,
       skippedGuards: run.skipped,
       environmentalSkipWarning: run.skipped.some((t) => GIT_DEPENDENT_GUARD_TITLES.includes(t))
         ? 'a git-dependent guard SKIPPED during this run -- its verdict for this mutation is environmental, not evidential'
@@ -774,11 +809,27 @@ try {
         throw new Error('IDENTITY CONTROL IS NOT GREEN (fail=' + run.totals.fail + ', skipped=' + run.totals.skipped + ', gitGuardsRan=' + gitGuardsRan + ') -- matrix invalid. Failed: ' + run.failed.join(' | '));
       }
     } else {
-      entry.verdict = run.totals.fail > 0 ? 'CAUGHT' : 'SILENT';
+      // RV-5: a CAUGHT verdict must be attributable to a guard that fired
+      // BECAUSE the claim went false, not to an environmental guard that
+      // fires on tree dirtiness alone (see isEnvironmentalGuardTitle). Only
+      // SEMANTIC fires count toward CAUGHT; a mutation whose only failures
+      // are environmental is SILENT -- its semantic guards, if any exist,
+      // did not fire, and an environmental side effect must not paper over
+      // that absence. This is the load-bearing branch: with M07's semantic
+      // readme-tags guards removed from the measured tree, the
+      // base-to-working-tree citation guard still fires (M07 edits
+      // src/corpus.js, which is under its watched pathspec) but it is
+      // `environmental: true`, so semanticFiredGuards is empty and the
+      // verdict is SILENT rather than a manufactured CAUGHT.
+      entry.verdict = semanticFiredGuards.length > 0 ? 'CAUGHT' : 'SILENT';
       entry.guardTitleInMeasuredTree = !missingGuardTitles.has(m.id);
       // Attribution to the named guard is only meaningful when that guard
       // exists in the measured tree; otherwise it is explicitly null, and
-      // the printed report marks the row UNATTRIBUTABLE.
+      // the printed report marks the row UNATTRIBUTABLE. (No mutation's own
+      // guardTitle is ever one of GIT_DEPENDENT_GUARD_TITLES, so checking
+      // against the full firedGuards list here vs. semanticFiredGuards is
+      // equivalent; firedGuards is used to keep this independent of the
+      // environmental split above.)
       entry.caughtByTargetGuard = entry.guardTitleInMeasuredTree
         ? firedGuards.some((g) => g.title === m.guardTitle)
         : null;
@@ -809,18 +860,24 @@ for (const r of results) {
   P('     claim: ' + r.guardTitle);
   let verdictLine = '     verdict: ' + r.verdict;
   if (r.verdict === 'CAUGHT') {
-    verdictLine += ' by ' + r.firedGuards.length + ' guard(s)';
+    verdictLine += ' by ' + r.semanticFiredGuardCount + ' semantic guard(s)';
     if (r.guardTitleInMeasuredTree) {
       verdictLine += r.caughtByTargetGuard ? ' incl. the targeted guard' : ' -- NOT incl. the targeted guard';
     }
   } else {
-    verdictLine += ' -- no guard fired; this claim\'s falsification is undetected';
+    verdictLine += ' -- no semantic guard fired; this claim\'s falsification is undetected';
+  }
+  if (r.environmentalFiredGuardCount > 0) {
+    verdictLine += '  (+' + r.environmentalFiredGuardCount + ' environmental guard(s) also fired, excluded from this verdict)';
   }
   if (!r.guardTitleInMeasuredTree) {
     verdictLine += '  [UNATTRIBUTABLE: the transcribed guard title does not exist in the measured tree, so attribution to the named guard is impossible]';
   }
   P(verdictLine);
-  for (const g of r.firedGuards) P('       - ' + (g.file || '(unattributed)') + '  ' + g.title);
+  for (const g of r.firedGuards) {
+    P('       - ' + (g.file || '(unattributed)') + '  ' + g.title
+      + (g.environmental ? '  [ENVIRONMENTAL -- tree-dirtiness fire, excluded from CAUGHT/SILENT]' : '  [semantic]'));
+  }
   if (r.skippedGuards.length) P('     skipped guards this run: ' + r.skippedGuards.join(' | '));
   if (r.environmentalSkipWarning) P('     WARNING: ' + r.environmentalSkipWarning);
   P('');

@@ -647,7 +647,7 @@ P('');
 // -------- Section A: census --------
 P('== A. TEST-FILE CENSUS (lines and test counts, re-derived) ==');
 P('');
-let totalLines = 0, totalStatic = 0, totalDynamic = 0;
+let totalLines = 0, totalStatic = 0, totalDynamic = 0, unparseableCount = 0;
 const perFile = [];
 for (const f of testFiles) {
   const src = readFileSync(path.join(ROOT, 'test', f), 'utf8');
@@ -659,6 +659,7 @@ for (const f of testFiles) {
   totalLines += lineCount;
   totalStatic += blocks.length;
   if (dyn.tests != null) totalDynamic += dyn.tests;
+  else unparseableCount++;
   const agree = dyn.tests === blocks.length ? 'agree' : 'DISAGREE (static ' + blocks.length + ' vs runner ' + dyn.tests + ')';
   P('  test/' + f.padEnd(38) + String(lineCount).padStart(5) + ' lines   '
     + String(blocks.length).padStart(3) + ' test() blocks   runner: '
@@ -673,7 +674,23 @@ for (const f of testFiles) {
 // column above already shows which file(s). Sections B and G below read this
 // flag so their prose cannot assert agreement the numbers do not back.
 const totalsAgree = totalDynamic === totalStatic;
+// Whether the runner's cross-check covers the WHOLE suite. A file whose TAP
+// output never carried a `# tests N` line (UNPARSEABLE, per-file column
+// above) contributes 0 to totalDynamic while its test() blocks still land in
+// totalStatic -- silently, unless disclosed here. partialCoverage gates that
+// disclosure in B and G so a numeric totalsAgree (true OR false) can never be
+// read as a statement about files the runner could not measure at all.
+const partialCoverage = unparseableCount > 0;
+const parseableCount = testFiles.length - unparseableCount;
 P('  ' + 'TOTAL'.padEnd(43) + String(totalLines).padStart(5) + ' lines   ' + String(totalStatic).padStart(3) + ' test() blocks   runner total: ' + totalDynamic + ' tests');
+if (partialCoverage) {
+  P('  UNPARSEABLE: ' + unparseableCount + ' of ' + testFiles.length + ' file(s) above produced no runner `# tests N` line');
+  P('  (see the per-file UNPARSEABLE cell(s)); their test() blocks are counted in the ' + totalStatic
+    + ' static TOTAL');
+  P('  above but are NOT reflected in the ' + totalDynamic + ' runner TOTAL. The static-vs-runner');
+  P('  comparison below (and in section G) therefore covers only the ' + parseableCount
+    + ' parseable file(s), not the whole suite.');
+}
 {
   let srcBin = 0;
   for (const dir of ['src', 'bin']) {
@@ -710,15 +727,30 @@ P('  at test time AND (b) asserts a count-shaped claim about it: a number parsed
 P('  from the document compared to an expectation, or set containment/equality');
 P('  between a document-claimed collection and a derived one. BORDERLINE items');
 P('  are listed one by one with reasons; EXCLUDED items are listed by title with');
-if (totalsAgree) {
+if (!partialCoverage && totalsAgree) {
   P('  a reason code. Nothing is silently dropped. (Full rule: header of this file.)');
-} else {
+} else if (!partialCoverage) {
   P('  a reason code. Nothing the static parser SAW is silently dropped from C/D/E --');
   P('  but the static test() parse (' + totalStatic + ') and the runner-measured count');
   P('  (' + totalDynamic + ') DISAGREE for this tree (see A\'s per-file "agree"/"DISAGREE"');
   P('  column): ' + Math.abs(totalDynamic - totalStatic) + ' test(s) the runner counted are not textually visible as');
   P('  test() blocks and so cannot appear as rows in C/D/E. That claim is withdrawn');
   P('  for this tree until the counts agree. (Full rule: header of this file.)');
+} else {
+  // partialCoverage: at least one file is UNPARSEABLE by the runner. Whether
+  // totalDynamic and totalStatic happen to be numerically equal or not, that
+  // comparison is over the parseable subset only -- say so explicitly rather
+  // than let a coincidental match read as whole-suite agreement.
+  P('  a reason code. Nothing the static parser SAW is silently dropped from C/D/E --');
+  P('  but ' + unparseableCount + ' of ' + testFiles.length + ' file(s) produced no runner `# tests N` line');
+  P('  (UNPARSEABLE; see A) and are excluded from the ' + totalDynamic + ' runner TOTAL, so the');
+  P('  static-vs-runner comparison covers only the ' + parseableCount + ' parseable file(s), not the whole');
+  P('  suite. The static (' + totalStatic + ') and runner (' + totalDynamic + ') totals '
+    + (totalsAgree ? 'are numerically equal,' : 'DISAGREE even on that subset,'));
+  P('  ' + (totalsAgree
+    ? 'but that equality is NOT evidence of whole-suite agreement while unparseable file(s) remain unmeasured.'
+    : 'and ' + Math.abs(totalDynamic - totalStatic) + ' test(s) are unaccounted for within the measured subset.'));
+  P('  That claim is withdrawn for this tree until every file parses. (Full rule: header of this file.)');
 }
 P('');
 
@@ -834,10 +866,17 @@ if (floorEvidence.length === 0) {
   P('');
   P('  Evidence behind the reading, all re-derived above:');
   P('    - the runner-measured suite currently holds ' + totalDynamic + ' tests across '
-    + testFiles.length + ' files' + (totalsAgree
-      ? ' (static parse agrees: ' + totalStatic + ');'
-      : ' (static parse DISAGREES: ' + totalStatic + ' parsed statically vs ' + totalDynamic
-        + ' measured by the runner -- see A\'s per-file "agree"/"DISAGREE" column);'));
+    + testFiles.length + ' files' + (partialCoverage
+      ? (' (' + unparseableCount + ' of these file(s) are UNPARSEABLE by the runner -- no `# tests N` line --'
+        + ' so this total and the static/runner comparison cover only the ' + parseableCount
+        + ' parseable file(s), not the whole suite; static parse (' + totalStatic + ') '
+        + (totalsAgree
+          ? 'is numerically equal but that is not evidence of whole-suite agreement);'
+          : 'DISAGREES with the runner even on that subset);'))
+      : (totalsAgree
+        ? ' (static parse agrees: ' + totalStatic + ');'
+        : ' (static parse DISAGREES: ' + totalStatic + ' parsed statically vs ' + totalDynamic
+          + ' measured by the runner -- see A\'s per-file "agree"/"DISAGREE" column);')));
   P('    - zero comparisons against a ' + FLOOR_MIN_DIGITS + '+-digit bound, in either operand order,');
   P('      inline or via a same-file named const, exist in test code (F.i);');
   P('    - no test spawns the test runner or enumerates any directory (F.ii);');
@@ -871,6 +910,10 @@ for (const r of nonDocFloors) {
 }
 P('');
 P('Totals: ' + included.length + ' included, ' + borderline.length + ' borderline, ' + excluded.length + ' excluded, of '
-  + rows.length + ' tests parsed statically (' + totalDynamic + ' measured by the runner).');
+  + rows.length + ' tests parsed statically (' + totalDynamic + ' measured by the runner)'
+  + (partialCoverage
+    ? ' -- ' + unparseableCount + ' file(s) UNPARSEABLE and excluded from that runner figure; comparison covers only '
+      + parseableCount + ' of ' + testFiles.length + ' file(s)'
+    : '') + '.');
 
 console.log(out.join('\n'));

@@ -1,0 +1,79 @@
+CYCLE 14 — RV-5 VERIFICATION GATE — verbatim console output
+gate script : /opt/swarm/runs/gate-c14-rv5.mjs
+gate doc    : /opt/swarm/runs/cycle-014-gate.md  sha256 0859fdcbbe58d9a8e551c7e63cddb8da61982cb74eac53cada86a04c6968b0e5
+item        : RV-5 "A CAUGHT verdict counts ANY failing test, so M07's detection is
+              structurally guaranteed and its floor row is unfalsifiable"
+work origin : salvaged from the crashed cycle-14 wave; no agent was dispatched this cycle
+
+--- step 1: M07's fired-guard composition, MEASURED at HEAD with the PRE-fix tool ---
+$ node /opt/swarm/runs/c14-b1-prehead.mjs
+elapsed seconds : 112
+mutations       : 18
+git-dependent guard titles (2):
+   - README Node support citation: cited git diff must be empty (or the check must skip on a missing prec
+   - README Node support citation: base-to-working-tree diff must also be empty, so an uncommitted falsif
+
+M07 verdict     : CAUGHT | suite {"tests":128,"pass":124,"fail":4,"skipped":0}
+M07 guardTitle  : README must list all single-entry tags
+M07 firedGuards :
+   [ENV ] test/node-support-citation.test.js  ::  README Node support citation: base-to-working-tree diff must also be empty, so an uncommitted falsification is
+   [SEM ] test/readme-tags.test.js  ::  README must state total unique tags correctly
+   [SEM ] test/readme-tags.test.js  ::  README must list all single-entry tags
+   [SEM ] test/readme-tags.test.js  ::  README must state correct multi-entry and single-entry tag counts
+
+all verdicts    : {"M01":"CAUGHT",...,"M18":"CAUGHT"}   (18/18 CAUGHT — full list in B-pre-head-verdicts.json)
+
+--- step 2: build the induced tree (M07's three MEASURED semantic guards deleted) ---
+$ node /opt/swarm/runs/c14-b2-induce.mjs
+M07 semantic guards to delete (3), measured not assumed:
+   - test/readme-tags.test.js :: README must state total unique tags correctly
+   - test/readme-tags.test.js :: README must list all single-entry tags
+   - test/readme-tags.test.js :: README must state correct multi-entry and single-entry tag counts
+induced clone HEAD: e61ccbd4b902e2fa2d9423efb67efd74fdebc2ef
+  deleting lines 102-117  (README must state total unique tags correctly)
+  deleting lines 164-185  (README must list all single-entry tags)
+  deleting lines 1635-1675  (README must state correct multi-entry and single-entry tag c)
+fixture commit A (deletion): 542852f4038c14bc4f9ac2c533c483bec3a1e331
+re-citing base 02f4668 -> 542852f
+rewriting 4 occurrence(s) of 02f4668 in README.md
+induced tree suite: tests=125 pass=125 fail=0 skipped=0  GREEN=true
+induced commit B (measure this): a222eabe8af874188573c03b026a37d16bc17264
+
+  Two failures were hit and RESOLVED while building this fixture, both of them the
+  repo telling the truth about itself rather than fixture bugs:
+   1. deleting guards edits test/, so README's cited Node-support base no longer
+      describes the tree and the base-to-working-tree citation guard fired on the
+      FIXTURE — which would have made the matrix's identity control (fail=0 required)
+      refuse to run. Remedy is the repo's own: re-cite. It costs two commits because
+      the citation names a sha that does not exist until the change is committed —
+      the citation two-commit tax this run measured in W-4.
+   2. test/readme-matrix-consistency.test.js then required the prose's "at commit `X`"
+      and the diff command's base to name the SAME commit, so all 4 mentions had to
+      move together.
+  A third failure was the conductor's own: the greenness probe first passed the bare
+  directory `test/` instead of the expanded `test/*.test.js` glob and mis-read the
+  tree as red (tests=1 fail=1). Corrected to a readdir expansion.
+
+--- step 3: the gate ---
+$ node /opt/swarm/runs/gate-c14-rv5.mjs
+measuring (3 runs, ~112s each):
+   [pre-induced] 106s
+   [post-induced] 104s
+   [post-head] 104s
+PASS  B1 CONVERSE CONTROL  real HEAD, POST-fix: M07 = CAUGHT (want CAUGHT); semantic=3 environmental=1
+PASS  B2 LOAD-BEARING PROOF  induced tree a222eab: PRE-fix M07 = CAUGHT (want CAUGHT, the defect) | POST-fix M07 = SILENT (want SILENT, the proof)
+PASS  B5 ENV FIRE STILL SEEN  induced POST-fix M07: environmental=1 (want >=1) semantic=0 (want 0); fired: ENV:test/node-support-citation.test.js
+PASS  B3 RECORDED SEPARATELY  POST-fix record: all 18 entries carry both counts and per-guard `environmental` = true; PRE-fix record carried them = false (want true/false)
+PASS  B4 NO DETECTION LOST  real HEAD: 18 mutations compared, verdicts changed = none
+
+================ RV-5 GATE: ALL CELLS PASS ================
+
+B2 is the cell the acceptance clause named: "M07 must be capable of reporting SILENT
+when its semantic guards are absent." On a GREEN induced tree where exactly those three
+guards are gone, the PRE-fix tool still calls M07 CAUGHT off a single environmental
+fire; the POST-fix tool calls it SILENT and still records that the environmental guard
+fired (B5). The row can now go red, which is what made it a floor row rather than a
+decoration.
+
+full records: /opt/swarm/runs/c14-gate/B-pre-head.json, B-pre-induced.json,
+              B-post-induced.json, B-post-head.json

@@ -1,0 +1,45 @@
+CYCLE 14 — RV-19 VERIFICATION GATE — verbatim console output
+gate script : /opt/swarm/runs/gate-c14-rv19.mjs
+gate doc    : /opt/swarm/runs/cycle-014-gate.md  sha256 0859fdcbbe58d9a8e551c7e63cddb8da61982cb74eac53cada86a04c6968b0e5
+item        : RV-19 "guard-inventory totalDynamic skips UNPARSEABLE files, so the new
+              DISAGREE detector can be silenced by the very case it should flag"
+work origin : salvaged from the crashed cycle-14 wave (session died ~20:38Z before
+              persisting); no agent was dispatched this cycle
+
+--- induction probe (proves the fixture actually reaches dyn.tests === null) ---
+$ node /opt/swarm/runs/c14-gate/probe-unparseable.mjs \
+      /opt/swarm/runs/c14-gate/rv19repo zz-unparseable.test.js
+file            : zz-unparseable.test.js
+execFile threw  : ERR_CHILD_PROCESS_STDIO_MAXBUFFER
+stdout bytes    : 33554432
+tests           : null
+UNPARSEABLE     : true
+
+--- gate run ---
+$ node /opt/swarm/runs/gate-c14-rv19.mjs
+PASS  A1 CONVERSE CONTROL  clean tree: PRE and POST output byte-identical (37302 bytes)
+PASS  A4 NOT UNCONDITIONAL  clean tree POST: count-disclosure=false subset-clause=false totals-clause=false (all must be false)
+PASS  A2 DEFECT REPRODUCES  PRE: per-file column reads UNPARSEABLE=true, any summary accounting=false (want true/false). Totals: Totals: 17 included, 18 borderline, 95 excluded, of 130 tests parsed statically (128 measured by the runner).
+PASS  A3 FIX WORKS  POST: count="UNPARSEABLE: 1 of 8 file(s)" | B-header-subset=true | G-evidence-subset=true | Totals="Totals: 17 included, 18 borderline, 95 excluded, of 130 tests parsed statically (128 measured by the runner) -- 1 file(s) UNPARSEABLE and excluded from that runner figure; comparison covers only 7 of 8 file(s)."
+PASS  A5 ATTRIBUTABLE  with `else unparseableCount++;` removed, A3 holds=false (want false). count="ABSENT"
+
+================ RV-19 GATE: ALL CELLS PASS ================
+
+--- the induced per-file row, PRE-fix (rv19-induced-pre.txt line 14) ---
+  test/zz-unparseable.test.js                   21 lines     2 test() blocks   runner: UNPARSEABLE   DISAGREE (static 2 vs runner null)   [WARNING: 1 block(s) not terminated by a column-0 "});" -- static parse suspect]
+
+  PRE-fix Totals line, same run — the two static blocks are in the 130, the runner
+  figure is 128, and NOTHING says the gap is a file the census could not read:
+    Totals: 17 included, 18 borderline, 95 excluded, of 130 tests parsed statically (128 measured by the runner).
+
+--- INSTRUMENT DEFECT, recorded not quietly corrected ---
+A2's first draft anchored its per-file regex with `\s*$`. The row continues past
+`runner: UNPARSEABLE` with the DISAGREE column and a static-parse WARNING, so the cell
+FAILED on its own regex while the induction had in fact fired (A3 passed in the same
+run, proving the state was induced). The regex was corrected to `\b` and the gate
+re-run in full. This is the conductor's FIFTH instrument defect this run — the third
+of them a check that failed for a reason other than the one it names.
+
+full artifacts: /opt/swarm/runs/c14-gate/rv19-clean-post.txt,
+                /opt/swarm/runs/c14-gate/rv19-induced-pre.txt,
+                /opt/swarm/runs/c14-gate/rv19-induced-post.txt

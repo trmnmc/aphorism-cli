@@ -1,0 +1,633 @@
+{
+  "meta": {
+    "tool": "tools/mutation-matrix.mjs",
+    "measuredRev": "a222eabe8af874188573c03b026a37d16bc17264",
+    "measuredCommit": "a222eabe8af874188573c03b026a37d16bc17264",
+    "baselineCommit": "a222eabe8af874188573c03b026a37d16bc17264",
+    "baselineCommitShort": "20b7ede",
+    "node": "v24.19.0",
+    "suiteCommand": "node --test --test-reporter=tap <test/*.test.js, glob expanded by readdir>",
+    "scratchStrategy": "full local git clone (git clone --no-hardlinks) of the repo into a per-invocation mkdtemp dir .scratch-W-2.XXXXXX/clone (W-13: never a fixed shared path), detached checkout at the measured rev; deleted after the run",
+    "generationRule": "one falsifying mutation per INCLUDED claim of tools/guard-inventory.mjs at the baseline (18 claims, inventory order; document-side edit wherever the claim is document-falsifiable, derivation-source edit for the one claim vacuous at baseline) plus exactly one identity control; cap 30"
+  },
+  "identity": {
+    "id": "M00",
+    "inventoryIndex": 0,
+    "guard": null,
+    "guardTitle": "(identity control -- no claim, no edit)",
+    "editSite": "none",
+    "note": "Converse control: zero edits. The suite must stay fully green (129/129 at baseline, 0 fail, 0 skipped) on the untouched scratch clone, or every CAUGHT verdict below is meaningless.",
+    "edits": [],
+    "suite": {
+      "tests": 125,
+      "pass": 125,
+      "fail": 0,
+      "skipped": 0
+    },
+    "firedGuards": [],
+    "skippedGuards": [],
+    "environmentalSkipWarning": null,
+    "verdict": "GREEN",
+    "gitDependentGuards": {
+      "ran": true,
+      "titles": [
+        "README Node support citation: cited git diff must be empty (or the check must skip on a missing precondition)",
+        "README Node support citation: base-to-working-tree diff must also be empty, so an uncommitted falsification is visible now (or the check must skip on a missing precondition)"
+      ],
+      "evidence": "both citation guards reported plain `ok` with no SKIP directive in the identity run, and the run reports 0 skipped overall"
+    }
+  },
+  "results": [
+    {
+      "id": "M01",
+      "inventoryIndex": 1,
+      "guard": "test/readme-matrix-consistency.test.js:125",
+      "guardTitle": "README Node support matrix: table must be present and non-empty",
+      "editSite": "document",
+      "note": "Deletes all four parseable matrix rows (whatever their current counts are), so the claim \"the table is present and non-empty\" is false.",
+      "edits": [
+        {
+          "file": "README.md",
+          "find": "| v18.20.8 | 128 tests, 126 pass, 0 fail, 2 skipped |\n| v20.20.2 | 128 tests, 126 pass, 0 fail, 2 skipped |\n| v22.23.2 | 128 tests, 126 pass, 0 fail, 2 skipped |\n| v24.19.0 | 128 tests, 126 pass, 0 fail, 2 skipped |\n",
+          "replace": ""
+        }
+      ],
+      "suite": {
+        "tests": 125,
+        "pass": 122,
+        "fail": 3,
+        "skipped": 0
+      },
+      "firedGuards": [
+        {
+          "file": "test/readme-matrix-consistency.test.js",
+          "title": "README Node support matrix: table must be present and non-empty"
+        },
+        {
+          "file": "test/readme-matrix-consistency.test.js",
+          "title": "README Node support matrix: each row's own arithmetic must hold (tests = pass + fail + skipped)"
+        },
+        {
+          "file": "test/readme-matrix-consistency.test.js",
+          "title": "README Node support matrix: all rows must agree with each other"
+        }
+      ],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "CAUGHT",
+      "guardTitleInMeasuredTree": true,
+      "caughtByTargetGuard": true
+    },
+    {
+      "id": "M02",
+      "inventoryIndex": 2,
+      "guard": "test/readme-matrix-consistency.test.js:140",
+      "guardTitle": "README Node support matrix: each row's own arithmetic must hold (tests = pass + fail + skipped)",
+      "editSite": "document",
+      "note": "Flips the v18.20.8 row's pass count down by 1 (whatever it currently is) so that row's own arithmetic no longer sums to its stated tests count.",
+      "edits": [
+        {
+          "file": "README.md",
+          "find": "| v18.20.8 | 128 tests, 126 pass, 0 fail, 2 skipped |",
+          "replace": "| v18.20.8 | 128 tests, 125 pass, 0 fail, 2 skipped |"
+        }
+      ],
+      "suite": {
+        "tests": 125,
+        "pass": 123,
+        "fail": 2,
+        "skipped": 0
+      },
+      "firedGuards": [
+        {
+          "file": "test/readme-matrix-consistency.test.js",
+          "title": "README Node support matrix: each row's own arithmetic must hold (tests = pass + fail + skipped)"
+        },
+        {
+          "file": "test/readme-matrix-consistency.test.js",
+          "title": "README Node support matrix: all rows must agree with each other"
+        }
+      ],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "CAUGHT",
+      "guardTitleInMeasuredTree": true,
+      "caughtByTargetGuard": true
+    },
+    {
+      "id": "M03",
+      "inventoryIndex": 3,
+      "guard": "test/readme-matrix-consistency.test.js:159",
+      "guardTitle": "README Node support matrix: all rows must agree with each other",
+      "editSite": "document",
+      "note": "Rewrites the v24 row with tests and pass both bumped up by 1 (whatever they currently are) -- internally self-consistent (pass+fail+skipped still sums to tests) so per-row arithmetic stays true, but it now disagrees with the other three rows.",
+      "edits": [
+        {
+          "file": "README.md",
+          "find": "| v24.19.0 | 128 tests, 126 pass, 0 fail, 2 skipped |",
+          "replace": "| v24.19.0 | 129 tests, 127 pass, 0 fail, 2 skipped |"
+        }
+      ],
+      "suite": {
+        "tests": 125,
+        "pass": 124,
+        "fail": 1,
+        "skipped": 0
+      },
+      "firedGuards": [
+        {
+          "file": "test/readme-matrix-consistency.test.js",
+          "title": "README Node support matrix: all rows must agree with each other"
+        }
+      ],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "CAUGHT",
+      "guardTitleInMeasuredTree": true,
+      "caughtByTargetGuard": true
+    },
+    {
+      "id": "M04",
+      "inventoryIndex": 4,
+      "guard": "test/readme-tags.test.js:53",
+      "guardTitle": "README tags must exist in corpus",
+      "editSite": "document",
+      "note": "Renames the `philosophy` band-table row to `metaphysics`, a backtick-quoted tag claim that does not exist in the corpus.",
+      "edits": [
+        {
+          "file": "README.md",
+          "find": "| `philosophy` | 3 |",
+          "replace": "| `metaphysics` | 3 |"
+        }
+      ],
+      "suite": {
+        "tests": 125,
+        "pass": 121,
+        "fail": 4,
+        "skipped": 0
+      },
+      "firedGuards": [
+        {
+          "file": "test/readme-tags.test.js",
+          "title": "README tags must exist in corpus"
+        },
+        {
+          "file": "test/readme-tags.test.js",
+          "title": "README tag counts must match corpus"
+        },
+        {
+          "file": "test/readme-tags.test.js",
+          "title": "every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band"
+        },
+        {
+          "file": "test/readme-tags.test.js",
+          "title": "every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)"
+        }
+      ],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "CAUGHT",
+      "guardTitleInMeasuredTree": true,
+      "caughtByTargetGuard": true
+    },
+    {
+      "id": "M05",
+      "inventoryIndex": 5,
+      "guard": "test/readme-tags.test.js:85",
+      "guardTitle": "README tag counts must match corpus",
+      "editSite": "document",
+      "note": "Changes `design`'s stated count 14 -> 15. 15 still fits the 5+ band, so band membership stays true and only the count claim is false.",
+      "edits": [
+        {
+          "file": "README.md",
+          "find": "| `design` | 14 |",
+          "replace": "| `design` | 15 |"
+        }
+      ],
+      "suite": {
+        "tests": 125,
+        "pass": 124,
+        "fail": 1,
+        "skipped": 0
+      },
+      "firedGuards": [
+        {
+          "file": "test/readme-tags.test.js",
+          "title": "README tag counts must match corpus"
+        }
+      ],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "CAUGHT",
+      "guardTitleInMeasuredTree": true,
+      "caughtByTargetGuard": true
+    },
+    {
+      "id": "M06",
+      "inventoryIndex": 6,
+      "guard": "test/readme-tags.test.js:102",
+      "guardTitle": "README must state total unique tags correctly",
+      "editSite": "document",
+      "note": "Changes the counts-table \"Distinct tags\" row 12 -> 13.",
+      "edits": [
+        {
+          "file": "README.md",
+          "find": "| Distinct tags | 12 |",
+          "replace": "| Distinct tags | 13 |"
+        }
+      ],
+      "suite": {
+        "tests": 125,
+        "pass": 125,
+        "fail": 0,
+        "skipped": 0
+      },
+      "firedGuards": [],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "SILENT",
+      "guardTitleInMeasuredTree": false,
+      "caughtByTargetGuard": null
+    },
+    {
+      "id": "M07",
+      "inventoryIndex": 7,
+      "guard": "test/readme-tags.test.js:165",
+      "guardTitle": "README must list all single-entry tags",
+      "editSite": "derivation-source",
+      "note": "VACUOUS AT BASELINE w.r.t. the document: the corpus has zero single-entry tags, so no README edit can falsify \"every single-entry tag is listed\". The falsifying edit therefore lands on the derivation source: src/corpus.js gains the tag `zzunlisted` on one entry, creating a single-entry tag the README does not mention. Expected side effects, recorded rather than hidden: the distinct/single-entry count guards also fire, and the citation guard's base-to-working-tree diff over src/ becomes non-empty -- which is that guard doing exactly the job its README section states.",
+      "edits": [
+        {
+          "file": "src/corpus.js",
+          "find": "    text: 'Premature optimization is the root of all evil.',\n    author: 'Donald Knuth',\n    tags: ['performance'],",
+          "replace": "    text: 'Premature optimization is the root of all evil.',\n    author: 'Donald Knuth',\n    tags: ['performance', 'zzunlisted'],"
+        }
+      ],
+      "suite": {
+        "tests": 125,
+        "pass": 124,
+        "fail": 1,
+        "skipped": 0
+      },
+      "firedGuards": [
+        {
+          "file": "test/node-support-citation.test.js",
+          "title": "README Node support citation: base-to-working-tree diff must also be empty, so an uncommitted falsification is visible now (or the check must skip on a missing precondition)"
+        }
+      ],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "CAUGHT",
+      "guardTitleInMeasuredTree": false,
+      "caughtByTargetGuard": null
+    },
+    {
+      "id": "M08",
+      "inventoryIndex": 8,
+      "guard": "test/readme-tags.test.js:434",
+      "guardTitle": "README Tag vocabulary counts table \"Tags on exactly one entry\" row matches the corpus (structural replacement for the retired token co-occurrence guard, Q-4)",
+      "editSite": "document",
+      "note": "Changes the counts-table \"Tags on exactly one entry\" row 0 -> 1. Two guards read this row (recorded redundancy, see the Q-4 block in test/readme-tags.test.js); both are expected to fire.",
+      "edits": [
+        {
+          "file": "README.md",
+          "find": "| Tags on exactly one entry | 0 |",
+          "replace": "| Tags on exactly one entry | 1 |"
+        }
+      ],
+      "suite": {
+        "tests": 125,
+        "pass": 125,
+        "fail": 0,
+        "skipped": 0
+      },
+      "firedGuards": [],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "SILENT",
+      "guardTitleInMeasuredTree": false,
+      "caughtByTargetGuard": null
+    },
+    {
+      "id": "M09",
+      "inventoryIndex": 9,
+      "guard": "test/readme-tags.test.js:1341",
+      "guardTitle": "every `| Tag | Count |` table in the real README Tag vocabulary section is a recognised band table (no table may hide under an unrecognised heading shape)",
+      "editSite": "document",
+      "note": "Inserts a structurally genuine `| Tag | Count |` table under a \"### \" heading (a shape band detection does not recognise) inside the Tag vocabulary section. Its one row restates a TRUE count (`humor` 9) so every other claim stays true -- only the census claim \"every such table is a recognised band\" is false.",
+      "edits": [
+        {
+          "file": "README.md",
+          "find": "\nTo find available tags at the command line, run:",
+          "replace": "\n### More tags\n\n| Tag | Count |\n|---|---|\n| `humor` | 9 |\n\nTo find available tags at the command line, run:"
+        }
+      ],
+      "suite": {
+        "tests": 125,
+        "pass": 124,
+        "fail": 1,
+        "skipped": 0
+      },
+      "firedGuards": [
+        {
+          "file": "test/readme-tags.test.js",
+          "title": "every `| Tag | Count |` table in the real README Tag vocabulary section is a recognised band table (no table may hide under an unrecognised heading shape)"
+        }
+      ],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "CAUGHT",
+      "guardTitleInMeasuredTree": true,
+      "caughtByTargetGuard": true
+    },
+    {
+      "id": "M10",
+      "inventoryIndex": 10,
+      "guard": "test/readme-tags.test.js:1361",
+      "guardTitle": "every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band",
+      "editSite": "document",
+      "note": "Relocates the `philosophy` row (corpus count 3) out of the 3-4 band into the 5+ band. Its stated count is unchanged and still matches the corpus, so the pure count guard stays true; only band membership is false, in both directions at once.",
+      "edits": [
+        {
+          "file": "README.md",
+          "find": "| `reliability` | 4 |\n| `philosophy` | 3 |\n",
+          "replace": "| `reliability` | 4 |\n"
+        },
+        {
+          "file": "README.md",
+          "find": "| `performance` | 5 |\n",
+          "replace": "| `performance` | 5 |\n| `philosophy` | 3 |\n"
+        }
+      ],
+      "suite": {
+        "tests": 125,
+        "pass": 124,
+        "fail": 1,
+        "skipped": 0
+      },
+      "firedGuards": [
+        {
+          "file": "test/readme-tags.test.js",
+          "title": "every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band"
+        }
+      ],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "CAUGHT",
+      "guardTitleInMeasuredTree": true,
+      "caughtByTargetGuard": true
+    },
+    {
+      "id": "M11",
+      "inventoryIndex": 11,
+      "guard": "test/readme-tags.test.js:1433",
+      "guardTitle": "every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)",
+      "editSite": "document",
+      "note": "Deletes the \"#### Appears 3–4 times\" band wholesale -- heading and all five rows -- stranding five multi-entry corpus tags with no band row anywhere. Every remaining stated fact is still true, which is exactly the falsification shape T-019 exists to catch.",
+      "edits": [
+        {
+          "file": "README.md",
+          "find": "#### Appears 3–4 times\n| Tag | Count |\n|---|---|\n| `language` | 4 |\n| `process` | 4 |\n| `readability` | 4 |\n| `reliability` | 4 |\n| `philosophy` | 3 |\n\n",
+          "replace": ""
+        }
+      ],
+      "suite": {
+        "tests": 125,
+        "pass": 124,
+        "fail": 1,
+        "skipped": 0
+      },
+      "firedGuards": [
+        {
+          "file": "test/readme-tags.test.js",
+          "title": "every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)"
+        }
+      ],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "CAUGHT",
+      "guardTitleInMeasuredTree": true,
+      "caughtByTargetGuard": true
+    },
+    {
+      "id": "M12",
+      "inventoryIndex": 12,
+      "guard": "test/readme-tags.test.js:1598",
+      "guardTitle": "README must state correct multi-entry and single-entry tag counts",
+      "editSite": "document",
+      "note": "Changes the counts-table \"Tags on 2 or more entries\" row 12 -> 11 (the row only this guard reads; the shared single-entry row is left alone so M08 and M12 stay independently attributable).",
+      "edits": [
+        {
+          "file": "README.md",
+          "find": "| Tags on 2 or more entries | 12 |",
+          "replace": "| Tags on 2 or more entries | 11 |"
+        }
+      ],
+      "suite": {
+        "tests": 125,
+        "pass": 125,
+        "fail": 0,
+        "skipped": 0
+      },
+      "firedGuards": [],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "SILENT",
+      "guardTitleInMeasuredTree": false,
+      "caughtByTargetGuard": null
+    },
+    {
+      "id": "M13",
+      "inventoryIndex": 13,
+      "guard": "test/readme-tags.test.js:1851",
+      "guardTitle": "README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)",
+      "editSite": "document",
+      "note": "Adds a prose sentence carrying a digit (\"In total 12 tags are in use.\") to the Tag vocabulary section. The figure is TRUE and checked by nothing -- the exact claim shape the digit-hygiene rule declares a violation.",
+      "edits": [
+        {
+          "file": "README.md",
+          "find": "The distribution is uneven, but every tag is a real pool.",
+          "replace": "The distribution is uneven, but every tag is a real pool. In total 12 tags are in use."
+        }
+      ],
+      "suite": {
+        "tests": 125,
+        "pass": 124,
+        "fail": 1,
+        "skipped": 0
+      },
+      "firedGuards": [
+        {
+          "file": "test/readme-tags.test.js",
+          "title": "README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)"
+        }
+      ],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "CAUGHT",
+      "guardTitleInMeasuredTree": true,
+      "caughtByTargetGuard": true
+    },
+    {
+      "id": "M14",
+      "inventoryIndex": 14,
+      "guard": "test/readme-tags.test.js:2318",
+      "guardTitle": "README Attribution table \"Entries ranked\" count must match corpus.length and the triage doc (C1)",
+      "editSite": "document",
+      "note": "Changes the Attribution counts-table \"Entries ranked\" row 50 -> 51, contradicting both corpus.length and the triage doc's row count.",
+      "edits": [
+        {
+          "file": "README.md",
+          "find": "| Entries ranked | 50 |",
+          "replace": "| Entries ranked | 51 |"
+        }
+      ],
+      "suite": {
+        "tests": 125,
+        "pass": 124,
+        "fail": 1,
+        "skipped": 0
+      },
+      "firedGuards": [
+        {
+          "file": "test/readme-tags.test.js",
+          "title": "README Attribution table \"Entries ranked\" count must match corpus.length and the triage doc (C1)"
+        }
+      ],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "CAUGHT",
+      "guardTitleInMeasuredTree": true,
+      "caughtByTargetGuard": true
+    },
+    {
+      "id": "M15",
+      "inventoryIndex": 15,
+      "guard": "test/readme-tags.test.js:2350",
+      "guardTitle": "README Attribution table \"Rated HIGH risk\" count must match the triage doc table (C2)",
+      "editSite": "document",
+      "note": "Changes the Attribution counts-table \"Rated HIGH risk\" row 8 -> 9, contradicting the triage doc's HIGH-row count.",
+      "edits": [
+        {
+          "file": "README.md",
+          "find": "| Rated HIGH risk | 8 |",
+          "replace": "| Rated HIGH risk | 9 |"
+        }
+      ],
+      "suite": {
+        "tests": 125,
+        "pass": 124,
+        "fail": 1,
+        "skipped": 0
+      },
+      "firedGuards": [
+        {
+          "file": "test/readme-tags.test.js",
+          "title": "README Attribution table \"Rated HIGH risk\" count must match the triage doc table (C2)"
+        }
+      ],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "CAUGHT",
+      "guardTitleInMeasuredTree": true,
+      "caughtByTargetGuard": true
+    },
+    {
+      "id": "M16",
+      "inventoryIndex": 16,
+      "guard": "test/readme-tags.test.js:2384",
+      "guardTitle": "README Attribution section must contain no digit runs outside the counts table (C7)",
+      "editSite": "document",
+      "note": "Adds a digit run to the Attribution section's prose, outside the counts table -- a number no guard verifies.",
+      "edits": [
+        {
+          "file": "README.md",
+          "find": "Nothing\nin that list has been resolved yet.",
+          "replace": "Nothing\nin that list has been resolved yet, and 3 entries remain unreviewed."
+        }
+      ],
+      "suite": {
+        "tests": 125,
+        "pass": 124,
+        "fail": 1,
+        "skipped": 0
+      },
+      "firedGuards": [
+        {
+          "file": "test/readme-tags.test.js",
+          "title": "README Attribution section must contain no digit runs outside the counts table (C7)"
+        }
+      ],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "CAUGHT",
+      "guardTitleInMeasuredTree": true,
+      "caughtByTargetGuard": true
+    },
+    {
+      "id": "M17",
+      "inventoryIndex": 17,
+      "guard": "test/readme-tags.test.js:2682",
+      "guardTitle": "README `--list` format literal matches the shipped binary's actual --list output (T-017)",
+      "editSite": "document",
+      "note": "Swaps the `--list` format literal's EM DASH separator for an ASCII hyphen, so the documented per-line format no longer matches what the unchanged binary prints.",
+      "edits": [
+        {
+          "file": "README.md",
+          "find": "`<text> — <author>`",
+          "replace": "`<text> - <author>`"
+        }
+      ],
+      "suite": {
+        "tests": 125,
+        "pass": 124,
+        "fail": 1,
+        "skipped": 0
+      },
+      "firedGuards": [
+        {
+          "file": "test/readme-tags.test.js",
+          "title": "README `--list` format literal matches the shipped binary's actual --list output (T-017)"
+        }
+      ],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "CAUGHT",
+      "guardTitleInMeasuredTree": true,
+      "caughtByTargetGuard": true
+    },
+    {
+      "id": "M18",
+      "inventoryIndex": 18,
+      "guard": "test/readme-tags.test.js:2754",
+      "guardTitle": "README `--author` matching section must state the correct count of distinct corpus authors (Q-8)",
+      "editSite": "document",
+      "note": "Changes the \"24 distinct authors\" claim to 25; the corpus's true distinct-author count is unchanged.",
+      "edits": [
+        {
+          "file": "README.md",
+          "find": "Of the corpus's 24 distinct authors",
+          "replace": "Of the corpus's 25 distinct authors"
+        }
+      ],
+      "suite": {
+        "tests": 125,
+        "pass": 124,
+        "fail": 1,
+        "skipped": 0
+      },
+      "firedGuards": [
+        {
+          "file": "test/readme-tags.test.js",
+          "title": "README `--author` matching section must state the correct count of distinct corpus authors (Q-8)"
+        }
+      ],
+      "skippedGuards": [],
+      "environmentalSkipWarning": null,
+      "verdict": "CAUGHT",
+      "guardTitleInMeasuredTree": true,
+      "caughtByTargetGuard": true
+    }
+  ],
+  "skippedClaims": []
+}

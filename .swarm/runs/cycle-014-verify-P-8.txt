@@ -1,0 +1,50 @@
+CYCLE 14 — P-8 PROOF — verbatim console output
+gate script : /opt/swarm/runs/gate-c14-p8.mjs
+item        : P-8 "The run baseline pins test_total 129, a count the repo deliberately
+              left behind at cycle 4, so any check copying it is unfalsifiable-by-design"
+filed by    : the conductor, against its OWN cycle-13 gate (D-R8-28, was D-R8-16)
+
+acceptance  : "Either the baseline field carries an explicit note that it is a historical
+              measurement and not a floor, or the suite-green check is restated in a form
+              that cannot be pinned to a count. Proof: a deliberate REMOVAL of one test
+              must be shown NOT to fail the restated check, while a deliberate FAILURE of
+              one test must still fail it -- both columns reported."
+
+Both alternatives were taken, not one:
+  (a) .swarm/state.json baseline now carries a "HISTORICAL MEASUREMENT, NOT A FLOOR" note
+      naming which fields drift by design (test_total, test_pass, test_lines, src_lines)
+      and which are standing invariants (corpus_sha256, help_sha256, SPEC S-8).
+  (b) the suite-green check is restated count-free as cell C5 of gate-c14-invariant.mjs:
+          tests > 0  AND  pass === tests  AND  fail === 0  AND  skipped === 0
+      The observed total is REPORTED, never compared.
+
+--- proof run ---
+$ node /opt/swarm/runs/gate-c14-p8.mjs
+P-8 two-column proof — both columns reported, neither argued
+
+CONTROL untouched HEAD            tests= 128 pass= 128 fail= 0 skipped= 0   restated=PASS   pinned(tests===129)=FAIL
+COLUMN A one test REMOVED         tests= 127 pass= 127 fail= 0 skipped= 0   restated=PASS   pinned(tests===129)=FAIL
+COLUMN B one test FAILING         tests= 128 pass= 127 fail= 1 skipped= 0   restated=FAIL   pinned(tests===129)=FAIL
+
+required: control PASS, column A (removal) PASS, column B (failure) FAIL
+observed: control PASS, column A PASS, column B FAIL
+
+the pinned form, for contrast: it reads FAIL on the control tree itself
+(128 tests today vs the pinned 129), and reads FAIL
+identically on all three trees — it cannot tell a legitimate guard
+consolidation from an injected regression, which is P-8 exactly.
+
+================ P-8 PROOF: BOTH COLUMNS AS REQUIRED ================
+
+--- a first draft of this proof FAILED, and the reason is worth keeping ---
+The first version edited the working tree in place and BOTH columns came back FAIL:
+
+  COLUMN A one test REMOVED       tests= 127 pass= 126 fail= 1 skipped= 0   restated=FAIL
+  COLUMN B one test FAILING       tests= 128 pass= 126 fail= 2 skipped= 0   restated=FAIL
+
+The extra failure in each column was NOT the restated check misfiring. Editing anything
+under `test/` puts the tree out of step with README's cited Node-support base, so
+test/node-support-citation.test.js fires on the FIXTURE ITSELF — the same environmental
+fire RV-5 is about, arriving uninvited in a different tool's proof on the same night.
+Each column is therefore committed and re-cited (the citation two-commit tax, W-4) so
+that it differs from the control by only its intended change. Recorded as D-R8-32.
