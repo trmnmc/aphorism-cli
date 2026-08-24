@@ -1,0 +1,66 @@
+CYCLE 12 — VERIFICATION EVIDENCE — RV-12 (priority 4, kind=fix, effort S)
+Same sealed gate: /opt/swarm/runs/cycle-012-gate.md, sha256 4bda5d1e93e5...eff3, hashed before
+dispatch, re-verified unchanged after.
+
+The builder demonstrated the disagreeing state using a scratch tree of its own construction.
+That is its evidence, not the conductor's. The conductor built its own perturbation and ran
+its own comparison; everything below is the conductor's measurement.
+
+---------------------------------------------------------------------------------------
+G2 (converse control) — clean tree, POST-FIX vs PRE-FIX, whole-output byte diff
+---------------------------------------------------------------------------------------
+Both scripts run via spawnSync from the repo root and their FULL stdout compared line by line
+(pre-fix restored via `git show HEAD:tools/guard-inventory.mjs` into
+tools/.gate-prefix-guard-inventory.mjs, deleted afterwards).
+
+  post exit=0  pre exit=0
+  CLEAN-TREE TOTAL DIFFERING LINES = 0  (converse control wants 0)
+
+G2 verdict: PASS. On the tree where the counts genuinely agree (128 == 128), the fixed tool's
+entire output is byte-identical to the old one. The fix is inert exactly where it should be.
+This is the cell that would have caught a "fix" that improved the honest case by degrading the
+already-correct one.
+
+---------------------------------------------------------------------------------------
+G1 (primary) + G3 (failability) — CONDUCTOR-AUTHORED perturbed tree
+---------------------------------------------------------------------------------------
+Perturbation: test/zz-conductor-probe.test.js, copied in from
+/opt/swarm/runs/cycle-012-mismatch-probe.test.js. It registers 3 cases from inside a `for`
+loop, so each `test(` call is indented and invisible to guard-inventory's column-0 static scan
+(`/^test\(/`, extractTestBlocks line 155) while the runner still counts all 3. Static and
+runner totals are therefore forced apart: 128 vs 131.
+
+=== POST-FIX on PERTURBED tree (G1) === exit=0
+  |   test/zz-conductor-probe.test.js               16 lines     0 test() blocks   runner: 3 tests (3 pass, 0 fail, 0 skipped)   DISAGREE (static 0 vs runner 3)
+  |   a reason code. Nothing the static parser SAW is silently dropped from C/D/E --
+  |     - the runner-measured suite currently holds 131 tests across 8 files (static parse DISAGREES: 128 parsed statically vs 131 measured by the runner -- see A's per-file "agree"/"DISAGREE" column);
+  | Totals: 17 included, 18 borderline, 93 excluded, of 128 tests parsed statically (131 measured by the runner).
+
+=== PRE-FIX on PERTURBED tree (G3 failability) === exit=0
+  |   test/zz-conductor-probe.test.js               16 lines     0 test() blocks   runner: 3 tests (3 pass, 0 fail, 0 skipped)   DISAGREE (static 0 vs runner 3)
+  |   a reason code. Nothing is silently dropped. (Full rule: header of this file.)
+  |     - the runner-measured suite currently holds 131 tests across 8 files (static parse agrees: 128);
+  | Totals: 17 included, 18 borderline, 93 excluded, of 128 tests parsed statically (131 measured by the runner).
+
+G3 verdict: PASS. The pre-fix line reads "(static parse agrees: 128)" on a line that in the
+same breath says "holds 131 tests" — the defect as filed, caught in the act: the word "agrees"
+printed over two different numbers. Note also that the tool's own per-file column had already
+printed DISAGREE for that very file, so the summary was contradicting evidence the same run
+had produced four sections earlier.
+
+G1 verdict: PASS. Post-fix, the summary states the disagreement with both numbers and points
+the reader at the per-file column, and the blanket claim "Nothing is silently dropped" is
+narrowed to "Nothing the static parser SAW is silently dropped from C/D/E" — the claim is
+withdrawn for the tree where it is not true, rather than being quietly left standing.
+
+Cleanup: the probe file was deleted and `git status --porcelain` re-checked before the commit.
+It showed exactly two modified files (tools/detection-floor.mjs, tools/guard-inventory.mjs)
+and no untracked residue. The probe is NOT part of this commit.
+
+---------------------------------------------------------------------------------------
+Correction to the builder's report
+---------------------------------------------------------------------------------------
+The builder wrote "no line deleted, no existing string mutated when counts agree". The first
+half is not accurate: `git diff --stat` shows 2 deletions in this file (lines replaced by
+their conditional forms). The second half is what actually matters and it is confirmed — but
+confirmed by the conductor's 0-differing-lines byte diff above, not by the builder saying so.

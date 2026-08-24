@@ -6,7 +6,7 @@
   "run_started_at": "2026-08-24T13:05:56.000Z",
   "kickoff_source": "allocator",
   "phase": "BUILD",
-  "cycle": 11,
+  "cycle": 12,
   "run_cmd": "node bin/aphorism.js",
   "test_cmd": "node --test test/*.test.js",
   "spec_digest": [
@@ -197,13 +197,13 @@
     "last_full_qa_cycle": null,
     "last_taste_cycle": null,
     "last_review_fix_cycle": 9,
-    "last_build_wave_cycle": 11
+    "last_build_wave_cycle": 12
   },
   "counters": {
     "consecutive_no_value": 0,
     "k_current": 5,
-    "wave_streak": 1,
-    "window_tokens_attributed": 58727139
+    "wave_streak": 0,
+    "window_tokens_attributed": 71274570
   },
   "known_issues_file": "known-issues.json",
   "prior_runs": {
@@ -211,9 +211,9 @@
     "note": "runs #1-#7; run #7 delivered ZERO work cycles (usage lockout). Done items archived to backlog-archive-runs1-7.json."
   },
   "last_cycle": {
-    "cycle": 11,
-    "work": "build-wave (headless fallback: 2 direct Agent builders, disjoint scopes declared in-prompt; gear-2 cap k=2 — sonnet + opus)",
-    "outcome": "value -- 2 of 2 items verified, both by conductor-authored checks the builders never saw. W-15: the detection floor stopped reporting STALE and certifies again, and the committed record was proven RUN rather than typed by an INDEPENDENT conductor re-measure agreeing 18/18 rows and on the identity control. RV-10: the count-floor detector's one-directional blind spot is closed in both operand orders plus a named-const form, proven against a floor guard the conductor wrote and proved failable (PASS at 120, FAIL at 900), with the pre-fix tool printing ABSENT on the identical tree; sections A-E byte-identical, converse control still ABSENT. Backlog id collision W-14 found at orient and repaired (D-R8-26). One new item filed from a builder's unprompted disclosure (P-5).",
-    "ts": "2026-08-24T19:24:24+00:00"
+    "cycle": 12,
+    "work": "build-wave (headless fallback: 2 direct Agent builders, disjoint scopes declared in-prompt; gear-2 cap k=2 — sonnet + sonnet)",
+    "outcome": "value -- 2 of 2 items verified against a gate sealed by sha256 BEFORE dispatch (4bda5d1e...) and re-checked unchanged after, so no cell could be adapted to what the builders did. RV-7: the detection-floor verdict line stopped calling a recorded ancestor \"HEAD\"; proven failable by restoring the pre-fix tool from git and running it on the SAME tree, where it still misnamed 5856837 as HEAD. RV-12: guard-inventory stopped asserting \"static parse agrees\" unconditionally; proven on a conductor-authored perturbed tree where the pre-fix tool printed \"agrees: 128\" on a line reading \"holds 131 tests\", and proven harmless by a BYTE-FOR-BYTE clean-tree diff of 0 differing lines. Suite 128 pass / 0 fail. W-6 invariants held: --help and corpus sha unchanged, repo still has no package.json so no dependency is even expressible. Two new items (RV-19, RV-20) filed from the builders' own unprompted disclosures.",
+    "ts": "2026-08-24T19:52:00+00:00"
   }
 }

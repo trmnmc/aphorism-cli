@@ -823,7 +823,7 @@
         "S-6"
       ],
       "kind": "fix",
-      "status": "todo",
+      "status": "done",
       "effort": "S",
       "priority": 2,
       "deps": [],
@@ -835,9 +835,9 @@
       "packages": [],
       "severity": "low",
       "acceptance": "The single line a reader quotes must name the commit it actually describes, or say plainly that the record was measured at an ancestor under the FRESH-BY-CONTENT exemption. Verified by running the tool when record and HEAD differ and reading the verdict line.",
-      "notes": "REPRODUCED on a completely undoctored run. detection-floor.mjs:519 interpolates recordedSha(finalRec) into a sentence that calls it HEAD, after the same run printed 'THE FINAL RECORD IS NOT AT HEAD' with both shas. Conductor confirmed the interpolation by reading :517-521. Anyone quoting only the verdict line publishes the wrong measured commit. [CYCLE 11 OBSERVED IN THE WILD] No longer a reviewer reading: the post-commit default-path run at HEAD d25a83f printed 'VERDICT: DETECTION FLOOR HOLDS at HEAD 5856837' -- naming the RECORD's sha as HEAD while the actual HEAD was d25a83f. Because this run depends on the fresh-by-content exemption (the record is deliberately left measuring an older commit whenever the new commit is verdict-irrelevant), the misprint is the ORDINARY case, not the edge case. Raised p6 -> p2. The fix must not paper over it by re-measuring more often -- the exemption is correct and the sentence is what is wrong.",
+      "notes": "REPRODUCED on a completely undoctored run. detection-floor.mjs:519 interpolates recordedSha(finalRec) into a sentence that calls it HEAD, after the same run printed 'THE FINAL RECORD IS NOT AT HEAD' with both shas. Conductor confirmed the interpolation by reading :517-521. Anyone quoting only the verdict line publishes the wrong measured commit. [CYCLE 11 OBSERVED IN THE WILD] No longer a reviewer reading: the post-commit default-path run at HEAD d25a83f printed 'VERDICT: DETECTION FLOOR HOLDS at HEAD 5856837' -- naming the RECORD's sha as HEAD while the actual HEAD was d25a83f. Because this run depends on the fresh-by-content exemption (the record is deliberately left measuring an older commit whenever the new commit is verdict-irrelevant), the misprint is the ORDINARY case, not the edge case. Raised p6 -> p2. The fix must not paper over it by re-measuring more often -- the exemption is correct and the sentence is what is wrong. | cycle 12: DONE. The verdict line now distinguishes the two freshness states. Conductor gate (sealed sha256 4bda5d1e93e5..., hashed BEFORE dispatch and re-checked unchanged after): G1 pass -- post-fix line reads \"record measured at 5856837..., an ancestor of current HEAD 6c38fdb...\", and 6c38fdb is the actual rev-parse HEAD, independently captured. G2 pass (converse control) -- exit 0, 17 same-guard / 1 changed-guard / 0 claim-gone / 0 detection-lost, identity control GREEN both sides: verdict unmoved. G3 pass (failability) -- the pre-fix tool, restored from git show HEAD: and run on the SAME tree, still printed \"at HEAD 585683734...\", failing G1 for exactly the reason G1 names. The builder labelled its exit-0 claim UNVERIFIED because its sandbox denied exit-code capture; the conductor captured it directly via spawnSync and it is 0.",
       "found_cycle": 9,
-      "updated_cycle": 11
+      "updated_cycle": 12
     },
     {
       "id": "RV-8",
@@ -939,7 +939,7 @@
         "S-6"
       ],
       "kind": "fix",
-      "status": "todo",
+      "status": "done",
       "effort": "S",
       "priority": 4,
       "deps": [],
@@ -951,8 +951,9 @@
       "packages": [],
       "severity": "medium",
       "acceptance": "The parenthetical must state agreement only when the static and runner counts are equal, and say so plainly when they differ. Tests the static parser misses must appear somewhere in the classification sections, or the tool must stop claiming 'Nothing is silently dropped'. Converse control: on a tree where the counts agree, the line still reads as it does today.",
-      "notes": "REPRODUCED. guard-inventory.mjs:679 interpolates totalStatic into the fixed prose 'static parse agrees: ' with no comparison on that line. With three tests registered from inside a loop (not at column 0, missed by extractTestBlocks at :149) the verdict's evidence line read 'holds 131 tests across 7 files (static parse agrees: 128)' -- asserting agreement between 131 and 128. The three tests appear nowhere in sections C, D or E (verifier's grep count: 0), contradicting the header's 'Nothing is silently dropped'. MITIGATION on the record: the per-file census line DOES print 'DISAGREE (static 28 vs runner 31)', so the contradiction is visible elsewhere in the same output -- it is the VERDICT's supporting evidence line that states the opposite.",
-      "found_cycle": 9
+      "notes": "REPRODUCED. guard-inventory.mjs:679 interpolates totalStatic into the fixed prose 'static parse agrees: ' with no comparison on that line. With three tests registered from inside a loop (not at column 0, missed by extractTestBlocks at :149) the verdict's evidence line read 'holds 131 tests across 7 files (static parse agrees: 128)' -- asserting agreement between 131 and 128. The three tests appear nowhere in sections C, D or E (verifier's grep count: 0), contradicting the header's 'Nothing is silently dropped'. MITIGATION on the record: the per-file census line DOES print 'DISAGREE (static 28 vs runner 31)', so the contradiction is visible elsewhere in the same output -- it is the VERDICT's supporting evidence line that states the opposite. | cycle 12: DONE. Same seal. G2 converse control pass -- post-fix and pre-fix full clean-tree outputs diffed BYTE-FOR-BYTE: 0 differing lines, exit 0 both. G1 and G3 proven on a perturbed tree built from the CONDUCTOR OWN probe, not the builder scratch tree: 3 cases registered inside a for-loop, invisible to the column-0 test-block scan at extractTestBlocks:155. Pre-fix printed \"(static parse agrees: 128)\" on a line reading \"holds 131 tests\" -- literally agreeing over two different numbers, the defect exactly as filed. Post-fix printed \"(static parse DISAGREES: 128 parsed statically vs 131 measured by the runner)\" and downgraded the blanket \"Nothing is silently dropped\" to \"Nothing the static parser SAW is silently dropped from C/D/E\". Probe removed and the tree confirmed clean of it before the commit. Minor correction to the builder report: it said \"no line deleted\"; git diff --stat shows 2 deletions in this file (lines replaced by their conditional forms). The substance held -- the byte-identical clean-tree control is the conductor measurement, not the builder claim.",
+      "found_cycle": 9,
+      "updated_cycle": 12
     },
     {
       "id": "RV-13",
@@ -1139,6 +1140,44 @@
       "opened_cycle": 11,
       "acceptance": "Either each FLOOR_PROBE_LIMITS entry is tied to the probe it qualifies (so removing or widening a probe forces the limit text to move with it), or section G stops presenting the limits list as if it were derived like the probe list directly above it. Proof: a probe change must be shown to either update the limits automatically or fail loudly, and the clean tree must still report ABSENT.",
       "notes": "DISCLOSED BY THE BUILDER, unprompted, at cycle 11: 'the limits list (FLOOR_PROBE_LIMITS) is hand-written prose and CAN drift; that is the one part of the new output not derived from the mechanism, and I am flagging it rather than implying otherwise.' Same class as RV-13/RV-14/P-4: a sentence that reads as measured while being authored. Low severity, and note the DIRECTION: drift makes the tool understate its own blind spots, i.e. look more capable than it is. Two further limits the builder named and deliberately did not fix: 1-2 digit bounds are invisible to F.i (lowering FLOOR_MIN_DIGITS to 2 puts 3 hits on the clean tree and destroys the converse control -- a chosen false-negative), and indirect calls (computed property access, aliases, wrappers) evade F.ii.b."
+    },
+    {
+      "id": "RV-19",
+      "title": "guard-inventory totalDynamic skips UNPARSEABLE files, so the new DISAGREE detector can be silenced by the very case it should flag",
+      "kind": "fix",
+      "status": "todo",
+      "priority": 3,
+      "effort": "S",
+      "model": "sonnet",
+      "attempts": 0,
+      "created_cycle": 12,
+      "updated_cycle": 12,
+      "files_hint": [
+        "tools/guard-inventory.mjs"
+      ],
+      "deps": [],
+      "packages": [],
+      "acceptance": "totalDynamic accumulates only under the guard \"dyn.tests != null\", so a test file whose runner output is UNPARSEABLE contributes 0 to the runner total while still contributing its static blocks -- the totals can be dragged back into false agreement by exactly the file the census could not read. The disagreement summary must account for UNPARSEABLE files explicitly (count them, and state that the comparison covers only the parseable subset) rather than letting them vanish from the sum. Converse control: on the clean tree, where no file is UNPARSEABLE, the agreement line and the Totals line must stay byte-identical to today.",
+      "notes": "Filed cycle 12 from the RV-12 builder UNPROMPTED disclosure -- it flagged the gap in the code it had just fixed rather than leaving it for a reader to find. This is the second-order hole in RV-12 own fix, so it is worth more than its S-effort suggests: RV-12 made the tool honest when it can count, and this is the path where it cannot count. Priority 3 for that reason."
+    },
+    {
+      "id": "RV-20",
+      "title": "detection-floor partition header says \"recorded HEAD <sha>\" under FRESH-BY-CONTENT, where the sha is a recorded ancestor and not any HEAD",
+      "kind": "polish",
+      "status": "todo",
+      "priority": 7,
+      "effort": "S",
+      "model": "haiku",
+      "attempts": 0,
+      "created_cycle": 12,
+      "updated_cycle": 12,
+      "files_hint": [
+        "tools/detection-floor.mjs"
+      ],
+      "deps": [],
+      "packages": [],
+      "acceptance": "The partition-header line prints \"recorded HEAD \" plus the record short sha under FRESH-BY-CONTENT. It already hedges with \"recorded\", so it does not carry RV-7 outright false naming, but under the exemption that commit is a recorded ANCESTOR and not a HEAD of anything. Either drop the word HEAD from that branch or make it name the same relationship the RV-7 verdict line now names. Converse control: the LIVE branch wording must not change.",
+      "notes": "Filed cycle 12 from the RV-7 builder UNPROMPTED disclosure -- it named the adjacent line it deliberately did NOT touch and gave its reason (the acceptance clause named one line; widening scope risked the byte-movement invariant). Correct call, correctly reported. Priority 7 precisely because the line is hedged rather than false."
     }
   ]
 }

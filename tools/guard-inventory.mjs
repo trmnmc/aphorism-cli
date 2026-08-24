@@ -666,6 +666,13 @@ for (const f of testFiles) {
     + '   ' + agree
     + (unterminated ? '   [WARNING: ' + unterminated + ' block(s) not terminated by a column-0 "});" -- static parse suspect]' : ''));
 }
+// Whether the statically-parsed test() count matches the runner-measured
+// count, TOTAL across the whole suite. A test file that registers cases
+// through a loop (or any indirection the textual test()-block scan cannot
+// see) makes totalDynamic exceed totalStatic; the per-file 'agree'/'DISAGREE'
+// column above already shows which file(s). Sections B and G below read this
+// flag so their prose cannot assert agreement the numbers do not back.
+const totalsAgree = totalDynamic === totalStatic;
 P('  ' + 'TOTAL'.padEnd(43) + String(totalLines).padStart(5) + ' lines   ' + String(totalStatic).padStart(3) + ' test() blocks   runner total: ' + totalDynamic + ' tests');
 {
   let srcBin = 0;
@@ -703,7 +710,16 @@ P('  at test time AND (b) asserts a count-shaped claim about it: a number parsed
 P('  from the document compared to an expectation, or set containment/equality');
 P('  between a document-claimed collection and a derived one. BORDERLINE items');
 P('  are listed one by one with reasons; EXCLUDED items are listed by title with');
-P('  a reason code. Nothing is silently dropped. (Full rule: header of this file.)');
+if (totalsAgree) {
+  P('  a reason code. Nothing is silently dropped. (Full rule: header of this file.)');
+} else {
+  P('  a reason code. Nothing the static parser SAW is silently dropped from C/D/E --');
+  P('  but the static test() parse (' + totalStatic + ') and the runner-measured count');
+  P('  (' + totalDynamic + ') DISAGREE for this tree (see A\'s per-file "agree"/"DISAGREE"');
+  P('  column): ' + Math.abs(totalDynamic - totalStatic) + ' test(s) the runner counted are not textually visible as');
+  P('  test() blocks and so cannot appear as rows in C/D/E. That claim is withdrawn');
+  P('  for this tree until the counts agree. (Full rule: header of this file.)');
+}
 P('');
 
 P('== C. INCLUDED COUNT-CLAIM GUARDS (' + included.length + ') ==');
@@ -818,7 +834,10 @@ if (floorEvidence.length === 0) {
   P('');
   P('  Evidence behind the reading, all re-derived above:');
   P('    - the runner-measured suite currently holds ' + totalDynamic + ' tests across '
-    + testFiles.length + ' files (static parse agrees: ' + totalStatic + ');');
+    + testFiles.length + ' files' + (totalsAgree
+      ? ' (static parse agrees: ' + totalStatic + ');'
+      : ' (static parse DISAGREES: ' + totalStatic + ' parsed statically vs ' + totalDynamic
+        + ' measured by the runner -- see A\'s per-file "agree"/"DISAGREE" column);'));
   P('    - zero comparisons against a ' + FLOOR_MIN_DIGITS + '+-digit bound, in either operand order,');
   P('      inline or via a same-file named const, exist in test code (F.i);');
   P('    - no test spawns the test runner or enumerates any directory (F.ii);');

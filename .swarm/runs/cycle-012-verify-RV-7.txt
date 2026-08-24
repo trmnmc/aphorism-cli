@@ -1,0 +1,57 @@
+CYCLE 12 — VERIFICATION EVIDENCE — RV-7 (priority 2, kind=fix, effort S)
+Gate sealed at /opt/swarm/runs/cycle-012-gate.md, sha256
+4bda5d1e93e520d58a93aa5f244547dce77011fbeeec018e4350c6616ab6eff3, hashed BEFORE dispatch and
+re-verified byte-identical after the builders returned. Builders never saw it.
+
+Tree under test: working tree at HEAD 6c38fdb0b59801a9954328d6da874e8c05523210, with the
+builder's edit to tools/detection-floor.mjs applied and nothing else.
+
+Driver: node child_process.spawnSync(node, [<script>], {cwd: /opt/targets/aphorism-cli}) —
+exit status captured directly by the conductor, not inferred from the printed text. This
+matters: the builder explicitly labelled its own exit-0 claim UNVERIFIED because its sandbox
+denied exit-code capture. The conductor did not accept the inference; it measured.
+
+---------------------------------------------------------------------------------------
+G1 (primary) + G2 (converse control) — POST-FIX, node tools/detection-floor.mjs
+---------------------------------------------------------------------------------------
+=== POST-FIX (G1/G2) === exit=0
+  VERDICT> VERDICT: DETECTION FLOOR HOLDS -- record measured at 585683734ea56e08671bfcc9be9310130e511542, an ancestor of current HEAD 6c38fdb0b59801a9954328d6da874e8c05523210, exempt under FRESH-BY-CONTENT (see freshness note above).
+  BUCKET > SAME-GUARD (17): still detected, target guard fired on both sides
+  BUCKET > GUARD-CHANGED (1): still detected, but NOT by the baseline's named guard
+  BUCKET > CLAIM-GONE (0): skipped at HEAD, anchor occurs 0 times -- the claim no longer exists
+  BUCKET > DETECTION-LOST (0): none
+  BUCKET > 0 detection lost; identity control GREEN on both sides; HEAD record fresh-by-content.
+
+Independently captured, same driver, same moment:
+  ACTUAL HEAD = 6c38fdb0b59801a9954328d6da874e8c05523210
+
+G1 verdict: PASS. The line names 5856837 as "record measured at ... an ancestor of current
+HEAD 6c38fdb", and 6c38fdb is in fact the repo's HEAD. It no longer prints a sha and calls
+it HEAD when it is not.
+
+G2 verdict: PASS (control GREEN). exit 0; 17 same-guard / 1 changed-guard / 0 claim-gone /
+0 detection-lost; identity control GREEN on both sides. Identical to the pre-fix run below.
+The conclusion did not move — only the sentence beside it.
+
+---------------------------------------------------------------------------------------
+G3 (failability) — PRE-FIX tool, SAME tree
+---------------------------------------------------------------------------------------
+The pre-fix tool was restored with `git show HEAD:tools/detection-floor.mjs` into
+tools/.gate-prefix-detection-floor.mjs (the tool resolves ROOT relative to its own directory,
+so it must sit inside tools/ to address the real repo). Deleted after the run; the tree was
+re-checked and showed only the two builder files modified.
+
+=== PRE-FIX  (G3 failability) === exit=0
+  VERDICT> VERDICT: DETECTION FLOOR HOLDS at HEAD 585683734ea56e08671bfcc9be9310130e511542
+  BUCKET > SAME-GUARD (17): still detected, target guard fired on both sides
+  BUCKET > GUARD-CHANGED (1): still detected, but NOT by the baseline's named guard
+  BUCKET > CLAIM-GONE (0): skipped at HEAD, anchor occurs 0 times -- the claim no longer exists
+  BUCKET > DETECTION-LOST (0): none
+  BUCKET > 0 detection lost; identity control GREEN on both sides; HEAD record fresh-by-content.
+
+G3 verdict: PASS. On the identical tree, the pre-fix tool prints "at HEAD 585683734..." while
+HEAD is 6c38fdb — it fails G1 for exactly the reason G1 names. G1 is therefore measuring
+something: it separates the two versions rather than passing both.
+
+Note the buckets are byte-identical across pre-fix and post-fix. That is the point: the pair
+of runs isolates the change to the sha-naming sentence and nothing else.

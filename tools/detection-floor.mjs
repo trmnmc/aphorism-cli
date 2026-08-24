@@ -608,7 +608,18 @@ if (extraAtHead.length) {
 console.log('');
 console.log('='.repeat(78));
 if (failures.length === 0) {
-  console.log('VERDICT: DETECTION FLOOR HOLDS at HEAD ' + recordedSha(finalRec));
+  // RV-7: recordedSha(finalRec) is the sha the record CLAIMS to have
+  // measured -- under FRESH or LIVE that sha IS the repo's current HEAD
+  // (asserted above), but under FRESH-BY-CONTENT it is an ancestor of HEAD,
+  // not HEAD itself. Naming it "HEAD" unconditionally contradicts the
+  // freshness banner already printed for that exact case. Say which one it
+  // is, plainly, rather than calling an ancestor "HEAD".
+  if (freshness === 'FRESH-BY-CONTENT') {
+    console.log('VERDICT: DETECTION FLOOR HOLDS -- record measured at ' + recordedSha(finalRec)
+      + ', an ancestor of current HEAD ' + headSha + ', exempt under FRESH-BY-CONTENT (see freshness note above).');
+  } else {
+    console.log('VERDICT: DETECTION FLOOR HOLDS at HEAD ' + recordedSha(finalRec));
+  }
   console.log('  every mutation the suite caught at baseline ' + BASELINE_FULL_SHA.slice(0, 7) + ' is accounted for:');
   console.log('  ' + buckets.sameGuard.length + ' same-guard, '
     + buckets.guardChanged.length + ' changed-guard (listed by name above), '
