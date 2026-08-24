@@ -5,8 +5,8 @@
  "run_label": "improvement run #8",
  "run_started_at": "2026-08-24T13:05:56.000Z",
  "kickoff_source": "allocator",
- "phase": "PLAN",
- "cycle": 0,
+ "phase": "BUILD",
+ "cycle": 1,
  "run_cmd": "node bin/aphorism.js",
  "test_cmd": "node --test test/*.test.js",
  "spec_digest": [
@@ -52,6 +52,18 @@
    "cycle": 0,
    "kind": "capacity",
    "text": "L-038 exhausted-window refusal test RUN, not assumed — this is the check the last two runs failed. Probe at kickoff: weekly_used_pct 6.0 at week_elapsed_pct 4.819, weekly reset 2026-08-31T04:59:59Z (well past stop_at), gear 4, ratio 0.32, probe_ok true. Capacity is real; the run OPENS. Contrast run #7, whose kickoff probe wrote weekly_used_pct 100 fifteen minutes before 381 dead spawns."
+  },
+  {
+   "id": "D-R8-5",
+   "cycle": 1,
+   "kind": "plan",
+   "text": "PLAN independently reproduced cycle 0's D-R8-2 finding by a different route (.github/workflows/test.yml carries an explicit written refusal to add a count assertion), and raised a SECOND premise objection: S-5's 127-vs-129 gap is most likely CI depth-1 skips vs a local full clone, not staleness — both numbers true of different environments. Neither is accepted as fact; W-1 and W-5 exist to measure them, and both items now carry the counter-hypothesis in their notes so a builder cannot quietly assume the spec's framing."
+  },
+  {
+   "id": "D-R8-6",
+   "cycle": 1,
+   "kind": "risk",
+   "text": "The entire citation-window risk is concentrated in W-7, the only item touching test/ (inside the README citation pathspec). Closing that window needs a new Actions run id, requiring both a successful push and Actions API access — neither confirmed from this environment. W-7 is sequenced last among code-touching items, gated on a confirmed ability to obtain a run id, and must predict the window in its own commit message (S-8). Every other item lands in tools/, docs/ or REPORT.md, outside the pathspec. L-043's pathspec-guard clause applied at PLAN time rather than discovered at merge time."
   }
  ],
  "qa": {
@@ -69,5 +81,11 @@
  "prior_runs": {
   "count": 7,
   "note": "runs #1-#7; run #7 delivered ZERO work cycles (usage lockout). Done items archived to backlog-archive-runs1-7.json."
+ },
+ "last_cycle": {
+  "cycle": 1,
+  "work": "PLAN (inline)",
+  "outcome": "value — 10 items, all 8 must-haves covered, plan gate passed",
+  "ts": "2026-08-24T13:25:50.000Z"
  }
 }
