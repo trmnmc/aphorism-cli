@@ -147,19 +147,34 @@ test('README must state total unique tags correctly', () => {
 // below, which reads that exact row via readTagVocabCount and compares it
 // to a count derived from src/corpus.js at test time.
 //
-// REDUNDANCY, RECORDED RATHER THAN TRIMMED. Two tests now read that one
-// row: the renamed test just named, and the "counts table \"Tags on
-// exactly one entry\" row matches the corpus" test below, which is Q-4's
-// structural replacement for the retired token co-occurrence guard. They
-// are redundant in the strict sense -- a wrong value in that row fails both
-// and no mutation fails only one of them -- and that is stated here rather
-// than resolved by deleting one of them: Q-4's scope was to stop reading
-// these counts out of prose, not to prune guards, and dropping a green
-// guard is a coverage decision that wants its own item and its own
-// measurement. What is NOT true of this pair is that either one carries
-// coverage the other lacks, so neither should be cited as the reason the
-// prose test above could go: that reason is the paragraph above this one --
-// the phrase it read no longer exists to be made wrong.
+// REDUNDANCY, RECORDED RATHER THAN TRIMMED -- and, as of W-7 (2026-08-24),
+// RESOLVED. Q-4 left two tests reading that one row: the renamed test just
+// named, and a "counts table \"Tags on exactly one entry\" row matches the
+// corpus" test that used to sit further down this file as Q-4's structural
+// replacement for the retired token co-occurrence guard. Q-4 recorded them
+// as redundant in the strict sense -- a wrong value in that row fails both
+// and no mutation fails only one of them -- and deliberately did not resolve
+// it, on the grounds that Q-4's scope was to stop reading these counts out
+// of prose, not to prune guards, and that dropping a green guard is a
+// coverage decision wanting its own item and its own measurement.
+//
+// W-7 is that item and that measurement, and it deleted the second test.
+// Nine candidate falsifications of the row were run through a full suite on
+// a scratch clone and the NAMED failing tests recorded; the deleted guard's
+// firing set turned out to be a strict SUBSET of the surviving one's (they
+// fire together on every falsification of this row, and the surviving guard
+// additionally fires on a wrong "Tags on 2 or more entries" row, which the
+// deleted one never read). Deleting the surviving guard instead would have
+// lost that second row; deleting the subset lost nothing. The full cell
+// table, the verbatim mutation, the three deletion-attribution variants and
+// the "both deleted -> SILENT" control live in the W-7 block where that test
+// used to be -- search this file for "W-7 (2026-08-24) -- CONSOLIDATED".
+//
+// What was NOT true of the pair, and is still worth saying here, is that
+// either one carried coverage the other lacked in the direction that
+// mattered, so neither should be cited as the reason the prose test above
+// could go: that reason is the paragraph above this one -- the phrase it
+// read no longer exists to be made wrong.
 // ---------------------------------------------------------------------------
 
 test('README must list all single-entry tags', () => {
@@ -431,25 +446,83 @@ test('README must list all single-entry tags', () => {
 // correct README rejected for how a SENTENCE was written, and no rewording,
 // splitting or deletion of prose in this section can fail this test.
 // ---------------------------------------------------------------------------
-test('README Tag vocabulary counts table "Tags on exactly one entry" row matches the corpus (structural replacement for the retired token co-occurrence guard, Q-4)', () => {
-  const readmePath = path.join(__dirname, '..', 'README.md');
-  const readmeContent = fs.readFileSync(readmePath, 'utf8');
-  const tagVocabSection = getTagVocabSection(readmeContent);
-  const table = parseTagVocabCountsTable(tagVocabSection);
-  assertTagVocabCountsTableWellFormed(table);
-
-  const statedSingleEntryCount = readTagVocabCount(table, 'Tags on exactly one entry');
-
-  const tagsInCorpus = countTagsInCorpus();
-  const trueSingleEntryCount = Object.keys(tagsInCorpus).filter((tag) => tagsInCorpus[tag] === 1).length;
-
-  assert.equal(
-    statedSingleEntryCount,
-    trueSingleEntryCount,
-    'README Tag vocabulary counts table states ' + statedSingleEntryCount + ' tags on exactly one entry, but the corpus has ' +
-      trueSingleEntryCount
-  );
-});
+//
+// W-7 (2026-08-24) -- CONSOLIDATED, and the guard that stood here is GONE.
+// Everything above this note describes a test called "README Tag vocabulary
+// counts table \"Tags on exactly one entry\" row matches the corpus
+// (structural replacement for the retired token co-occurrence guard, Q-4)",
+// which used to sit on the next line. It has been DELETED. Read every "the
+// test below" / "this test" in the block above as pointing at
+// "README must state correct multi-entry and single-entry tag counts"
+// further down this file: that guard reads the SAME "Tags on exactly one
+// entry" row, out of the same structurally-located table, through the same
+// four helpers (getTagVocabSection -> parseTagVocabCountsTable ->
+// assertTagVocabCountsTableWellFormed -> readTagVocabCount), and compares it
+// to the same count derived from src/corpus.js at test time. The Q-4
+// structural re-shape this block argues for is intact; only the duplicate
+// reader of it is gone.
+//
+// WHY, MEASURED RATHER THAN PREFERRED. The Q-4 REDUNDANCY note near the top
+// of this file recorded these two guards as redundant "in the strict sense"
+// and deferred the decision, saying it wanted its own item and its own
+// measurement. This is that measurement. Every cell below was run on a
+// scratch clone of this repo at HEAD (3bc2edc; test/, README.md and src/ are
+// byte-identical to the mutation-matrix baseline 20b7ede, verified with
+// `git diff 20b7ede HEAD -- test README.md src` = empty), node v24.19.0,
+// one full `node --test --test-reporter=tap test/*.test.js` per cell, verdict
+// taken from the NAMED `not ok` titles, not from the exit status.
+//
+// The falsification of the row is, verbatim, the mutation the detection
+// floor ships as M08 (tools/mutation-matrix.mjs):
+//     README.md:  | Tags on exactly one entry | 0 |
+//              -> | Tags on exactly one entry | 1 |
+//
+// Firing sets, one row per candidate falsification, measured with BOTH
+// guards present. "434" = the deleted guard, "1598" = the surviving
+// "README must state correct multi-entry and single-entry tag counts".
+// (The two README-Node-support citation guards fail in any cell whose tree
+// has an edited test/ file -- that is the README's own cited diff window
+// over `src bin test .github`, not a verdict about these guards, and it is
+// excluded from every reading here.)
+//
+//   X1  row value 0 -> 1 (the M08 mutation)          434 FIRES   1598 FIRES
+//   X2  row deleted outright                         434 FIRES   1598 FIRES
+//   X3  row label renamed ("precisely one entry")    434 FIRES   1598 FIRES
+//   X4  row duplicated with a contradictory value    434 FIRES   1598 FIRES
+//   X5  row value not an integer ("zero")            434 FIRES   1598 FIRES
+//   X6  counts-table header row broken               434 FIRES   1598 FIRES
+//   X8  a second counts table added to the section   434 FIRES   1598 FIRES
+//   X7  "Tags on 2 or more entries" 12 -> 11         434 silent  1598 FIRES
+//   X0  identity control, pristine README            434 silent  1598 silent
+//
+// The two firing sets are IDENTICAL on the mutation this item was opened
+// about (X1) and on every other falsification of that row (X2-X6, X8). They
+// differ in exactly one direction, X7, and it is the direction that makes
+// the deleted guard the redundant one: 1598 reads a SECOND row (the
+// multi-entry row, inventory claim [12]) that 434 never read. There is no
+// cell in which 434 fires and 1598 does not -- 434's coverage was a strict
+// SUBSET of 1598's, so removing it removes no detection at all, while
+// removing 1598 instead would have lost X7.
+//
+// ATTRIBUTION -- each kill was attributed by deletion, not assumed. Same
+// clone, same mutation X1, three further suite variants:
+//   - 434 deleted, 1598 kept  -> X1 still CAUGHT, by 1598 alone.
+//   - 1598 deleted, 434 kept  -> X1 still CAUGHT, by 434 alone.
+//   - BOTH deleted            -> X1 SILENT: 127 tests, no guard fires.
+// The last cell is the control that makes the first two mean something: the
+// pair is the only coverage this row has, so the surviving guard is load-
+// bearing and what W-7 did here is a de-duplication, not a coverage cut.
+// X0 (identity) stayed green in all four variants, so no cell's verdict is
+// an artifact of a suite that fails on everything.
+//
+// COST OF THE DELETION, stated rather than claimed away: the failure message
+// for a wrong single-entry row is now emitted once instead of twice, and the
+// row loses its own dedicated test NAME -- a reader scanning test titles for
+// "Tags on exactly one entry" will no longer find one, and must read
+// "README must state correct multi-entry and single-entry tag counts", whose
+// name covers both rows. The suite drops from 129 tests to 128. What is NOT
+// lost is any mutation: measured above, cell by cell.
+// ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
 // Bidirectional, band-aware guard on the Tag vocabulary count tables.
@@ -675,10 +748,12 @@ function readTagVocabCount(table, label) {
 // ---------------------------------------------------------------------------
 // Direct unit tests for the three Q-4 helpers above.
 //
-// WHY THESE EXIST. The three README-reading guards that call these helpers
-// ("README must state total unique tags correctly", "README must state
-// correct multi-entry and single-entry tag counts", and the "Tags on exactly
-// one entry" row test) all run against the REAL README, which is well-formed.
+// WHY THESE EXIST. The README-reading guards that call these helpers
+// ("README must state total unique tags correctly" and "README must state
+// correct multi-entry and single-entry tag counts" -- there was a third, a
+// separate reader of the "Tags on exactly one entry" row, until W-7 measured
+// it as a strict subset of the second and deleted it) all run against the
+// REAL README, which is well-formed.
 // They therefore exercise exactly one path through each helper: the happy
 // one. Every failure mode these helpers exist FOR -- the four the comment
 // block above parseTagVocabCountsTable claims they close -- was reachable
@@ -1619,10 +1694,14 @@ test('README must state correct multi-entry and single-entry tag counts', () => 
   );
 
   // The count of tags appearing on exactly one entry, read from the counts
-  // table's "Tags on exactly one entry" row. This is the SAME row the
-  // "counts table \"Tags on exactly one entry\" row matches the corpus"
-  // test above reads; see the Q-4 comment block near the top of this file
-  // for why that redundancy is recorded rather than trimmed here.
+  // table's "Tags on exactly one entry" row. This assertion is now the ONLY
+  // reader of that row in the suite: a second test used to read it too, and
+  // W-7 (2026-08-24) measured that pair's firing sets across nine
+  // falsifications of the row, found the other test's set to be a strict
+  // subset of this test's, and deleted it. Which means this assertion is
+  // load-bearing on its own -- with both readers removed the row's
+  // falsification goes SILENT, measured. See the "W-7 (2026-08-24) --
+  // CONSOLIDATED" block earlier in this file for the cell table.
   const statedSingleEntryCount = readTagVocabCount(table, 'Tags on exactly one entry');
   const expectedSingleEntryCount = Object.keys(tagsInCorpus).filter(tag => tagsInCorpus[tag] === 1).length;
   assert.equal(
