@@ -21357,3 +21357,26 @@ runfile-mirror:
 ```json
 {"version": 1, "run_label": "improvement run #7 (aphorism-cli)", "targets": [{"path": "/opt/targets/aphorism-cli", "status": "done", "weight": 1, "name": "aphorism-cli"}], "rotation_cursor": 0, "rotation_schedule": [0], "stop_at": 1787509907, "usage_reset_at": 1787547599, "model_policy": "value-routing", "auth_mode": "subscription", "heartbeat": {"ts": 1787548283, "next_wakeup_at": 1787548283, "pid": 3464832, "limp": false, "degraded_tiers": []}, "pacing": {"mode": "guest", "dial": 0.3}, "budget": {"source": "probe", "gear": 2, "gear_target": 2, "ratio": 1.35, "mode": "guest", "k_cap": 2, "promote": false, "demote": true, "window_tokens": 18664610, "window_cost_usd": 15.594585, "api_cap_usd": null, "api_spend_usd": 0.0, "tokens_per_hour": 7109007, "projected_depletion_at": 1787487591, "last_probe_ts": 1787423515, "last_real_probe_ts": 1787423515, "probe_failures": 0, "weekly": {"ok": true, "weekly_used_pct": 100, "opus_used_pct": 100, "week_elapsed_pct": 79.48, "weekly_heat": 1.26, "opus_heat": 1.26, "ceiling": 3, "promote_blocked": true}}, "watchdog": {"mode": "pacer", "plist_loaded": false, "lockfile": "/opt/swarm/runs/watchdog.lock", "relaunch_attempts": 0}, "caffeinate_pid": 0, "wrap_up_complete": true, "cycles_since_recycle": 0, "artifact": {"file": "/opt/swarm/runs/dashboard.html", "publish_failures": 0}, "playbook": {"mode": "auto", "applied": [], "vetoed": [], "directives": {"wave_k": null, "routing_recs": [], "prompt_lines": {}}, "source": "direct read of playbook/learnings.md \u2014 bin/swarm-playbook.sh is structurally denied (KI-R6-2); NOT re-attempted this run (L-045)"}, "kickoff_hints": {"mode": "guest", "dial": 0.3, "brief": "TRICKLE POSTURE: housekeeping only \u2014 harden tests, fix playbook items, polish docs \u2014 no new features. Haiku-priced work types; no new features.", "source": "allocator", "stop_at": 1787509907, "consumed_at": 1787423515}, "usage_reset_note": "Set to the WEEKLY reset (2026-08-24T05:00Z), not to stop_at (L-038): the 5h rolling window is irrelevant while weekly_used_pct is 100, so the weekly boundary is the only reset that would actually restore capacity. It lands 10.5h AFTER stop_at, which is the honest statement that this run cannot outlast its own limit.", "session_shape": "headless -p session (claude -p /swarm ... --add-dir /opt/targets): Workflow tool is review-gated, so build dispatch is DIRECT Agent calls at k=2 with disjoint scopes declared in-prompt (L-016); Artifact publish unavailable; settings.json unwritable.", "wrap_up_note": "WRAP_UP at 2026-08-24T05:11:23Z via the cycle.md step-1 clock check (now - stop_at = 38376s = 10.7h). Delivered work cycles: 0. Cycle 0 committed 55dfbb8 then died on the weekly limit at 18:47:13Z; the 381 sessions spawned after it each died on HTTP 429 in ~415ms. This session is the 382nd spawn and the first since 2026-08-22T18:47Z to reach a turn - it started at 05:02:07Z, two minutes after the weekly reset. No new work was started: WRAP_UP finishes nothing new, and starting fresh work 10.7h past stop_at would be the conductor overriding the operator's clock. See KI-R7-1."}
 ```
+
+### WRAP_UP addendum — the three best-effort steps, recorded as they actually went
+
+- **Target push: OK.** `88577eb`, `06282c4`, and tag `improvement-run-7-2026-08-24` are on
+  `origin/master` (github.com/trmnmc/aphorism-cli).
+- **SWARM repo push: FAILED.** `28f0fb6` (the playbook merges) committed locally, but
+  `git push` to `git@github.com:trmnmc/SWARM.git` was refused — SSH auth
+  ("Please make sure you have the correct access rights"). Per hard rule 1 a push failure is
+  journaled and never blocks: the commit is durable on disk and the next session with
+  credentials will carry it. **The two lessons are safe locally; they are NOT yet on the
+  remote.** Worth a human's eye — this is SWARM's own repo, not the target's.
+- **Project screenshot: SKIPPED.** `project screenshot skipped: aphorism-cli: browse CLI not
+  installed` (`~/.claude/skills/gstack/browse/dist/browse` absent). The registry did resolve a
+  URL (`https://swarm.fenley.ai/projects/aphorism-cli`), so the skip is the CLI's absence, not
+  a missing target. Best-effort by contract; never a wrap-up gate.
+- **Watchdog: nothing unloaded, and that is correct rather than skipped.**
+  `runfile.watchdog.plist_loaded` is `false` — this run loaded nothing, so there is nothing to
+  boot out. `swarm-watchdog.timer` is a system-wide unit this run did not enable, and
+  disabling it here would degrade every future run to fix nothing (KI-R6-1 already records
+  that it no-ops on improvement runs regardless). Left alone deliberately.
+- **caffeinate: N/A** — Linux VPS, `caffeinate_pid` 0. No identity check needed.
+- **Control channel archived**: `control.json` → `control.json.1787548283`,
+  `notify.log` → `notify.log.1787548283`. Next run lazy-inits fresh.
