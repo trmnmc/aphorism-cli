@@ -136,6 +136,12 @@
       "cycle": 6,
       "kind": "gate",
       "text": "The suite is 128 tests at HEAD against a run baseline of 129, and that DROP is recorded as a pass rather than explained away. It is W-7 (cycle 4) consolidating the two guards that read the same 'Tags on exactly one entry' row, which is what closed KI-R6-3, and must-have S-1 states outright that a test-count drop is a PASS. The attribution is not taken on the conductor's say-so: the C4 identity control measured both revisions on untouched scratch clones and reports baseline 20b7ede at 129 tests / 129 pass / 0 fail / 0 skipped GREEN and HEAD e40736c at 128 / 128 / 0 / 0 GREEN, so the -1 is located at a specific commit by an instrument that had no stake in the answer."
+    },
+    {
+      "id": "D-R8-19",
+      "cycle": 6,
+      "kind": "correction",
+      "text": "KI-36 is CLOSED rather than carried, and the reasoning for reversing cycle 5's deferral is on the record. Cycle 5 deferred the fix because the cycle was already committed and slipping an unrecorded change into the reporting instrument was the exact move that cycle kept refusing. That reasoning was about UNRECORDEDNESS, not about the fix, and it does not survive into a cycle where step 8 has not yet run: rendering the burn-up strip IS step 8's own job, cycle.md step 8 specifies one bar per cycle at height cumulative verified over backlog total, and runs/ is inside the writable half of the hard-rule-5 fence. Deferring a second time would have meant knowingly publishing a flat empty strip for a sixth cycle to the run's only live audience. The fix is recorded here, in the journal, and in KI-36's own resolution field, so it is not unrecorded in any sense. Fixing it also surfaced two sibling hardcodes in the same file and one instrument disagreement between the budget probe and the allocator (KI-37) - which is itself evidence for the D-R8-17 thesis: nobody had read this renderer end to end since it was written, so every confident constant in it had survived untouched."
     }
   ],
   "qa": {

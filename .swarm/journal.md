@@ -22625,9 +22625,48 @@ restated to be checkable at all), W-8 soft-block cleared and re-routed sonnet->f
 open question is a judgment call, not a build). Clean wave: 0 reverts, 0 failed verifies ->
 wave_streak 1, k_current unchanged at 5. consecutive_no_value reset to 0.
 burn attribution: 13852619 window tokens credited to aphorism-cli for cycle 5.
-commit: __COMMIT__
+commit: 154d073
 next wakeup: 1787589293 (+90s)
 runfile-mirror:
 ```json
 {"version":1,"run_label":"improvement run #8","targets":[{"path":"/opt/targets/aphorism-cli","name":"aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":1787663147,"usage_reset_at":1787601600,"stop_at_iso":"2026-08-25T13:05:47.000Z","usage_reset_at_iso":"2026-08-24T20:00:00.000Z","model_policy":"value-routing","auth_mode":"subscription","kickoff_source":"allocator","heartbeat":{"ts":1787589203,"next_wakeup_at":1787589293,"pid":4063002,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"probe","gear":3,"gear_target":3,"ratio":0.77,"mode":"guest","k_cap":3,"promote":false,"demote":false,"window_tokens":25842756,"window_cost_usd":24.496047500000003,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":23495348,"projected_depletion_at":1787605673,"last_probe_ts":1787587620,"last_real_probe_ts":1787587620,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":0,"opus_used_pct":100,"week_elapsed_pct":6.599,"weekly_heat":0.0,"opus_heat":15.15,"ceiling":5,"promote_blocked":true,"week_resets_at":1788152399},"probe_note":"cycle 6 probe: probe_ok true. gear 3 CRUISE (ratio 0.77, guest mode clamps 1-3), k_cap 3, no demote, no promote. Burn 25.8M window tokens at 23.5M tok/h, projected depletion 1787605673 (~2026-08-24T20:27Z), ahead of the 20:00Z window reset. NOTE for routing: weekly.opus_used_pct reads 100 (opus_heat 15.15) while the overall weekly is 0% at 6.6% elapsed, so weekly.ok stays true and promote is blocked. This cycle dispatched nothing to opus - both builders ran sonnet per the value-routing table - so the opus reading cost the cycle nothing, but W-8 and W-10 were both carrying model:opus in the backlog and W-8 has been re-routed to fable (a judgment call about whether a SKIPPED claim counts as detection lost, which is a judgment seat, not a build)."},"watchdog":{"mode":"pacer","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0,"note":"swarm-watchdog.timer is enabled+active but is a MEASURED NO-OP for this run: bin/swarm-watchdog.sh line 279 keys its DONE-guard on REPORT.md existing in every target, and /opt/targets/aphorism-cli/REPORT.md exists from run #7. L-037 clause 2, asserted at kickoff rather than assumed. RECOVERY PATH IS THE PACER: bin/swarm-pacer.sh keys only on wrap_up_complete (line 183) and heartbeat.next_wakeup_at (line 229) \u2014 it does NOT check REPORT.md \u2014 and swarm-pacer.timer is active. Verified by reading both scripts; neither was edited (hard rule 5)."},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":5,"artifact":{"file":"/opt/swarm/runs/dashboard.html","publish_failures":0},"playbook":{"apply_mode":"auto","source":"direct read of playbook/learnings.md (bin/swarm-playbook.sh structurally unallowlisted \u2014 KI-R6-2, 12th consecutive confirmation, zero denials burned this run)","applied":["L-008","L-016","L-024","L-026","L-029","L-031","L-033","L-034","L-037","L-038","L-042","L-043","L-044","L-046","L-047"],"vetoed":[],"held_out":[{"id":"L-022","why":"persisted UI state in beforeEach \u2014 this target is a terminal CLI with no browser surface; held out for the fourth consecutive run"}],"directives":{"wave_k":null,"routing_recs":["core-logic->fable (L-026)"],"prompt_lines":{"builder":"The conductor is the SOLE committer \u2014 never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. The conductor seals its verification gate by hash before dispatch \u2014 do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work. Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps. Classify each surviving mutant as HOLE (a real gap - harden it) or BOUNDARY (behaviour the spec does not decide - document it) BEFORE writing any test. When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive \u2014 a kill you cannot attribute is not evidence. For every mutation that must kill the suite, author one control that must leave it GREEN \u2014 a check that dies on everything is a snapshot test, not an assertion. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check.","reviewer":"The conductor is the SOLE committer \u2014 never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. Assign each fixer a pairwise-disjoint file set; two fixers must never share a file. The conductor seals its verification gate by hash before dispatch \u2014 do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work.","qa":"Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'. Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns. Classify each surviving mutant as HOLE or BOUNDARY BEFORE writing any test."},"process":["kickoff-refuse-on-exhausted-window (L-038) \u2014 RUN at cycle 0, PASSED: weekly 6.0% at 4.819% elapsed, reset 2026-08-31 well past stop_at","spawner-backoff-to-known-reset (L-037) \u2014 SWARM tool gap, reported not edited (hard rule 5)","wire-through check at each layer boundary for domain-capability items (L-046)","reserve one mid-run cycle for the taste pass before the VALUE_LOOP tail (L-038)"]}},"kickoff_hints":{"mode":"guest","dial":0.3,"brief":"TRICKLE POSTURE: housekeeping only \u2014 harden tests, fix playbook items, polish docs \u2014 no new features. Haiku-priced work types; no new features.","source":"allocator","stop_at":1787663147,"consumed_at":1787577261},"session_shape":"headless -p session spawned by swarm-pacer.sh (auto-kickoff 13:05:48Z). Workflow tool is review-gated headless, so build dispatch is DIRECT Agent calls with disjoint scopes declared in-prompt (L-016); Artifact publish unavailable (local dashboard render IS the publication on the VPS); `claude` is not allowlisted so kickoff step 11 could not run."}
 ```
+
+### cycle 6 addendum — KI-36 closed at step 8, and an instrument disagreement it uncovered
+
+The dashboard renderer's burn-up strip (KI-36 / D-R8-16, filed at step 8 of cycle 5) is FIXED
+rather than carried a second time. It had hardcoded `const verified = 0`, `data-cycles="1"` and
+a `cycle 0 — 0 verified` title, then self-checked those against a constant
+`burnup_bars_expected: 1` — reporting ok:true and 1-of-1 bars while publishing a flat empty
+strip through five cycles and thirteen verified items.
+
+Both halves are fixed: the series is derived from the structural field
+`backlog.items[].updated_cycle` on done items, and the self-check now compares rendered bars
+against that derived length. Nine done items from cycles 2-4 predated the field; they were
+backfilled from the run's own COMMIT BODIES (runs/_c6-backfill.py, which asserts the done-count
+matches the mapping and refuses to run otherwise) rather than from journal prose.
+
+  VERIFICATION EVIDENCE — node runs/run8-render-dashboard.mjs
+    "ok": true, "burnup_bars_rendered": 7, "burnup_bars_expected": 7,
+    "burnup_verified_cumulative": 13, "burnup_done_items_without_a_cycle": [],
+    "live_placeholders_located_and_filled": "12/12", "unfilled_live_placeholders": []
+  rendered bars (grep of the published file, heights are real and monotone):
+    cycle 0 — 0 verified / 16 live items (0%)      cycle 4 — 9 verified (56%)
+    cycle 1 — 0 verified (0%)                      cycle 5 — 11 verified (69%)
+    cycle 2 — 3 verified (19%)                     cycle 6 — 13 verified (81%)
+    cycle 3 — 6 verified (38%)
+
+Reading the renderer end to end turned up two more confident hardcodes of the same class:
+the allocator tile asserted "trickle · 4% overall / 2% premium" while runs/allocator.json read
+posture normal / 3.147% overall / 0% premium (now derived, UNKNOWN when unreadable), and the
+tests tile presented the 129/129 run baseline as though it were current (now labelled
+"@baseline 20b7ede"; HEAD is 128/128, D-R8-18).
+
+KI-37 opened (medium, reported not edited — bin/ is read-only under hard rule 5): the cycle-6
+budget probe wrote weekly.opus_used_pct 100 / promote_blocked true, while runs/allocator.json,
+probed in the same window at the same week_elapsed_pct 6.599, read opus_used_pct 16. One is
+wrong by a factor of six. It cost this cycle nothing — both builders routed to sonnet — but
+W-8 and W-10 were carrying model:opus when the probe read 100, and the routing table sends
+L-effort builds and all review-fix reviewers to opus.
+
+commit: %s
