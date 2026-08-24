@@ -1,0 +1,90 @@
+W-12 verification evidence — cycle 5, improvement run #8
+========================================================================
+Gate scripts, conductor-authored AT VERIFICATION TIME, outside the target tree
+(a builder could not have read them):
+  /opt/swarm/runs/gate-c5-part1.mjs        cheap cells C1-C8
+  /opt/swarm/runs/gate-c5-part2.mjs        expensive cells C9-C13
+  /opt/swarm/runs/gate-c5-c1-addendum.mjs  corrects a defect in C1 (see below)
+Raw matrix transcripts parked alongside this file:
+  cycle-005-matrix-at-HEAD.txt      node tools/mutation-matrix.mjs --rev HEAD
+  cycle-005-matrix-at-baseline.txt  node tools/mutation-matrix.mjs --rev 20b7ede
+  cycle-005-matrix-default.txt      node tools/mutation-matrix.mjs --write-baseline (throwaway clone)
+
+Cells bearing on W-12: C7 (CLI refusals each fail for the reason they name), C10 (--rev measures the named tree, discriminated by suite size), C11 (absent guardTitle degrades visibly, with converse control), C12 (default path still verdict-for-verdict identical to the committed baseline)
+
+VERDICT OF RECORD: 13/13 cells passed at verification time.
+The PART 1 transcript below is a RE-RUN taken after step 7 wrote .swarm/state.json,
+so its C1 reads FAIL — that is the gate script's own stale expectation, not a
+regression in the work. See D-R8-15 and the C1 ADDENDUM at the end of this file.
+========================================================================
+
+FAIL  C1 write scope: only tools/mutation-matrix.mjs (+ conductor-owned .swarm/) modified
+        raw status lines (bracketed to show the status column verbatim):
+        [ M .swarm/backlog.json]
+        [ M .swarm/state.json]
+        [ M tools/mutation-matrix.mjs]
+        parsed paths: [".swarm/backlog.json",".swarm/state.json","tools/mutation-matrix.mjs"]
+        unexpected: [".swarm/state.json"]   untracked count: 0
+PASS  C2 frozen files byte-unmoved (baseline JSON, run-all.mjs, corpus)
+        ok     tools/mutation-matrix-baseline.json  5ac3c65d65466dea…
+        ok     tools/run-all.mjs  47ce28fe56876a85…
+        ok     src/corpus.js  77a4de5c777a3bdb…
+PASS  C3 citation pathspec (src bin test .github README.md) untouched — window already spent
+        changed files: [".swarm/backlog.json",".swarm/state.json","tools/mutation-matrix.mjs"]
+        inside pathspec: []
+PASS  C4 --help sha256 unmoved (W-6 standing invariant)
+        exit 0   sha256 d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64
+PASS  C5 zero-dependency invariant holds (S-8)
+        import specifiers: ["node:fs","node:child_process","node:path","node:url"]
+        non-node: []
+        package.json dependency count: no package.json
+PASS  C6 scratch path: OLD is a shared constant, NEW is per-invocation (structural)
+        OLD: const SCRATCH_ROOT = path.join(ROOT, '.scratch-W-2');
+             constant, no pid/random/mkdtemp component -> every concurrent run resolves the SAME path: true
+        NEW assignments:
+             let SCRATCH_ROOT = null;
+             SCRATCH_ROOT = mkdtempSync(path.join(ROOT, '.scratch-W-2.'));
+             uses mkdtempSync and no fixed .scratch-W-2 literal: true
+PASS  C7 CLI negative controls: each refusal fails for the reason it names
+        ok   unknown flag  -> exit 2
+                   reason given: error: unknown argument: --totally-bogus
+        ok   --rev with no value  -> exit 2
+                   reason given: error: --rev requires a value
+        ok   --rev + --write-baseline refused  -> exit 2
+                   reason given: error: --write-baseline regenerates the committed baseline and is only valid for the default baseline rev (20b7ede); drop --rev
+        ok   unresolvable rev  -> exit 1
+                   reason given: file:///opt/targets/aphorism-cli/tools/mutation-matrix.mjs:483
+        baseline JSON unchanged across all four refusals: true
+        scratch dirs left behind by the failure paths: none
+PASS  C8 suite green in the working tree: 128/128/0/0 (the HEAD contract)
+        node --test test/*.test.js -> {"tests":"128","pass":"128","fail":"0","skipped":"0"}   exit 0
+
+================ PART 1 ROLL-UP ================
+FAIL  C1 write scope: only tools/mutation-matrix.mjs (+ conductor-owned .swarm/) modified
+PASS  C2 frozen files byte-unmoved (baseline JSON, run-all.mjs, corpus)
+PASS  C3 citation pathspec (src bin test .github README.md) untouched — window already spent
+PASS  C4 --help sha256 unmoved (W-6 standing invariant)
+PASS  C5 zero-dependency invariant holds (S-8)
+PASS  C6 scratch path: OLD is a shared constant, NEW is per-invocation (structural)
+PASS  C7 CLI negative controls: each refusal fails for the reason it names
+PASS  C8 suite green in the working tree: 128/128/0/0 (the HEAD contract)
+7/8 cells passed
+
+
+===== C1 ADDENDUM =====
+C1-ADDENDUM  write scope, restated as a rule rather than a snapshot
+  raw status lines, bracketed so a column-eating parse is visible in the evidence:
+    [ M .swarm/backlog.json]
+    [ M .swarm/state.json]
+    [ M tools/mutation-matrix.mjs]
+  parsed paths          : [".swarm/backlog.json",".swarm/state.json","tools/mutation-matrix.mjs"]
+  conductor-owned (.swarm/): [".swarm/backlog.json",".swarm/state.json"]
+  attributable to builder  : ["tools/mutation-matrix.mjs"]
+  permitted builder scope  : ["tools/mutation-matrix.mjs"]
+  OUT OF SCOPE          : []
+  untracked files       : 0
+
+  CONVERSE CONTROL — paths this rule would reject if present: ["src/corpus.js","README.md",".scratch-W-2.XXXXXX/clone"]  (3/3)
+  a rule that rejected none of those would be vacuous.
+
+PASS  C1-ADDENDUM

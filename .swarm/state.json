@@ -1,127 +1,145 @@
 {
- "idea": "zero-dependency Node CLI printing a random attributed programming aphorism — improvement run #8: adopt run #7's stress-tested but entirely UNBUILT guard-reduction spec, re-verified item-by-item; no new features, no new deps",
- "project_dir": "/opt/targets/aphorism-cli",
- "created_at": "2026-08-14T00:00:00+00:00",
- "run_label": "improvement run #8",
- "run_started_at": "2026-08-24T13:05:56.000Z",
- "kickoff_source": "allocator",
- "phase": "BUILD",
- "cycle": 4,
- "run_cmd": "node bin/aphorism.js",
- "test_cmd": "node --test test/*.test.js",
- "spec_digest": [
-  "IMPROVEMENT RUN #8 on a shipped zero-dep Node CLI — adopt run #7's stress-tested but entirely UNBUILT guard-reduction spec, re-verified item-by-item first; no new features, no new deps",
-  "must: measure which count-claim guards actually bind at HEAD BEFORE retiring any, then replace COUNT floors with a DETECTION floor — <=30 rule-generated mutations + one GREEN identity control, shipped as rerunnable tools/mutation-matrix.mjs; a test-count DROP is a PASS (S-1)",
-  "must: close KI-R6-3 by consolidating the two same-row guards or publishing the distinguishing mutation (S-2); make the citation-history doc QUOTE README's rule instead of paraphrasing it, guard <=30 lines, failable, attributable, converse-controlled (S-3)",
-  "must: COUNT the citation two-commit tax and adjudicate the README matrix's 127-vs-129 numbers by measurement, changing nothing unless the measurement says it is wrong (S-4, S-5)",
-  "must: every published finding ships as a rerunnable tool, not prose (S-6); the escalation of the three brief-locked user-visible changes is written as brief text run #9 could launch with (S-7); corpus sha 77a4de5c and --help sha d759d781 unmoved, green every commit bar one predicted citation window (S-8)"
- ],
- "baseline": {
-  "commit": "20b7ede",
-  "test_total": 129,
-  "test_pass": 129,
-  "test_fail": 0,
-  "test_skipped": 0,
-  "src_lines": 594,
-  "test_lines": 4587,
-  "corpus_sha256": "77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e",
-  "help_sha256": "d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64",
-  "measured_at": "2026-08-24T13:05:56.000Z"
- },
- "decisions": [
-  {
-   "id": "D-R8-1",
-   "cycle": 0,
-   "kind": "design",
-   "text": "ADOPT run #7's spec rather than author a new one. Run #7 stress-tested and taste-gated an identical trickle brief, reshaped it from guard-accretion to guard-REDUCTION, then delivered zero work cycles (381/381 spawns dead on HTTP 429). Re-authoring the scope would re-derive a conclusion already reached and paid for; L-045 forbids exactly that. Inherited items are re-verified against the repo before prioritization, which already caught one false premise (see D-R8-2)."
+  "idea": "zero-dependency Node CLI printing a random attributed programming aphorism — improvement run #8: adopt run #7's stress-tested but entirely UNBUILT guard-reduction spec, re-verified item-by-item; no new features, no new deps",
+  "project_dir": "/opt/targets/aphorism-cli",
+  "created_at": "2026-08-14T00:00:00+00:00",
+  "run_label": "improvement run #8",
+  "run_started_at": "2026-08-24T13:05:56.000Z",
+  "kickoff_source": "allocator",
+  "phase": "BUILD",
+  "cycle": 5,
+  "run_cmd": "node bin/aphorism.js",
+  "test_cmd": "node --test test/*.test.js",
+  "spec_digest": [
+    "IMPROVEMENT RUN #8 on a shipped zero-dep Node CLI — adopt run #7's stress-tested but entirely UNBUILT guard-reduction spec, re-verified item-by-item first; no new features, no new deps",
+    "must: measure which count-claim guards actually bind at HEAD BEFORE retiring any, then replace COUNT floors with a DETECTION floor — <=30 rule-generated mutations + one GREEN identity control, shipped as rerunnable tools/mutation-matrix.mjs; a test-count DROP is a PASS (S-1)",
+    "must: close KI-R6-3 by consolidating the two same-row guards or publishing the distinguishing mutation (S-2); make the citation-history doc QUOTE README's rule instead of paraphrasing it, guard <=30 lines, failable, attributable, converse-controlled (S-3)",
+    "must: COUNT the citation two-commit tax and adjudicate the README matrix's 127-vs-129 numbers by measurement, changing nothing unless the measurement says it is wrong (S-4, S-5)",
+    "must: every published finding ships as a rerunnable tool, not prose (S-6); the escalation of the three brief-locked user-visible changes is written as brief text run #9 could launch with (S-7); corpus sha 77a4de5c and --help sha d759d781 unmoved, green every commit bar one predicted citation window (S-8)"
+  ],
+  "baseline": {
+    "commit": "20b7ede",
+    "test_total": 129,
+    "test_pass": 129,
+    "test_fail": 0,
+    "test_skipped": 0,
+    "src_lines": 594,
+    "test_lines": 4587,
+    "corpus_sha256": "77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e",
+    "help_sha256": "d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64",
+    "measured_at": "2026-08-24T13:05:56.000Z"
   },
-  {
-   "id": "D-R8-2",
-   "cycle": 0,
-   "kind": "correction",
-   "text": "Run #7's R-1 named a \">= 121 tests\" COUNT floor to retire. Cycle 0 grepped test/ at HEAD and found no such literal floor anywhere. The inherited premise is unconfirmed, so S-1 was re-shaped to MEASURE the inventory of count-claim guards first and retire only what the inventory shows exists. L-045 (re-verify inherited SPEC items) and L-031 (measure before planning against an inferred gap) both applied, and both paid at cycle 0."
+  "decisions": [
+    {
+      "id": "D-R8-1",
+      "cycle": 0,
+      "kind": "design",
+      "text": "ADOPT run #7's spec rather than author a new one. Run #7 stress-tested and taste-gated an identical trickle brief, reshaped it from guard-accretion to guard-REDUCTION, then delivered zero work cycles (381/381 spawns dead on HTTP 429). Re-authoring the scope would re-derive a conclusion already reached and paid for; L-045 forbids exactly that. Inherited items are re-verified against the repo before prioritization, which already caught one false premise (see D-R8-2)."
+    },
+    {
+      "id": "D-R8-2",
+      "cycle": 0,
+      "kind": "correction",
+      "text": "Run #7's R-1 named a \">= 121 tests\" COUNT floor to retire. Cycle 0 grepped test/ at HEAD and found no such literal floor anywhere. The inherited premise is unconfirmed, so S-1 was re-shaped to MEASURE the inventory of count-claim guards first and retire only what the inventory shows exists. L-045 (re-verify inherited SPEC items) and L-031 (measure before planning against an inferred gap) both applied, and both paid at cycle 0."
+    },
+    {
+      "id": "D-R8-3",
+      "cycle": 0,
+      "kind": "taste",
+      "text": "Taste judge scored use-twice 4 / product-not-demo 6 / scope-fits-night 7 / one-memorable-thing 6 and caught that S-1/S-4/S-5 could each be discharged by publishing prose. Spec CHANGED at lock rather than annotated: S-6 now requires every published finding to ship as a rerunnable tool in tools/, and S-7 requires the escalation to be written as launch-ready brief text for run #9. The use-twice 4 is recorded and not argued away — it is the honest cost of a fourth consecutive trickle brief on a finished program."
+    },
+    {
+      "id": "D-R8-4",
+      "cycle": 0,
+      "kind": "capacity",
+      "text": "L-038 exhausted-window refusal test RUN, not assumed — this is the check the last two runs failed. Probe at kickoff: weekly_used_pct 6.0 at week_elapsed_pct 4.819, weekly reset 2026-08-31T04:59:59Z (well past stop_at), gear 4, ratio 0.32, probe_ok true. Capacity is real; the run OPENS. Contrast run #7, whose kickoff probe wrote weekly_used_pct 100 fifteen minutes before 381 dead spawns."
+    },
+    {
+      "id": "D-R8-5",
+      "cycle": 1,
+      "kind": "plan",
+      "text": "PLAN independently reproduced cycle 0's D-R8-2 finding by a different route (.github/workflows/test.yml carries an explicit written refusal to add a count assertion), and raised a SECOND premise objection: S-5's 127-vs-129 gap is most likely CI depth-1 skips vs a local full clone, not staleness — both numbers true of different environments. Neither is accepted as fact; W-1 and W-5 exist to measure them, and both items now carry the counter-hypothesis in their notes so a builder cannot quietly assume the spec's framing."
+    },
+    {
+      "id": "D-R8-6",
+      "cycle": 1,
+      "kind": "risk",
+      "text": "The entire citation-window risk is concentrated in W-7, the only item touching test/ (inside the README citation pathspec). Closing that window needs a new Actions run id, requiring both a successful push and Actions API access — neither confirmed from this environment. W-7 is sequenced last among code-touching items, gated on a confirmed ability to obtain a run id, and must predict the window in its own commit message (S-8). Every other item lands in tools/, docs/ or REPORT.md, outside the pathspec. L-043's pathspec-guard clause applied at PLAN time rather than discovered at merge time."
+    },
+    {
+      "id": "D-R8-7",
+      "cycle": 2,
+      "kind": "gate",
+      "text": "W-3 PASSES its acceptance clause and the conductor still recorded a defect against it. The clause scopes failability to perturbing the QUOTE, and that direction attributes correctly. The conductor also perturbed the README side -- a case the clause does not cover -- and the check still printed `docs/node-support-citation-history.md has diverged`, blaming the document that did not move. Every factual clause in that message is true; only the direction of attribution is wrong. Rounding this into a FAIL would discard verified work over a case the clause never asked for; burying it would be the gate opening itself by silence. Recorded as new item P-1 instead, with the exact perturbation that produces it."
+    },
+    {
+      "id": "D-R8-8",
+      "cycle": 3,
+      "kind": "gate",
+      "text": "P-1 PASSES all three directions of its acceptance clause and the conductor still recorded a defect against it — the same ruling shape as D-R8-7. The tool resolves its third anchor with `git show HEAD:<path>`, and git walks UP the directory tree: from a checkout that is not itself a repo but sits inside one, the anchor silently resolves against the ANCESTOR repo. Measured: `git rev-parse --show-toplevel` from a nested .git-deleted clone returns /opt/targets/aphorism-cli. In the gate the ancestor was the same project, so the attribution looked right — the coincidence is what makes it worth fixing. Run genuinely outside any repo, the fallback fires correctly and honestly, so the builder`s untested path is now exercised and works. Recorded as new item P-2 rather than rounded into a FAIL, because the clause covers three directions and all three pass."
+    },
+    {
+      "id": "D-R8-9",
+      "cycle": 3,
+      "kind": "correction",
+      "text": "The conductor`s own W-5 gate script carried a bug: its README row-parser assumed five pipe-separated columns, but the table has two columns with the counts in prose, so it parsed zero rows and printed `depth-1 == README row? -> NO`. That NO was the gate failing, not W-5. Corrected in a second script (gate-c3-w5b.mjs), which parses all four rows and reports YES. Recorded here rather than silently re-run, because a gate that misreports must be as visible as a build that does — the evidence file names the bug explicitly."
+    },
+    {
+      "id": "D-R8-10",
+      "cycle": 4,
+      "kind": "correction",
+      "text": "The conductor's own W-7 gate carried a parser bug, the SECOND cycle running (cf. D-R8-9). Cell C1 read `git status --porcelain` and called .trim() on stdout BEFORE splitting into lines, which ate the leading space of the first line's two-character status column; the path was then sliced one byte short and C1 reported the modified file as \"est/readme-tags.test.js\", failing the cell on a file that does not exist. The item was NOT rounded to a FAIL and the cell was NOT quietly re-run: it is corrected in runs/gate-c4-w7-c1-addendum.mjs, which documents the defect in its own header and additionally checks something the original missed — that no .scratch tree survives into the commit. Two gate-parser bugs in two consecutive cycles is now a pattern in the conductor's own instruments, not an isolated slip, and it is the RETRO candidate of this run: gate scripts are written once and run once, so they get none of the scrutiny the code under test gets."
+    },
+    {
+      "id": "D-R8-11",
+      "cycle": 4,
+      "kind": "gate",
+      "text": "The single citation window S-8 permits was opened and CLOSED inside cycle 4, rather than left open across a cycle boundary. Hard rule 4 (green main before the cycle commits) and S-8 (green every commit bar one predicted window) are in tension — recorded as blocked item P-7 for a human ruling — and this cycle resolved it by satisfying both literally: commit 02f4668 opens the window and NAMES it in advance in its own message, and the next commit closes it, so the cycle ENDS green. The enabling measurement was cheap and was taken before dispatch rather than assumed: `gh run list` returns run ids, master is level with origin/master, and CI end-to-end is ~23 seconds. D-R8-6 had gated W-7 on \"a confirmed ability to obtain a run id\"; that gate was checked, not waived."
+    },
+    {
+      "id": "D-R8-12",
+      "cycle": 4,
+      "kind": "risk",
+      "text": "W-8 is unsatisfiable as shipped and would have failed SILENTLY. tools/mutation-matrix.mjs pins BASELINE to 20b7ede, so \"re-run the matrix at final HEAD\" (W-8's clause) would have measured the baseline twice and produced a guaranteed-identical matrix — which the clause explicitly anticipates as a possible legitimate null result (\"if W-7 ends in the keep-both branch this still runs and should show an identical matrix\"). The two outcomes are observationally identical, so a builder could have discharged W-8 honestly and been wrong. Caught by reading the tool before dispatching against it, not at W-8's gate. W-12 filed as a hard dependency."
+    },
+    {
+      "id": "D-R8-13",
+      "cycle": 5,
+      "kind": "gate",
+      "text": "The two gate-parser bugs of cycles 3 and 4 (D-R8-9, D-R8-10) were treated as a standing hazard rather than as closed incidents. The cycle-5 gate was written with the cycle-4 defect named in its own header as a rule: split `git status --porcelain` into lines BEFORE any trim, and take the path as line.slice(3) — trimming whole stdout first is what ate the leading space of the status column last cycle. Cell C1 additionally prints every status line BRACKETED, so a column-eating bug is visible in the evidence itself rather than inferable only from a wrong verdict. Three gate scripts in a row have now carried a defect or a defence against one; the instruments deserve the same scrutiny as the code they judge, and this run should say so in RETRO."
+    },
+    {
+      "id": "D-R8-14",
+      "cycle": 5,
+      "kind": "correction",
+      "text": "The conductor did NOT re-reproduce W-13's pre-fix crash and does not claim to. The item asked the BUILDER for a pre-fix contrast, and the builder reproduced it with the cycle-4 signature (spawnSync git ENOENT inside resetClone, plus a second, worse mode: two runs silently interleaving on one shared clone without crashing). The conductor verified the pre-fix hazard STRUCTURALLY instead — cell C6 shows the old SCRATCH_ROOT was a process-invariant constant with no pid/random/mkdtemp component, so two concurrent runs necessarily resolved the same path — and verified the POST-fix behaviour by live demonstration (C9: 81s of genuine overlap, two distinct mkdtemp dirs, both exit 0, no ENOENT). Recorded because the distinction matters: \"conductor-verified\" covers the fix and the old code's shape, while the crash reproduction is builder-reported and cycle-4-observed. Rolling those together would overstate what the gate proved."
+    },
+    {
+      "id": "D-R8-15",
+      "cycle": 5,
+      "kind": "correction",
+      "text": "The conductor's own gate carried a defect for the THIRD consecutive cycle, and this one was caught by re-running the gate rather than by reading it. Cell C1 hardcoded the expected dirty set as [\".swarm/backlog.json\", \"tools/mutation-matrix.mjs\"] — true at verification time, false the instant step 7 wrote .swarm/state.json. The cell's own title says .swarm/ is conductor-owned, so state.json was always meant to be permitted: the list was a point-in-time SNAPSHOT masquerading as a RULE. Re-running the gate after persist therefore reported FAIL on a cell whose subject — the builder's write scope — had not changed at all. Handled exactly as D-R8-9 and D-R8-10 were: not re-labelled, not silently re-run. The C1 verdict of record stays the one taken at verification time (PASS, before persist), and runs/gate-c5-c1-addendum.mjs restates the cell as the rule it should always have been — builder scope is tools/mutation-matrix.mjs, every .swarm/ path is the conductor's — so it is re-runnable at any point in the cycle. The addendum also carries a converse control naming three paths the rule must reject, because a scope check that cannot fail is not evidence. Three cycles, three instrument defects, three DIFFERENT root causes (five-column parse of a two-column table; .trim() eating a status column; a snapshot used as an invariant). The common factor is not any one bug: gate scripts are written once, run once, and reviewed by nobody, while the code they judge gets a builder, a gate and a converse control. This is the run's primary RETRO candidate."
+    }
+  ],
+  "qa": {
+    "last_look_cycle": null,
+    "last_full_qa_cycle": null,
+    "last_taste_cycle": null
   },
-  {
-   "id": "D-R8-3",
-   "cycle": 0,
-   "kind": "taste",
-   "text": "Taste judge scored use-twice 4 / product-not-demo 6 / scope-fits-night 7 / one-memorable-thing 6 and caught that S-1/S-4/S-5 could each be discharged by publishing prose. Spec CHANGED at lock rather than annotated: S-6 now requires every published finding to ship as a rerunnable tool in tools/, and S-7 requires the escalation to be written as launch-ready brief text for run #9. The use-twice 4 is recorded and not argued away — it is the honest cost of a fourth consecutive trickle brief on a finished program."
+  "counters": {
+    "consecutive_no_value": 0,
+    "k_current": 5,
+    "wave_streak": 0,
+    "window_tokens_attributed": 0
   },
-  {
-   "id": "D-R8-4",
-   "cycle": 0,
-   "kind": "capacity",
-   "text": "L-038 exhausted-window refusal test RUN, not assumed — this is the check the last two runs failed. Probe at kickoff: weekly_used_pct 6.0 at week_elapsed_pct 4.819, weekly reset 2026-08-31T04:59:59Z (well past stop_at), gear 4, ratio 0.32, probe_ok true. Capacity is real; the run OPENS. Contrast run #7, whose kickoff probe wrote weekly_used_pct 100 fifteen minutes before 381 dead spawns."
+  "known_issues_file": "known-issues.json",
+  "prior_runs": {
+    "count": 7,
+    "note": "runs #1-#7; run #7 delivered ZERO work cycles (usage lockout). Done items archived to backlog-archive-runs1-7.json."
   },
-  {
-   "id": "D-R8-5",
-   "cycle": 1,
-   "kind": "plan",
-   "text": "PLAN independently reproduced cycle 0's D-R8-2 finding by a different route (.github/workflows/test.yml carries an explicit written refusal to add a count assertion), and raised a SECOND premise objection: S-5's 127-vs-129 gap is most likely CI depth-1 skips vs a local full clone, not staleness — both numbers true of different environments. Neither is accepted as fact; W-1 and W-5 exist to measure them, and both items now carry the counter-hypothesis in their notes so a builder cannot quietly assume the spec's framing."
-  },
-  {
-   "id": "D-R8-6",
-   "cycle": 1,
-   "kind": "risk",
-   "text": "The entire citation-window risk is concentrated in W-7, the only item touching test/ (inside the README citation pathspec). Closing that window needs a new Actions run id, requiring both a successful push and Actions API access — neither confirmed from this environment. W-7 is sequenced last among code-touching items, gated on a confirmed ability to obtain a run id, and must predict the window in its own commit message (S-8). Every other item lands in tools/, docs/ or REPORT.md, outside the pathspec. L-043's pathspec-guard clause applied at PLAN time rather than discovered at merge time."
-  },
-  {
-   "id": "D-R8-7",
-   "cycle": 2,
-   "kind": "gate",
-   "text": "W-3 PASSES its acceptance clause and the conductor still recorded a defect against it. The clause scopes failability to perturbing the QUOTE, and that direction attributes correctly. The conductor also perturbed the README side -- a case the clause does not cover -- and the check still printed `docs/node-support-citation-history.md has diverged`, blaming the document that did not move. Every factual clause in that message is true; only the direction of attribution is wrong. Rounding this into a FAIL would discard verified work over a case the clause never asked for; burying it would be the gate opening itself by silence. Recorded as new item P-1 instead, with the exact perturbation that produces it."
-  },
-  {
-   "id": "D-R8-8",
-   "cycle": 3,
-   "kind": "gate",
-   "text": "P-1 PASSES all three directions of its acceptance clause and the conductor still recorded a defect against it — the same ruling shape as D-R8-7. The tool resolves its third anchor with `git show HEAD:<path>`, and git walks UP the directory tree: from a checkout that is not itself a repo but sits inside one, the anchor silently resolves against the ANCESTOR repo. Measured: `git rev-parse --show-toplevel` from a nested .git-deleted clone returns /opt/targets/aphorism-cli. In the gate the ancestor was the same project, so the attribution looked right — the coincidence is what makes it worth fixing. Run genuinely outside any repo, the fallback fires correctly and honestly, so the builder`s untested path is now exercised and works. Recorded as new item P-2 rather than rounded into a FAIL, because the clause covers three directions and all three pass."
-  },
-  {
-   "id": "D-R8-9",
-   "cycle": 3,
-   "kind": "correction",
-   "text": "The conductor`s own W-5 gate script carried a bug: its README row-parser assumed five pipe-separated columns, but the table has two columns with the counts in prose, so it parsed zero rows and printed `depth-1 == README row? -> NO`. That NO was the gate failing, not W-5. Corrected in a second script (gate-c3-w5b.mjs), which parses all four rows and reports YES. Recorded here rather than silently re-run, because a gate that misreports must be as visible as a build that does — the evidence file names the bug explicitly."
-  },
-  {
-   "id": "D-R8-10",
-   "cycle": 4,
-   "kind": "correction",
-   "text": "The conductor's own W-7 gate carried a parser bug, the SECOND cycle running (cf. D-R8-9). Cell C1 read `git status --porcelain` and called .trim() on stdout BEFORE splitting into lines, which ate the leading space of the first line's two-character status column; the path was then sliced one byte short and C1 reported the modified file as \"est/readme-tags.test.js\", failing the cell on a file that does not exist. The item was NOT rounded to a FAIL and the cell was NOT quietly re-run: it is corrected in runs/gate-c4-w7-c1-addendum.mjs, which documents the defect in its own header and additionally checks something the original missed — that no .scratch tree survives into the commit. Two gate-parser bugs in two consecutive cycles is now a pattern in the conductor's own instruments, not an isolated slip, and it is the RETRO candidate of this run: gate scripts are written once and run once, so they get none of the scrutiny the code under test gets."
-  },
-  {
-   "id": "D-R8-11",
-   "cycle": 4,
-   "kind": "gate",
-   "text": "The single citation window S-8 permits was opened and CLOSED inside cycle 4, rather than left open across a cycle boundary. Hard rule 4 (green main before the cycle commits) and S-8 (green every commit bar one predicted window) are in tension — recorded as blocked item P-7 for a human ruling — and this cycle resolved it by satisfying both literally: commit 02f4668 opens the window and NAMES it in advance in its own message, and the next commit closes it, so the cycle ENDS green. The enabling measurement was cheap and was taken before dispatch rather than assumed: `gh run list` returns run ids, master is level with origin/master, and CI end-to-end is ~23 seconds. D-R8-6 had gated W-7 on \"a confirmed ability to obtain a run id\"; that gate was checked, not waived."
-  },
-  {
-   "id": "D-R8-12",
-   "cycle": 4,
-   "kind": "risk",
-   "text": "W-8 is unsatisfiable as shipped and would have failed SILENTLY. tools/mutation-matrix.mjs pins BASELINE to 20b7ede, so \"re-run the matrix at final HEAD\" (W-8's clause) would have measured the baseline twice and produced a guaranteed-identical matrix — which the clause explicitly anticipates as a possible legitimate null result (\"if W-7 ends in the keep-both branch this still runs and should show an identical matrix\"). The two outcomes are observationally identical, so a builder could have discharged W-8 honestly and been wrong. Caught by reading the tool before dispatching against it, not at W-8's gate. W-12 filed as a hard dependency."
+  "last_cycle": {
+    "cycle": 5,
+    "work": "build-wave (1 direct Agent call, headless fallback: W-12 + W-13, one file, one builder)",
+    "outcome": "value — W-12 and W-13 both verified done by a conductor-authored gate, 13/13 cells across two scripts; clean wave, 0 reverts, 0 failed verifies; W-8 unblocked; 1 new defect filed by the gate itself (W-14)",
+    "ts": "2026-08-24T15:54:31.125Z"
   }
- ],
- "qa": {
-  "last_look_cycle": null,
-  "last_full_qa_cycle": null,
-  "last_taste_cycle": null
- },
- "counters": {
-  "consecutive_no_value": 0,
-  "k_current": 4,
-  "wave_streak": 1,
-  "window_tokens_attributed": 0
- },
- "known_issues_file": "known-issues.json",
- "prior_runs": {
-  "count": 7,
-  "note": "runs #1-#7; run #7 delivered ZERO work cycles (usage lockout). Done items archived to backlog-archive-runs1-7.json."
- },
- "last_cycle": {
-  "cycle": 4,
-  "work": "build-wave (2 direct Agent calls, headless fallback: W-7, W-9) + W-11 as the conductor-held closure of the window the wave opened",
-  "outcome": "value — W-7, W-9, W-11 all verified done by conductor-authored gates (6/6, 6/6, 8/8); clean wave, 0 reverts, 0 failed verifies; the run's single permitted citation window opened and closed inside the cycle; 2 new tool defects filed (W-12, W-13)",
-  "ts": "2026-08-24T15:18:20.000Z"
- }
 }

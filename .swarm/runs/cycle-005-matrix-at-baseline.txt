@@ -1,0 +1,132 @@
+MUTATION MATRIX -- detection floor for the W-1 machine-checked document claims
+measured rev: 20b7ede -> resolved full sha 20b7edec2eb42cae185bdd7934f4bc6cd2899577 (named via --rev; NOT the default baseline)   node: v24.19.0
+mutations run: 19 of 19 generated (18 falsifying + 1 identity); skipped: 0
+
+identity control M00: GREEN (129 tests, 0 fail, 0 skipped; git-dependent guards ran: true)
+
+M01  [inventory 1]  test/readme-matrix-consistency.test.js:125
+     claim: README Node support matrix: table must be present and non-empty
+     verdict: CAUGHT by 3 guard(s) incl. the targeted guard
+       - test/readme-matrix-consistency.test.js  README Node support matrix: table must be present and non-empty
+       - test/readme-matrix-consistency.test.js  README Node support matrix: each row's own arithmetic must hold (tests = pass + fail + skipped)
+       - test/readme-matrix-consistency.test.js  README Node support matrix: all rows must agree with each other
+
+M02  [inventory 2]  test/readme-matrix-consistency.test.js:140
+     claim: README Node support matrix: each row's own arithmetic must hold (tests = pass + fail + skipped)
+     verdict: CAUGHT by 2 guard(s) incl. the targeted guard
+       - test/readme-matrix-consistency.test.js  README Node support matrix: each row's own arithmetic must hold (tests = pass + fail + skipped)
+       - test/readme-matrix-consistency.test.js  README Node support matrix: all rows must agree with each other
+
+M03  [inventory 3]  test/readme-matrix-consistency.test.js:159
+     claim: README Node support matrix: all rows must agree with each other
+     verdict: CAUGHT by 1 guard(s) incl. the targeted guard
+       - test/readme-matrix-consistency.test.js  README Node support matrix: all rows must agree with each other
+
+M04  [inventory 4]  test/readme-tags.test.js:53
+     claim: README tags must exist in corpus
+     verdict: CAUGHT by 4 guard(s) incl. the targeted guard
+       - test/readme-tags.test.js  README tags must exist in corpus
+       - test/readme-tags.test.js  README tag counts must match corpus
+       - test/readme-tags.test.js  every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+       - test/readme-tags.test.js  every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+
+M05  [inventory 5]  test/readme-tags.test.js:85
+     claim: README tag counts must match corpus
+     verdict: CAUGHT by 1 guard(s) incl. the targeted guard
+       - test/readme-tags.test.js  README tag counts must match corpus
+
+M06  [inventory 6]  test/readme-tags.test.js:102
+     claim: README must state total unique tags correctly
+     verdict: CAUGHT by 1 guard(s) incl. the targeted guard
+       - test/readme-tags.test.js  README must state total unique tags correctly
+
+M07  [inventory 7]  test/readme-tags.test.js:165
+     claim: README must list all single-entry tags
+     verdict: CAUGHT by 5 guard(s) incl. the targeted guard
+       - test/node-support-citation.test.js  README Node support citation: base-to-working-tree diff must also be empty, so an uncommitted falsification is visible now (or the check must skip on a missing precondition)
+       - test/readme-tags.test.js  README must state total unique tags correctly
+       - test/readme-tags.test.js  README must list all single-entry tags
+       - test/readme-tags.test.js  README Tag vocabulary counts table "Tags on exactly one entry" row matches the corpus (structural replacement for the retired token co-occurrence guard, Q-4)
+       - test/readme-tags.test.js  README must state correct multi-entry and single-entry tag counts
+
+M08  [inventory 8]  test/readme-tags.test.js:434
+     claim: README Tag vocabulary counts table "Tags on exactly one entry" row matches the corpus (structural replacement for the retired token co-occurrence guard, Q-4)
+     verdict: CAUGHT by 2 guard(s) incl. the targeted guard
+       - test/readme-tags.test.js  README Tag vocabulary counts table "Tags on exactly one entry" row matches the corpus (structural replacement for the retired token co-occurrence guard, Q-4)
+       - test/readme-tags.test.js  README must state correct multi-entry and single-entry tag counts
+
+M09  [inventory 9]  test/readme-tags.test.js:1341
+     claim: every `| Tag | Count |` table in the real README Tag vocabulary section is a recognised band table (no table may hide under an unrecognised heading shape)
+     verdict: CAUGHT by 1 guard(s) incl. the targeted guard
+       - test/readme-tags.test.js  every `| Tag | Count |` table in the real README Tag vocabulary section is a recognised band table (no table may hide under an unrecognised heading shape)
+
+M10  [inventory 10]  test/readme-tags.test.js:1361
+     claim: every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+     verdict: CAUGHT by 1 guard(s) incl. the targeted guard
+       - test/readme-tags.test.js  every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+
+M11  [inventory 11]  test/readme-tags.test.js:1433
+     claim: every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+     verdict: CAUGHT by 1 guard(s) incl. the targeted guard
+       - test/readme-tags.test.js  every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+
+M12  [inventory 12]  test/readme-tags.test.js:1598
+     claim: README must state correct multi-entry and single-entry tag counts
+     verdict: CAUGHT by 1 guard(s) incl. the targeted guard
+       - test/readme-tags.test.js  README must state correct multi-entry and single-entry tag counts
+
+M13  [inventory 13]  test/readme-tags.test.js:1851
+     claim: README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)
+     verdict: CAUGHT by 1 guard(s) incl. the targeted guard
+       - test/readme-tags.test.js  README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)
+
+M14  [inventory 14]  test/readme-tags.test.js:2318
+     claim: README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1)
+     verdict: CAUGHT by 1 guard(s) incl. the targeted guard
+       - test/readme-tags.test.js  README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1)
+
+M15  [inventory 15]  test/readme-tags.test.js:2350
+     claim: README Attribution table "Rated HIGH risk" count must match the triage doc table (C2)
+     verdict: CAUGHT by 1 guard(s) incl. the targeted guard
+       - test/readme-tags.test.js  README Attribution table "Rated HIGH risk" count must match the triage doc table (C2)
+
+M16  [inventory 16]  test/readme-tags.test.js:2384
+     claim: README Attribution section must contain no digit runs outside the counts table (C7)
+     verdict: CAUGHT by 1 guard(s) incl. the targeted guard
+       - test/readme-tags.test.js  README Attribution section must contain no digit runs outside the counts table (C7)
+
+M17  [inventory 17]  test/readme-tags.test.js:2682
+     claim: README `--list` format literal matches the shipped binary's actual --list output (T-017)
+     verdict: CAUGHT by 1 guard(s) incl. the targeted guard
+       - test/readme-tags.test.js  README `--list` format literal matches the shipped binary's actual --list output (T-017)
+
+M18  [inventory 18]  test/readme-tags.test.js:2754
+     claim: README `--author` matching section must state the correct count of distinct corpus authors (Q-8)
+     verdict: CAUGHT by 1 guard(s) incl. the targeted guard
+       - test/readme-tags.test.js  README `--author` matching section must state the correct count of distinct corpus authors (Q-8)
+
+claims produced by the rule but skipped by the harness: NONE
+
+summary: 18 CAUGHT, 0 SILENT
+unattributable mutations (transcribed guard title absent from the measured tree): NONE
+
+--- STDERR ---
+running M00 (identity) ... tests=129 fail=0 skipped=0
+running M01 (test/readme-matrix-consistency.test.js:125) ... tests=129 fail=3 skipped=0
+running M02 (test/readme-matrix-consistency.test.js:140) ... tests=129 fail=2 skipped=0
+running M03 (test/readme-matrix-consistency.test.js:159) ... tests=129 fail=1 skipped=0
+running M04 (test/readme-tags.test.js:53) ... tests=129 fail=4 skipped=0
+running M05 (test/readme-tags.test.js:85) ... tests=129 fail=1 skipped=0
+running M06 (test/readme-tags.test.js:102) ... tests=129 fail=1 skipped=0
+running M07 (test/readme-tags.test.js:165) ... tests=129 fail=5 skipped=0
+running M08 (test/readme-tags.test.js:434) ... tests=129 fail=2 skipped=0
+running M09 (test/readme-tags.test.js:1341) ... tests=129 fail=1 skipped=0
+running M10 (test/readme-tags.test.js:1361) ... tests=129 fail=1 skipped=0
+running M11 (test/readme-tags.test.js:1433) ... tests=129 fail=1 skipped=0
+running M12 (test/readme-tags.test.js:1598) ... tests=129 fail=1 skipped=0
+running M13 (test/readme-tags.test.js:1851) ... tests=129 fail=1 skipped=0
+running M14 (test/readme-tags.test.js:2318) ... tests=129 fail=1 skipped=0
+running M15 (test/readme-tags.test.js:2350) ... tests=129 fail=1 skipped=0
+running M16 (test/readme-tags.test.js:2384) ... tests=129 fail=1 skipped=0
+running M17 (test/readme-tags.test.js:2682) ... tests=129 fail=1 skipped=0
+running M18 (test/readme-tags.test.js:2754) ... tests=129 fail=1 skipped=0

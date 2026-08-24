@@ -6,8 +6,19 @@
 // tools/guard-inventory.mjs (W-1) inventoried -- as opposed to merely
 // containing N tests. Run from the repo root:
 //
-//     node tools/mutation-matrix.mjs                  # run matrix, print report
+//     node tools/mutation-matrix.mjs                  # measure the W-2 baseline (20b7ede), print report
+//     node tools/mutation-matrix.mjs --rev <rev>      # measure any rev resolvable in this repo (W-12)
 //     node tools/mutation-matrix.mjs --write-baseline # also write tools/mutation-matrix-baseline.json
+//                                                     # (default baseline rev only; refuses --rev)
+//
+// The ZERO-ARGUMENT invocation is a frozen contract: it measures the W-2
+// baseline commit and must reproduce tools/mutation-matrix-baseline.json
+// verdict-for-verdict; tools/run-all.mjs spawns this file with no CLI args
+// and relies on exactly that. `--rev` (W-12) points the SAME mutation set at
+// a different tree -- the mutations themselves are never re-derived; only
+// the tree they are measured against changes. Every run states the resolved
+// full sha of the tree it actually measured (asserted against the scratch
+// clone's own HEAD, not merely echoed from the argument).
 //
 // This file is deliberately NOT a test: it lives in tools/, is not matched
 // by the suite glob (`node --test test/*.test.js`), registers no node:test
@@ -42,15 +53,31 @@
 // The mutations are TRANSCRIBED from the W-1 inventory's 18 INCLUDED rows
 // (not re-derived here); each names its inventory index, guard file:line and
 // guard title. The harness cross-checks every transcribed guard title
-// against the scratch copy's test files at run time and fails loud if the
-// transcription has drifted from the suite.
+// against the scratch copy's test files at run time. A title that is absent
+// from the MEASURED tree does NOT abort the run (W-12 C): the CAUGHT/SILENT
+// verdict is still computed and reported, but the mutation is explicitly
+// marked UNATTRIBUTABLE in the report and in the JSON
+// (guardTitleInMeasuredTree: false, caughtByTargetGuard: null) -- visible
+// degradation, never a silent one and never a dead run. This is live at
+// HEAD: a cycle-4 consolidation retired one transcribed title (M08's).
 //
 // ---------------------------------------------------------------------------
 // GIT STRATEGY FOR THE SCRATCH COPY (decided, not defaulted)
 // ---------------------------------------------------------------------------
 // The suite is NOT run in this working tree. Each run makes a full local
-// clone -- `git clone --no-hardlinks <repo-root> .scratch-W-2/clone` --
-// and checks it out DETACHED at the baseline commit (20b7ede). A local
+// clone -- `git clone --no-hardlinks <repo-root> <scratch>/clone` -- and
+// checks it out DETACHED at the measured rev (default: baseline 20b7ede).
+//
+// The scratch directory is PER-INVOCATION, not shared (W-13): it is created
+// with mkdtemp as `.scratch-W-2.XXXXXX/` in the repo root, so two
+// overlapping runs each own a private clone and can never delete each
+// other's tree out from under a live git process. (The previous fixed
+// `.scratch-W-2/` path did exactly that in cycle 4: a second invocation's
+// setup rm'd the first's clone mid-run, which died with `spawnSync git
+// ENOENT` inside resetClone -- and when the timing missed the deletion
+// window, the two runs silently interleaved edits on ONE shared clone,
+// corrupting verdicts, which is worse.) Each scratch dir is still deleted
+// in the finally block, so no run leaves anything behind on exit. A local
 // clone is a real git repository with a real work tree and the FULL commit
 // history, which is exactly what test/node-support-citation.test.js needs:
 // its two guards spawn `git`, require a work tree, require the README-cited
@@ -69,7 +96,7 @@
 // Mutations are applied to files in the clone only. Between mutations the
 // clone is reset with `git checkout -- .` and verified clean via
 // `git status --porcelain` before the next edit is applied. The entire
-// .scratch-W-2/ directory is deleted in a finally block.
+// per-invocation scratch directory is deleted in a finally block.
 //
 // The suite command is the CI command with the glob expanded by readdir
 // (spawn without a shell): `node --test --test-reporter=tap test/<each>.test.js`.
@@ -77,18 +104,65 @@
 // their test file by scanning the scratch copy's test sources for
 // column-0 `test('<title>'` declarations.
 
-import { readFileSync, writeFileSync, readdirSync, rmSync, mkdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, rmSync, mkdtempSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..');
-const SCRATCH_ROOT = path.join(ROOT, '.scratch-W-2');
-const CLONE = path.join(SCRATCH_ROOT, 'clone');
-const BASELINE = '20b7ede';
+const DEFAULT_REV = '20b7ede'; // the W-2 baseline; the zero-argument contract
 const BASELINE_JSON = path.join(HERE, 'mutation-matrix-baseline.json');
-const WRITE_BASELINE = process.argv.includes('--write-baseline');
+
+// Per-invocation scratch (W-13): created by mkdtemp in setUpClone, so the
+// path is unique to this process; assigned here so the finally block and the
+// scratch helpers can see it.
+let SCRATCH_ROOT = null;
+let CLONE = null;
+
+// ---------------------------------------------------------------------------
+// CLI (W-12). Zero args == measure DEFAULT_REV; that path is frozen
+// (tools/run-all.mjs spawns this file with no args). `--rev <rev>` measures
+// any rev resolvable in this repo. Unknown arguments are fatal: a mistyped
+// flag must not silently fall back to measuring the baseline, or the W-8
+// "no detection lost at HEAD" comparison could pass vacuously.
+// ---------------------------------------------------------------------------
+function usageError(msg) {
+  process.stderr.write(
+    'error: ' + msg + '\n' +
+    'usage: node tools/mutation-matrix.mjs [--rev <rev>] [--write-baseline]\n' +
+    '  (no args)         measure the W-2 baseline rev ' + DEFAULT_REV + '\n' +
+    '  --rev <rev>       measure <rev> instead (any rev resolvable in this repo)\n' +
+    '  --write-baseline  also write tools/mutation-matrix-baseline.json;\n' +
+    '                    only valid for the default baseline rev (no --rev)\n'
+  );
+  process.exit(2);
+}
+
+let WRITE_BASELINE = false;
+let revArg = null;
+{
+  const argRest = process.argv.slice(2);
+  for (let i = 0; i < argRest.length; i++) {
+    const a = argRest[i];
+    if (a === '--write-baseline') {
+      WRITE_BASELINE = true;
+    } else if (a === '--rev') {
+      if (i + 1 >= argRest.length) usageError('--rev requires a value');
+      revArg = argRest[++i];
+    } else if (a.startsWith('--rev=')) {
+      revArg = a.slice('--rev='.length);
+    } else {
+      usageError('unknown argument: ' + a);
+    }
+  }
+  if (revArg !== null && revArg.trim() === '') usageError('--rev requires a non-empty value');
+  if (WRITE_BASELINE && revArg !== null) {
+    usageError('--write-baseline regenerates the committed baseline and is only valid for the default baseline rev (' + DEFAULT_REV + '); drop --rev');
+  }
+}
+const TARGET_REV = revArg === null ? DEFAULT_REV : revArg;
+const IS_DEFAULT_REV = revArg === null;
 
 // The two guards that depend on git (they spawn `git` and skip when the
 // environment cannot evaluate the citation). The identity run must show
@@ -471,25 +545,33 @@ function buildTitleMap(cwd) {
 // scratch lifecycle
 // ---------------------------------------------------------------------------
 function setUpClone() {
-  rmSync(SCRATCH_ROOT, { recursive: true, force: true });
-  mkdirSync(SCRATCH_ROOT, { recursive: true });
+  // W-13: a fresh, process-unique scratch dir per invocation. mkdtemp
+  // guarantees the name is not shared with any concurrent run, so no
+  // invocation can ever delete or re-clone another's tree. Never pre-delete
+  // sibling `.scratch-W-2.*` dirs here: sweeping them would reintroduce
+  // exactly the cross-run destruction this scheme removes.
+  SCRATCH_ROOT = mkdtempSync(path.join(ROOT, '.scratch-W-2.'));
+  CLONE = path.join(SCRATCH_ROOT, 'clone');
 
-  // Baseline must be resolvable here before we clone at all.
-  git(ROOT, ['cat-file', '-e', BASELINE + '^{commit}']);
-  const fullBaseline = git(ROOT, ['rev-parse', BASELINE + '^{commit}']).stdout.trim();
+  // W-12: the measured rev must resolve to a commit here before we clone at
+  // all. `--verify --end-of-options` makes a flag-shaped --rev value fail
+  // loudly instead of being read as a git option.
+  const fullSha = git(ROOT, ['rev-parse', '--verify', '--end-of-options', TARGET_REV + '^{commit}']).stdout.trim();
 
   git(ROOT, ['clone', '--quiet', '--no-hardlinks', ROOT, CLONE]);
-  git(CLONE, ['checkout', '--quiet', '--detach', fullBaseline]);
+  git(CLONE, ['checkout', '--quiet', '--detach', fullSha]);
 
+  // The sha we report as "measured" is asserted against the clone's own
+  // HEAD -- what the suite actually ran against -- not echoed from the CLI.
   const head = git(CLONE, ['rev-parse', 'HEAD']).stdout.trim();
-  if (head !== fullBaseline) {
-    throw new Error('scratch clone HEAD ' + head + ' is not the baseline ' + fullBaseline);
+  if (head !== fullSha) {
+    throw new Error('scratch clone HEAD ' + head + ' is not the requested rev ' + fullSha);
   }
   const shallow = git(CLONE, ['rev-parse', '--is-shallow-repository']).stdout.trim();
   if (shallow !== 'false') {
     throw new Error('scratch clone is shallow -- the git-dependent guards would skip and corrupt the matrix');
   }
-  return fullBaseline;
+  return fullSha;
 }
 
 function resetClone() {
@@ -522,20 +604,32 @@ function applyEdits(mutation) {
 const report = [];
 const P = (s = '') => { report.push(s); console.log(s); };
 
-let fullBaseline;
+let measuredSha;
 const results = [];
 const skippedClaims = [];
 let identityResult = null;
 
 try {
-  fullBaseline = setUpClone();
+  measuredSha = setUpClone();
   const titleMap = buildTitleMap(CLONE);
 
-  // Cross-check the transcribed inventory against the suite it targets.
+  // Cross-check the transcribed inventory against the suite of the MEASURED
+  // tree. A missing title must NOT abort the run (W-12 C): titles were
+  // transcribed at the default baseline, and a later tree may have renamed
+  // or consolidated a guard (live at HEAD since a cycle-4 consolidation).
+  // The CAUGHT/SILENT verdict -- the thing the detection floor turns on --
+  // is still computed for every mutation; only per-guard ATTRIBUTION
+  // degrades, and it degrades visibly: the mutation is flagged
+  // UNATTRIBUTABLE in the printed report, and carries
+  // guardTitleInMeasuredTree: false / caughtByTargetGuard: null in the JSON.
+  const missingGuardTitles = new Set();
   for (const m of MUTATIONS) {
     if (m.kind === 'identity') continue;
     if (!titleMap.has(m.guardTitle)) {
-      throw new Error(m.id + ': transcribed guard title not found in the scratch suite -- the W-1 inventory transcription has drifted: ' + m.guardTitle);
+      missingGuardTitles.add(m.id);
+      process.stderr.write(m.id + ' NOTE: transcribed guard title not found in the measured tree'
+        + ' -- verdict will still be computed, attribution degrades to UNATTRIBUTABLE: '
+        + m.guardTitle + '\n');
     }
   }
 
@@ -594,21 +688,31 @@ try {
       }
     } else {
       entry.verdict = run.totals.fail > 0 ? 'CAUGHT' : 'SILENT';
-      entry.caughtByTargetGuard = firedGuards.some((g) => g.title === m.guardTitle);
+      entry.guardTitleInMeasuredTree = !missingGuardTitles.has(m.id);
+      // Attribution to the named guard is only meaningful when that guard
+      // exists in the measured tree; otherwise it is explicitly null, and
+      // the printed report marks the row UNATTRIBUTABLE.
+      entry.caughtByTargetGuard = entry.guardTitleInMeasuredTree
+        ? firedGuards.some((g) => g.title === m.guardTitle)
+        : null;
       results.push(entry);
     }
   }
 
   resetClone();
 } finally {
-  rmSync(SCRATCH_ROOT, { recursive: true, force: true });
+  if (SCRATCH_ROOT !== null) rmSync(SCRATCH_ROOT, { recursive: true, force: true });
 }
 
 // ---------------------------------------------------------------------------
 // report + baseline JSON
 // ---------------------------------------------------------------------------
 P('MUTATION MATRIX -- detection floor for the W-1 machine-checked document claims');
-P('baseline: ' + BASELINE + ' (' + fullBaseline + ')   node: ' + process.version);
+P('measured rev: ' + TARGET_REV + ' -> resolved full sha ' + measuredSha
+  + (IS_DEFAULT_REV
+      ? ' (default W-2 baseline; zero-argument contract, comparable to tools/mutation-matrix-baseline.json)'
+      : ' (named via --rev; NOT the default baseline)')
+  + '   node: ' + process.version);
 P('mutations run: ' + (results.length + (identityResult ? 1 : 0)) + ' of ' + MUTATIONS.length + ' generated (' + results.length + ' falsifying + 1 identity); skipped: ' + skippedClaims.length);
 P('');
 P('identity control M00: ' + identityResult.verdict + ' (' + identityResult.suite.tests + ' tests, ' + identityResult.suite.fail + ' fail, ' + identityResult.suite.skipped + ' skipped; git-dependent guards ran: ' + identityResult.gitDependentGuards.ran + ')');
@@ -616,7 +720,19 @@ P('');
 for (const r of results) {
   P(r.id + '  [inventory ' + r.inventoryIndex + ']  ' + r.guard);
   P('     claim: ' + r.guardTitle);
-  P('     verdict: ' + r.verdict + (r.verdict === 'CAUGHT' ? ' by ' + r.firedGuards.length + ' guard(s)' + (r.caughtByTargetGuard ? ' incl. the targeted guard' : ' -- NOT incl. the targeted guard') : ' -- no guard fired; this claim\'s falsification is undetected'));
+  let verdictLine = '     verdict: ' + r.verdict;
+  if (r.verdict === 'CAUGHT') {
+    verdictLine += ' by ' + r.firedGuards.length + ' guard(s)';
+    if (r.guardTitleInMeasuredTree) {
+      verdictLine += r.caughtByTargetGuard ? ' incl. the targeted guard' : ' -- NOT incl. the targeted guard';
+    }
+  } else {
+    verdictLine += ' -- no guard fired; this claim\'s falsification is undetected';
+  }
+  if (!r.guardTitleInMeasuredTree) {
+    verdictLine += '  [UNATTRIBUTABLE: the transcribed guard title does not exist in the measured tree, so attribution to the named guard is impossible]';
+  }
+  P(verdictLine);
   for (const g of r.firedGuards) P('       - ' + (g.file || '(unattributed)') + '  ' + g.title);
   if (r.skippedGuards.length) P('     skipped guards this run: ' + r.skippedGuards.join(' | '));
   if (r.environmentalSkipWarning) P('     WARNING: ' + r.environmentalSkipWarning);
@@ -629,18 +745,23 @@ if (skippedClaims.length) {
   P('claims produced by the rule but skipped by the harness: NONE');
 }
 const silent = results.filter((r) => r.verdict === 'SILENT');
+const unattributableResults = results.filter((r) => !r.guardTitleInMeasuredTree);
 P('');
 P('summary: ' + results.filter((r) => r.verdict === 'CAUGHT').length + ' CAUGHT, ' + silent.length + ' SILENT'
   + (silent.length ? ' (' + silent.map((r) => r.id).join(', ') + ')' : ''));
+P('unattributable mutations (transcribed guard title absent from the measured tree): '
+  + (unattributableResults.length ? unattributableResults.map((r) => r.id).join(', ') : 'NONE'));
 
 const baseline = {
   meta: {
     tool: 'tools/mutation-matrix.mjs',
-    baselineCommit: fullBaseline,
-    baselineCommitShort: BASELINE,
+    measuredRev: TARGET_REV,
+    measuredCommit: measuredSha,
+    baselineCommit: measuredSha,
+    baselineCommitShort: DEFAULT_REV,
     node: process.version,
     suiteCommand: 'node --test --test-reporter=tap <test/*.test.js, glob expanded by readdir>',
-    scratchStrategy: 'full local git clone (git clone --no-hardlinks) of the repo into .scratch-W-2/clone, detached checkout at the baseline commit; deleted after the run',
+    scratchStrategy: 'full local git clone (git clone --no-hardlinks) of the repo into a per-invocation mkdtemp dir .scratch-W-2.XXXXXX/clone (W-13: never a fixed shared path), detached checkout at the measured rev; deleted after the run',
     generationRule: 'one falsifying mutation per INCLUDED claim of tools/guard-inventory.mjs at the baseline (18 claims, inventory order; document-side edit wherever the claim is document-falsifiable, derivation-source edit for the one claim vacuous at baseline) plus exactly one identity control; cap 30',
   },
   identity: identityResult,
