@@ -24089,3 +24089,69 @@ runfile-mirror:
 ```json
 {"version":1,"run_label":"improvement run #8","targets":[{"path":"/opt/targets/aphorism-cli","name":"aphorism-cli","status":"active","weight":1}],"rotation_cursor":0,"rotation_schedule":[0],"stop_at":1787663147,"usage_reset_at":1787601600,"stop_at_iso":"2026-08-25T13:05:47.000Z","usage_reset_at_iso":"2026-08-24T20:00:00.000Z","model_policy":"value-routing","auth_mode":"subscription","kickoff_source":"allocator","heartbeat":{"ts":1787607404,"next_wakeup_at":1787609312,"pid":454469,"limp":false,"degraded_tiers":[]},"pacing":{"mode":"guest","dial":0.3},"budget":{"source":"probe","gear":2,"gear_target":2,"ratio":0.53,"mode":"guest","k_cap":2,"promote":false,"demote":true,"window_tokens":21250911,"window_cost_usd":12.401585799999994,"api_cap_usd":null,"api_spend_usd":0,"tokens_per_hour":17747994,"projected_depletion_at":1787631678,"last_probe_ts":1787607404,"last_real_probe_ts":1787607404,"probe_failures":0,"weekly":{"ok":true,"weekly_used_pct":100,"opus_used_pct":100,"week_elapsed_pct":9.625,"weekly_heat":10.39,"opus_heat":10.39,"ceiling":2,"promote_blocked":true,"week_resets_at":1788152399},"probe_note":"cycle 14 probe: probe_ok true. rho 0.53, gear held at 2 (guest clamps 1-3; the weekly governor ceiling of 2 binds, so gear_target 2 -- no hysteresis step needed). k_cap 2, demote TRUE, promote blocked. Window is climbing normally post-reset: 7.56M -> 21.25M tokens since the 20:21Z probe (+13.69M, attributed to this target), 17.75M tok/h, projected depletion 1787631678 (02:21Z) which is ~10.7h BEFORE stop_at 1787663147 -- the next 5h boundary at ~01:00Z lands first, so this is a normal mid-window reading, not a squeeze. KI-37 NINTH OBSERVATION: weekly_used_pct 100 at week_elapsed_pct 9.625 (path 0 -> 37.50 -> 0 -> 100 x6); opus_used_pct pinned at 100 for the ninth consecutive probe while weekly.ok stays true and the ceiling stays 2."},"watchdog":{"mode":"pacer","plist_loaded":true,"lockfile":"/opt/swarm/runs/watchdog.lock","relaunch_attempts":0,"note":"swarm-watchdog.timer is enabled+active but is a MEASURED NO-OP for this run: bin/swarm-watchdog.sh line 279 keys its DONE-guard on REPORT.md existing in every target, and /opt/targets/aphorism-cli/REPORT.md exists from run #7. L-037 clause 2, asserted at kickoff rather than assumed. RECOVERY PATH IS THE PACER: bin/swarm-pacer.sh keys only on wrap_up_complete (line 183) and heartbeat.next_wakeup_at (line 229) \u2014 it does NOT check REPORT.md \u2014 and swarm-pacer.timer is active. Verified by reading both scripts; neither was edited (hard rule 5)."},"caffeinate_pid":0,"wrap_up_complete":false,"cycles_since_recycle":14,"artifact":{"file":"/opt/swarm/runs/dashboard.html","publish_failures":0},"playbook":{"apply_mode":"auto","source":"direct read of playbook/learnings.md (bin/swarm-playbook.sh structurally unallowlisted \u2014 KI-R6-2, 12th consecutive confirmation, zero denials burned this run)","applied":["L-008","L-016","L-024","L-026","L-029","L-031","L-033","L-034","L-037","L-038","L-042","L-043","L-044","L-046","L-047"],"vetoed":[],"held_out":[{"id":"L-022","why":"persisted UI state in beforeEach \u2014 this target is a terminal CLI with no browser surface; held out for the fourth consecutive run"}],"directives":{"wave_k":null,"routing_recs":["core-logic->fable (L-026)"],"prompt_lines":{"builder":"The conductor is the SOLE committer \u2014 never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. The conductor seals its verification gate by hash before dispatch \u2014 do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work. Find untested surfaces by mutation-measuring documented behaviors against the existing suite, not by reading the suite for gaps. Classify each surviving mutant as HOLE (a real gap - harden it) or BOUNDARY (behaviour the spec does not decide - document it) BEFORE writing any test. When adding a test for an unprotected surface, prove it both fails against the specific mutation and that removing it lets the mutation survive \u2014 a kill you cannot attribute is not evidence. For every mutation that must kill the suite, author one control that must leave it GREEN \u2014 a check that dies on everything is a snapshot test, not an assertion. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check.","reviewer":"The conductor is the SOLE committer \u2014 never commit or push yourself. Use ./.scratch-<item>/ for any scratch tree and delete it before you finish; never write outside the target directory. Assign each fixer a pairwise-disjoint file set; two fixers must never share a file. The conductor seals its verification gate by hash before dispatch \u2014 do not attempt to locate, read or infer the check; code to the acceptance clause, never to a test. A gate cell that fails must be shown to fail for the reason it names before its verdict is recorded against the dispatched work.","qa":"Your job is to REFUTE the central claim, not confirm it. Default to skepticism. Distinguish 'I verified this is wrong, here is the computation' from 'this looks suspicious but I could not confirm it'. Where possible verify with a discriminator: an observable that a faked or degenerate implementation could not produce, rather than a comparison against a remembered reference value. Never assert against prose matched by regex - read a structural marker the document owns, or retire the check. When fixing a detection hole, measure the fix against true-positive controls AND the unfixed baseline, and report both columns. Classify each surviving mutant as HOLE or BOUNDARY BEFORE writing any test."},"process":["kickoff-refuse-on-exhausted-window (L-038) \u2014 RUN at cycle 0, PASSED: weekly 6.0% at 4.819% elapsed, reset 2026-08-31 well past stop_at","spawner-backoff-to-known-reset (L-037) \u2014 SWARM tool gap, reported not edited (hard rule 5)","wire-through check at each layer boundary for domain-capability items (L-046)","reserve one mid-run cycle for the taste pass before the VALUE_LOOP tail (L-038)"]}},"kickoff_hints":{"mode":"guest","dial":0.3,"brief":"TRICKLE POSTURE: housekeeping only \u2014 harden tests, fix playbook items, polish docs \u2014 no new features. Haiku-priced work types; no new features.","source":"allocator","stop_at":1787663147,"consumed_at":1787577261},"session_shape":"headless -p session spawned by swarm-pacer.sh (auto-kickoff 13:05:48Z). Workflow tool is review-gated headless, so build dispatch is DIRECT Agent calls with disjoint scopes declared in-prompt (L-016); Artifact publish unavailable (local dashboard render IS the publication on the VPS); `claude` is not allowlisted so kickoff step 11 could not run."}
 ```
+
+### POST-COMMIT ADDENDUM — cycle 14, measured at c79abda
+
+**commits:**
+- `1aac952` "cycle 14: two measurement tools learn to say which guard actually caught the bug [value]"
+- `c79abda` "cycle 14: re-measure the detection floor at the commit that moved the instrument"
+
+Two commits, not one, and the second is not bookkeeping: RV-5 edits `tools/mutation-matrix.mjs`,
+which is inside `detection-floor`'s `VERDICT_RELEVANT` set, so landing it necessarily stales the
+committed record. RV-5's own backlog note asked for the re-measure to happen in the SAME cycle
+rather than leaving the next cycle to open on a stale instrument. It did.
+
+**All three sealed predictions held.** They were written into
+`/opt/swarm/runs/cycle-014-gate.md` (sha256 `0859fdcb…`) BEFORE the first commit.
+
+*Prediction 1 — STALE after the first commit.* Exit 3, and it named the path:
+
+```
+THE FINAL RECORD IS NOT AT HEAD.
+  recorded (meta.measuredCommit): 5856837...
+  current HEAD:                   1aac952...
+STALE. The diff from the recorded commit to HEAD touches verdict-relevant paths:
+  - tools/mutation-matrix.mjs
+A stale comparison is NOT a pass. No rows were compared.
+VERDICT: STALE (exit 3)
+```
+
+*Prediction 2 — FRESH-BY-CONTENT after the re-measure commit.* Exit 0, and the exemption was
+derived by the tool from its own changed-paths list, not asserted by the conductor:
+
+```
+However: the recorded commit is an ancestor of HEAD, and git diff 1aac952..c79abda touches NONE
+of the paths any recorded verdict depends on ... Changed paths (all verdict-neutral):
+  - tools/mutation-matrix-final.json
+VERDICT: DETECTION FLOOR HOLDS -- record measured at 1aac952..., an ancestor of current HEAD
+c79abda..., exempt under FRESH-BY-CONTENT.
+  17 same-guard, 1 changed-guard, 0 claim-gone; 0 detection lost; identity control GREEN both sides.
+```
+
+*Prediction 3 — no verdict moves.* The refreshed record's 18 verdicts are **identical** to the
+pre-commit POST-fix measurement at `e61ccbd`, checked programmatically in `c14-remeasure.mjs`, not
+eyeballed. That is the point of B4 restated at a different commit: RV-5 changed how a verdict is
+*attributed*, and at real HEAD every mutation still has at least one semantic guard, so nothing moves.
+
+**Post-commit invariants, re-measured at `c79abda`:**
+
+```
+tree clean          : true
+corpus sha256       : 77a4de5c777a3bdb      (SPEC S-8, unmoved)
+--help sha256       : d759d781ddcac780      (SPEC S-8, unmoved)
+test_cmd            : {"tests":128,"pass":128,"fail":0,"skipped":0} -> count-free green = true
+run-all.mjs         : ROLL-UP: 6/7 ran clean; SKIPPED: mutation-matrix. | exit 0
+```
+
+`test_cmd` is reported here in the form P-8 demanded and cycle 13 got wrong: the total is printed,
+never compared. The `129` literal that cycle 13 asserted as an invariant is retired, and
+`state.baseline` now carries the note saying why.
+
+**One thing the floor says that is worth reading twice.** The M08 row is GUARD-CHANGED: the guard
+the baseline named is gone from HEAD, and the mutation is still caught — by
+`README must state correct multi-entry and single-entry tag counts`, which is one of the three
+guards this cycle deliberately deleted to build the RV-5 fixture. So the two halves of tonight's
+work meet: the floor's one changed-guard row depends on exactly the guard whose absence RV-5's
+proof had to simulate. Before RV-5, a future consolidation that removed that guard too would have
+left M07 reading CAUGHT off the citation guard alone. After RV-5, it reads SILENT and the row goes
+red. That is the difference between a floor and a decoration, and it is now measurable.
