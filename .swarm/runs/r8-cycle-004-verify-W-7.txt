@@ -1,0 +1,13 @@
+PRE-CHANGE, ROW FALSIFIED
+  README Tag vocabulary counts table "Tags on exactly one entry" row matches the corpus (structural replacement for the retired token co-occurrence guard, Q-4)
+  README must state correct multi-entry and single-entry tag counts
+
+POST-CHANGE, ROW FALSIFIED
+  README Node support citation: base-to-working-tree diff must also be empty, so an uncommitted falsification is visible now (or the check must skip on a missing precondition)
+  README must state correct multi-entry and single-entry tag counts
+
+PRE-CHANGE, UNMUTATED
+  (none)
+
+POST-CHANGE, UNMUTATED
+  README Node support citation: base-to-working-tree diff must also be empty, so an uncommitted falsification is visible now (or the check must skip on a missing precondition)

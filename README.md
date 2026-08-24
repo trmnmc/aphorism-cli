@@ -187,24 +187,26 @@ that spawn the real binary and assert on stdout, stderr, and exit codes.
 *This section is machine-checked: `test/node-support-citation.test.js` parses the CI citation and the retirement condition out of the prose below and executes them, so the exact shape of those two claims is load-bearing rather than stylistic.*
 
 CI runs the whole suite on four Node majors — 18, 20, 22 and 24 — on every push. The
-reference matrix is [Actions run 32405521233](https://github.com/trmnmc/aphorism-cli/actions/runs/32405521233)
-at commit `7e50d6f` (2026-08-20), the matrix run for the push that carried the last change to
-`src/`, `bin/`, `test/`, or the workflow itself. That change landed in commit `a302f71`, which
-has no run of its own — CI runs once per push, not once per commit — so the citation names
-`7e50d6f`, the SHA that push was tested at. It reported:
+reference matrix is [Actions run 32742357417](https://github.com/trmnmc/aphorism-cli/actions/runs/32742357417)
+at commit `02f4668` (2026-08-24), the matrix run for the push that carried the last change to
+`src/`, `bin/`, `test/`, or the workflow itself. That change landed in commit `02f4668` itself,
+which was also the head of its own push — unlike the previous citation, where the commit that
+changed those paths (`22fdeac`, merged as `a302f71`) was not the head of its push and so had
+no run of its own — so the citation names `02f4668` directly, the same commit that made the
+change and the SHA the run executed against. It reported:
 
 | Node | Result |
 |---|---|
-| v18.20.8 | 129 tests, 127 pass, 0 fail, 2 skipped |
-| v20.20.2 | 129 tests, 127 pass, 0 fail, 2 skipped |
-| v22.23.2 | 129 tests, 127 pass, 0 fail, 2 skipped |
-| v24.19.0 | 129 tests, 127 pass, 0 fail, 2 skipped |
+| v18.20.8 | 128 tests, 126 pass, 0 fail, 2 skipped |
+| v20.20.2 | 128 tests, 126 pass, 0 fail, 2 skipped |
+| v22.23.2 | 128 tests, 126 pass, 0 fail, 2 skipped |
+| v24.19.0 | 128 tests, 126 pass, 0 fail, 2 skipped |
 
 The two skips are the same on all four majors and are expected. Both are in
 `test/node-support-citation.test.js`, the guard on this section, and both stand down because
 CI checks out shallow — see the first standing limit below.
 
-That citation is the reference matrix until `git diff 7e50d6f..HEAD -- src bin test .github`
+That citation is the reference matrix until `git diff 02f4668..HEAD -- src bin test .github`
 stops being empty. Once that diff is non-empty the cited run no longer describes this tree
 and the section needs a new run id; that is the section's own falsification condition, and it
 is stated here exactly once on purpose. For the current state of CI — including any runs
@@ -234,7 +236,7 @@ print the TAP summary (`# tests <n>`), while Node 24 prints the spec-reporter su
 (`ℹ tests <n>`) — and that marker is U+2139 INFORMATION SOURCE, not an ASCII `i`. The test
 count moves as the suite grows; the split between the two reporters does not.
 
-The cycle-by-cycle record of how this citation reached run `32405521233` — seven entries
+The cycle-by-cycle record of how this citation reached run `32742357417` — eight entries
 covering every move since run `32267338333`, what retired each one, and what a review pass
 found in the guard itself — is recorded in
 [`docs/node-support-citation-history.md`](docs/node-support-citation-history.md).

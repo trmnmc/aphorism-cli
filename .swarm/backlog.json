@@ -139,7 +139,7 @@
    "files_hint": [],
    "packages": [],
    "acceptance": "At every commit this run makes: src/corpus.js hashes to sha256 77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e; --help output hashes to sha256 d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64; the dependency surface is unchanged and nothing under tools/ imports outside node: builtins; no file under src/ or bin/ changes at all; and the suite is green at every commit EXCEPT a single citation window named as such, IN ADVANCE, in the commit message of the commit that opens it.",
-   "notes": "An invariant, not a unit of work — conductor-held, never dispatched to a builder. Both hashes re-verified against HEAD 912a2a4 by PLAN and they match SPEC exactly, so the baseline is real, not inherited. W-7 is the ONLY item that can open a citation window (only item touching test/); every other item lands in tools/, docs/, or REPORT.md, all outside the cited pathspec. package.json must not be touched and appears in no files_hint. [CYCLE 3 HELD] corpus sha256 77a4de5c... and --help sha256 d759d781... both re-measured before AND after the wave, unmoved. git status --porcelain -- src bin test .github README.md package.json EMPTY at both points, so no citation window opened. grep finds zero non-node: imports under tools/. Suite green 129/129/0 skipped at the cycle-3 commit, and test count unchanged at 129 (all three items added zero tests)."
+   "notes": "An invariant, not a unit of work — conductor-held, never dispatched to a builder. Both hashes re-verified against HEAD 912a2a4 by PLAN and they match SPEC exactly, so the baseline is real, not inherited. W-7 is the ONLY item that can open a citation window (only item touching test/); every other item lands in tools/, docs/, or REPORT.md, all outside the cited pathspec. package.json must not be touched and appears in no files_hint. [CYCLE 3 HELD] corpus sha256 77a4de5c... and --help sha256 d759d781... both re-measured before AND after the wave, unmoved. git status --porcelain -- src bin test .github README.md package.json EMPTY at both points, so no citation window opened. grep finds zero non-node: imports under tools/. Suite green 129/129/0 skipped at the cycle-3 commit, and test count unchanged at 129 (all three items added zero tests). [CYCLE 4 HELD] corpus sha256 77a4de5c and --help sha256 d759d781 re-measured before AND after the wave, both unmoved. git status --porcelain -- src bin .github package.json README.md docs EMPTY before the wave. Zero non-node: imports under tools/. The predicted citation window WAS opened by commit 02f4668 and NAMED IN ADVANCE in that commit's message per S-8, then closed inside the same cycle by W-11 — so the run has now spent its single permitted window, and no further commit may open another."
   },
   {
    "id": "W-7",
@@ -148,7 +148,7 @@
     "S-2"
    ],
    "kind": "fix",
-   "status": "todo",
+   "status": "done",
    "effort": "M",
    "priority": 7,
    "deps": [
@@ -162,7 +162,7 @@
    ],
    "packages": [],
    "acceptance": "The mutation falsifying README's 'Tags on exactly one entry' counts-table row is run through the detection floor and the set of NAMED guards it fires is recorded. If the two guards' firing sets are identical, exactly ONE is removed, and re-running the matrix shows every mutation detected at the 20b7ede baseline is still detected and the identity control still green. If the firing sets DIFFER, both are kept and the distinguishing mutation — the specific edit one catches and the other does not — is recorded in the test file naming what each guard uniquely catches. Either outcome closes it; 'keep both because removing one feels risky' does not. A drop in test count is a PASS.",
-   "notes": "The two guards are in test/readme-tags.test.js: the test at ~line 434 (Q-4's structural replacement) and the second assertion inside the test at ~line 1598. The file's own comment block at lines 150-162 already concedes they are redundant in the strict sense — 'a wrong value in that row fails both and no mutation fails only one of them' — so consolidation is the likely branch. NOTE removing the ~1598 assertion would also drop the 'Tags on 2 or more entries' check, so target ~434 or be surgical. BIGGEST RISK IN THE PLAN: this is the ONLY item touching test/, inside the cited pathspec, so the commit that lands it makes the README's cited diff non-empty and turns both citation guards RED on a full clone. Closing the window needs a NEW Actions run id, which needs a successful push AND Actions API access — unverified from this environment (origin is https and master is level with origin/master, encouraging but not proof). Sequence LAST among code-touching items, GATE on a confirmed ability to obtain a run id, and predict the window in the commit message per S-8. There is no test/-free path to the removal branch."
+   "notes": "The two guards are in test/readme-tags.test.js: the test at ~line 434 (Q-4's structural replacement) and the second assertion inside the test at ~line 1598. The file's own comment block at lines 150-162 already concedes they are redundant in the strict sense — 'a wrong value in that row fails both and no mutation fails only one of them' — so consolidation is the likely branch. NOTE removing the ~1598 assertion would also drop the 'Tags on 2 or more entries' check, so target ~434 or be surgical. BIGGEST RISK IN THE PLAN: this is the ONLY item touching test/, inside the cited pathspec, so the commit that lands it makes the README's cited diff non-empty and turns both citation guards RED on a full clone. Closing the window needs a NEW Actions run id, which needs a successful push AND Actions API access — unverified from this environment (origin is https and master is level with origin/master, encouraging but not proof). Sequence LAST among code-touching items, GATE on a confirmed ability to obtain a run id, and predict the window in the commit message per S-8. There is no test/-free path to the removal branch. [CYCLE 4 DONE] CONSOLIDATE branch, forced by measurement not preference. Builder probed 9 falsifications of the \"Tags on exactly one entry\" row; firing sets identical on all of them, differing in exactly ONE direction (falsifying \"Tags on 2 or more entries\" fires the ~1598 guard alone). No edit fires ~434 without also firing ~1598, so ~434 is a strict subset and is the determined removal. Attribution controls: ~434 deleted -> still caught; ~1598 deleted -> still caught; BOTH deleted -> SILENT. Test count 129 -> 128. Conductor gate 6/6 on two throwaway clones (detection preserved via the survivor; converse control green; window measured in both uncommitted and committed states; branch read off the diff, not the claim). Gate cell C1 initially failed on the CONDUCTOR's own porcelain parser (.trim() before split ate the first line's status column) — corrected in runs/gate-c4-w7-c1-addendum.mjs and recorded as D-R8-10, not silently re-run."
   },
   {
    "id": "W-8",
@@ -176,7 +176,8 @@
    "priority": 8,
    "deps": [
     "W-2",
-    "W-7"
+    "W-7",
+    "W-12"
    ],
    "attempts": 0,
    "model": "opus",
@@ -185,7 +186,7 @@
    ],
    "packages": [],
    "acceptance": "The mutation matrix is re-run against final HEAD and recorded in tools/mutation-matrix-final.json in the same machine-comparable shape as the baseline. A direct comparison shows no mutation detected at baseline 20b7ede is undetected at final HEAD, and the identity control is green in both. Any mutation whose FIRING GUARD changed (still detected, by a different named guard) is listed explicitly rather than folded into the pass. If any detection was lost, that is stated as a FAILURE with the specific mutation named — never rounded to a pass.",
-   "notes": "This is what makes W-7's test-count DROP defensible rather than merely permitted. Must run AFTER W-7 lands or it measures the wrong tree. If W-7 ends in the 'keep both' branch this still runs and should show an identical matrix — a null result worth publishing as one. Depends on W-2's scratch-copy git strategy; if the two citation guards are N/A in the matrix they are N/A in BOTH runs and that must be stated rather than silently equal."
+   "notes": "This is what makes W-7's test-count DROP defensible rather than merely permitted. Must run AFTER W-7 lands or it measures the wrong tree. If W-7 ends in the 'keep both' branch this still runs and should show an identical matrix — a null result worth publishing as one. Depends on W-2's scratch-copy git strategy; if the two citation guards are N/A in the matrix they are N/A in BOTH runs and that must be stated rather than silently equal. [CYCLE 4] BLOCKED ON A TOOL GAP, discovered by measurement not by reading: tools/mutation-matrix.mjs hardcodes `const BASELINE = '20b7ede'` (line 89) and checks its scratch clone out detached at that commit, so it CANNOT measure any other tree. W-8's clause requires re-running the matrix at FINAL HEAD; as shipped the tool cannot do it. W-12 must land first. Until then W-8 is not merely unstarted — it is unsatisfiable, and would have been \"discharged\" by a builder measuring the baseline twice and reporting an identical matrix as a pass."
   },
   {
    "id": "W-9",
@@ -194,7 +195,7 @@
     "S-6"
    ],
    "kind": "tool",
-   "status": "todo",
+   "status": "done",
    "effort": "S",
    "priority": 9,
    "deps": [
@@ -211,7 +212,7 @@
    ],
    "packages": [],
    "acceptance": "tools/run-all.mjs invokes every measurement executable this run shipped, in a stated order, prints each one's re-derived output under a labelled heading, and ends with a one-line roll-up of which ran clean and which reported a problem. Zero-dependency, imports nothing outside node: builtins, not collected by the suite, leaves the tree byte-identical. Running it must be sufficient for a skeptical reader to re-derive every number this run publishes WITHOUT reading REPORT.md.",
-   "notes": "Scope discipline: a dispatcher, not a report generator — it must not restate or interpret any finding, only re-run the tools that produce them. If the mutation matrix is slow (~30 suite runs), give it an opt-out flag and state in the file what the default excludes. This item is the concrete answer to the taste gate's catch that S-1/S-4/S-5 could all be discharged as prose."
+   "notes": "Scope discipline: a dispatcher, not a report generator — it must not restate or interpret any finding, only re-run the tools that produce them. If the mutation matrix is slow (~30 suite runs), give it an opt-out flag and state in the file what the default excludes. This item is the concrete answer to the taste gate's catch that S-1/S-4/S-5 could all be discharged as prose. [CYCLE 4 DONE] tools/run-all.mjs dispatches all five tools in a fixed stated order, prints each one's real output under a labelled heading, ends with a mechanical roll-up (exit 0 = clean). Zero-dep (node:child_process, node:path, node:url). mutation-matrix excluded by default (~19 suite runs) with its slot still printing a heading naming --include-mutation-matrix. Conductor gate 6/6, including the discriminator that matters: replacing tools/citation-tax.mjs with a bare throw in a scratch clone makes the roll-up say PROBLEM, and the same clone unbroken says clean. Byte-identity proven by sha256 manifest over all 946 tracked files before/after, not by git status alone."
   },
   {
    "id": "W-10",
@@ -554,6 +555,69 @@
    "packages": [],
    "acceptance": "When tools/citation-rule-check.mjs runs in a directory that is NOT itself a git repository but is nested inside an unrelated one, it must not state that it compared a file against \"its own git HEAD version\". Either it verifies that the resolved git toplevel is the directory under check and otherwise takes the undetermined-direction path, or its message stops asserting whose HEAD it used. The three existing directions (README-side, doc-side, honest control) must all still behave as they do today, demonstrated by real runs.",
    "notes": "Found by the cycle-3 conductor gate, BEYOND the P-1 acceptance clause. Measured: git rev-parse --show-toplevel from a nested checkout with .git deleted returns /opt/targets/aphorism-cli (the PARENT repo), so `git show HEAD:README.md` silently resolves against an ancestor. In the gate the ancestor happened to be the same project, so the attribution looked correct - that coincidence is exactly what makes it worth fixing. Run genuinely outside any repo the fallback DOES fire correctly (verified), so this is narrow: only the nested-inside-unrelated-repo case. Low severity; the failure mode is a confidently-stated attribution that could name the wrong side."
+  },
+  {
+   "id": "W-11",
+   "title": "Close the citation window opened by W-7: re-cite README's Node-support matrix at the new run id",
+   "covers": [
+    "S-8"
+   ],
+   "kind": "fix",
+   "status": "done",
+   "effort": "S",
+   "priority": 1,
+   "deps": [
+    "W-7"
+   ],
+   "attempts": 0,
+   "model": "sonnet",
+   "files_hint": [
+    "README.md",
+    "docs/node-support-citation-history.md"
+   ],
+   "packages": [],
+   "acceptance": "README's \"### Node support\" section cites a run id whose headSha IS the commit README names, re-queried from the Actions API by the conductor rather than taken from prose; the matrix table's four rows match what that run printed in its own logs; the cited retirement-condition diff is empty against both HEAD and the working tree; the suite is 128/128 with both citation guards RUN, not skipped; tools/citation-rule-check.mjs exits 0 AND is shown to be failable; and the history doc's \"nothing below has been altered\" promise survives (no preserved blockquote line changed).",
+   "notes": "Classified `fix`, not `docs`: it restores green and its prose is PARSED by three separate guards, so gear 2's sonnet->haiku docs demote does not apply to it (build/fix never drops below sonnet). Scope was the whole risk — touching anything under src/ bin/ test/ .github/ would have RE-OPENED the very window it closes. New citation: run 32742357417 at commit 02f4668 (2026-08-24), 128 tests / 126 pass / 0 fail / 2 skipped on all four majors, replacing run 32405521233 at 7e50d6f. Structurally unlike the previous move: this time the commit that changed the paths WAS the head of its push, so it has a run of its own."
+  },
+  {
+   "id": "W-12",
+   "title": "tools/mutation-matrix.mjs cannot measure any tree but 20b7ede, so W-8 is unsatisfiable as shipped",
+   "covers": [
+    "S-1"
+   ],
+   "kind": "fix",
+   "status": "todo",
+   "effort": "S",
+   "priority": 2,
+   "deps": [],
+   "attempts": 0,
+   "model": "sonnet",
+   "files_hint": [
+    "tools/mutation-matrix.mjs"
+   ],
+   "packages": [],
+   "acceptance": "The matrix can be run against a caller-named commit (and against the working tree), the commit it measured is recorded in its own output so two runs are machine-comparable and cannot be silently confused, and the default with no argument still reproduces the existing baseline byte-for-byte. Demonstrated by running it at 20b7ede and at HEAD in the same session and showing the two outputs differ ONLY where the tree differs.",
+   "notes": "Measured at cycle 4: line 89 `const BASELINE = '20b7ede'`, and line 482 checks the scratch clone out detached at it. This is not cosmetic — W-8's whole clause is \"re-run the matrix at final HEAD and prove no baseline detection was lost\", and a tool pinned to the baseline would answer that question by measuring the baseline twice and reporting a guaranteed identical result as a pass. The null result would look exactly like the real one."
+  },
+  {
+   "id": "W-13",
+   "title": "tools/mutation-matrix.mjs uses a shared scratch path, so two concurrent runs clobber each other",
+   "covers": [
+    "S-6"
+   ],
+   "kind": "fix",
+   "status": "todo",
+   "effort": "S",
+   "priority": 4,
+   "deps": [],
+   "attempts": 0,
+   "model": "sonnet",
+   "files_hint": [
+    "tools/mutation-matrix.mjs"
+   ],
+   "packages": [],
+   "acceptance": "Two concurrent invocations of the matrix both complete and both produce correct, independent results — demonstrated by actually running two at once and showing neither crashes and neither's output is corrupted. Either the scratch path is made unique per invocation, or the tool detects a concurrent run and refuses with a clear message rather than crashing inside resetClone. A refusal is an acceptable answer; a crash is not.",
+   "notes": "OBSERVED, not theorised, during the cycle-4 wave: the scratch dir .scratch-W-2/clone is a fixed path, and while W-9's tools/run-all.mjs was invoking the matrix, W-7's builder invoked it too. The second run deleted and recreated the clone under the first, which then died with `spawnSync git ENOENT` inside resetClone. Both agents reported it independently. Sharpened by W-9 shipping a dispatcher that runs the matrix as one of five tools, which makes concurrent invocation MORE likely from here, not less."
   }
  ]
 }

@@ -37,6 +37,7 @@ chronological order by cycle number, so the citation chain reads forward:
 | 10 | run `32335038575` at commit `c9dd7ff` | run `32337875271` at commit `2b003ea` |
 | Q-7 (improvement run #6) | run `32337875271` at commit `2b003ea` | run `32400996331` at commit `4b63e91` |
 | Q-8 (improvement run #6) | run `32400996331` at commit `4b63e91` | run `32405521233` at commit `7e50d6f` |
+| W-7 (improvement run #8) | run `32405521233` at commit `7e50d6f` | run `32742357417` at commit `02f4668` |
 
 The cycle 3 entry records only the citation it retired; the run id it moved to is not stated
 in the entry itself, and is not inferred here. The last row is the citation the README still
@@ -45,13 +46,19 @@ carries today.
 The row above labelled "Q-7 (improvement run #6)" is a later move, appended after this file
 was first written; unlike the five rows above it, it is not one of the five cycles this
 file's intro paragraph describes, and its label follows that later run's own task-id
-convention rather than this run's cycle numbering. It is now the citation the README carries;
-see "Q-7 (improvement run #6)" below for the entry.
+convention rather than this run's cycle numbering. It was, until the two moves below it, the
+citation the README carried; see "Q-7 (improvement run #6)" below for the entry.
 
 The row above that, labelled "Q-8 (improvement run #6)", is a second later move, appended for
 the same reason as Q-7: it is not one of the five cycles this file's intro paragraph
+describes, and its label follows that later run's own task-id convention. It was, until the
+row below it, the citation the README carried; see "Q-8 (improvement run #6)" below for the
+entry.
+
+The row below that, labelled "W-7 (improvement run #8)", is a third later move, appended for
+the same reason as Q-7 and Q-8: it is not one of the five cycles this file's intro paragraph
 describes, and its label follows that later run's own task-id convention. It is now the
-citation the README carries; see "Q-8 (improvement run #6)" below for the entry.
+citation the README carries; see "W-7 (improvement run #8)" below for the entry.
 
 ## Cycle 3
 
@@ -211,11 +218,14 @@ defect in the rule, not a missing run to go find.
 The rule is rewritten rather than patched around. Rather than paraphrase the replacement, this
 entry now QUOTES it, verbatim, from the `### Node support` section of
 [`../README.md`](../README.md) — README is the rule's home, this file only records it. The
-block below is byte-identical to that sentence, README's own line wrapping included, and
-`tools/citation-rule-check.mjs` asserts that byte-identity and exits non-zero if the two drift
-apart.
+block below was byte-identical to that sentence, README's own line wrapping included, for as
+long as `7e50d6f` was the citation README carried. `tools/citation-rule-check.mjs` matches only
+the FIRST ` ```readme-quote ` fence in this file, so a live-checked quote and a superseded one
+cannot coexist under the same fence name — this block has since been retagged
+` ```readme-quote-superseded-q8 ` (content unchanged) so the checker skips it and matches the
+current quote in the W-7 entry below instead.
 
-```readme-quote
+```readme-quote-superseded-q8
 The
 reference matrix is [Actions run 32405521233](https://github.com/trmnmc/aphorism-cli/actions/runs/32405521233)
 at commit `7e50d6f` (2026-08-20), the matrix run for the push that carried the last change to
@@ -265,3 +275,71 @@ full clone, before this re-citation landed the suite reported 129 tests, 127 pas
 skipped: the same two tests that skip in CI ran instead and failed, because the stale
 citation's own diff was non-empty on this tree. Those 2 fails were Q-8's to close, and this
 move closes them.
+
+## W-7 (improvement run #8)
+
+**2026-08-24, filed as W-7 of improvement run #8.** Moved from run `32405521233` at commit
+`7e50d6f` to run `32742357417` at commit `02f4668`. Retired the same way `7e50d6f` retired its
+own predecessor: a later commit changed `test/` — here, `02f4668` ("cycle 4: KI-R6-3 closed by
+consolidation, and one entry point that re-runs every finding"), which deleted one of the two
+redundant guards in `test/readme-tags.test.js` that both read README's
+`| Tags on exactly one entry | 0 |` row — inside the cited pathspec, and the guard on this
+section went red on a full clone exactly as standing limit 2 predicts. `02f4668`'s own commit
+message states the window in advance: it names itself as the commit that opens the predicted
+citation window and leaves closing it to "the very next commit," which is this move.
+
+Quoting the same rule Q-8 quoted (the block below is unchanged in wording from Q-8's; only
+what it now selects has moved):
+
+```readme-quote
+The
+reference matrix is [Actions run 32742357417](https://github.com/trmnmc/aphorism-cli/actions/runs/32742357417)
+at commit `02f4668` (2026-08-24), the matrix run for the push that carried the last change to
+`src/`, `bin/`, `test/`, or the workflow itself.
+```
+
+**Deriving the citation from that quoted rule, on this tree** (HEAD `02f4668` at the time of
+writing):
+
+1. *"the last change to `src/`, `bin/`, `test/`, or the workflow itself"* —
+   `git log -1 --format=%h -- src bin test .github` gives `02f4668` ("cycle 4: KI-R6-3 closed
+   by consolidation, and one entry point that re-runs every finding"), and HEAD is `02f4668`
+   itself, so trivially there is no later commit to check: `02f4668` is the last change to
+   those paths.
+2. *"the push that carried"* that change — unlike `22fdeac`/`a302f71` last time, `02f4668` was
+   itself the head of its own push, so it did not need a separate SHA to stand in for it: the
+   run for that push executed directly against `02f4668`.
+3. *"the matrix run for"* that push — run `32742357417` (`conclusion: success`,
+   `headSha: 02f4668b70658d9d06ee562034e47bcd9ade55c5`), the four rows of which are the matrix
+   table in the README.
+
+The quoted rule therefore selects run `32742357417` at commit `02f4668` — the citation the
+README carries now. Steps 1 and 2 are re-derivable from any full clone with the commands
+shown; step 3's run id, conclusion and head SHA are as measured for this move and were not
+re-queried when this entry was written.
+
+**A structural difference from the Q-8 move is worth stating plainly, since it is the opposite
+shape.** Last time, the commit that changed the cited paths (`22fdeac`, merged as `a302f71`)
+was NOT the head of its push, so the citation had to name a different SHA (`7e50d6f`) than the
+commit that made the change. This time they are the SAME commit: `02f4668` both made the
+change and was the head of the push, so it has a run of its own, and the citation names it
+directly. The README's prose describing which run was selected was rewritten to say this
+truthfully rather than carry the old, awkward two-SHA explanation forward.
+
+Run `32742357417` (`conclusion: success`, `headSha: 02f4668b70658d9d06ee562034e47bcd9ade55c5`)
+reported, across all four Node majors (v18.20.8, v20.20.2, v22.23.2, v24.19.0): 128 tests, 126
+pass, 0 fail, 2 skipped — the test count fell from 129 to 128 because `02f4668` (item W-7)
+removed one of the two redundant guards in `test/readme-tags.test.js` that both read README's
+`| Tags on exactly one entry | 0 |` row. Nine candidate falsifications of that row were run
+through a full suite on a scratch clone, and the removed guard's firing set turned out to be a
+strict subset of the surviving guard's: no falsification of the row fired the removed guard
+without also firing the survivor, so its coverage was redundant, not load-bearing. Detection
+was re-measured after the removal and is preserved — the full cell-by-cell measurement lives
+in `test/readme-tags.test.js` itself, in the block marked "W-7 (2026-08-24) --
+CONSOLIDATED." The skip count, the two skipped tests' identities, and the reason
+(`test/node-support-citation.test.js` skipping on a shallow clone that cannot reach the cited
+base) are unchanged from the citation this replaces. Locally, on a full clone, before this
+re-citation landed the suite reported 128 tests, 126 pass, 2 fail, 0 skipped: the same two
+tests that skip in CI ran instead and failed, because the stale citation's own diff was
+non-empty on this tree (this was the predicted, documented window `02f4668`'s own commit
+message opened). Those 2 fails were W-7's to close, and this move closes them.

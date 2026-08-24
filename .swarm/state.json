@@ -6,7 +6,7 @@
  "run_started_at": "2026-08-24T13:05:56.000Z",
  "kickoff_source": "allocator",
  "phase": "BUILD",
- "cycle": 3,
+ "cycle": 4,
  "run_cmd": "node bin/aphorism.js",
  "test_cmd": "node --test test/*.test.js",
  "spec_digest": [
@@ -82,6 +82,24 @@
    "cycle": 3,
    "kind": "correction",
    "text": "The conductor`s own W-5 gate script carried a bug: its README row-parser assumed five pipe-separated columns, but the table has two columns with the counts in prose, so it parsed zero rows and printed `depth-1 == README row? -> NO`. That NO was the gate failing, not W-5. Corrected in a second script (gate-c3-w5b.mjs), which parses all four rows and reports YES. Recorded here rather than silently re-run, because a gate that misreports must be as visible as a build that does — the evidence file names the bug explicitly."
+  },
+  {
+   "id": "D-R8-10",
+   "cycle": 4,
+   "kind": "correction",
+   "text": "The conductor's own W-7 gate carried a parser bug, the SECOND cycle running (cf. D-R8-9). Cell C1 read `git status --porcelain` and called .trim() on stdout BEFORE splitting into lines, which ate the leading space of the first line's two-character status column; the path was then sliced one byte short and C1 reported the modified file as \"est/readme-tags.test.js\", failing the cell on a file that does not exist. The item was NOT rounded to a FAIL and the cell was NOT quietly re-run: it is corrected in runs/gate-c4-w7-c1-addendum.mjs, which documents the defect in its own header and additionally checks something the original missed — that no .scratch tree survives into the commit. Two gate-parser bugs in two consecutive cycles is now a pattern in the conductor's own instruments, not an isolated slip, and it is the RETRO candidate of this run: gate scripts are written once and run once, so they get none of the scrutiny the code under test gets."
+  },
+  {
+   "id": "D-R8-11",
+   "cycle": 4,
+   "kind": "gate",
+   "text": "The single citation window S-8 permits was opened and CLOSED inside cycle 4, rather than left open across a cycle boundary. Hard rule 4 (green main before the cycle commits) and S-8 (green every commit bar one predicted window) are in tension — recorded as blocked item P-7 for a human ruling — and this cycle resolved it by satisfying both literally: commit 02f4668 opens the window and NAMES it in advance in its own message, and the next commit closes it, so the cycle ENDS green. The enabling measurement was cheap and was taken before dispatch rather than assumed: `gh run list` returns run ids, master is level with origin/master, and CI end-to-end is ~23 seconds. D-R8-6 had gated W-7 on \"a confirmed ability to obtain a run id\"; that gate was checked, not waived."
+  },
+  {
+   "id": "D-R8-12",
+   "cycle": 4,
+   "kind": "risk",
+   "text": "W-8 is unsatisfiable as shipped and would have failed SILENTLY. tools/mutation-matrix.mjs pins BASELINE to 20b7ede, so \"re-run the matrix at final HEAD\" (W-8's clause) would have measured the baseline twice and produced a guaranteed-identical matrix — which the clause explicitly anticipates as a possible legitimate null result (\"if W-7 ends in the keep-both branch this still runs and should show an identical matrix\"). The two outcomes are observationally identical, so a builder could have discharged W-8 honestly and been wrong. Caught by reading the tool before dispatching against it, not at W-8's gate. W-12 filed as a hard dependency."
   }
  ],
  "qa": {
@@ -92,7 +110,7 @@
  "counters": {
   "consecutive_no_value": 0,
   "k_current": 4,
-  "wave_streak": 0,
+  "wave_streak": 1,
   "window_tokens_attributed": 0
  },
  "known_issues_file": "known-issues.json",
@@ -101,9 +119,9 @@
   "note": "runs #1-#7; run #7 delivered ZERO work cycles (usage lockout). Done items archived to backlog-archive-runs1-7.json."
  },
  "last_cycle": {
-  "cycle": 3,
-  "work": "build-wave (3 direct Agent calls, headless fallback: W-2, W-5, P-1)",
-  "outcome": "value — all three verified done by conductor-authored gates; clean wave, 0 reverts, 0 failed verifies; new item P-2 from a finding beyond P-1`s clause",
-  "ts": "2026-08-24T14:30:00.000Z"
+  "cycle": 4,
+  "work": "build-wave (2 direct Agent calls, headless fallback: W-7, W-9) + W-11 as the conductor-held closure of the window the wave opened",
+  "outcome": "value — W-7, W-9, W-11 all verified done by conductor-authored gates (6/6, 6/6, 8/8); clean wave, 0 reverts, 0 failed verifies; the run's single permitted citation window opened and closed inside the cycle; 2 new tool defects filed (W-12, W-13)",
+  "ts": "2026-08-24T15:18:20.000Z"
  }
 }

@@ -1,0 +1,778 @@
+TAP version 13
+# Subtest: zero args: no error, no filters set
+ok 1 - zero args: no error, no filters set
+  ---
+  duration_ms: 5.880028
+  type: 'test'
+  ...
+# Subtest: --author <name> sets author string
+ok 2 - --author <name> sets author string
+  ---
+  duration_ms: 0.348942
+  type: 'test'
+  ...
+# Subtest: --author=<name> equals form sets author string
+ok 3 - --author=<name> equals form sets author string
+  ---
+  duration_ms: 0.284989
+  type: 'test'
+  ...
+# Subtest: --tag <tag> sets tag string
+ok 4 - --tag <tag> sets tag string
+  ---
+  duration_ms: 0.345978
+  type: 'test'
+  ...
+# Subtest: --tag=<tag> equals form sets tag string
+ok 5 - --tag=<tag> equals form sets tag string
+  ---
+  duration_ms: 0.539409
+  type: 'test'
+  ...
+# Subtest: combined --author X --tag Y sets both
+ok 6 - combined --author X --tag Y sets both
+  ---
+  duration_ms: 0.783511
+  type: 'test'
+  ...
+# Subtest: --seed <n> parses as a number
+ok 7 - --seed <n> parses as a number
+  ---
+  duration_ms: 0.579376
+  type: 'test'
+  ...
+# Subtest: --seed=<n> equals form parses as a number
+ok 8 - --seed=<n> equals form parses as a number
+  ---
+  duration_ms: 0.265633
+  type: 'test'
+  ...
+# Subtest: --seed <n> accepts a negative number
+ok 9 - --seed <n> accepts a negative number
+  ---
+  duration_ms: 1.527726
+  type: 'test'
+  ...
+# Subtest: --seed=<n> equals form accepts a negative number
+ok 10 - --seed=<n> equals form accepts a negative number
+  ---
+  duration_ms: 0.401164
+  type: 'test'
+  ...
+# Subtest: non-numeric --seed is a usage error
+ok 11 - non-numeric --seed is a usage error
+  ---
+  duration_ms: 0.507317
+  type: 'test'
+  ...
+# Subtest: non-numeric --seed= equals form is a usage error
+ok 12 - non-numeric --seed= equals form is a usage error
+  ---
+  duration_ms: 0.385633
+  type: 'test'
+  ...
+# Subtest: --list sets list: true
+ok 13 - --list sets list: true
+  ---
+  duration_ms: 0.267377
+  type: 'test'
+  ...
+# Subtest: --json sets json: true
+ok 14 - --json sets json: true
+  ---
+  duration_ms: 1.024785
+  type: 'test'
+  ...
+# Subtest: --help sets help: true
+ok 15 - --help sets help: true
+  ---
+  duration_ms: 0.286021
+  type: 'test'
+  ...
+# Subtest: -h sets help: true
+ok 16 - -h sets help: true
+  ---
+  duration_ms: 0.135301
+  type: 'test'
+  ...
+# Subtest: unknown flag is a usage error
+ok 17 - unknown flag is a usage error
+  ---
+  duration_ms: 0.29521
+  type: 'test'
+  ...
+# Subtest: unknown short flag is a usage error
+ok 18 - unknown short flag is a usage error
+  ---
+  duration_ms: 0.142134
+  type: 'test'
+  ...
+# Subtest: --author missing value at end of argv is a usage error
+ok 19 - --author missing value at end of argv is a usage error
+  ---
+  duration_ms: 0.173895
+  type: 'test'
+  ...
+# Subtest: --tag missing value because next token is another flag is a usage error
+ok 20 - --tag missing value because next token is another flag is a usage error
+  ---
+  duration_ms: 0.14043
+  type: 'test'
+  ...
+# Subtest: --seed missing value at end of argv is a usage error
+ok 21 - --seed missing value at end of argv is a usage error
+  ---
+  duration_ms: 0.110664
+  type: 'test'
+  ...
+# Subtest: --author= with empty value is a usage error
+ok 22 - --author= with empty value is a usage error
+  ---
+  duration_ms: 0.155229
+  type: 'test'
+  ...
+# Subtest: a bare positional argument (not a flag) is a usage error
+ok 23 - a bare positional argument (not a flag) is a usage error
+  ---
+  duration_ms: 0.106295
+  type: 'test'
+  ...
+# Subtest: parseArgs never throws on malformed input
+ok 24 - parseArgs never throws on malformed input
+  ---
+  duration_ms: 0.303966
+  type: 'test'
+  ...
+# Subtest: absent options are undefined/false, never null
+ok 25 - absent options are undefined/false, never null
+  ---
+  duration_ms: 0.16076
+  type: 'test'
+  ...
+# Subtest: HELP is a non-empty string mentioning every flag name
+ok 26 - HELP is a non-empty string mentioning every flag name
+  ---
+  duration_ms: 0.19189
+  type: 'test'
+  ...
+# Subtest: HELP fits comfortably on one 24-line terminal screen
+ok 27 - HELP fits comfortably on one 24-line terminal screen
+  ---
+  duration_ms: 0.106105
+  type: 'test'
+  ...
+# Subtest: --seed Infinity / --seed -Infinity parse to numbers, not a usage error
+ok 28 - --seed Infinity / --seed -Infinity parse to numbers, not a usage error
+  ---
+  duration_ms: 0.148015
+  type: 'test'
+  ...
+# Subtest: bare invocation prints one attributed aphorism and exits 0
+ok 29 - bare invocation prints one attributed aphorism and exits 0
+  ---
+  duration_ms: 57.96534
+  type: 'test'
+  ...
+# Subtest: --seed is deterministic across separate processes
+ok 30 - --seed is deterministic across separate processes
+  ---
+  duration_ms: 94.890958
+  type: 'test'
+  ...
+# Subtest: different seeds do not all collapse to one aphorism
+ok 31 - different seeds do not all collapse to one aphorism
+  ---
+  duration_ms: 611.635126
+  type: 'test'
+  ...
+# Subtest: --json emits a single-line JSON object with text/author/tags
+ok 32 - --json emits a single-line JSON object with text/author/tags
+  ---
+  duration_ms: 62.684801
+  type: 'test'
+  ...
+# Subtest: --list prints every entry in the filtered set
+ok 33 - --list prints every entry in the filtered set
+  ---
+  duration_ms: 49.296063
+  type: 'test'
+  ...
+# Subtest: --help prints usage to stdout and exits 0
+ok 34 - --help prints usage to stdout and exits 0
+  ---
+  duration_ms: 44.688889
+  type: 'test'
+  ...
+# Subtest: no match exits 1 with stderr only and zero bytes on stdout
+ok 35 - no match exits 1 with stderr only and zero bytes on stdout
+  ---
+  duration_ms: 47.487194
+  type: 'test'
+  ...
+# Subtest: unknown flag is a usage error, exit 2, stdout clean
+ok 36 - unknown flag is a usage error, exit 2, stdout clean
+  ---
+  duration_ms: 49.174008
+  type: 'test'
+  ...
+# Subtest: non-numeric seed is a usage error, exit 2
+ok 37 - non-numeric seed is a usage error, exit 2
+  ---
+  duration_ms: 59.949696
+  type: 'test'
+  ...
+# Subtest: author filter is case-insensitive and narrows the list
+ok 38 - author filter is case-insensitive and narrows the list
+  ---
+  duration_ms: 97.767986
+  type: 'test'
+  ...
+# Subtest: output is pipe-safe — no ANSI escapes when not a TTY
+ok 39 - output is pipe-safe — no ANSI escapes when not a TTY
+  ---
+  duration_ms: 55.891272
+  type: 'test'
+  ...
+# Subtest: --tag matches membership, not substring containment
+ok 40 - --tag matches membership, not substring containment
+  ---
+  duration_ms: 100.883655
+  type: 'test'
+  ...
+# Subtest: --list prints exactly one line per matching entry, no drops
+ok 41 - --list prints exactly one line per matching entry, no drops
+  ---
+  duration_ms: 48.91617
+  type: 'test'
+  ...
+# Subtest: --list preserves corpus order (first and last line match)
+ok 42 - --list preserves corpus order (first and last line match)
+  ---
+  duration_ms: 44.842995
+  type: 'test'
+  ...
+# Subtest: --json output is exactly one line, never pretty-printed
+ok 43 - --json output is exactly one line, never pretty-printed
+  ---
+  duration_ms: 46.684807
+  type: 'test'
+  ...
+# Subtest: --list --json emits newline-delimited JSON, one object per line, in corpus order
+ok 44 - --list --json emits newline-delimited JSON, one object per line, in corpus order
+  ---
+  duration_ms: 53.806972
+  type: 'test'
+  ...
+# Subtest: --json composes with --seed: the seeded JSON pick is reproducible AND is the same entry as the plain-text pick
+ok 45 - --json composes with --seed: the seeded JSON pick is reproducible AND is the same entry as the plain-text pick
+  ---
+  duration_ms: 899.223853
+  type: 'test'
+  ...
+# Subtest: --json composes with the filter flags: the JSON pick is always a member of the FILTERED set
+ok 46 - --json composes with the filter flags: the JSON pick is always a member of the FILTERED set
+  ---
+  duration_ms: 1092.642841
+  type: 'test'
+  ...
+# Subtest: --list accepts a valid --seed and IGNORES it: output is byte-identical across seeds
+ok 47 - --list accepts a valid --seed and IGNORES it: output is byte-identical across seeds
+  ---
+  duration_ms: 449.900497
+  type: 'test'
+  ...
+# Subtest: --list --seed abc is a usage error, exit 2, stdout empty, stderr carries the diagnostic
+ok 48 - --list --seed abc is a usage error, exit 2, stdout empty, stderr carries the diagnostic
+  ---
+  duration_ms: 49.35692
+  type: 'test'
+  ...
+# Subtest: --seed abc --list (erroring flag BEFORE --list) is still a usage error, exit 2, stdout empty
+ok 49 - --seed abc --list (erroring flag BEFORE --list) is still a usage error, exit 2, stdout empty
+  ---
+  duration_ms: 45.360903
+  type: 'test'
+  ...
+# Subtest: --list --seed=  (empty seed value) is a usage error, exit 2, stdout empty
+ok 50 - --list --seed=  (empty seed value) is a usage error, exit 2, stdout empty
+  ---
+  duration_ms: 49.052231
+  type: 'test'
+  ...
+# Subtest: --list --seed "   " (whitespace-only seed value) is a usage error, exit 2, stdout empty
+ok 51 - --list --seed "   " (whitespace-only seed value) is a usage error, exit 2, stdout empty
+  ---
+  duration_ms: 48.908204
+  type: 'test'
+  ...
+# Subtest: --list --nosuchflag (unknown flag) is a usage error, exit 2, stdout empty — --list does not swallow it
+ok 52 - --list --nosuchflag (unknown flag) is a usage error, exit 2, stdout empty — --list does not swallow it
+  ---
+  duration_ms: 46.190593
+  type: 'test'
+  ...
+# Subtest: --nosuchflag --list (unknown flag BEFORE --list) is still a usage error, exit 2, stdout empty
+ok 53 - --nosuchflag --list (unknown flag BEFORE --list) is still a usage error, exit 2, stdout empty
+  ---
+  duration_ms: 50.733725
+  type: 'test'
+  ...
+# Subtest: plain single-pick output is TWO lines: text, newline, four-space indent, EM DASH, space, author
+ok 54 - plain single-pick output is TWO lines: text, newline, four-space indent, EM DASH, space, author
+  ---
+  duration_ms: 44.049716
+  type: 'test'
+  ...
+# Subtest: --seed Infinity and --seed -Infinity (typed as CLI strings) are accepted and deterministic
+ok 55 - --seed Infinity and --seed -Infinity (typed as CLI strings) are accepted and deterministic
+  ---
+  duration_ms: 173.107459
+  type: 'test'
+  ...
+# Subtest: --list with a filter that matches nothing is STILL exit 1, stderr only, stdout empty
+ok 56 - --list with a filter that matches nothing is STILL exit 1, stderr only, stdout empty
+  ---
+  duration_ms: 85.478907
+  type: 'test'
+  ...
+# Subtest: --tag "" (bare empty-string value) matches nothing: whole-tag equality against the literal "" is not a filter no-op
+ok 57 - --tag "" (bare empty-string value) matches nothing: whole-tag equality against the literal "" is not a filter no-op
+  ---
+  duration_ms: 40.555568
+  type: 'test'
+  ...
+# Subtest: README Node support citation: cited git diff must be empty (or the check must skip on a missing precondition)
+ok 58 - README Node support citation: cited git diff must be empty (or the check must skip on a missing precondition)
+  ---
+  duration_ms: 32.693385
+  type: 'test'
+  ...
+# Subtest: README Node support citation: base-to-working-tree diff must also be empty, so an uncommitted falsification is visible now (or the check must skip on a missing precondition)
+ok 59 - README Node support citation: base-to-working-tree diff must also be empty, so an uncommitted falsification is visible now (or the check must skip on a missing precondition)
+  ---
+  duration_ms: 25.142695
+  type: 'test'
+  ...
+# Subtest: --list | true: exits quietly, zero stderr, no crash banner
+ok 60 - --list | true: exits quietly, zero stderr, no crash banner
+  ---
+  duration_ms: 54.744289
+  type: 'test'
+  ...
+# Subtest: | true (no --list, single aphorism): exits quietly, zero stderr
+ok 61 - | true (no --list, single aphorism): exits quietly, zero stderr
+  ---
+  duration_ms: 55.47075
+  type: 'test'
+  ...
+# Subtest: --list | head -0: exits quietly, zero stderr, no crash banner
+ok 62 - --list | head -0: exits quietly, zero stderr, no crash banner
+  ---
+  duration_ms: 51.818087
+  type: 'test'
+  ...
+# Subtest: --list | /nonexistent-cmd-xyz: no crash banner from the CLI itself
+ok 63 - --list | /nonexistent-cmd-xyz: no crash banner from the CLI itself
+  ---
+  duration_ms: 54.789025
+  type: 'test'
+  ...
+# Subtest: non-EPIPE stdout write failure: reported, not silent, not exit 1, no stack trace
+ok 64 - non-EPIPE stdout write failure: reported, not silent, not exit 1, no stack trace
+  ---
+  duration_ms: 51.831021
+  type: 'test'
+  ...
+# Subtest: usage error survives a closed stderr reader: still exits 2, not clobbered to 1
+ok 65 - usage error survives a closed stderr reader: still exits 2, not clobbered to 1
+  ---
+  duration_ms: 170.666273
+  type: 'test'
+  ...
+# Subtest: no-match exit code survives a closed stderr reader: still exits 1, not misreported
+ok 66 - no-match exit code survives a closed stderr reader: still exits 1, not misreported
+  ---
+  duration_ms: 145.467259
+  type: 'test'
+  ...
+# Subtest: non-EPIPE stderr write failure: not silent, not the earned exit code, no stack trace
+ok 67 - non-EPIPE stderr write failure: not silent, not the earned exit code, no stack trace
+  ---
+  duration_ms: 52.640922
+  type: 'test'
+  ...
+# Subtest: control: --list | head -1 stays completely clean
+ok 68 - control: --list | head -1 stays completely clean
+  ---
+  duration_ms: 48.333026
+  type: 'test'
+  ...
+# Subtest: control: --list | head -5 stays completely clean
+ok 69 - control: --list | head -5 stays completely clean
+  ---
+  duration_ms: 47.05405
+  type: 'test'
+  ...
+# Subtest: control: --list | sed 1q stays completely clean
+ok 70 - control: --list | sed 1q stays completely clean
+  ---
+  duration_ms: 46.22474
+  type: 'test'
+  ...
+# Subtest: control: --list | grep -q . stays completely clean
+ok 71 - control: --list | grep -q . stays completely clean
+  ---
+  duration_ms: 46.285156
+  type: 'test'
+  ...
+# Subtest: control: | wc -l stays completely clean
+ok 72 - control: | wc -l stays completely clean
+  ---
+  duration_ms: 49.137928
+  type: 'test'
+  ...
+# Subtest: control: --list --json | head -2 stays completely clean
+ok 73 - control: --list --json | head -2 stays completely clean
+  ---
+  duration_ms: 48.722106
+  type: 'test'
+  ...
+# Subtest: control: exit 1 / exit 2 stderr messages and codes are unchanged
+ok 74 - control: exit 1 / exit 2 stderr messages and codes are unchanged
+  ---
+  duration_ms: 92.818301
+  type: 'test'
+  ...
+# Subtest: control: a normal (non-full) stdout target still exits 0 with empty stderr
+ok 75 - control: a normal (non-full) stdout target still exits 0 with empty stderr
+  ---
+  duration_ms: 94.654531
+  type: 'test'
+  ...
+# Subtest: README Node support matrix: table must be present and non-empty
+ok 76 - README Node support matrix: table must be present and non-empty
+  ---
+  duration_ms: 2.130087
+  type: 'test'
+  ...
+# Subtest: README Node support matrix: each row's own arithmetic must hold (tests = pass + fail + skipped)
+ok 77 - README Node support matrix: each row's own arithmetic must hold (tests = pass + fail + skipped)
+  ---
+  duration_ms: 0.64838
+  type: 'test'
+  ...
+# Subtest: README Node support matrix: all rows must agree with each other
+ok 78 - README Node support matrix: all rows must agree with each other
+  ---
+  duration_ms: 0.634342
+  type: 'test'
+  ...
+# Subtest: README Node support matrix: cited Actions run id must match between the link text and the link URL
+ok 79 - README Node support matrix: cited Actions run id must match between the link text and the link URL
+  ---
+  duration_ms: 2.870576
+  type: 'test'
+  ...
+# Subtest: README Node support matrix: cited commit must match between the prose and the falsification-condition command
+ok 80 - README Node support matrix: cited commit must match between the prose and the falsification-condition command
+  ---
+  duration_ms: 0.538819
+  type: 'test'
+  ...
+# Subtest: README tags must exist in corpus
+ok 81 - README tags must exist in corpus
+  ---
+  duration_ms: 4.583478
+  type: 'test'
+  ...
+# Subtest: README tag counts must match corpus
+ok 82 - README tag counts must match corpus
+  ---
+  duration_ms: 0.788842
+  type: 'test'
+  ...
+# Subtest: README must state total unique tags correctly
+ok 83 - README must state total unique tags correctly
+  ---
+  duration_ms: 1.796815
+  type: 'test'
+  ...
+# Subtest: README must list all single-entry tags
+ok 84 - README must list all single-entry tags
+  ---
+  duration_ms: 0.784954
+  type: 'test'
+  ...
+# Subtest: assertTagVocabCountsTableWellFormed fails loud on a DUPLICATED row label, whichever order the rows appear in (Q-4)
+ok 85 - assertTagVocabCountsTableWellFormed fails loud on a DUPLICATED row label, whichever order the rows appear in (Q-4)
+  ---
+  duration_ms: 2.047638
+  type: 'test'
+  ...
+# Subtest: assertTagVocabCountsTableWellFormed fails loud on a row label no guard in this file reads (Q-4)
+ok 86 - assertTagVocabCountsTableWellFormed fails loud on a row label no guard in this file reads (Q-4)
+  ---
+  duration_ms: 2.119747
+  type: 'test'
+  ...
+# Subtest: parseTagVocabCountsTable returns null when the counts table is missing or malformed, and both readers fail loud on that null (Q-4)
+ok 87 - parseTagVocabCountsTable returns null when the counts table is missing or malformed, and both readers fail loud on that null (Q-4)
+  ---
+  duration_ms: 0.800504
+  type: 'test'
+  ...
+# Subtest: readTagVocabCount fails loud when a row value is not a plain integer, or when its row is absent (Q-4)
+ok 88 - readTagVocabCount fails loud when a row value is not a plain integer, or when its row is absent (Q-4)
+  ---
+  duration_ms: 2.79503
+  type: 'test'
+  ...
+# Subtest: extractBandTablesFromReadme tolerates a prose sentence between a band heading and its table (T-025), without mis-attaching a table when the real one is missing
+ok 89 - extractBandTablesFromReadme tolerates a prose sentence between a band heading and its table (T-025), without mis-attaching a table when the real one is missing
+  ---
+  duration_ms: 1.837283
+  type: 'test'
+  ...
+# Subtest: extractBandTablesFromReadme does not let a band-shaped PROSE line steal a real heading's table (T-039)
+ok 90 - extractBandTablesFromReadme does not let a band-shaped PROSE line steal a real heading's table (T-039)
+  ---
+  duration_ms: 1.158214
+  type: 'test'
+  ...
+# Subtest: extractBandTablesFromReadme does not read a fenced example block as a second, real band table
+ok 91 - extractBandTablesFromReadme does not read a fenced example block as a second, real band table
+  ---
+  duration_ms: 0.279008
+  type: 'test'
+  ...
+# Subtest: extractBandTablesFromReadme's recognised bands account for every structural `| Tag | Count |` table -- a table under an unrecognised heading shape is a loud mismatch, not a silent miss
+ok 92 - extractBandTablesFromReadme's recognised bands account for every structural `| Tag | Count |` table -- a table under an unrecognised heading shape is a loud mismatch, not a silent miss
+  ---
+  duration_ms: 0.486238
+  type: 'test'
+  ...
+# Subtest: every `| Tag | Count |` table in the real README Tag vocabulary section is a recognised band table (no table may hide under an unrecognised heading shape)
+ok 93 - every `| Tag | Count |` table in the real README Tag vocabulary section is a recognised band table (no table may hide under an unrecognised heading shape)
+  ---
+  duration_ms: 0.606389
+  type: 'test'
+  ...
+# Subtest: every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+ok 94 - every band table in README Tag vocabulary contains exactly the corpus tags whose count fits that band
+  ---
+  duration_ms: 0.646598
+  type: 'test'
+  ...
+# Subtest: every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+ok 95 - every corpus tag appearing on 2+ entries must have a row in some band table (no band table may be deleted wholesale) (T-019)
+  ---
+  duration_ms: 0.361106
+  type: 'test'
+  ...
+# Subtest: extractBandTablesFromReadme derives a band's row count purely from its table, ignoring decoy "N tags" phrases in the heading line (T-024b)
+ok 96 - extractBandTablesFromReadme derives a band's row count purely from its table, ignoring decoy "N tags" phrases in the heading line (T-024b)
+  ---
+  duration_ms: 0.367719
+  type: 'test'
+  ...
+# Subtest: README must state correct multi-entry and single-entry tag counts
+ok 97 - README must state correct multi-entry and single-entry tag counts
+  ---
+  duration_ms: 0.479104
+  type: 'test'
+  ...
+# Subtest: README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)
+ok 98 - README Tag vocabulary section must contain no unrecognised count-claim digits (J-5)
+  ---
+  duration_ms: 0.654741
+  type: 'test'
+  ...
+# Subtest: README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1)
+ok 99 - README Attribution table "Entries ranked" count must match corpus.length and the triage doc (C1)
+  ---
+  duration_ms: 1.961814
+  type: 'test'
+  ...
+# Subtest: README Attribution table "Rated HIGH risk" count must match the triage doc table (C2)
+ok 100 - README Attribution table "Rated HIGH risk" count must match the triage doc table (C2)
+  ---
+  duration_ms: 0.747101
+  type: 'test'
+  ...
+# Subtest: README Attribution section must contain no digit runs outside the counts table (C7)
+ok 101 - README Attribution section must contain no digit runs outside the counts table (C7)
+  ---
+  duration_ms: 0.54469
+  type: 'test'
+  ...
+# Subtest: README Layout section paths must exist on disk (C6)
+ok 102 - README Layout section paths must exist on disk (C6)
+  ---
+  duration_ms: 0.676424
+  type: 'test'
+  ...
+# Subtest: getListBehaviourSection tolerates a reformatted "--list behaviour" heading with no backticks (T-021)
+ok 103 - getListBehaviourSection tolerates a reformatted "--list behaviour" heading with no backticks (T-021)
+  ---
+  duration_ms: 0.522999
+  type: 'test'
+  ...
+# Subtest: getListBehaviourSection still fails on a SEPARATOR MISMATCH (not a heading-parse error) when a reformatted heading's literal is mutated (T-021)
+ok 104 - getListBehaviourSection still fails on a SEPARATOR MISMATCH (not a heading-parse error) when a reformatted heading's literal is mutated (T-021)
+  ---
+  duration_ms: 0.299428
+  type: 'test'
+  ...
+# Subtest: getListBehaviourSection reports ambiguity loudly instead of taking the first of two qualifying headings (T-021)
+ok 105 - getListBehaviourSection reports ambiguity loudly instead of taking the first of two qualifying headings (T-021)
+  ---
+  duration_ms: 0.462091
+  type: 'test'
+  ...
+# Subtest: getListBehaviourSection does not let "--list-only" satisfy the standalone `--list` token (T-021)
+ok 106 - getListBehaviourSection does not let "--list-only" satisfy the standalone `--list` token (T-021)
+  ---
+  duration_ms: 0.246315
+  type: 'test'
+  ...
+# Subtest: getListBehaviourSection tolerates the American spelling "behavior" in the heading (T-027)
+ok 107 - getListBehaviourSection tolerates the American spelling "behavior" in the heading (T-027)
+  ---
+  duration_ms: 0.13008
+  type: 'test'
+  ...
+# Subtest: getListBehaviourSection still fails on a SEPARATOR MISMATCH (not a heading-parse error) under an American-spelled heading (T-027)
+ok 108 - getListBehaviourSection still fails on a SEPARATOR MISMATCH (not a heading-parse error) under an American-spelled heading (T-027)
+  ---
+  duration_ms: 0.157773
+  type: 'test'
+  ...
+# Subtest: README `--list` format literal matches the shipped binary's actual --list output (T-017)
+ok 109 - README `--list` format literal matches the shipped binary's actual --list output (T-017)
+  ---
+  duration_ms: 50.743473
+  type: 'test'
+  ...
+# Subtest: README `--author` matching section must state the correct count of distinct corpus authors (Q-8)
+ok 110 - README `--author` matching section must state the correct count of distinct corpus authors (Q-8)
+  ---
+  duration_ms: 0.562525
+  type: 'test'
+  ...
+# Subtest: corpus has at least 40 entries
+ok 111 - corpus has at least 40 entries
+  ---
+  duration_ms: 1.885536
+  type: 'test'
+  ...
+# Subtest: every corpus entry has non-empty text, non-empty author, and an array of tags
+ok 112 - every corpus entry has non-empty text, non-empty author, and an array of tags
+  ---
+  duration_ms: 2.06345
+  type: 'test'
+  ...
+# Subtest: filter: author match is case-insensitive
+ok 113 - filter: author match is case-insensitive
+  ---
+  duration_ms: 1.187069
+  type: 'test'
+  ...
+# Subtest: filter: tag match is case-insensitive
+ok 114 - filter: tag match is case-insensitive
+  ---
+  duration_ms: 0.634945
+  type: 'test'
+  ...
+# Subtest: filter: author and tag together narrow to the intersection (AND)
+ok 115 - filter: author and tag together narrow to the intersection (AND)
+  ---
+  duration_ms: 0.547105
+  type: 'test'
+  ...
+# Subtest: filter: undefined/absent options do not filter
+ok 116 - filter: undefined/absent options do not filter
+  ---
+  duration_ms: 0.209835
+  type: 'test'
+  ...
+# Subtest: pick: same seed over the same candidates always returns the same element
+ok 117 - pick: same seed over the same candidates always returns the same element
+  ---
+  duration_ms: 0.942197
+  type: 'test'
+  ...
+# Subtest: pick: different seeds generally produce different results
+ok 118 - pick: different seeds generally produce different results
+  ---
+  duration_ms: 0.334124
+  type: 'test'
+  ...
+# Subtest: pick: undefined seed picks a valid member (random mode)
+ok 119 - pick: undefined seed picks a valid member (random mode)
+  ---
+  duration_ms: 0.73073
+  type: 'test'
+  ...
+# Subtest: pick: null seed also triggers random mode and returns a valid member
+ok 120 - pick: null seed also triggers random mode and returns a valid member
+  ---
+  duration_ms: 0.382116
+  type: 'test'
+  ...
+# Subtest: pick: throws RangeError on empty candidates array
+ok 121 - pick: throws RangeError on empty candidates array
+  ---
+  duration_ms: 0.765016
+  type: 'test'
+  ...
+# Subtest: pick: Infinity seed is deterministic and returns a valid member
+ok 122 - pick: Infinity seed is deterministic and returns a valid member
+  ---
+  duration_ms: 0.598354
+  type: 'test'
+  ...
+# Subtest: pick: -Infinity seed is deterministic and returns a valid member
+ok 123 - pick: -Infinity seed is deterministic and returns a valid member
+  ---
+  duration_ms: 0.37872
+  type: 'test'
+  ...
+# Subtest: pick: NaN seed still uses the random branch and returns a valid member
+ok 124 - pick: NaN seed still uses the random branch and returns a valid member
+  ---
+  duration_ms: 0.221548
+  type: 'test'
+  ...
+# Subtest: pick: finite seed determinism is unchanged by the non-finite-seed fix
+ok 125 - pick: finite seed determinism is unchanged by the non-finite-seed fix
+  ---
+  duration_ms: 0.246886
+  type: 'test'
+  ...
+# Subtest: pick: every candidate is REACHABLE by an unseeded draw
+ok 126 - pick: every candidate is REACHABLE by an unseeded draw
+  ---
+  duration_ms: 3.707058
+  type: 'test'
+  ...
+# Subtest: pick: unseeded draws split the interval EQUALLY across candidates (uniform)
+ok 127 - pick: unseeded draws split the interval EQUALLY across candidates (uniform)
+  ---
+  duration_ms: 6.697696
+  type: 'test'
+  ...
+# Subtest: pick: single-element candidates always returns that element regardless of seed
+ok 128 - pick: single-element candidates always returns that element regardless of seed
+  ---
+  duration_ms: 0.274909
+  type: 'test'
+  ...
+1..128
+# tests 128
+# suites 0
+# pass 128
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4713.967759
