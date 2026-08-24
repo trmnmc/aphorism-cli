@@ -1072,20 +1072,21 @@
         "S-6"
       ],
       "kind": "fix",
-      "status": "todo",
+      "status": "done",
       "effort": "S",
       "priority": 8,
       "deps": [],
       "attempts": 0,
-      "model": "haiku",
+      "model": "sonnet",
       "files_hint": [
         "tools/run-all.mjs"
       ],
       "packages": [],
       "severity": "low",
       "acceptance": "If confirmed: the heading and the content it labels must land on the same stream, so an ordinary `node tools/run-all.mjs > evidence.txt` capture does not show a labelled stderr section with an empty body while a real stack trace went elsewhere. FIRST STEP IS TO REPRODUCE IT -- not adversarially verified.",
-      "notes": "NOT ADVERSARIALLY VERIFIED -- filed honestly as a reviewer claim. Reviewer reported tools/run-all.mjs:233 writing the heading via console.log (stdout) and :234 writing the child's stderr to stderr, so a stdout-only archive reads as 'the child emitted empty stderr' when it emitted a module-resolution stack trace. Plausible on the cited line numbers but unreproduced by any second party. Shares a file with RV-15/RV-16/RV-17 -- see the wave note on RV-15.",
-      "found_cycle": 9
+      "notes": "NOT ADVERSARIALLY VERIFIED -- filed honestly as a reviewer claim. Reviewer reported tools/run-all.mjs:233 writing the heading via console.log (stdout) and :234 writing the child's stderr to stderr, so a stdout-only archive reads as 'the child emitted empty stderr' when it emitted a module-resolution stack trace. Plausible on the cited line numbers but unreproduced by any second party. Shares a file with RV-15/RV-16/RV-17 -- see the wave note on RV-15. cycle 13: CONFIRMED, not assumed. Reproduced through the REAL seven-entry dispatcher in a git worktree at 424640e (the builder measured a trimmed copy of the dispatch logic; the conductor did not reuse it): heading on stdout, body on stderr, verbatim. Fixed by relaying the child stderr body to stdout alongside its heading, and the file header was corrected in the same commit so it no longer claims a stdout/stderr distinction it no longer makes. Both converse controls hold: the heading is still printed when a child writes stderr (not deleted) and is absent from BOTH streams when none does (not unconditional). Evidence: .swarm/runs/cycle-013-verify-RV-18.txt.",
+      "found_cycle": 9,
+      "updated_cycle": 13
     },
     {
       "id": "P-4",
@@ -1178,6 +1179,23 @@
       "packages": [],
       "acceptance": "The partition-header line prints \"recorded HEAD \" plus the record short sha under FRESH-BY-CONTENT. It already hedges with \"recorded\", so it does not carry RV-7 outright false naming, but under the exemption that commit is a recorded ANCESTOR and not a HEAD of anything. Either drop the word HEAD from that branch or make it name the same relationship the RV-7 verdict line now names. Converse control: the LIVE branch wording must not change.",
       "notes": "Filed cycle 12 from the RV-7 builder UNPROMPTED disclosure -- it named the adjacent line it deliberately did NOT touch and gave its reason (the acceptance clause named one line; widening scope risked the byte-movement invariant). Correct call, correctly reported. Priority 7 precisely because the line is hedged rather than false."
+    },
+    {
+      "id": "P-8",
+      "kind": "fix",
+      "status": "todo",
+      "priority": 5,
+      "effort": "S",
+      "model": "sonnet",
+      "attempts": 0,
+      "created_cycle": 13,
+      "updated_cycle": 13,
+      "title": "The run baseline pins test_total 129, a count the repo deliberately left behind at cycle 4, so any check copying it is unfalsifiable-by-design",
+      "acceptance": "state.baseline.test_total is 129, measured at 20b7ede at kickoff. Cycle 4 (02f4668) intentionally consolidated two same-row guards, taking test/readme-tags.test.js from 31 to 30 top-level registrations and the suite from 129 to 128 -- the guard REDUCTION the spec asked for, and S-1 states that a test-count DROP is a PASS. The cycle-13 gate copied 129 out of the baseline and asserted it as an invariant, which is the SECOND occurrence of D-R8-15 snapshot-as-rule shape. Either the baseline field carries an explicit note that it is a historical measurement and not a floor, or the suite-green check is restated in a form that cannot be pinned to a count. Proof: a deliberate REMOVAL of one test must be shown NOT to fail the restated check, while a deliberate FAILURE of one test must still fail it -- both columns reported.",
+      "files_hint": [
+        ".swarm/state.json"
+      ],
+      "notes": "Filed by the conductor against its OWN instrument, not against a builder. Fourth instrument defect this run (D-R8-9, D-R8-10, D-R8-15, and this one)."
     }
   ]
 }

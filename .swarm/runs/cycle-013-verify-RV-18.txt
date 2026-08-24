@@ -1,0 +1,91 @@
+cycle 13 — VERIFICATION EVIDENCE for RV-18
+gate authored before dispatch, sealed as sha256 f88583086f2cf4a03d4c1932029b8cc3f38e43d335af621e29ed207da9820762
+gate runner: /opt/swarm/runs/gate-c13-rv18.mjs (conductor-written at verification time)
+
+The conductor did NOT reuse the builder's reproduction. The builder measured a TRIMMED copy
+of the dispatch logic (its TOOLS array cut to a single stub). This gate runs the REAL
+tools/run-all.mjs with its real seven-entry TOOLS array, inside a real `git worktree` of the
+repo at 424640e, and induces stderr by swapping ONE real dispatched tool
+(tools/test-line-delta.mjs, order slot [2]) for a stub.
+
+$ node /opt/swarm/runs/gate-c13-rv18.mjs
+
+--- C1 pre-fix (HEAD run-all.mjs) + stderr-emitting stub --- exit=0  stdout=71559B  stderr=56B
+  [PASS] C1 heading IS on stdout
+         observed: stdout.includes(heading)=true
+  [PASS] C1 body is NOT on stdout
+         observed: stdout.includes(RV18_MARKER_STDERR)=false
+  [PASS] C1 body IS on stderr
+         observed: stderr.includes(RV18_MARKER_STDERR)=true
+  [PASS] C1 heading is NOT on stderr
+         observed: stderr.includes(heading)=false
+         stdout at the heading (4 lines): ["-- stderr (relayed verbatim) --","","[run-all] tools/test-line-delta.mjs exited 0 (45ms elapsed)",""]
+         full pre-fix stderr: "RV18_MARKER_STDERR line one\nRV18_MARKER_STDERR line two\n"
+
+--- C2 post-fix (working tree run-all.mjs) + same stub --- exit=0  stdout=71615B  stderr=0B
+  [PASS] C2 heading and body land on the SAME stream
+         observed: heading{stdout:true,stderr:false} body{stdout:true,stderr:false}
+  [PASS] C2 forbidden state absent (heading on stdout with body missing from stdout)
+         observed: headingOnStdout&&!bodyOnStdout=false
+         stdout at the heading (4 lines): ["-- stderr (relayed verbatim) --","RV18_MARKER_STDERR line one","RV18_MARKER_STDERR line two",""]
+  [PASS] C3a heading still printed at all when a child writes stderr (fix is not deletion)
+         observed: heading present somewhere = true
+
+--- C3b post-fix + stdout-ONLY stub (converse control) --- exit=0  stdout=71521B  stderr=0B
+  [PASS] C3b heading absent from BOTH streams when no child writes stderr
+         observed: stdout=false stderr=false; control marker present on stdout=true
+  [PASS] C3b control is non-degenerate: the stub DID run (its stdout marker relayed)
+         observed: stdout.includes(RV18_MARKER_STDOUT_ONLY)=true
+  [PASS] C5 imports limited to node: builtins
+         observed: ["node:child_process","node:path","node:url"]
+  [PASS] C5 header no longer claims a stdout/stderr distinction it does not make
+         observed: old claim string still present = false
+
+================ GATE RESULT: ALL CELLS PASS ================
+
+--- C4 no collateral change to the clean-HEAD run -----------------------------------------
+C4 pre-fix  bytes stdout/stderr: 72804 / 0
+C4 post-fix bytes stdout/stderr: 72804 / 0
+C4 pre-fix  roll-up: "ROLL-UP: 6/7 ran clean; SKIPPED: mutation-matrix."
+C4 post-fix roll-up: "ROLL-UP: 6/7 ran clean; SKIPPED: mutation-matrix."
+C4 roll-up identical: true
+C4 expected exactly: true
+C4 exit line: EXIT=0
+
+(72804 vs the 72851 quoted pre-dispatch is a UNITS difference, not a change: 72851 is
+`wc -c` BYTES, 72804 is decoded UTF-16 string length; the 47-unit gap is the multi-byte
+box-drawing and check-mark characters in the tools' output. Both captures decode identically
+and their roll-up lines are equal.)
+
+--- C6 standing invariant W-6 --------------------------------------------------------------
+$ sha256sum src/corpus.js
+77a4de5c777a3bdb7099ea900e090831f3ec2d203e2346f9b9ac6419e545d09e  src/corpus.js     [expected, UNMOVED]
+$ node bin/aphorism.js --help | sha256sum
+d759d781ddcac780ed7eb13d7768e90f1bd52d707377fab50ff5c8f648dd5e64  -                  [expected, UNMOVED]
+$ git diff --name-only HEAD
+tools/run-all.mjs                                                  [no src/, no bin/, no test/]
+$ node --test test/*.test.js
+  tests 128 / pass 128 / fail 0 / skipped 0
+
+*** C6's "129 pass" literal is DEFECTIVE and is recorded as such, not quietly amended. ***
+It was copied out of state.baseline.test_total, which was measured at the run baseline
+20b7ede at kickoff — i.e. a point-in-time SNAPSHOT used as an invariant. Attribution,
+measured rather than argued:
+  suite in the pre-fix worktree at 424640e, tools/ untouched:  tests 128 / pass 128 / fail 0
+  top-level `test(` in test/readme-tags.test.js @ 20b7ede:     31
+  top-level `test(` in test/readme-tags.test.js @ HEAD:        30
+  only commit touching test/ since baseline:                   02f4668 (cycle 4, W-7)
+The suite was ALREADY 128 before this cycle began, and the single registration was removed by
+cycle 4's KI-R6-3 consolidation of two same-row guards — which is the guard REDUCTION the spec
+asked for, and S-1 states in terms that a test-count DROP is a PASS. Structurally this cycle
+could not have moved it either: the collection glob is `test/*.test.js` and the only file
+changed is `tools/run-all.mjs`.
+VERDICT OF RECORD for C6: PASS on the invariant it was written to express — both shas
+unmoved, no src/ or bin/ movement, suite green with zero failures — with the pinned count
+retired as unfalsifiable-by-design.
+
+--- C7 builder write scope, stated as a RULE not a snapshot (D-R8-15) ----------------------
+C7 dirty set, 1 line(s), each BRACKETED verbatim (D-R8-13):
+  [ M tools/run-all.mjs]  -> path=[tools/run-all.mjs]
+out-of-scope paths: []
+.scratch-* trees present: []

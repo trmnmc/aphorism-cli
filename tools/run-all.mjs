@@ -17,8 +17,15 @@
 // WHAT THIS FILE IS -- AND, JUST AS LOAD-BEARING, WHAT IT IS NOT
 // ---------------------------------------------------------------------------
 // This is a DISPATCHER, not a report generator. It invokes each published
-// tool as a real child process and relays its real stdout/stderr verbatim
-// under a labelled heading. It does not parse, restate, summarise or
+// tool as a real child process and relays its real output verbatim: the
+// child's stdout is written straight through, and if the child ALSO wrote
+// to stderr, that text is relayed too, under a labelled heading -- both
+// onto THIS dispatcher's own stdout, so a plain
+// `node tools/run-all.mjs > evidence.txt` capture never shows the heading
+// with an empty body while the real content went to a stream that capture
+// didn't redirect. (This dispatcher does not have a separate stderr output
+// of its own -- everything it prints, including relayed child stderr, is on
+// its stdout.) It does not parse, restate, summarise or
 // interpret any tool's findings -- the only judgement this file makes about
 // a tool's run is mechanical: did the child process exit 0 ("ran clean") or
 // non-zero ("reported a problem"), using each tool's OWN documented exit
@@ -231,7 +238,7 @@ for (let i = 0; i < TOOLS.length; i++) {
   if (result.stderr && result.stderr.trim() !== '') {
     console.log('');
     console.log('-- stderr (relayed verbatim) --');
-    process.stderr.write(result.stderr);
+    process.stdout.write(result.stderr);
   }
 
   const exitCode = result.status; // null if killed by signal
