@@ -22524,3 +22524,25 @@ this cycle stayed entirely outside the pathspec. Zero non-`node:` imports. Suite
   "session_shape": "headless -p session spawned by swarm-pacer.sh (auto-kickoff 13:05:48Z). Workflow tool is review-gated headless, so build dispatch is DIRECT Agent calls with disjoint scopes declared in-prompt (L-016); Artifact publish unavailable (local dashboard render IS the publication on the VPS); `claude` is not allowlisted so kickoff step 11 could not run."
 }
 ```
+
+### cycle 5 addendum — a fourth instrument defect, in the reporting path
+
+Found at step 8, after the cycle commit. `runs/run8-render-dashboard.mjs` hardcodes the
+burn-up strip to ONE bar (lines 70-71, `data-cycles="1"`, title `cycle 0 — 0 verified`) and
+self-checks it against `burnup_bars_expected: 1`. So it reports `ok:true`, `1/1 bars`, and
+publishes a flat empty progress strip — through five cycles and eleven verified items.
+cycle.md step 8 asks for one bar per cycle, height = cumulative verified / backlog total.
+
+The self-check is the durable part of the bug: it validates the renderer against its own
+hardcoded intent instead of against the spec, so it cannot ever notice. Filed as **KI-36**
+and **D-R8-16**, deferred to a later cycle rather than patched here — the cycle was already
+committed and journalled, and slipping an unrecorded fix into the reporting instrument is
+the exact move D-R8-9, D-R8-10 and D-R8-15 each refused.
+
+This widens the RETRO candidate. It is not "gate scripts get no scrutiny"; it is that
+ONE-SHOT INSTRUMENTS get no scrutiny — written once, run once, self-certifying. The gates
+were three of them. The renderer is the fourth, and it has been misreporting the run to its
+only live audience the entire time.
+
+Everything else in the render is sound: 12/12 placeholders filled, 0 leaked into comments,
+8 journal lines, 15 decisions, notify line present, 48,222 bytes.
